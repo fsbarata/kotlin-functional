@@ -2,7 +2,8 @@ package com.experiment
 
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.types.Option
-import com.fsbarata.fp.types.monad
+import com.fsbarata.fp.types.f
+import com.fsbarata.fp.types.asList
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -16,12 +17,14 @@ class MonadExperimentKtTest {
 	@Test
 	fun `multiply accepts List`() {
 		assertEquals(listOf(15, 25),
-				listOf(3, 5).monad()
+				listOf(3, 5).f()
 						.multiply(5)
+						.asList
 		)
 		assertEquals(listOf(0),
-				listOf(3, 5).monad()
+				listOf(3, 5).f()
 						.multiply(0)
+						.asList
 		)
 	}
 

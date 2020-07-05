@@ -1,30 +1,33 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.Functor
-import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.*
 
 class ListF<A>(
 		private val wrapped: List<A>
 ) : Monad<List<*>, A>,
+		Monoid<A>,
 		List<A> by wrapped {
+	override fun empty() = empty<A>()
+
 	override fun <B> just(b: B): ListF<B> = Companion.just(b)
 
 	override fun <B> map(f: (A) -> B) =
-			wrapped.map(f).monad()
+			wrapped.map(f).f()
 
 	override fun <B> flatMap(f: (A) -> Functor<List<*>, B>) =
-			wrapped.flatMap { f(it).value }.monad()
+			wrapped.flatMap { f(it).asList }.f()
 
-	fun toList() = wrapped
+	override fun append(a: Semigroup<A>): Monoid<A> =
+			(this + a as List<A>).f()
 
 	companion object {
-		fun <A> just(a: A) = listOf(a).monad()
+		fun <A> empty() = emptyList<A>().f()
+		fun <A> just(a: A) = listOf(a).f()
 	}
 }
 
-fun <A> List<A>.monad() = ListF(this)
+fun <A> List<A>.f() = ListF(this)
 
-val <A> Context<List<*>, A>.value: List<A>
-	get() = (this as ListF<A>).toList()
+val <A> Context<List<*>, A>.asList: List<A>
+	get() = this as List<A>
 

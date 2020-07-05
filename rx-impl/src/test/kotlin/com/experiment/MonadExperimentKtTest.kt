@@ -1,8 +1,8 @@
 package com.experiment
 
 import com.fsbarata.fp.concepts.Monad
-import com.fsbarata.fp.types.monad
-import com.fsbarata.fp.types.value
+import com.fsbarata.fp.types.f
+import com.fsbarata.fp.types.asObservable
 import io.reactivex.subjects.PublishSubject
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -19,9 +19,9 @@ class MonadExperimentKtTest {
 	fun `multiply accepts Observable`() {
 		val subject = PublishSubject.create<Int>()
 		val testObserver =
-				subject.monad()
+				subject.f()
 						.multiply(5)
-						.value
+						.asObservable
 						.test()
 
 		assertTrue(subject.hasObservers())
@@ -36,9 +36,9 @@ class MonadExperimentKtTest {
 		testObserver.dispose()
 
 		val anotherObserver =
-				subject.monad()
+				subject.f()
 						.multiply(0)
-						.value
+						.asObservable
 						.test()
 
 		anotherObserver.assertValue(0)
