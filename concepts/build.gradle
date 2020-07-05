@@ -1,0 +1,7 @@
+apply from: '../kotlin.gradle'
+
+dependencies {
+}
+
+
+
