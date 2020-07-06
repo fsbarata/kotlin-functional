@@ -5,7 +5,7 @@ import com.fsbarata.fp.concepts.*
 class ListF<A>(
 		private val wrapped: List<A>
 ) : Monad<List<*>, A>,
-		Monoid<A>,
+		Monoid<ListF<A>>,
 		List<A> by wrapped {
 	override fun empty() = empty<A>()
 
@@ -17,8 +17,8 @@ class ListF<A>(
 	override fun <B> flatMap(f: (A) -> Functor<List<*>, B>) =
 			wrapped.flatMap { f(it).asList }.f()
 
-	override fun append(a: Semigroup<A>): Monoid<A> =
-			(this + a as List<A>).f()
+	override fun append(a: ListF<A>): ListF<A> =
+			(this + a).f()
 
 	companion object {
 		fun <A> empty() = emptyList<A>().f()

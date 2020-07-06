@@ -11,7 +11,7 @@ data class Option<A>(
 	override fun <B> just(b: B) = Option.just(b)
 
 	override fun <B> flatMap(f: (A) -> Functor<Any, B>) =
-			Option(value?.let { (f(it) as Option<B>).value })
+			Option(value?.let { f(it).asOption.value })
 
 	companion object {
 		fun <A> empty() = Option<A>(null)
