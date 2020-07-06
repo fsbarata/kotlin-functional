@@ -1,13 +1,11 @@
 package com.fsbarata.fp.concepts
 
-interface Monoid<A>: Semigroup<A> {
-	fun empty(): Monoid<A>
-
-	override fun append(a: Semigroup<A>): Monoid<A>
+interface Monoid<A : Monoid<A>> : Semigroup<A> {
+	fun empty(): A
 }
 
-fun <A> List<Monoid<A>>.foldLeft(): Monoid<A> =
-		concat(first().empty()) as Monoid<A>
+fun <M : Monoid<M>> List<M>.foldLeft(): M =
+		fold(first().empty()) { a, b -> a.append(b) }
 
-fun <A> List<Monoid<A>>.foldRight(): Monoid<A> =
+fun <M : Monoid<M>> List<M>.foldRight(): M =
 		foldRight(first().empty()) { a, b -> a.append(b) }

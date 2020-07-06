@@ -9,7 +9,7 @@ class ObservableF<A>(
 		private val wrapped: Observable<A>
 ) : Observable<A>(),
 		Monad<Observable<*>, A>,
-		Monoid<A>,
+		Monoid<ObservableF<A>>,
 		ObservableSource<A> {
 	override fun subscribeActual(observer: Observer<in A>) {
 		wrapped.subscribe(observer)
@@ -26,8 +26,7 @@ class ObservableF<A>(
 
 	override fun empty() = empty<A>()
 
-	override fun append(a: Semigroup<A>) =
-			concatWith(a as Observable<A>).f()
+	override fun append(a: ObservableF<A>) = concatWith(a).f()
 
 	companion object {
 		fun <A> empty() = Observable.empty<A>().f()
