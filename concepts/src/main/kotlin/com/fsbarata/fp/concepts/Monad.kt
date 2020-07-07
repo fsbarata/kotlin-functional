@@ -8,6 +8,6 @@ interface Monad<C, A> : Applicative<C, A> {
 	override fun <B> map(f: (A) -> B): Monad<C, B> = ap(just(f))
 
 	override fun <B> ap(ff: Functor<C, (A) -> B>): Monad<C, B> =
-			flatMap { a -> ff.map { c -> c(a) } as Monad<C, B> }
+			flatMap { a -> ff.map { it(a) } }
 }
 
