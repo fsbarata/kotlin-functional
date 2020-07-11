@@ -1,9 +1,6 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.concepts.Foldable
-import com.fsbarata.fp.concepts.Functor
-import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.*
 
 data class Option<A>(
 		val value: A?
@@ -30,3 +27,9 @@ fun <A : Any> A?.f() = toOption()
 val <A> Context<Any, A>.asOption
 	get() = this as Option<A>
 
+fun <A> Monoid<A>.option() = object : Monoid<Option<A>> {
+	override fun empty() = Option.empty<A>()
+
+	override fun Option<A>.combine(a: Option<A>): Option<A> =
+			flatMap { t -> a.map { t.combine(it) } }
+}
