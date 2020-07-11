@@ -6,6 +6,7 @@ class ListF<A>(
 		private val wrapped: List<A>
 ) : Monad<List<*>, A>,
 		Monoid<ListF<A>>,
+		Foldable<A>,
 		List<A> by wrapped {
 	override fun empty() = empty<A>()
 
@@ -17,8 +18,11 @@ class ListF<A>(
 	override fun <B> flatMap(f: (A) -> Functor<List<*>, B>) =
 			wrapped.flatMap { f(it).asList }.f()
 
-	override fun append(a: ListF<A>): ListF<A> =
+	override fun combine(a: ListF<A>): ListF<A> =
 			(this + a).f()
+
+	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
+			wrapped.fold(initialValue, accumulator)
 
 	companion object {
 		fun <A> empty() = emptyList<A>().f()

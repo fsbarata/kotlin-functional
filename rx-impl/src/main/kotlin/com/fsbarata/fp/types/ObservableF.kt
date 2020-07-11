@@ -26,7 +26,7 @@ class ObservableF<A>(
 
 	override fun empty() = empty<A>()
 
-	override fun append(a: ObservableF<A>) = concatWith(a).f()
+	override fun combine(a: ObservableF<A>) = concatWith(a).f()
 
 	companion object {
 		fun <A> empty() = Observable.empty<A>().f()

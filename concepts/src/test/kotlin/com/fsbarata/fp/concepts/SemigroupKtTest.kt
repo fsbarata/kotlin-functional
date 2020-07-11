@@ -5,7 +5,7 @@ import org.junit.Test
 
 class SemigroupKtTest {
 	data class SInt(val value: Int) : Semigroup<SInt> {
-		override fun append(a: SInt) = SInt(value + a.value)
+		override fun combine(a: SInt) = SInt(value + a.value)
 	}
 
 	@Test

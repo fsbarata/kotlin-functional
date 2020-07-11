@@ -5,7 +5,12 @@ interface Monoid<A : Monoid<A>> : Semigroup<A> {
 }
 
 fun <M : Monoid<M>> List<M>.foldLeft(): M =
-		fold(first().empty()) { a, b -> a.append(b) }
+		fold(first().empty()) { a, b -> a.combine(b) }
 
 fun <M : Monoid<M>> List<M>.foldRight(): M =
-		foldRight(first().empty()) { a, b -> a.append(b) }
+		foldRight(first().empty()) { a, b -> a.combine(b) }
+
+fun <M : Monoid<M>> Foldable<M>.fold(empty: M): M =
+		fold(empty) { a, b -> a.combine(b) }
+
+
