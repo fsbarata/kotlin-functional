@@ -9,7 +9,6 @@ class ObservableF<A>(
 		private val wrapped: Observable<A>
 ) : Observable<A>(),
 		Monad<Observable<*>, A>,
-		Monoid<ObservableF<A>>,
 		ObservableSource<A> {
 	override fun subscribeActual(observer: Observer<in A>) {
 		wrapped.subscribe(observer)
@@ -24,10 +23,6 @@ class ObservableF<A>(
 	override fun <B> flatMap(f: (A) -> Functor<Observable<*>, B>): ObservableF<B> =
 			wrapped.flatMap { f(it).asObservable }.f()
 
-	override fun empty() = empty<A>()
-
-	override fun combine(a: ObservableF<A>) = concatWith(a).f()
-
 	companion object {
 		fun <A> empty() = Observable.empty<A>().f()
 		fun <A> just(a: A) = Observable.just(a).f()
@@ -35,6 +30,10 @@ class ObservableF<A>(
 }
 
 fun <A> Observable<A>.f() = ObservableF(this)
+fun <A> Observable<A>.concatMonoid() = object : Monoid<Observable<A>> {
+	override fun empty() = Observable.empty<A>()
+	override fun Observable<A>.combine(other: Observable<A>) = concatWith(other)
+}
 
 val <A> Context<Observable<*>, A>.asObservable
 	get() = this as Observable<A>

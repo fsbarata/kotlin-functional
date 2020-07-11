@@ -1,20 +1,27 @@
 package com.fsbarata.fp.concepts
 
-interface Semigroup<A: Semigroup<A>> {
-	fun combine(a: A): A
+interface Semigroup<A> {
+	fun A.combine(a: A): A
 
-	operator fun plus(a: A) = combine(a)
+	operator fun A.plus(a: A) = combine(a)
 
-	operator fun times(n: Int): A {
+	operator fun A.times(n: Int): A {
 		require(n >= 1)
-		val a = this as A
-		return a.addMult(a, n)
+		return add(this, n)
 	}
+
+	private tailrec fun A.add(a: A, n: Int): A =
+			if (n == 1) this
+			else this.combine(a).add(a, n - 1)
+
+
+	fun List<A>.fold(initialValue: A) =
+			fold(initialValue) { a, b -> a.combine(b) }
+
+	fun List<A>.foldRight(initialValue: A) =
+			foldRight(initialValue) { a, b -> a.combine(b) }
+
+	fun Foldable<A>.fold(initialValue: A) =
+			fold(initialValue) { a, b -> a.combine(b) }
 }
 
-private tailrec fun <A: Semigroup<A>> A.addMult(a: A, n: Int): A =
-		if (n == 1) this
-		else combine(a).addMult(a, n - 1)
-
-fun <A: Semigroup<A>> List<A>.concat(initialValue: Semigroup<A>) =
-		fold(initialValue) { a, b -> a.combine(b) }
