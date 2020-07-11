@@ -3,9 +3,7 @@ package com.fsbarata.fp.concepts
 interface Semigroup<A> {
 	fun A.combine(a: A): A
 
-	operator fun A.plus(a: A) = combine(a)
-
-	operator fun A.times(n: Int): A {
+	fun A.times(n: Int): A {
 		require(n >= 1)
 		return add(this, n)
 	}

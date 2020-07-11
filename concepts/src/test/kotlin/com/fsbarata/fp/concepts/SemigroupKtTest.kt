@@ -13,8 +13,8 @@ class SemigroupKtTest {
 	@Test
 	fun semigroup_default_times() {
 		with(XIntSG) {
-			assertEquals(XInt(3), XInt(3) * 1)
-			assertEquals(XInt(45), XInt(3) * 15)
+			assertEquals(XInt(3), XInt(3).times(1))
+			assertEquals(XInt(45), XInt(3).times(15))
 		}
 	}
 }
