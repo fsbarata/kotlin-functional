@@ -1,9 +1,12 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.*
-import io.reactivex.Observable
-import io.reactivex.ObservableSource
-import io.reactivex.Observer
+import com.fsbarata.fp.concepts.Context
+import com.fsbarata.fp.concepts.Functor
+import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.Monoid
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.ObservableSource
+import io.reactivex.rxjava3.core.Observer
 
 class ObservableF<A>(
 		private val wrapped: Observable<A>

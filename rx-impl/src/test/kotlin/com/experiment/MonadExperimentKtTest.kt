@@ -1,9 +1,9 @@
 package com.experiment
 
 import com.fsbarata.fp.concepts.Monad
-import com.fsbarata.fp.types.f
 import com.fsbarata.fp.types.asObservable
-import io.reactivex.subjects.PublishSubject
+import com.fsbarata.fp.types.f
+import io.reactivex.rxjava3.subjects.PublishSubject
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -32,7 +32,8 @@ class MonadExperimentKtTest {
 		subject.onNext(5)
 		testObserver.assertValueAt(1, 25)
 
-		testObserver.assertNotTerminated()
+		testObserver.assertNotComplete()
+		testObserver.assertNoErrors()
 		testObserver.dispose()
 
 		val anotherObserver =
