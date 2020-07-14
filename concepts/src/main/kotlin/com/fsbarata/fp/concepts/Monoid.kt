@@ -2,11 +2,11 @@ package com.fsbarata.fp.concepts
 
 interface Monoid<A> : Semigroup<A> {
 	fun empty(): A
-
-	fun List<A>.foldLeft() = fold(empty())
-
-	fun List<A>.foldRight() = foldRight(empty())
-
-	fun Foldable<A>.fold() = fold(empty())
 }
 
+fun <A> Foldable<A>.fold(monoid: Monoid<A>) =
+		with(monoid) { fold(empty(), this) }
+fun <A> List<A>.fold(monoid: Monoid<A>) =
+		with(monoid) { fold(empty(), this) }
+fun <A> List<A>.foldRight(monoid: Monoid<A>) =
+		with(monoid) { fold(empty(), this) }

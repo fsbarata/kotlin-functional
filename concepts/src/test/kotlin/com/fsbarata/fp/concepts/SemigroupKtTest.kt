@@ -7,7 +7,7 @@ class SemigroupKtTest {
 	data class XInt(val i: Int)
 
 	object XIntSG : Semigroup<XInt> {
-		override fun XInt.combine(a: XInt) = XInt(i + a.i)
+		override fun XInt.combine(other: XInt) = XInt(i + other.i)
 	}
 
 	@Test

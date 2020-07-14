@@ -8,7 +8,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class MonadExperimentKtTest {
+class ObservableMonadTest {
 	private fun <F : Any> Monad<F, Int>.multiply(
 			x: Int
 	): Monad<F, Int> =

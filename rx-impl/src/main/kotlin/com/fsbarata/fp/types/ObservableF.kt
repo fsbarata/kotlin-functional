@@ -33,10 +33,6 @@ class ObservableF<A>(
 }
 
 fun <A> Observable<A>.f() = ObservableF(this)
-fun <A> Observable<A>.concatMonoid() = object : Monoid<Observable<A>> {
-	override fun empty() = Observable.empty<A>()
-	override fun Observable<A>.combine(other: Observable<A>) = concatWith(other)
-}
 
 val <A> Context<Observable<*>, A>.asObservable
 	get() = this as Observable<A>

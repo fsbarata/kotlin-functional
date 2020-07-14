@@ -26,10 +26,3 @@ fun <A : Any> A?.f() = toOption()
 
 val <A> Context<Any, A>.asOption
 	get() = this as Option<A>
-
-fun <A> Monoid<A>.option() = object : Monoid<Option<A>> {
-	override fun empty() = Option.empty<A>()
-
-	override fun Option<A>.combine(a: Option<A>): Option<A> =
-			flatMap { t -> a.map { t.combine(it) } }
-}

@@ -1,6 +1,9 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.*
+import com.fsbarata.fp.concepts.Context
+import com.fsbarata.fp.concepts.Foldable
+import com.fsbarata.fp.concepts.Functor
+import com.fsbarata.fp.concepts.Monad
 
 class ListF<A>(
 		private val wrapped: List<A>
@@ -25,10 +28,6 @@ class ListF<A>(
 }
 
 fun <A> List<A>.f() = ListF(this)
-fun <A> List<A>.monoid() = object : Monoid<List<A>> {
-	override fun empty() = emptyList<A>()
-	override fun List<A>.combine(a: List<A>) = this + a
-}
 
 val <A> Context<List<*>, A>.asList: List<A>
 	get() = this as List<A>
