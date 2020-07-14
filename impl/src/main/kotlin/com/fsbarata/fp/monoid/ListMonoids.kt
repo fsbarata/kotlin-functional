@@ -8,7 +8,7 @@ fun <A> optionMonoid(semigroup: Semigroup<A>) = object : Monoid<Option<A>> {
 	override fun empty() = Option.empty<A>()
 	override fun Option<A>.combine(other: Option<A>) =
 			with(semigroup) {
-				flatMap { a -> other.map { a.combine(it) } }
+				other.map { value?.combine(it) ?: it } orOption this@combine
 			}
 }
 

@@ -17,11 +17,14 @@ fun completableMergeMonoid() = object : Monoid<Completable> {
 	override fun Completable.combine(other: Completable) = mergeWith(other)
 }
 
-fun <A> maybeMonoid(semigroup: Semigroup<A>) = object : Monoid<Maybe<A>> {
+fun <A> maybeCombineMonoid(semigroup: Semigroup<A>) = object : Monoid<Maybe<A>> {
 	override fun empty() = Maybe.empty<A>()
 	override fun Maybe<A>.combine(other: Maybe<A>) =
 			with(semigroup) {
-				flatMap { a -> other.map { a.combine(it) } }
+				flatMap { a ->
+					other.map { a.combine(it) }
+							.switchIfEmpty(this@combine)
+				}.switchIfEmpty(other)
 			}
 }
 
