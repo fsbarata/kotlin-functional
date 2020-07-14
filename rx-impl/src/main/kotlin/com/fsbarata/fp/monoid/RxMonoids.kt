@@ -2,10 +2,20 @@ package com.fsbarata.fp.monoid
 
 import com.fsbarata.fp.concepts.Monoid
 import com.fsbarata.fp.concepts.Semigroup
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.Observables
 
+fun completableConcatMonoid() = object : Monoid<Completable> {
+	override fun empty() = Completable.never()
+	override fun Completable.combine(other: Completable) = concatWith(other)
+}
+
+fun completableMergeMonoid() = object : Monoid<Completable> {
+	override fun empty() = Completable.never()
+	override fun Completable.combine(other: Completable) = mergeWith(other)
+}
 
 fun <A> maybeMonoid(semigroup: Semigroup<A>) = object : Monoid<Maybe<A>> {
 	override fun empty() = Maybe.empty<A>()
@@ -20,8 +30,14 @@ fun <A> observableConcatMonoid() = object : Monoid<Observable<A>> {
 	override fun Observable<A>.combine(other: Observable<A>) = concatWith(other)
 }
 
-fun <A : Any> observableZipMonoid(semigroup: Semigroup<A>) = object : Monoid<Observable<A>> {
+fun <A> observableMergeMonoid() = object : Monoid<Observable<A>> {
 	override fun empty() = Observable.empty<A>()
-	override fun Observable<A>.combine(other: Observable<A>): Observable<A> =
-			with(semigroup) { Observables.zip(this@combine, other) { a, b -> a.combine(b) } }
+	override fun Observable<A>.combine(other: Observable<A>) = mergeWith(other)
 }
+
+fun <A : Any> observableCombineLatestMonoid(monoid: Monoid<A>) = object : Monoid<Observable<A>> {
+	override fun empty() = Observable.just(monoid.empty())
+	override fun Observable<A>.combine(other: Observable<A>): Observable<A> =
+			with(monoid) { Observables.combineLatest(this@combine, other) { a, b -> a.combine(b) } }
+}
+
