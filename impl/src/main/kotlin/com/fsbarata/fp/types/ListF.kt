@@ -15,6 +15,9 @@ class ListF<A>(
 	override fun <B> map(f: (A) -> B) =
 			wrapped.map(f).f()
 
+	override fun <B> ap(ff: Functor<List<*>, (A) -> B>): ListF<B> =
+			flatMap { item -> ff.map { it(item) } }
+
 	override fun <B> flatMap(f: (A) -> Functor<List<*>, B>) =
 			wrapped.flatMap { f(it).asList }.f()
 
@@ -29,6 +32,6 @@ class ListF<A>(
 
 fun <A> List<A>.f() = ListF(this)
 
-val <A> Context<List<*>, A>.asList: List<A>
-	get() = this as List<A>
+val <A> Context<List<*>, A>.asList: ListF<A>
+	get() = this as ListF<A>
 

@@ -1,9 +1,6 @@
-package com.experiment
+package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Monad
-import com.fsbarata.fp.types.Option
-import com.fsbarata.fp.types.f
-import com.fsbarata.fp.types.asList
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

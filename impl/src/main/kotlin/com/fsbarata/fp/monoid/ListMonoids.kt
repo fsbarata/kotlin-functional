@@ -17,8 +17,3 @@ fun <A> listConcatMonoid() = object : Monoid<List<A>> {
 	override fun List<A>.combine(other: List<A>) = this + other
 }
 
-fun <A> listZipMonoid(semigroup: Semigroup<A>) = object : Monoid<List<A>> {
-	override fun empty() = emptyList<A>()
-	override fun List<A>.combine(other: List<A>) =
-			with(semigroup) { zip(other) { a, b -> a.combine(b) } }
-}
