@@ -19,12 +19,21 @@ class NonEmptyList<A> private constructor(
 	override fun <B> flatMap(f: (A) -> Functor<NonEmptyList<*>, B>): NonEmptyList<B> =
 			NonEmptyList(list.flatMap { f(it).asNel })
 
-	companion object {
-		fun <T> just(item: T) = NonEmptyList(listOf(item))
-	}
 
 	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
 			list.fold(initialValue, accumulator)
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (javaClass != other?.javaClass) return false
+		return list == (other as NonEmptyList<*>).list
+	}
+
+	override fun hashCode() = list.hashCode()
+
+	companion object {
+		fun <T> just(item: T) = NonEmptyList(listOf(item))
+	}
 }
 
 val <A> Context<NonEmptyList<*>, A>.asNel get() = this as NonEmptyList<A>

@@ -16,6 +16,9 @@ class Reader<D, A>(val run: (D) -> A) : Monad<Reader<D, *>, A> {
 	override fun <B> flatMap(f: (A) -> Functor<Reader<D, *>, B>): Reader<D, B> =
 			Reader { f(run(it)).asReader.run(it) }
 
+	fun <E> leftMap(f: (E) -> D): Reader<E, A> =
+			Reader { e -> run(f(e)) }
+
 	companion object {
 		fun <D, A> just(a: A): Reader<D, A> = Reader { a }
 
