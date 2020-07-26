@@ -9,7 +9,7 @@ class ProviderF<A>(
 ) : () -> A by get,
 		Monad<ProviderF<*>, A> {
 	override fun <B> just(b: B) =
-			Companion.just<B>(b)
+			Companion.just(b)
 
 	override fun <B> map(f: (A) -> B): ProviderF<B> =
 			ProviderF { f(get()) }
@@ -25,7 +25,6 @@ class ProviderF<A>(
 				ProviderF { b }
 	}
 }
-
 
 val <A> Context<ProviderF<*>, A>.asProviderF
 	get() = this as ProviderF<A>
