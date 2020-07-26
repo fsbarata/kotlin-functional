@@ -1,11 +1,8 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.concepts.Foldable
-import com.fsbarata.fp.concepts.Functor
-import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.*
 
-class ListF<A>(
+data class ListF<A>(
 		private val wrapped: List<A>
 ) : Monad<List<*>, A>,
 		Foldable<A>,

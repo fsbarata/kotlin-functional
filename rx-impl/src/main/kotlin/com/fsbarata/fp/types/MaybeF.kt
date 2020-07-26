@@ -32,4 +32,4 @@ class MaybeF<A>(
 fun <A> Maybe<A>.f() = MaybeF(this)
 
 val <A> Context<Maybe<*>, A>.asMaybe
-	get() = this as Maybe<A>
+	get() = this as MaybeF<A>

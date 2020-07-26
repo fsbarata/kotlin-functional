@@ -35,4 +35,4 @@ class ObservableF<A>(
 fun <A> Observable<A>.f() = ObservableF(this)
 
 val <A> Context<Observable<*>, A>.asObservable
-	get() = this as Observable<A>
+	get() = this as ObservableF<A>

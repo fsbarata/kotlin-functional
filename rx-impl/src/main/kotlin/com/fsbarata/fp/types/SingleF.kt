@@ -1,8 +1,6 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.concepts.Functor
-import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.*
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleObserver
 import io.reactivex.rxjava3.core.SingleSource
@@ -31,4 +29,4 @@ class SingleF<A>(
 fun <A> Single<A>.f() = SingleF(this)
 
 val <A> Context<Single<*>, A>.asSingle
-	get() = this as Single<A>
+	get() = this as SingleF<A>
