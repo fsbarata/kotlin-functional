@@ -7,7 +7,7 @@ import com.fsbarata.fp.concepts.Monad
 
 data class Option<A>(
 		val value: A?
-) : Monad<Any?, A>,
+) : Monad<Option<*>, A>,
 		Foldable<A> {
 	infix fun or(a: A) = value ?: a
 	infix fun orOption(a: Option<A>) = Option(value ?: a.value)
@@ -17,10 +17,10 @@ data class Option<A>(
 	override fun <B> map(f: (A) -> B) =
 			Option(value?.let(f))
 
-	override fun <B> ap(ff: Functor<Any?, (A) -> B>): Option<B> =
+	override fun <B> ap(ff: Functor<Option<*>, (A) -> B>): Option<B> =
 			ff.map { map(it) }.asOption.value ?: empty()
 
-	override fun <B> flatMap(f: (A) -> Functor<Any?, B>) =
+	override fun <B> flatMap(f: (A) -> Functor<Option<*>, B>) =
 			Option(value?.let { f(it).asOption.value })
 
 	fun <B> fold(ifEmpty: () -> B, ifSome: (A) -> B): B {
@@ -41,5 +41,5 @@ data class Option<A>(
 fun <A : Any> A?.toOption() = Option(this)
 fun <A : Any> A?.f() = toOption()
 
-val <A> Context<Any?, A>.asOption
+val <A> Context<Option<*>, A>.asOption
 	get() = this as Option<A>
