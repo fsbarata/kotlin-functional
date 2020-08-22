@@ -1,6 +1,6 @@
 package com.fsbarata.fp.concepts
 
-interface Monad<C, A> : Applicative<C, A> {
+interface Monad<C, out A> : Applicative<C, A> {
 	fun <B> flatMap(f: (A) -> Functor<C, B>): Monad<C, B>
 
 	override fun <B> just(b: B): Monad<C, B>
