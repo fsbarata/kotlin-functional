@@ -26,5 +26,14 @@ fun <A> List<A>.fold(initialValue: A, semigroup: Semigroup<A>) =
 fun <A> Sequence<A>.fold(initialValue: A, semigroup: Semigroup<A>) =
 		with(semigroup) { fold(initialValue) { acc, a -> acc.combine(a) } }
 
+fun <A> Foldable<A>.scan(initialValue: A, semigroup: Semigroup<A>) =
+		with(semigroup) { scan(initialValue) { acc, a -> acc.combine(a) } }
+
+fun <A> List<A>.scan(initialValue: A, semigroup: Semigroup<A>) =
+		with(semigroup) { scan(initialValue) { acc, a -> acc.combine(a) } }
+
+fun <A> Sequence<A>.scan(initialValue: A, semigroup: Semigroup<A>) =
+		with(semigroup) { scan(initialValue) { acc, a -> acc.combine(a) } }
+
 fun <A> List<A>.foldRight(initialValue: A, semigroup: Semigroup<A>) =
 		with(semigroup) { foldRight(initialValue) { acc, a -> acc.combine(a) } }
