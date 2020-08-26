@@ -9,8 +9,13 @@ data class Option<A>(
 		val value: A?
 ) : Monad<Option<*>, A>,
 		Foldable<A> {
+	inline fun orNull() = value
+
 	infix fun or(a: A) = value ?: a
 	infix fun orOption(a: Option<A>) = Option(value ?: a.value)
+
+	fun isPresent() = value != null
+	fun isAbsent() = value == null
 
 	override fun <B> just(b: B) = Option.just(b)
 
@@ -26,7 +31,6 @@ data class Option<A>(
 	fun <B> fold(ifEmpty: () -> B, ifSome: (A) -> B): B {
 		return ifSome(value ?: return ifEmpty())
 	}
-
 
 	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R {
 		return accumulator(initialValue, value ?: return initialValue)
