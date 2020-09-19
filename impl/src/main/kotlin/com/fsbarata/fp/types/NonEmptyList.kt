@@ -16,9 +16,11 @@ class NonEmptyList<A> private constructor(
 	override fun <B> map(f: (A) -> B): NonEmptyList<B> =
 			NonEmptyList(list.map(f))
 
-	override fun <B> flatMap(f: (A) -> Functor<NonEmptyList<*>, B>): NonEmptyList<B> =
+	override fun <B> bind(f: (A) -> Functor<NonEmptyList<*>, B>): NonEmptyList<B> =
 			NonEmptyList(list.flatMap { f(it).asNel })
 
+	fun <B> flatMap(f: (A) -> NonEmptyList<B>): NonEmptyList<B> =
+			NonEmptyList(list.flatMap(f))
 
 	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
 			list.fold(initialValue, accumulator)

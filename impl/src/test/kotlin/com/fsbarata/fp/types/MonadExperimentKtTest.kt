@@ -9,7 +9,7 @@ class MonadExperimentKtTest {
 			x: Int
 	): Monad<F, Int> =
 			if (x == 0) just(0)
-			else flatMap { just(x * it) }
+			else bind { just(x * it) }
 
 	@Test
 	fun `multiply accepts List`() {
@@ -27,16 +27,16 @@ class MonadExperimentKtTest {
 
 	@Test
 	fun `multiply accepts Option`() {
-		assertEquals(Option.just(25),
-				Option.just(5)
+		assertEquals(Optional.just(25),
+				Optional.just(5)
 						.multiply(5)
 		)
-		assertEquals(Option.just(0),
-				Option.just(5)
+		assertEquals(Optional.just(0),
+				Optional.just(5)
 						.multiply(0)
 		)
-		assertEquals(Option.empty<Int>(),
-				Option.empty<Int>()
+		assertEquals(Optional.empty<Int>(),
+				Optional.empty<Int>()
 						.multiply(5)
 		)
 	}

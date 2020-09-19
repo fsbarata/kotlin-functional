@@ -18,8 +18,11 @@ class FlowableF<A>(
 	override fun <B> map(f: (A) -> B) =
 			wrapped.map(f).f()
 
-	override fun <B> flatMap(f: (A) -> Functor<Flowable<*>, B>): FlowableF<B> =
-			wrapped.flatMap { f(it).asFlowable }.f()
+	override fun <B> bind(f: (A) -> Functor<Flowable<*>, B>): FlowableF<B> =
+			flatMap { f(it).asFlowable }
+
+	fun <B> flatMap(f: (A) -> Flowable<B>): FlowableF<B> =
+			wrapped.flatMap(f).f()
 
 	fun reduce(semigroup: Semigroup<A>) = with(semigroup) { reduce { a1, a2 -> a1.combine(a2) } }.f()
 	fun fold(initialValue: A, semigroup: Semigroup<A>) = with(semigroup) { reduce(initialValue) { a1, a2 -> a1.combine(a2) } }.f()

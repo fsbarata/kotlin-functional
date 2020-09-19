@@ -1,12 +1,12 @@
 package com.fsbarata.fp.monoid
 
 import com.fsbarata.fp.concepts.Monoid
-import com.fsbarata.fp.types.Option
+import com.fsbarata.fp.types.Optional
 
-fun <A> Monoid<A>.option() = object : Monoid<Option<A>> {
-	override fun empty() = Option.empty<A>()
-	override fun Option<A>.combine(other: Option<A>) =
-			other.map { value?.combine(it) ?: it } orOption this@combine
+fun <A> Monoid<A>.option() = object : Monoid<Optional<A>> {
+	override fun empty() = Optional.empty<A>()
+	override fun Optional<A>.combine(other: Optional<A>) =
+			other.map { value?.combine(it) ?: it } orOptional this@combine
 }
 
 fun <A> listConcatMonoid() = object : Monoid<List<A>> {

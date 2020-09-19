@@ -16,10 +16,16 @@ sealed class Either<out T, out A> : Monad<Either<*, *>, A> {
 				is Right -> Right(f(value))
 			}
 
-	override fun <B> flatMap(f: (A) -> Functor<Either<*, *>, B>): Either<T, B> =
+	override fun <B> bind(f: (A) -> Functor<Either<*, *>, B>): Either<T, B> =
 			when (this) {
 				is Left -> Left(value)
 				is Right -> f(value).asEither
+			}
+
+	fun <B> flatMap(f: (A) -> Either<Nothing, B>): Either<T, B> =
+			when (this) {
+				is Left -> Left(value)
+				is Right -> f(value)
 			}
 
 	companion object {

@@ -1,6 +1,7 @@
 package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.*
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleObserver
 import io.reactivex.rxjava3.core.SingleSource
@@ -18,8 +19,11 @@ class SingleF<A>(
 
 	override fun <B> map(f: (A) -> B) = wrapped.map(f).f()
 
-	override fun <B> flatMap(f: (A) -> Functor<Single<*>, B>): SingleF<B> =
-			wrapped.flatMap { f(it).asSingle }.f()
+	override fun <B> bind(f: (A) -> Functor<Single<*>, B>): SingleF<B> =
+			flatMap { f(it).asSingle }
+
+	fun <B> flatMap(f: (A) -> Single<B>): SingleF<B> =
+			wrapped.flatMap(f).f()
 
 	companion object {
 		fun <A> just(a: A) = Single.just(a).f()

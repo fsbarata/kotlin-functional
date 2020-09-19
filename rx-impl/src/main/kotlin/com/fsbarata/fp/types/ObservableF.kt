@@ -20,8 +20,11 @@ class ObservableF<A>(
 	override fun <B> map(f: (A) -> B) =
 			wrapped.map(f).f()
 
-	override fun <B> flatMap(f: (A) -> Functor<Observable<*>, B>): ObservableF<B> =
-			wrapped.flatMap { f(it).asObservable }.f()
+	override fun <B> bind(f: (A) -> Functor<Observable<*>, B>): ObservableF<B> =
+			flatMap { f(it).asObservable }
+
+	fun <B> flatMap(f: (A) -> Observable<B>): ObservableF<B> =
+			wrapped.flatMap(f).f()
 
 	fun reduce(semigroup: Semigroup<A>) = with(semigroup) { reduce { a1, a2 -> a1.combine(a2) } }.f()
 	fun fold(initialValue: A, semigroup: Semigroup<A>) = with(semigroup) { reduce(initialValue) { a1, a2 -> a1.combine(a2) } }.f()

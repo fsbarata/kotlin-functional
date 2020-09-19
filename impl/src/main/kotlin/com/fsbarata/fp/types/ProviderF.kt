@@ -17,8 +17,11 @@ class ProviderF<A>(
 	override fun <B> ap(ff: Functor<ProviderF<*>, (A) -> B>): ProviderF<B> =
 			ProviderF { ff.map { it(get()) }.asProviderF.get() }
 
-	override fun <B> flatMap(f: (A) -> Functor<ProviderF<*>, B>): ProviderF<B> =
-			ProviderF { f(get()).asProviderF.get() }
+	override fun <B> bind(f: (A) -> Functor<ProviderF<*>, B>): ProviderF<B> =
+			flatMap { f(it).asProviderF }
+
+	fun <B> flatMap(f: (A) -> ProviderF<B>): ProviderF<B> =
+			f(get())
 
 	companion object {
 		fun <B> just(b: B): ProviderF<B> =

@@ -13,7 +13,7 @@ class ObservableMonadTest {
 			x: Int
 	): Monad<F, Int> =
 			if (x == 0) just(0)
-			else flatMap { just(x * it) }
+			else bind { just(x * it) }
 
 	@Test
 	fun `multiply accepts Observable`() {
