@@ -56,7 +56,7 @@ class NonEmptyList<A>(
 
 val <A> Context<NonEmptyList<*>, A>.asNel get() = this as NonEmptyList<A>
 
-fun <A> List<A>.nonEmptyOrNull(): NonEmptyList<A>? {
+fun <A> List<A>.nel(): NonEmptyList<A>? {
 	return NonEmptyList(
 			firstOrNull() ?: return null,
 			drop(1)
@@ -64,8 +64,8 @@ fun <A> List<A>.nonEmptyOrNull(): NonEmptyList<A>? {
 }
 
 fun <A> List<A>.concatNel(item: A) =
-		nonEmptyOrNull()?.plus(item) ?: NonEmptyList.just(item)
+		nel()?.plus(item) ?: NonEmptyList.just(item)
 
 fun <A> List<A>.concatNel(other: NonEmptyList<A>) = this + other
 operator fun <A> List<A>.plus(other: NonEmptyList<A>) =
-		nonEmptyOrNull()?.plus(other) ?: other
+		nel()?.plus(other) ?: other
