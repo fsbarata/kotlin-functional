@@ -14,6 +14,18 @@ class NonEmptyListTest {
 	}
 
 	@Test
+	fun first() {
+		assertEquals(9, nel1.first())
+		assertEquals(5, nel2.first())
+	}
+
+	@Test
+	fun last() {
+		assertEquals(9, nel1.last())
+		assertEquals(3, nel2.last())
+	}
+
+	@Test
 	fun get() {
 		assertEquals(9, nel1[0])
 		assertEquals(5, nel2[0])
