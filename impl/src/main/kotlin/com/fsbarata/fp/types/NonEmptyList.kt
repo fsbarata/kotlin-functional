@@ -6,7 +6,7 @@ import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
 import java.io.Serializable
 
-data class NonEmptyList<A>(
+class NonEmptyList<A>(
 		private val head: A,
 		private val tail: List<A>
 ) : AbstractList<A>(),
@@ -48,7 +48,7 @@ data class NonEmptyList<A>(
 	fun plus(other: Iterable<A>) = NonEmptyList(head, tail + other)
 
 	companion object {
-		fun <T> just(item: T) = NonEmptyList(item, listOf(item))
+		fun <T> just(item: T) = of(item, emptyList())
 		fun <T> of(head: T, vararg others: T) = of(head, others.toList())
 		fun <T> of(head: T, others: List<T>) = NonEmptyList(head, others)
 	}
@@ -63,5 +63,9 @@ fun <A> List<A>.nonEmptyOrNull(): NonEmptyList<A>? {
 	)
 }
 
-fun <A> List<A>.concat(other: NonEmptyList<A>) =
+fun <A> List<A>.concatNel(item: A) =
+		nonEmptyOrNull()?.plus(item) ?: NonEmptyList.just(item)
+
+fun <A> List<A>.concatNel(other: NonEmptyList<A>) = this + other
+operator fun <A> List<A>.plus(other: NonEmptyList<A>) =
 		nonEmptyOrNull()?.plus(other) ?: other
