@@ -7,7 +7,7 @@ import org.reactivestreams.Subscriber
 class FlowableF<A>(
 		private val wrapped: Flowable<A>
 ) : Flowable<A>(),
-		Monad<Flowable<*>, A> {
+		Monad<FlowableF<*>, A> {
 	override fun subscribeActual(observer: Subscriber<in A>) {
 		wrapped.subscribe(observer)
 	}
@@ -18,7 +18,7 @@ class FlowableF<A>(
 	override fun <B> map(f: (A) -> B) =
 			wrapped.map(f).f()
 
-	override fun <B> bind(f: (A) -> Functor<Flowable<*>, B>): FlowableF<B> =
+	override fun <B> bind(f: (A) -> Functor<FlowableF<*>, B>): FlowableF<B> =
 			flatMap { f(it).asFlowable }
 
 	fun <B> flatMap(f: (A) -> Flowable<B>): FlowableF<B> =
@@ -39,5 +39,5 @@ class FlowableF<A>(
 
 fun <A> Flowable<A>.f() = FlowableF(this)
 
-val <A> Context<Flowable<*>, A>.asFlowable
+val <A> Context<FlowableF<*>, A>.asFlowable
 	get() = this as FlowableF<A>

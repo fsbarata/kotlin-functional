@@ -10,7 +10,7 @@ import io.reactivex.rxjava3.core.MaybeSource
 class MaybeF<A>(
 		private val wrapped: Maybe<A>
 ) : Maybe<A>(),
-		Monad<Maybe<*>, A>,
+		Monad<MaybeF<*>, A>,
 		MaybeSource<A> {
 	override fun subscribeActual(observer: MaybeObserver<in A>) {
 		wrapped.subscribe(observer)
@@ -22,7 +22,7 @@ class MaybeF<A>(
 	override fun <B> map(f: (A) -> B) =
 			wrapped.map(f).f()
 
-	override fun <B> bind(f: (A) -> Functor<Maybe<*>, B>): MaybeF<B> =
+	override fun <B> bind(f: (A) -> Functor<MaybeF<*>, B>): MaybeF<B> =
 			flatMap { f(it).asMaybe }
 
 	fun <B> flatMap(f: (A) -> Maybe<B>): MaybeF<B> =
@@ -36,5 +36,5 @@ class MaybeF<A>(
 
 fun <A> Maybe<A>.f() = MaybeF(this)
 
-val <A> Context<Maybe<*>, A>.asMaybe
+val <A> Context<MaybeF<*>, A>.asMaybe
 	get() = this as MaybeF<A>

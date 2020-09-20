@@ -9,7 +9,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ObservableMonadTest {
-	private fun <F : Any> Monad<F, Int>.multiply(
+	private fun <F : Monad<F, *>> Monad<F, Int>.multiply(
 			x: Int
 	): Monad<F, Int> =
 			if (x == 0) just(0)

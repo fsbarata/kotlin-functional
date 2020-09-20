@@ -8,7 +8,7 @@ import io.reactivex.rxjava3.core.Observer
 class ObservableF<A>(
 		private val wrapped: Observable<A>
 ) : Observable<A>(),
-		Monad<Observable<*>, A>,
+		Monad<ObservableF<*>, A>,
 		ObservableSource<A> {
 	override fun subscribeActual(observer: Observer<in A>) {
 		wrapped.subscribe(observer)
@@ -20,7 +20,7 @@ class ObservableF<A>(
 	override fun <B> map(f: (A) -> B) =
 			wrapped.map(f).f()
 
-	override fun <B> bind(f: (A) -> Functor<Observable<*>, B>): ObservableF<B> =
+	override fun <B> bind(f: (A) -> Functor<ObservableF<*>, B>): ObservableF<B> =
 			flatMap { f(it).asObservable }
 
 	fun <B> flatMap(f: (A) -> Observable<B>): ObservableF<B> =
@@ -41,5 +41,5 @@ class ObservableF<A>(
 
 fun <A> Observable<A>.f() = ObservableF(this)
 
-val <A> Context<Observable<*>, A>.asObservable
+val <A> Context<ObservableF<*>, A>.asObservable
 	get() = this as ObservableF<A>

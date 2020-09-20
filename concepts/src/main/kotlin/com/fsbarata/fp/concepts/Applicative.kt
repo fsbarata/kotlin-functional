@@ -1,6 +1,6 @@
 package com.fsbarata.fp.concepts
 
-interface Applicative<C, out A> : Functor<C, A> {
+interface Applicative<C : Applicative<C, *>, out A> : Functor<C, A> {
 	fun <B> just(b: B): Applicative<C, B>
 
 	fun <B> ap(ff: Functor<C, (A) -> B>): Applicative<C, B>

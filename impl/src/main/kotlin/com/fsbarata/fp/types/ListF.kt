@@ -7,7 +7,7 @@ import com.fsbarata.fp.concepts.Monad
 
 data class ListF<A>(
 		private val wrapped: List<A>
-) : Monad<List<*>, A>,
+) : Monad<ListF<*>, A>,
 		Foldable<A>,
 		List<A> by wrapped {
 	override fun <B> just(b: B): ListF<B> = Companion.just(b)
@@ -15,10 +15,10 @@ data class ListF<A>(
 	override fun <B> map(f: (A) -> B) =
 			wrapped.map(f).f()
 
-	override fun <B> ap(ff: Functor<List<*>, (A) -> B>): ListF<B> =
+	override fun <B> ap(ff: Functor<ListF<*>, (A) -> B>): ListF<B> =
 			bind { item -> ff.map { it(item) } }
 
-	override fun <B> bind(f: (A) -> Functor<List<*>, B>) =
+	override fun <B> bind(f: (A) -> Functor<ListF<*>, B>) =
 			flatMap { f(it).asList }
 
 	fun <B> flatMap(f: (A) -> List<B>) =
@@ -35,6 +35,6 @@ data class ListF<A>(
 
 fun <A> List<A>.f() = ListF(this)
 
-val <A> Context<List<*>, A>.asList: ListF<A>
+val <A> Context<ListF<*>, A>.asList: ListF<A>
 	get() = this as ListF<A>
 

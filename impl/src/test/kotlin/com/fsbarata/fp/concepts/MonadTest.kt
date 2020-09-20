@@ -3,7 +3,7 @@ package com.fsbarata.fp.concepts
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-abstract class MonadTest<C> {
+abstract class MonadTest<C: Monad<C, *>> {
 	abstract val monad: Monad<C, Int>
 	abstract fun Monad<C, Int>.equalTo(other: Monad<C, Int>): Boolean
 
