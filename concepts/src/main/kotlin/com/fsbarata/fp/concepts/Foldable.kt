@@ -1,6 +1,6 @@
 package com.fsbarata.fp.concepts
 
-interface Foldable<T> {
+interface Foldable<out T> {
 	fun <R> fold(initialValue: R, accumulator: (R, T) -> R): R
 }
 
