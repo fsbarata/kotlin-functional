@@ -76,10 +76,10 @@ class NonEmptyList<out A> private constructor(
 
 	fun reversed() = tail.asReversed().nel()?.plus(head) ?: this
 
-	fun <R: Comparable<R>> maxOf(selector: (A) -> R): R =
+	fun <R : Comparable<R>> maxOf(selector: (A) -> R): R =
 			tail.maxOfOrNull(selector)?.coerceAtLeast(selector(head)) ?: selector(head)
 
-	fun <R: Comparable<R>> minOf(selector: (A) -> R): R =
+	fun <R : Comparable<R>> minOf(selector: (A) -> R): R =
 			tail.minOfOrNull(selector)?.coerceAtMost(selector(head)) ?: selector(head)
 
 	fun distinct() = NonEmptyList(head, (tail.toSet() - head).toList())
@@ -91,6 +91,8 @@ class NonEmptyList<out A> private constructor(
 				tail.filter { set.add(selector(it)) }
 		)
 	}
+
+	fun asSequence() = NonEmptySequence(head, tail.asSequence())
 
 	companion object {
 		fun <T> just(item: T) = of(item, emptyList())
@@ -116,16 +118,14 @@ operator fun <A> List<A>.plus(other: NonEmptyList<A>) =
 		nel()?.plus(other) ?: other
 
 fun <T> NonEmptyList<NonEmptyList<T>>.flatten() = NonEmptyList.of(head.head, head.tail + tail.flatten())
-fun <T: Comparable<T>> NonEmptyList<T>.max() = tail.maxOrNull()?.coerceAtLeast(head) ?: head
-fun <T: Comparable<T>> NonEmptyList<T>.min() = tail.minOrNull()?.coerceAtMost(head) ?: head
+fun <T : Comparable<T>> NonEmptyList<T>.max() = tail.maxOrNull()?.coerceAtLeast(head) ?: head
+fun <T : Comparable<T>> NonEmptyList<T>.min() = tail.minOrNull()?.coerceAtMost(head) ?: head
 
-class NonEmptyIterator<A> internal constructor(
+class NonEmptyIterator<out A>(
 		private val head: A,
 		private val tailIterator: Iterator<A>,
-		internal var begin: Boolean
+		private var begin: Boolean = true
 ) : Iterator<A> {
-	constructor(head: A, tailIterator: Iterator<A>) : this(head, tailIterator, true)
-
 	override fun hasNext() = begin || tailIterator.hasNext()
 	override fun next(): A {
 		if (begin) {
