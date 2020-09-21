@@ -7,8 +7,8 @@ import com.fsbarata.fp.concepts.Monad
 import java.io.Serializable
 
 class NonEmptyList<out A> private constructor(
-		private val head: A,
-		private val tail: List<A>
+		val head: A,
+		val tail: List<A>
 ) : AbstractList<A>(),
 		List<A>,
 		Monad<NonEmptyList<*>, A>,
@@ -66,11 +66,31 @@ class NonEmptyList<out A> private constructor(
 		return NonEmptyList(headList.head, headList.tail + tail.flatMap(f))
 	}
 
+	fun <B> flatMap(f: (A) -> List<B>): List<B> = f(head) + tail.flatMap(f)
+
 	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
 			tail.fold(accumulator(initialValue, head), accumulator)
 
 	operator fun plus(other: @UnsafeVariance A) = NonEmptyList(head, tail + other)
 	operator fun plus(other: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + other)
+
+	fun reversed() = tail.asReversed().nel()?.plus(head) ?: this
+
+	fun <R: Comparable<R>> maxOf(selector: (A) -> R): R =
+			tail.maxOfOrNull(selector)?.coerceAtLeast(selector(head)) ?: selector(head)
+
+	fun <R: Comparable<R>> minOf(selector: (A) -> R): R =
+			tail.minOfOrNull(selector)?.coerceAtMost(selector(head)) ?: selector(head)
+
+	fun distinct() = NonEmptyList(head, (tail.toSet() - head).toList())
+	fun <K> distinctBy(selector: (A) -> K): NonEmptyList<A> {
+		val set = HashSet<K>()
+		set.add(selector(head))
+		return NonEmptyList(
+				head,
+				tail.filter { set.add(selector(it)) }
+		)
+	}
 
 	companion object {
 		fun <T> just(item: T) = of(item, emptyList())
@@ -94,6 +114,10 @@ fun <A> List<A>.concatNel(item: A) =
 fun <A> List<A>.concatNel(other: NonEmptyList<A>) = this + other
 operator fun <A> List<A>.plus(other: NonEmptyList<A>) =
 		nel()?.plus(other) ?: other
+
+fun <T> NonEmptyList<NonEmptyList<T>>.flatten() = NonEmptyList.of(head.head, head.tail + tail.flatten())
+fun <T: Comparable<T>> NonEmptyList<T>.max() = tail.maxOrNull()?.coerceAtLeast(head) ?: head
+fun <T: Comparable<T>> NonEmptyList<T>.min() = tail.minOrNull()?.coerceAtMost(head) ?: head
 
 class NonEmptyIterator<A> internal constructor(
 		private val head: A,

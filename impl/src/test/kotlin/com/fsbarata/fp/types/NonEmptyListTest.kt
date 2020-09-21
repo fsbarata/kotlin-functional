@@ -2,6 +2,7 @@ package com.fsbarata.fp.types
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.math.BigInteger
 
 class NonEmptyListTest {
 	val nel1 = NonEmptyList.just(9)
@@ -151,5 +152,70 @@ class NonEmptyListTest {
 		assertEquals(NonEmptyList.of(5, 1, 3, 3), listOf(5, 1).concatNel(NonEmptyList.of(3, 3)))
 		assertEquals(NonEmptyList.just(5), emptyList<Int>().concatNel(5))
 		assertEquals(NonEmptyList.just(5), emptyList<Int>().concatNel(NonEmptyList.just(5)))
+	}
+
+	@Test
+	fun reversed() {
+		assertEquals(nel1, nel1.reversed())
+		assertEquals(NonEmptyList.of(3, 1, 5), nel2.reversed())
+		assertEquals(NonEmptyList.of(5, 2, 4, 2), nel3.reversed())
+	}
+
+	@Test
+	fun max() {
+		assertEquals(9, nel1.max())
+		assertEquals(5, nel2.max())
+		assertEquals(5, nel3.max())
+	}
+
+	@Test
+	fun min() {
+		assertEquals(9, nel1.min())
+		assertEquals(1, nel2.min())
+		assertEquals(2, nel3.min())
+	}
+
+	@Test
+	fun maxOf() {
+		assertEquals(BigInteger.valueOf(9), nel1.maxOf { BigInteger.valueOf(it.toLong()) })
+		assertEquals(BigInteger.valueOf(2), nel2.maxOf { BigInteger.valueOf(it % 3L) })
+		assertEquals(BigInteger.valueOf(4), nel3.maxOf { BigInteger.valueOf(it % 5L) })
+	}
+
+	@Test
+	fun minOf() {
+		assertEquals(BigInteger.valueOf(9), nel1.minOf { BigInteger.valueOf(it.toLong()) })
+		assertEquals(BigInteger.valueOf(0), nel2.minOf { BigInteger.valueOf(it % 3L) })
+		assertEquals(BigInteger.valueOf(0), nel3.minOf { BigInteger.valueOf(it % 5L) })
+	}
+
+	@Test
+	fun distinct() {
+		assertEquals(nel1, nel1.distinct())
+		assertEquals(nel2, nel2.distinct())
+		assertEquals(NonEmptyList.of(2, 4, 5), nel3.distinct())
+		assertEquals(NonEmptyList.just(2), NonEmptyList.of(2, 2, 2).distinct())
+		assertEquals(NonEmptyList.of(2, 4, 5), NonEmptyList.of(2, 4, 5, 4).distinct())
+	}
+
+	@Test
+	fun distinctBy() {
+		assertEquals(nel1, nel1.distinctBy { it })
+		assertEquals(NonEmptyList.of(5, 3), nel2.distinctBy { it % 4 })
+		assertEquals(NonEmptyList.of(2, 5), nel3.distinctBy { it % 2 })
+	}
+
+	@Test
+	fun flatten() {
+		assertEquals(
+				NonEmptyList.of(3, 5, 1, 3, 9),
+				NonEmptyList.of(
+						NonEmptyList.of(3, 5),
+						listOf(
+								NonEmptyList.of(1, 3),
+								NonEmptyList.just(9)
+						)
+				).flatten()
+		)
 	}
 }
