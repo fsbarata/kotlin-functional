@@ -218,4 +218,15 @@ class NonEmptyListTest {
 				).flatten()
 		)
 	}
+
+	@Test
+	fun asSequence() {
+		assertEquals(nel1, nel1.asSequence().toList())
+		assertEquals(nel2, nel2.asSequence().toList())
+		assertEquals(nel3, nel3.asSequence().toList())
+
+		assertEquals(listOf(9), nel1.asSequence().filter { it > 3 }.toList())
+		assertEquals(listOf(5), nel2.asSequence().filter { it > 3 }.toList())
+		assertEquals(listOf(4, 5), nel3.asSequence().filter { it > 3 }.toList())
+	}
 }

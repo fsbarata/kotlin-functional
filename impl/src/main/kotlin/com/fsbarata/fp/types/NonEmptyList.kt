@@ -43,7 +43,7 @@ class NonEmptyList<out A> private constructor(
 			(tail.lastIndexOf(element) + 1).takeIf { it != 0 }
 					?: if (head == element) 0 else -1
 
-	override fun iterator(): Iterator<A> =
+	override fun iterator(): NonEmptyIterator<A> =
 			NonEmptyIterator(head, tail.iterator())
 
 	override fun subList(fromIndex: Int, toIndex: Int): List<A> = when {
@@ -92,7 +92,7 @@ class NonEmptyList<out A> private constructor(
 		)
 	}
 
-	fun asSequence() = NonEmptySequence(head, tail.asSequence())
+	fun asSequence() = NonEmptySequence { iterator() }
 
 	companion object {
 		fun <T> just(item: T) = of(item, emptyList())
@@ -122,16 +122,18 @@ fun <T : Comparable<T>> NonEmptyList<T>.max() = tail.maxOrNull()?.coerceAtLeast(
 fun <T : Comparable<T>> NonEmptyList<T>.min() = tail.minOrNull()?.coerceAtMost(head) ?: head
 
 class NonEmptyIterator<out A>(
-		private val head: A,
-		private val tailIterator: Iterator<A>,
-		private var begin: Boolean = true
+		val head: A,
+		val tail: Iterator<A>,
 ) : Iterator<A> {
-	override fun hasNext() = begin || tailIterator.hasNext()
+	private var begin: Boolean = true
+
+	override fun hasNext() = begin || tail.hasNext()
+
 	override fun next(): A {
 		if (begin) {
 			begin = false
 			return head
 		}
-		return tailIterator.next()
+		return tail.next()
 	}
 }
