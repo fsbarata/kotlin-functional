@@ -20,7 +20,7 @@ class NonEmptyList<out A> private constructor(
 			if (index == 0) head
 			else tail[index - 1]
 
-	@Deprecated("Non empty list cannot be empty")
+	@Deprecated("Non empty list cannot be empty", replaceWith = ReplaceWith("false"))
 	override fun isEmpty() = false
 
 	fun first() = head
