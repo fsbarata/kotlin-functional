@@ -4,8 +4,4 @@ interface Foldable<out T> {
 	fun <R> fold(initialValue: R, accumulator: (R, T) -> R): R
 }
 
-fun <T, R> Foldable<T>.scan(initialValue: R, accumulator: (R, T) -> R) =
-		fold(Pair(initialValue, listOf(initialValue))) { (a, list), v ->
-			val newValue = accumulator(a, v)
-			Pair(newValue, list + newValue)
-		}.second
+fun <T> Foldable<T>.toList() = fold(emptyList<T>()) { list, item -> list + item }

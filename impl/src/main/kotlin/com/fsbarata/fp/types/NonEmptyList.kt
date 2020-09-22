@@ -121,6 +121,14 @@ fun <T> NonEmptyList<NonEmptyList<T>>.flatten() = NonEmptyList.of(head.head, hea
 fun <T : Comparable<T>> NonEmptyList<T>.max() = tail.maxOrNull()?.coerceAtLeast(head) ?: head
 fun <T : Comparable<T>> NonEmptyList<T>.min() = tail.minOrNull()?.coerceAtMost(head) ?: head
 
+fun <T, R> Iterable<T>.scanNel(initialValue: R, operation: (R, T) -> R) = NonEmptyList.of(
+		initialValue,
+		scan(initialValue, operation).drop(1)
+)
+
+fun <S, A : S> NonEmptyList<A>.runningReduceNel(operation: (S, A) -> S) =
+		tail.scanNel(head, operation)
+
 class NonEmptyIterator<out A>(
 		val head: A,
 		val tail: Iterator<A>,

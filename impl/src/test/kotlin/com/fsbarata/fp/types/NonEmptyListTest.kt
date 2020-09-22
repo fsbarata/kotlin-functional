@@ -229,4 +229,18 @@ class NonEmptyListTest {
 		assertEquals(listOf(5), nel2.asSequence().filter { it > 3 }.toList())
 		assertEquals(listOf(4, 5), nel3.asSequence().filter { it > 3 }.toList())
 	}
+
+	@Test
+	fun runningReduceNel() {
+		assertEquals(NonEmptyList.just(9), nel1.runningReduceNel { acc, i -> acc + i - 2 })
+		assertEquals(NonEmptyList.of(5, 4, 5), nel2.runningReduceNel { acc, i -> acc + i - 2 })
+		assertEquals(NonEmptyList.of(2, 4, 4, 7), nel3.runningReduceNel { acc, i -> acc + i - 2 })
+	}
+
+	@Test
+	fun scanNel() {
+		assertEquals(NonEmptyList.of(-4, 3), nel1.scanNel(-4) { acc, i -> acc + i - 2 })
+		assertEquals(NonEmptyList.of(-4, -1, -2, -1), nel2.scanNel(-4) { acc, i -> acc + i - 2 })
+		assertEquals(NonEmptyList.of(-4, -4, -2, -2, 1), nel3.scanNel(-4) { acc, i -> acc + i - 2 })
+	}
 }
