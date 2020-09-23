@@ -74,7 +74,7 @@ class NonEmptyList<out A> private constructor(
 	operator fun plus(other: @UnsafeVariance A) = NonEmptyList(head, tail + other)
 	operator fun plus(other: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + other)
 
-	fun reversed() = tail.asReversed().nel()?.plus(head) ?: this
+	fun reversed() = tail.asReversed().nonEmpty()?.plus(head) ?: this
 
 	fun <R : Comparable<R>> maxOf(selector: (A) -> R): R =
 			tail.maxOfOrNull(selector)?.coerceAtLeast(selector(head)) ?: selector(head)
@@ -103,19 +103,24 @@ class NonEmptyList<out A> private constructor(
 
 val <A> Context<NonEmptyList<*>, A>.asNel get() = this as NonEmptyList<A>
 
-fun <A> List<A>.nel(): NonEmptyList<A>? {
-	return NonEmptyList.of(
-			firstOrNull() ?: return null,
-			drop(1)
-	)
+fun <A> nelOf(head: A): NonEmptyList<A> = NonEmptyList.just(head)
+fun <A> nelOf(head: A, vararg tail: A): NonEmptyList<A> = NonEmptyList.of(head, *tail)
+
+fun <A> List<A>.nonEmpty(): NonEmptyList<A>? = toNel()
+fun <A> Iterable<A>.toNel(): NonEmptyList<A>? = when {
+	this is NonEmptyList<A> -> this
+	else -> iterator().nonEmpty()?.toNel()
 }
 
+internal fun <A> NonEmptyIterator<A>.toNel(): NonEmptyList<A> =
+		NonEmptyList.of(head, tail.asSequence().toList())
+
 fun <A> List<A>.concatNel(item: A) =
-		nel()?.plus(item) ?: NonEmptyList.just(item)
+		nonEmpty()?.plus(item) ?: NonEmptyList.just(item)
 
 fun <A> List<A>.concatNel(other: NonEmptyList<A>) = this + other
 operator fun <A> List<A>.plus(other: NonEmptyList<A>) =
-		nel()?.plus(other) ?: other
+		nonEmpty()?.plus(other) ?: other
 
 fun <T> NonEmptyList<NonEmptyList<T>>.flatten() = NonEmptyList.of(head.head, head.tail + tail.flatten())
 fun <T : Comparable<T>> NonEmptyList<T>.max() = tail.maxOrNull()?.coerceAtLeast(head) ?: head
@@ -128,20 +133,3 @@ fun <T, R> Iterable<T>.scanNel(initialValue: R, operation: (R, T) -> R) = NonEmp
 
 fun <S, A : S> NonEmptyList<A>.runningReduceNel(operation: (S, A) -> S) =
 		tail.scanNel(head, operation)
-
-class NonEmptyIterator<out A>(
-		val head: A,
-		val tail: Iterator<A>,
-) : Iterator<A> {
-	private var begin: Boolean = true
-
-	override fun hasNext() = begin || tail.hasNext()
-
-	override fun next(): A {
-		if (begin) {
-			begin = false
-			return head
-		}
-		return tail.next()
-	}
-}

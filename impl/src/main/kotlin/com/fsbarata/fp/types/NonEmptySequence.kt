@@ -1,6 +1,7 @@
 package com.fsbarata.fp.types
 
-interface NonEmptySequence<out A> : Sequence<A> {
+interface NonEmptySequence<out A> :
+		Sequence<A> {
 	override fun iterator(): NonEmptyIterator<A>
 
 	@Deprecated("Non empty sequence always has a first", replaceWith = ReplaceWith("first()"))
@@ -11,10 +12,7 @@ interface NonEmptySequence<out A> : Sequence<A> {
 	fun lastOrNull(): Nothing = throw UnsupportedOperationException()
 	fun last() = iterator().let { it.tail.asSequence().lastOrNull() ?: it.head }
 
-	fun toList(): NonEmptyList<A> {
-		val iterator = iterator()
-		return NonEmptyList.of(iterator.next(), iterator.asSequence().toList())
-	}
+	fun toList(): NonEmptyList<A> = iterator().toNel()
 }
 
 inline fun <A> NonEmptySequence(crossinline iterator: () -> NonEmptyIterator<A>): NonEmptySequence<A> =
@@ -28,6 +26,9 @@ fun <A : Any> nonEmptySequence(head: A, nextFunction: (A) -> A?) = NonEmptySeque
 			generateSequence(nextFunction(head), nextFunction).iterator()
 	)
 }
+
+fun <A> nonEmptySequenceOf(head: A, vararg tail: A) =
+		NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
 
 fun <A> Sequence<A>.nonEmpty(ifEmpty: () -> NonEmptySequence<A>) =
 		NonEmptySequence {
