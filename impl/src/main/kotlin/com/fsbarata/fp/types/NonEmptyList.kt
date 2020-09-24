@@ -13,6 +13,7 @@ class NonEmptyList<out A> private constructor(
 		List<A>,
 		Monad<NonEmptyList<*>, A>,
 		Foldable<A>,
+		NonEmptyIterable<A>,
 		Serializable {
 	override val size: Int = 1 + tail.size
 
@@ -68,9 +69,6 @@ class NonEmptyList<out A> private constructor(
 
 	fun <B> flatMap(f: (A) -> List<B>): List<B> = f(head) + tail.flatMap(f)
 
-	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
-			tail.fold(accumulator(initialValue, head), accumulator)
-
 	operator fun plus(other: @UnsafeVariance A) = NonEmptyList(head, tail + other)
 	operator fun plus(other: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + other)
 
@@ -105,6 +103,8 @@ val <A> Context<NonEmptyList<*>, A>.asNel get() = this as NonEmptyList<A>
 
 fun <A> nelOf(head: A): NonEmptyList<A> = NonEmptyList.just(head)
 fun <A> nelOf(head: A, vararg tail: A): NonEmptyList<A> = NonEmptyList.of(head, *tail)
+
+fun <A> List<A>.startWithItem(item: A) = nelOf(item, this)
 
 fun <A> List<A>.nonEmpty(): NonEmptyList<A>? = toNel()
 fun <A> Iterable<A>.toNel(): NonEmptyList<A>? = when {
