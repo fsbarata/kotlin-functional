@@ -7,8 +7,8 @@ import com.fsbarata.fp.concepts.Monad
 import java.io.Serializable
 
 class NonEmptyList<out A> private constructor(
-	val head: A,
-	val tail: List<A>,
+	override val head: A,
+	override val tail: List<A>,
 ): AbstractList<A>(),
    List<A>,
    Monad<NonEmptyList<*>, A>,
@@ -56,18 +56,14 @@ class NonEmptyList<out A> private constructor(
 	override fun <B> just(b: B): NonEmptyList<B> =
 		Companion.just(b)
 
-	override fun <B> map(f: (A) -> B): NonEmptyList<B> =
-		NonEmptyList(f(head), tail.map(f))
+	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
 
 	override fun <B> bind(f: (A) -> Functor<NonEmptyList<*>, B>): NonEmptyList<B> =
 		flatMap { f(it).asNel }
 
-	fun <B> flatMap(f: (A) -> NonEmptyList<B>): NonEmptyList<B> {
-		val headList = f(head)
-		return NonEmptyList(headList.head, headList.tail + tail.flatMap(f))
-	}
+	inline fun <B> flatMap(f: (A) -> NonEmptyList<B>): NonEmptyList<B> = map(f).flatten()
 
-	fun <B> flatMap(f: (A) -> List<B>): List<B> = f(head) + tail.flatMap(f)
+	inline fun <B> flatMapIterable(f: (A) -> List<B>): List<B> = f(head) + tail.flatMap(f)
 
 	operator fun plus(other: @UnsafeVariance A) = NonEmptyList(head, tail + other)
 	operator fun plus(other: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + other)
@@ -112,9 +108,6 @@ fun <A> Iterable<A>.toNel(): NonEmptyList<A>? = when {
 	else -> iterator().nonEmpty()?.toNel()
 }
 
-internal fun <A> NonEmptyIterator<A>.toNel(): NonEmptyList<A> =
-	NonEmptyList.of(head, tail.asSequence().toList())
-
 fun <A> List<A>.concatNel(item: A) =
 	nonEmpty()?.plus(item) ?: NonEmptyList.just(item)
 
@@ -122,14 +115,7 @@ fun <A> List<A>.concatNel(other: NonEmptyList<A>) = this + other
 operator fun <A> List<A>.plus(other: NonEmptyList<A>) =
 	nonEmpty()?.plus(other) ?: other
 
-fun <T> NonEmptyList<NonEmptyList<T>>.flatten() = NonEmptyList.of(head.head, head.tail + tail.flatten())
-fun <T: Comparable<T>> NonEmptyList<T>.max() = tail.maxOrNull()?.coerceAtLeast(head) ?: head
-fun <T: Comparable<T>> NonEmptyList<T>.min() = tail.minOrNull()?.coerceAtMost(head) ?: head
-
 fun <T, R> Iterable<T>.scanNel(initialValue: R, operation: (R, T) -> R) = NonEmptyList.of(
 	initialValue,
 	scan(initialValue, operation).drop(1)
 )
-
-fun <S, A: S> NonEmptyList<A>.runningReduceNel(operation: (S, A) -> S) =
-	tail.scanNel(head, operation)

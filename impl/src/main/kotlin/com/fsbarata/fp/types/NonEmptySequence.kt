@@ -1,23 +1,18 @@
 package com.fsbarata.fp.types
 
+import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Foldable
+import com.fsbarata.fp.concepts.Functor
+import com.fsbarata.fp.concepts.Monad
 
 interface NonEmptySequence<out A>:
 	Sequence<A>,
+	Monad<NonEmptySequence<*>, A>,
 	Foldable<A> {
 	override fun iterator(): NonEmptyIterator<A>
 
 	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
 		(this as Sequence<A>).fold(initialValue, accumulator)
-
-	fun <B> map(f: (A) -> B) = NonEmptySequence {
-		iterator().let {
-			NonEmptyIterator(
-				f(it.head),
-				it.tail.asSequence().map(f).iterator()
-			)
-		}
-	}
 
 	@Deprecated("Non empty sequence always has a first", replaceWith = ReplaceWith("first()"))
 	fun firstOrNull(): Nothing = throw UnsupportedOperationException()
@@ -28,6 +23,40 @@ interface NonEmptySequence<out A>:
 	fun last() = iterator().let { it.tail.asSequence().lastOrNull() ?: it.head }
 
 	fun toList(): NonEmptyList<A> = iterator().toNel()
+
+	override fun <B> just(b: B) = Companion.just(b)
+
+	override fun <B> map(f: (A) -> B) = NonEmptySequence {
+		iterator().let {
+			NonEmptyIterator(
+				f(it.head),
+				it.tail.asSequence().map(f).iterator()
+			)
+		}
+	}
+
+	override fun <B> bind(f: (A) -> Functor<NonEmptySequence<*>, B>) = NonEmptySequence {
+		iterator().let {
+			val headIterator = f(it.head).asNes.iterator()
+			NonEmptyIterator(
+				headIterator.head,
+				(Sequence { headIterator.tail } + Sequence { it.tail }.flatMap { f(it).asNes }).iterator()
+			)
+		}
+	}
+
+	companion object {
+		fun <A> just(a: A) = NonEmptySequence { NonEmptyIterator(a, EmptyIterator()) }
+	}
+}
+
+val <A> Context<NonEmptySequence<*>, A>.asNes get() = this as NonEmptySequence<A>
+
+private class EmptyIterator<A>: Iterator<A> {
+	override fun hasNext(): Boolean = false
+
+	override fun next(): A = throw NoSuchElementException()
+
 }
 
 inline fun <A> NonEmptySequence(crossinline iterator: () -> NonEmptyIterator<A>): NonEmptySequence<A> =
@@ -41,6 +70,9 @@ fun <A: Any> nonEmptySequence(head: A, nextFunction: (A) -> A?) = NonEmptySequen
 		generateSequence(nextFunction(head), nextFunction).iterator()
 	)
 }
+
+fun <A> Sequence<A>.startWithItem(item: A) =
+	NonEmptySequence { NonEmptyIterator(item, iterator()) }
 
 fun <A> nonEmptySequenceOf(head: A, vararg tail: A) =
 	NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
