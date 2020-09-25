@@ -4,23 +4,23 @@ import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
 
-class Reader<D, out A>(val run: (D) -> A) : Monad<Reader<D, *>, A> {
+class Reader<D, out A>(val run: (D) -> A): Monad<Reader<D, *>, A> {
 	override fun <B> just(b: B): Reader<D, B> = Companion.just(b)
 
 	override fun <B> map(f: (A) -> B): Reader<D, B> =
-			Reader { f(run(it)) }
+		Reader { f(run(it)) }
 
 	override fun <B> ap(ff: Functor<Reader<D, *>, (A) -> B>): Reader<D, B> =
-			Reader { d -> ff.map { it(run(d)) }.asReader.run(d) }
+		Reader { d -> ff.map { it(run(d)) }.asReader.run(d) }
 
 	override fun <B> bind(f: (A) -> Functor<Reader<D, *>, B>): Reader<D, B> =
-			flatMap { f(it).asReader }
+		flatMap { f(it).asReader }
 
 	fun <B> flatMap(f: (A) -> Reader<in D, B>) =
-			Reader<D, B> { f(run(it)).run(it) }
+		Reader<D, B> { f(run(it)).run(it) }
 
 	fun <E> leftMap(f: (E) -> D): Reader<E, A> =
-			Reader { e -> run(f(e)) }
+		Reader { e -> run(f(e)) }
 
 	companion object {
 		fun <D, A> just(a: A): Reader<D, A> = Reader { a }

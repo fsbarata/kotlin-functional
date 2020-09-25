@@ -2,19 +2,19 @@ package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Foldable
 
-interface NonEmptySequence<out A> :
-		Sequence<A>,
-		Foldable<A> {
+interface NonEmptySequence<out A>:
+	Sequence<A>,
+	Foldable<A> {
 	override fun iterator(): NonEmptyIterator<A>
 
 	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
-			(this as Sequence<A>).fold(initialValue, accumulator)
+		(this as Sequence<A>).fold(initialValue, accumulator)
 
 	fun <B> map(f: (A) -> B) = NonEmptySequence {
 		iterator().let {
 			NonEmptyIterator(
-					f(it.head),
-					it.tail.asSequence().map(f).iterator()
+				f(it.head),
+				it.tail.asSequence().map(f).iterator()
 			)
 		}
 	}
@@ -31,28 +31,28 @@ interface NonEmptySequence<out A> :
 }
 
 inline fun <A> NonEmptySequence(crossinline iterator: () -> NonEmptyIterator<A>): NonEmptySequence<A> =
-		object : NonEmptySequence<A> {
-			override fun iterator() = iterator()
-		}
+	object: NonEmptySequence<A> {
+		override fun iterator() = iterator()
+	}
 
-fun <A : Any> nonEmptySequence(head: A, nextFunction: (A) -> A?) = NonEmptySequence {
+fun <A: Any> nonEmptySequence(head: A, nextFunction: (A) -> A?) = NonEmptySequence {
 	NonEmptyIterator(
-			head,
-			generateSequence(nextFunction(head), nextFunction).iterator()
+		head,
+		generateSequence(nextFunction(head), nextFunction).iterator()
 	)
 }
 
 fun <A> nonEmptySequenceOf(head: A, vararg tail: A) =
-		NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
+	NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
 
 fun <A> Sequence<A>.nonEmpty(ifEmpty: NonEmptySequence<A>) = nonEmpty(ifEmpty::iterator)
 
 fun <A> Sequence<A>.nonEmpty(ifEmpty: () -> NonEmptyIterator<A>) =
-		NonEmptySequence {
-			val iterator = iterator()
-			if (iterator.hasNext()) NonEmptyIterator(iterator.next(), iterator)
-			else ifEmpty()
-		}
+	NonEmptySequence {
+		val iterator = iterator()
+		if (iterator.hasNext()) NonEmptyIterator(iterator.next(), iterator)
+		else ifEmpty()
+	}
 
 
 

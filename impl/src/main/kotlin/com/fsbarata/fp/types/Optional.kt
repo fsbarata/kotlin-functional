@@ -6,9 +6,9 @@ import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
 
 data class Optional<A> private constructor(
-		val value: A?
-) : Monad<Optional<*>, A>,
-		Foldable<A> {
+	val value: A?,
+): Monad<Optional<*>, A>,
+   Foldable<A> {
 	inline fun orNull() = value
 
 	infix fun orElse(a: A) = orElseGet { a }
@@ -22,16 +22,16 @@ data class Optional<A> private constructor(
 	override fun <B> just(b: B) = Optional.just(b)
 
 	override fun <B> map(f: (A) -> B) =
-			Optional(value?.let(f))
+		Optional(value?.let(f))
 
 	override fun <B> ap(ff: Functor<Optional<*>, (A) -> B>): Optional<B> =
-			ff.map { map(it) }.asOptional.value ?: empty()
+		ff.map { map(it) }.asOptional.value ?: empty()
 
 	override fun <B> bind(f: (A) -> Functor<Optional<*>, B>) =
-			flatMap { f(it).asOptional }
+		flatMap { f(it).asOptional }
 
 	fun <B> flatMap(f: (A) -> Optional<B>): Optional<B> =
-			value?.let(f) ?: empty()
+		value?.let(f) ?: empty()
 
 	fun <B> fold(ifEmpty: () -> B, ifSome: (A) -> B): B {
 		return ifSome(value ?: return ifEmpty())
@@ -48,8 +48,8 @@ data class Optional<A> private constructor(
 	}
 }
 
-fun <A : Any> A?.toOptional() = Optional.ofNullable(this)
-fun <A : Any> A?.f() = toOptional()
+fun <A: Any> A?.toOptional() = Optional.ofNullable(this)
+fun <A: Any> A?.f() = toOptional()
 
 val <A> Context<Optional<*>, A>.asOptional
 	get() = this as Optional<A>

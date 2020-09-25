@@ -9,20 +9,20 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ObservableMonadTest {
-	private fun <F : Monad<F, *>> Monad<F, Int>.multiply(
-			x: Int
+	private fun <F: Monad<F, *>> Monad<F, Int>.multiply(
+		x: Int,
 	): Monad<F, Int> =
-			if (x == 0) just(0)
-			else bind { just(x * it) }
+		if (x == 0) just(0)
+		else bind { just(x * it) }
 
 	@Test
 	fun `multiply accepts Observable`() {
 		val subject = PublishSubject.create<Int>()
 		val testObserver =
-				subject.f()
-						.multiply(5)
-						.asObservable
-						.test()
+			subject.f()
+				.multiply(5)
+				.asObservable
+				.test()
 
 		assertTrue(subject.hasObservers())
 
@@ -37,10 +37,10 @@ class ObservableMonadTest {
 		testObserver.dispose()
 
 		val anotherObserver =
-				subject.f()
-						.multiply(0)
-						.asObservable
-						.test()
+			subject.f()
+				.multiply(0)
+				.asObservable
+				.test()
 
 		anotherObserver.assertValue(0)
 		assertFalse(subject.hasObservers())

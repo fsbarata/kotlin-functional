@@ -10,7 +10,7 @@ abstract class MonadTest<C: Monad<C, *>> {
 	@Test
 	fun flatMapIsCorrect() {
 		assertTrue(monad.map { it * 3 }.equalTo(
-				monad.bind { monad.just(it * 3) }
+			monad.bind { monad.just(it * 3) }
 		))
 	}
 }

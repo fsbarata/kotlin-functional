@@ -6,26 +6,26 @@ import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
 
 data class ListF<A>(
-		private val wrapped: List<A>
-) : Monad<ListF<*>, A>,
-		Foldable<A>,
-		List<A> by wrapped {
+	private val wrapped: List<A>,
+): Monad<ListF<*>, A>,
+   Foldable<A>,
+   List<A> by wrapped {
 	override fun <B> just(b: B): ListF<B> = Companion.just(b)
 
 	override fun <B> map(f: (A) -> B) =
-			wrapped.map(f).f()
+		wrapped.map(f).f()
 
 	override fun <B> ap(ff: Functor<ListF<*>, (A) -> B>): ListF<B> =
-			bind { item -> ff.map { it(item) } }
+		bind { item -> ff.map { it(item) } }
 
 	override fun <B> bind(f: (A) -> Functor<ListF<*>, B>) =
-			flatMap { f(it).asList }
+		flatMap { f(it).asList }
 
 	fun <B> flatMap(f: (A) -> List<B>) =
-			wrapped.flatMap(f).f()
+		wrapped.flatMap(f).f()
 
 	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
-			wrapped.fold(initialValue, accumulator)
+		wrapped.fold(initialValue, accumulator)
 
 	companion object {
 		fun <A> empty() = emptyList<A>().f()

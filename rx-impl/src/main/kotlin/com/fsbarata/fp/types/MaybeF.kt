@@ -8,25 +8,25 @@ import io.reactivex.rxjava3.core.MaybeObserver
 import io.reactivex.rxjava3.core.MaybeSource
 
 class MaybeF<A>(
-		private val wrapped: Maybe<A>
-) : Maybe<A>(),
-		Monad<MaybeF<*>, A>,
-		MaybeSource<A> {
+	private val wrapped: Maybe<A>,
+): Maybe<A>(),
+   Monad<MaybeF<*>, A>,
+   MaybeSource<A> {
 	override fun subscribeActual(observer: MaybeObserver<in A>) {
 		wrapped.subscribe(observer)
 	}
 
 	override fun <B> just(b: B): MaybeF<B> =
-			Companion.just(b)
+		Companion.just(b)
 
 	override fun <B> map(f: (A) -> B) =
-			wrapped.map(f).f()
+		wrapped.map(f).f()
 
 	override fun <B> bind(f: (A) -> Functor<MaybeF<*>, B>): MaybeF<B> =
-			flatMap { f(it).asMaybe }
+		flatMap { f(it).asMaybe }
 
 	fun <B> flatMap(f: (A) -> Maybe<B>): MaybeF<B> =
-			wrapped.flatMap(f).f()
+		wrapped.flatMap(f).f()
 
 	companion object {
 		fun <A> empty() = Maybe.empty<A>().f()

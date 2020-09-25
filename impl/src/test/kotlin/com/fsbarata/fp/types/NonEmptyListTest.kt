@@ -208,14 +208,14 @@ class NonEmptyListTest {
 	@Test
 	fun flatten() {
 		assertEquals(
-				NonEmptyList.of(3, 5, 1, 3, 9),
-				NonEmptyList.of(
-						NonEmptyList.of(3, 5),
-						listOf(
-								NonEmptyList.of(1, 3),
-								NonEmptyList.just(9)
-						)
-				).flatten()
+			NonEmptyList.of(3, 5, 1, 3, 9),
+			NonEmptyList.of(
+				NonEmptyList.of(3, 5),
+				listOf(
+					NonEmptyList.of(1, 3),
+					NonEmptyList.just(9)
+				)
+			).flatten()
 		)
 	}
 

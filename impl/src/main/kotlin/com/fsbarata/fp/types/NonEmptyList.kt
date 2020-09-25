@@ -7,19 +7,19 @@ import com.fsbarata.fp.concepts.Monad
 import java.io.Serializable
 
 class NonEmptyList<out A> private constructor(
-		val head: A,
-		val tail: List<A>
-) : AbstractList<A>(),
-		List<A>,
-		Monad<NonEmptyList<*>, A>,
-		Foldable<A>,
-		NonEmptyIterable<A>,
-		Serializable {
+	val head: A,
+	val tail: List<A>,
+): AbstractList<A>(),
+   List<A>,
+   Monad<NonEmptyList<*>, A>,
+   Foldable<A>,
+   NonEmptyIterable<A>,
+   Serializable {
 	override val size: Int = 1 + tail.size
 
 	override fun get(index: Int): A =
-			if (index == 0) head
-			else tail[index - 1]
+		if (index == 0) head
+		else tail[index - 1]
 
 	@Deprecated("Non empty list cannot be empty", replaceWith = ReplaceWith("false"))
 	override fun isEmpty() = false
@@ -37,15 +37,15 @@ class NonEmptyList<out A> private constructor(
 	override fun containsAll(elements: Collection<@UnsafeVariance A>) = elements.all(this::contains)
 
 	override fun indexOf(element: @UnsafeVariance A) =
-			if (head == element) 0
-			else (tail.indexOf(element) + 1).takeIf { it != 0 } ?: -1
+		if (head == element) 0
+		else (tail.indexOf(element) + 1).takeIf { it != 0 } ?: -1
 
 	override fun lastIndexOf(element: @UnsafeVariance A) =
-			(tail.lastIndexOf(element) + 1).takeIf { it != 0 }
-					?: if (head == element) 0 else -1
+		(tail.lastIndexOf(element) + 1).takeIf { it != 0 }
+			?: if (head == element) 0 else -1
 
 	override fun iterator(): NonEmptyIterator<A> =
-			NonEmptyIterator(head, tail.iterator())
+		NonEmptyIterator(head, tail.iterator())
 
 	override fun subList(fromIndex: Int, toIndex: Int): List<A> = when {
 		fromIndex == 0 && toIndex == 0 -> emptyList()
@@ -54,13 +54,13 @@ class NonEmptyList<out A> private constructor(
 	}
 
 	override fun <B> just(b: B): NonEmptyList<B> =
-			Companion.just(b)
+		Companion.just(b)
 
 	override fun <B> map(f: (A) -> B): NonEmptyList<B> =
-			NonEmptyList(f(head), tail.map(f))
+		NonEmptyList(f(head), tail.map(f))
 
 	override fun <B> bind(f: (A) -> Functor<NonEmptyList<*>, B>): NonEmptyList<B> =
-			flatMap { f(it).asNel }
+		flatMap { f(it).asNel }
 
 	fun <B> flatMap(f: (A) -> NonEmptyList<B>): NonEmptyList<B> {
 		val headList = f(head)
@@ -74,19 +74,19 @@ class NonEmptyList<out A> private constructor(
 
 	fun reversed() = tail.asReversed().nonEmpty()?.plus(head) ?: this
 
-	fun <R : Comparable<R>> maxOf(selector: (A) -> R): R =
-			tail.maxOfOrNull(selector)?.coerceAtLeast(selector(head)) ?: selector(head)
+	fun <R: Comparable<R>> maxOf(selector: (A) -> R): R =
+		tail.maxOfOrNull(selector)?.coerceAtLeast(selector(head)) ?: selector(head)
 
-	fun <R : Comparable<R>> minOf(selector: (A) -> R): R =
-			tail.minOfOrNull(selector)?.coerceAtMost(selector(head)) ?: selector(head)
+	fun <R: Comparable<R>> minOf(selector: (A) -> R): R =
+		tail.minOfOrNull(selector)?.coerceAtMost(selector(head)) ?: selector(head)
 
 	fun distinct() = NonEmptyList(head, (tail.toSet() - head).toList())
 	fun <K> distinctBy(selector: (A) -> K): NonEmptyList<A> {
 		val set = HashSet<K>()
 		set.add(selector(head))
 		return NonEmptyList(
-				head,
-				tail.filter { set.add(selector(it)) }
+			head,
+			tail.filter { set.add(selector(it)) }
 		)
 	}
 
@@ -113,23 +113,23 @@ fun <A> Iterable<A>.toNel(): NonEmptyList<A>? = when {
 }
 
 internal fun <A> NonEmptyIterator<A>.toNel(): NonEmptyList<A> =
-		NonEmptyList.of(head, tail.asSequence().toList())
+	NonEmptyList.of(head, tail.asSequence().toList())
 
 fun <A> List<A>.concatNel(item: A) =
-		nonEmpty()?.plus(item) ?: NonEmptyList.just(item)
+	nonEmpty()?.plus(item) ?: NonEmptyList.just(item)
 
 fun <A> List<A>.concatNel(other: NonEmptyList<A>) = this + other
 operator fun <A> List<A>.plus(other: NonEmptyList<A>) =
-		nonEmpty()?.plus(other) ?: other
+	nonEmpty()?.plus(other) ?: other
 
 fun <T> NonEmptyList<NonEmptyList<T>>.flatten() = NonEmptyList.of(head.head, head.tail + tail.flatten())
-fun <T : Comparable<T>> NonEmptyList<T>.max() = tail.maxOrNull()?.coerceAtLeast(head) ?: head
-fun <T : Comparable<T>> NonEmptyList<T>.min() = tail.minOrNull()?.coerceAtMost(head) ?: head
+fun <T: Comparable<T>> NonEmptyList<T>.max() = tail.maxOrNull()?.coerceAtLeast(head) ?: head
+fun <T: Comparable<T>> NonEmptyList<T>.min() = tail.minOrNull()?.coerceAtMost(head) ?: head
 
 fun <T, R> Iterable<T>.scanNel(initialValue: R, operation: (R, T) -> R) = NonEmptyList.of(
-		initialValue,
-		scan(initialValue, operation).drop(1)
+	initialValue,
+	scan(initialValue, operation).drop(1)
 )
 
-fun <S, A : S> NonEmptyList<A>.runningReduceNel(operation: (S, A) -> S) =
-		tail.scanNel(head, operation)
+fun <S, A: S> NonEmptyList<A>.runningReduceNel(operation: (S, A) -> S) =
+	tail.scanNel(head, operation)

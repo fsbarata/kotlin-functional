@@ -5,30 +5,34 @@ import io.reactivex.rxjava3.core.Flowable
 import org.reactivestreams.Subscriber
 
 class FlowableF<A>(
-		private val wrapped: Flowable<A>
-) : Flowable<A>(),
-		Monad<FlowableF<*>, A> {
+	private val wrapped: Flowable<A>,
+): Flowable<A>(),
+   Monad<FlowableF<*>, A> {
 	override fun subscribeActual(observer: Subscriber<in A>) {
 		wrapped.subscribe(observer)
 	}
 
 	override fun <B> just(b: B): FlowableF<B> =
-			Companion.just(b)
+		Companion.just(b)
 
 	override fun <B> map(f: (A) -> B) =
-			wrapped.map(f).f()
+		wrapped.map(f).f()
 
 	override fun <B> bind(f: (A) -> Functor<FlowableF<*>, B>): FlowableF<B> =
-			flatMap { f(it).asFlowable }
+		flatMap { f(it).asFlowable }
 
 	fun <B> flatMap(f: (A) -> Flowable<B>): FlowableF<B> =
-			wrapped.flatMap(f).f()
+		wrapped.flatMap(f).f()
 
 	fun reduce(semigroup: Semigroup<A>) = with(semigroup) { reduce { a1, a2 -> a1.combine(a2) } }.f()
-	fun fold(initialValue: A, semigroup: Semigroup<A>) = with(semigroup) { reduce(initialValue) { a1, a2 -> a1.combine(a2) } }.f()
+	fun fold(initialValue: A, semigroup: Semigroup<A>) =
+		with(semigroup) { reduce(initialValue) { a1, a2 -> a1.combine(a2) } }.f()
+
 	fun fold(monoid: Monoid<A>) = with(monoid) { reduce(empty()) { a1, a2 -> a1.combine(a2) } }.f()
 	fun scan(semigroup: Semigroup<A>) = with(semigroup) { scan { a1, a2 -> a1.combine(a2) } }.f()
-	fun scan(initialValue: A, semigroup: Semigroup<A>) = with(semigroup) { scan(initialValue) { a1, a2 -> a1.combine(a2) } }.f()
+	fun scan(initialValue: A, semigroup: Semigroup<A>) =
+		with(semigroup) { scan(initialValue) { a1, a2 -> a1.combine(a2) } }.f()
+
 	fun scan(monoid: Monoid<A>) = with(monoid) { scan(empty()) { a1, a2 -> a1.combine(a2) } }.f()
 
 	companion object {
