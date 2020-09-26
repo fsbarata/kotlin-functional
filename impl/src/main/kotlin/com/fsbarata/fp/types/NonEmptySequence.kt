@@ -35,12 +35,15 @@ interface NonEmptySequence<out A>:
 		}
 	}
 
-	override fun <B> bind(f: (A) -> Functor<NonEmptySequence<*>, B>) = NonEmptySequence {
+	override fun <B> bind(f: (A) -> Functor<NonEmptySequence<*>, B>) =
+		flatMap { f(it).asNes }
+
+	fun <B> flatMap(f: (A) -> NonEmptySequence<B>) = NonEmptySequence {
 		iterator().let {
 			val headIterator = f(it.head).asNes.iterator()
 			NonEmptyIterator(
 				headIterator.head,
-				(Sequence { headIterator.tail } + Sequence { it.tail }.flatMap { f(it).asNes }).iterator()
+				(Sequence { headIterator.tail } + Sequence { it.tail }.flatMap(f)).iterator()
 			)
 		}
 	}

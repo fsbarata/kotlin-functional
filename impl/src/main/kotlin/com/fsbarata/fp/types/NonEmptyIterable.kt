@@ -11,7 +11,7 @@ interface NonEmptyIterable<out A>:
 	override fun iterator() = NonEmptyIterator(head, tail.iterator())
 
 	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
-		transform { Iterable { tail }.fold(accumulator(initialValue, head), accumulator) }
+		tail.fold(accumulator(initialValue, head), accumulator)
 }
 
 fun <A> nonEmptyIterable(head: A, iterable: Iterable<A>) =
@@ -22,8 +22,15 @@ fun <A> nonEmptyIterable(head: A, iterable: Iterable<A>) =
 
 internal fun <A, B> NonEmptyIterable<A>.transform(f: NonEmptyIterator<A>.() -> B) = f(iterator())
 
+
+inline fun <A, B> NonEmptyIterable<A>.map(f: (A) -> B): NonEmptyList<B> = NonEmptyList.of(f(head), tail.map(f))
+
 fun <T> NonEmptyIterable<NonEmptyIterable<T>>.flatten() =
 	NonEmptyList.of(head.head, head.tail + tail.flatten())
+
+inline fun <A, B> NonEmptyIterable<A>.flatMap(f: (A) -> NonEmptyIterable<B>): NonEmptyList<B> = map(f).flatten()
+
+inline fun <A, B> NonEmptyIterable<A>.flatMapIterable(f: (A) -> Iterable<B>): List<B> = f(head) + tail.flatMap(f)
 
 fun <S, A: S> NonEmptyIterable<A>.runningReduceNel(operation: (S, A) -> S) =
 	tail.scanNel(head, operation)
