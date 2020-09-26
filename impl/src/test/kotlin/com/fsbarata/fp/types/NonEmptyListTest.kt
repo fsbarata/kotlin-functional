@@ -72,9 +72,9 @@ class NonEmptyListTest {
 
 	@Test
 	fun equals() {
-		assertEquals(listOf(9), nel1)
-		assertEquals(listOf(5, 1, 3), nel2)
-		assertEquals(listOf(2, 4, 2, 5), nel3)
+		assertEquals(nelOf(9), nel1)
+		assertEquals(nelOf(5, 1, 3), nel2)
+		assertEquals(nelOf(2, 4, 2, 5), nel3)
 	}
 
 	@Test
@@ -100,8 +100,8 @@ class NonEmptyListTest {
 		assertEquals(listOf(2, 4), nel3.subList(0, 2))
 		assertEquals(listOf(2, 4), nel3.subList(0, 2))
 
-		assertEquals(nel2, nel2.subList(0, nel2.size))
-		assertEquals(nel3, nel3.subList(0, nel3.size))
+		assertEquals(nel2.toList(), nel2.subList(0, nel2.size))
+		assertEquals(nel3.toList(), nel3.subList(0, nel3.size))
 
 		assertEquals(listOf(1), nel2.subList(1, 2))
 		assertEquals(listOf(1, 3), nel2.subList(1, 3))
