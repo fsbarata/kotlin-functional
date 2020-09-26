@@ -1,0 +1,19 @@
+apply plugin: 'maven-publish'
+
+task sourceJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.java.srcDirs
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.fsbarata.fp'
+            artifactId = project.name
+            version = '2.0'
+
+            artifact sourceJar
+            from components.java
+        }
+    }
+}
