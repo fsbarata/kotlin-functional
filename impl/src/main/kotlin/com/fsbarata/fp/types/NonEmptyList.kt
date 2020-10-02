@@ -103,9 +103,11 @@ fun <A> nelOf(head: A, vararg tail: A): NonEmptyList<A> = NonEmptyList.of(head, 
 fun <A> List<A>.startWithItem(item: A) = nelOf(item, this)
 
 fun <A> List<A>.nonEmpty(): NonEmptyList<A>? = toNel()
-fun <A> Iterable<A>.toNel(): NonEmptyList<A>? = when {
-	this is NonEmptyList<A> -> this
-	else -> iterator().nonEmpty()?.toNel()
+fun <A> Iterable<A>.toNel(): NonEmptyList<A>? {
+	return when {
+		this is NonEmptyList<A> -> this
+		else -> iterator().nonEmpty()?.toNel()
+	}
 }
 
 fun <A> List<A>.concatNel(item: A) =
