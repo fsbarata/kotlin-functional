@@ -4,28 +4,38 @@ import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
 
-sealed class Either<out T, out A>: Monad<Either<*, *>, A> {
-	data class Left<out T>(val value: T): Either<T, Nothing>() {
-		override fun <B> map(f: (Nothing) -> B) = this
-		override fun <B> flatMap(f: (Nothing) -> Either<Nothing, B>) = this
-		override fun <R> fold(ifLeft: (T) -> R, ifRight: (Nothing) -> R): R = ifLeft(value)
+sealed class Either<out E, out A> : Monad<Either<*, *>, A> {
+	data class Left<out E>(val value: E) : Either<E, Nothing>()
+	data class Right<out A>(val value: A) : Either<Nothing, A>()
+
+	override fun <B> just(b: B): Either<E, B> = Right(b)
+
+	override fun <B> map(f: (A) -> B): Either<E, B> = mapInline(f)
+
+	inline fun <B> mapInline(f: (A) -> B): Either<E, B> {
+		return flatMap { Right(f(it)) }
 	}
 
-	data class Right<out A>(val value: A): Either<Nothing, A>() {
-		override fun <B> map(f: (A) -> B) = Right(f(value))
-		override fun <B> flatMap(f: (A) -> Either<Nothing, B>) = f(value)
-		override fun <R> fold(ifLeft: (Nothing) -> R, ifRight: (A) -> R): R = ifRight(value)
+	inline fun <B> mapLeft(f: (E) -> B): Either<B, A> {
+		return fold(ifLeft = { Left(f(it)) }, { Right(it) })
 	}
 
-	override fun <B> just(b: B): Either<T, B> = Right(b)
+	inline fun <R> fold(ifLeft: (E) -> R, ifRight: (A) -> R): R = when (this) {
+		is Left -> ifLeft(value)
+		is Right -> ifRight(value)
+	}
 
-	abstract fun <B> flatMap(f: (A) -> Either<Nothing, B>): Either<T, B>
-	abstract fun <R> fold(ifLeft: (T) -> R, ifRight: (A) -> R): R
-
-	override fun <B> bind(f: (A) -> Functor<Either<*, *>, B>): Either<T, B> =
+	override fun <B> bind(f: (A) -> Functor<Either<*, *>, B>): Either<E, B> =
 		flatMap { f(it).asEither }
+
+	fun orNull() = fold({ null }, { it })
+	fun toOptional(): Optional<A> = fold({ Optional.empty() }, { Optional.just(it) })
 }
 
 val <A> Context<Either<*, *>, A>.asEither: Either<Nothing, A>
 	get() = this as Either<Nothing, A>
+
+inline fun <E, A, B> Either<E, A>.flatMap(f: (A) -> Either<E, B>): Either<E, B> {
+	return fold(ifLeft = { Either.Left(it) }, ifRight = { f(it) })
+}
 
