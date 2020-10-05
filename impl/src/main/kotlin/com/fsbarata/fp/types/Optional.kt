@@ -5,51 +5,60 @@ import com.fsbarata.fp.concepts.Foldable
 import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
 
-data class Optional<A> private constructor(
-	val value: A?,
-): Monad<Optional<*>, A>,
-   Foldable<A> {
-	inline fun orNull() = value
+sealed class Optional<out A> : Monad<Optional<*>, A>,
+	Foldable<A> {
+	abstract fun orNull(): A?
 
-	infix fun orElse(a: A) = orElseGet { a }
-	infix fun orElseGet(a: () -> A) = value ?: a()
-	infix fun orOptional(a: Optional<A>) = orOptionalGet { a }
-	infix fun orOptionalGet(a: () -> Optional<A>) = Optional(value ?: a().value)
-
-	fun isPresent() = value != null
-	fun isAbsent() = value == null
+	fun isPresent() = orNull() != null
+	fun isAbsent() = !isPresent()
 
 	override fun <B> just(b: B) = Optional.just(b)
 
-	override fun <B> map(f: (A) -> B) =
-		Optional(value?.let(f))
+	inline fun filter(predicate: (A) -> Boolean) =
+		ofNullable(orNull()?.takeIf(predicate))
 
-	override fun <B> ap(ff: Functor<Optional<*>, (A) -> B>): Optional<B> =
-		ff.map { map(it) }.asOptional.value ?: empty()
+	override fun <B> map(f: (A) -> B) =
+		flatMap { just(f(it)) }
 
 	override fun <B> bind(f: (A) -> Functor<Optional<*>, B>) =
 		flatMap { f(it).asOptional }
 
-	fun <B> flatMap(f: (A) -> Optional<B>): Optional<B> =
-		value?.let(f) ?: empty()
+	inline fun <B> flatMap(f: (A) -> Optional<B>): Optional<B> =
+		fold(ifEmpty = { empty<B>() }, ifSome = { f(it) })
 
-	fun <B> fold(ifEmpty: () -> B, ifSome: (A) -> B): B {
-		return ifSome(value ?: return ifEmpty())
+	inline fun <R> fold(ifEmpty: () -> R, ifSome: (A) -> R): R {
+		return ifSome(orNull() ?: return ifEmpty())
 	}
 
 	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R {
-		return accumulator(initialValue, value ?: return initialValue)
+		return fold(ifEmpty = { initialValue }, ifSome = { accumulator(initialValue, it) })
 	}
 
 	companion object {
-		fun <A> empty() = Optional<A>(null)
-		fun <A> just(a: A) = Optional(a)
-		fun <A> ofNullable(a: A?) = Optional(a)
+		fun <A> empty(): Optional<A> = None
+		fun <A> just(a: A): Optional<A> = Some(a)
+		fun <A> ofNullable(a: A?) = if (a != null) Some(a) else None
 	}
 }
 
-fun <A: Any> A?.toOptional() = Optional.ofNullable(this)
-fun <A: Any> A?.f() = toOptional()
+data class Some<T>(val value: T) : Optional<T>() {
+	override fun orNull() = value
+}
+
+object None : Optional<Nothing>() {
+	override fun orNull() = null
+}
+
+infix fun <A> Optional<A>.orElse(a: A) = orElseGet { a }
+infix fun <A> Optional<A>.orElseGet(a: () -> A) = orNull() ?: a()
+infix fun <A> Optional<A>.orOptional(a: Optional<A>) =
+	orOptionalGet { a }
+
+infix fun <A> Optional<A>.orOptionalGet(a: () -> Optional<A>) =
+	map { Optional.just(it) }.orElseGet(a)
+
+fun <A : Any> A?.toOptional() = Optional.ofNullable(this)
+fun <A : Any> A?.f() = toOptional()
 
 val <A> Context<Optional<*>, A>.asOptional
 	get() = this as Optional<A>
