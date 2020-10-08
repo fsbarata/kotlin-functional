@@ -12,8 +12,8 @@ data class ListF<A>(
    List<A> by wrapped {
 	override fun <B> just(b: B): ListF<B> = Companion.just(b)
 
-	override fun <B> map(f: (A) -> B) =
-		wrapped.map(f).f()
+	override inline fun <B> map(f: (A) -> B) =
+		(this as List<A>).map(f).f()
 
 	override fun <B> ap(ff: Functor<ListF<*>, (A) -> B>): ListF<B> =
 		bind { item -> ff.map { it(item) } }
@@ -21,8 +21,8 @@ data class ListF<A>(
 	override fun <B> bind(f: (A) -> Functor<ListF<*>, B>) =
 		flatMap { f(it).asList }
 
-	fun <B> flatMap(f: (A) -> List<B>) =
-		wrapped.flatMap(f).f()
+	inline fun <B> flatMap(f: (A) -> List<B>) =
+		(this as List<A>).flatMap(f).f()
 
 	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
 		wrapped.fold(initialValue, accumulator)
