@@ -4,17 +4,14 @@ import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
 
-sealed class Either<out E, out A> : Monad<Either<*, *>, A> {
-	data class Left<out E>(val value: E) : Either<E, Nothing>()
-	data class Right<out A>(val value: A) : Either<Nothing, A>()
+sealed class Either<out E, out A>: Monad<Either<*, *>, A> {
+	data class Left<out E>(val value: E): Either<E, Nothing>()
+	data class Right<out A>(val value: A): Either<Nothing, A>()
 
 	override fun <B> just(b: B): Either<E, B> = Right(b)
 
-	override fun <B> map(f: (A) -> B): Either<E, B> = mapInline(f)
-
-	inline fun <B> mapInline(f: (A) -> B): Either<E, B> {
-		return flatMap { Right(f(it)) }
-	}
+	final override inline fun <B> map(f: (A) -> B): Either<E, B> =
+		flatMap { Right(f(it)) }
 
 	inline fun <B> mapLeft(f: (E) -> B): Either<B, A> {
 		return fold(ifLeft = { Left(f(it)) }, { Right(it) })
