@@ -1,6 +1,7 @@
-package com.fsbarata.fp.types
+package com.fsbarata.fp.types.experimental
 
 import com.fsbarata.fp.concepts.*
+import com.fsbarata.fp.types.*
 import java.io.Serializable
 
 internal sealed class ListU<out A>
@@ -19,6 +20,7 @@ internal sealed class ListU<out A>
 
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("null"))
 		fun firstOrNull() = null
+
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("null"))
 		fun lastOrNull() = null
 
@@ -38,12 +40,12 @@ internal sealed class ListU<out A>
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("-1"))
 		override fun lastIndexOf(element: Nothing): Int = -1
 
-		override fun iterator() = object : Iterator<Nothing> {
+		override fun iterator() = object: Iterator<Nothing> {
 			override fun hasNext() = false
 			override fun next() = throw NoSuchElementException()
 		}
 
-		override fun listIterator() = object : ListIterator<Nothing> {
+		override fun listIterator() = object: ListIterator<Nothing> {
 			override fun hasNext() = false
 			override fun hasPrevious() = false
 			override fun next() = throw NoSuchElementException()
@@ -74,9 +76,11 @@ internal sealed class ListU<out A>
 			else tail[index - 1]
 
 		fun first() = head
+
 		@Deprecated("Non empty list always has a first", replaceWith = ReplaceWith("first()"))
 		fun firstOrNull(): Nothing = throw UnsupportedOperationException()
 		fun last() = if (tail.isEmpty()) head else tail.last()
+
 		@Deprecated("Non empty list always has a last", replaceWith = ReplaceWith("last()"))
 		fun lastOrNull(): Nothing = throw UnsupportedOperationException()
 
@@ -165,18 +169,18 @@ internal sealed class ListU<out A>
 	}
 }
 
-internal fun <A> List<A>.u() = toNe() ?: ListU.Empty
+internal fun <A> List<A>.u() = toNel() ?: ListU.Empty
 
 internal val <A> Context<ListU<*>, A>.asList: ListU<A>
 	get() = this as ListU<A>
 
 
-internal fun <A> Iterable<A>.toNe(): ListU.NonEmpty<A>? {
-	return when {
-		this is ListU.NonEmpty<A> -> this
-		else -> iterator().nonEmpty()?.toNe()
+internal fun <A> Iterable<A>.toNel(): ListU.NonEmpty<A>? {
+	return when (this) {
+		is ListU.NonEmpty<A> -> this
+		else -> iterator().nonEmpty()?.toNel()
 	}
 }
 
-internal fun <A> NonEmptyIterator<A>.toNe(): ListU.NonEmpty<A> =
+internal fun <A> NonEmptyIterator<A>.toNel(): ListU.NonEmpty<A> =
 	ListU.NonEmpty.of(head, tail.asSequence().toList())
