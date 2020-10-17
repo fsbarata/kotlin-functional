@@ -1,17 +1,18 @@
 package com.fsbarata.fp.concepts
 
-interface Semigroup<A> {
+fun interface Semigroup<A> {
 	fun A.combine(other: A): A
-
-	fun A.times(n: Int): A {
-		require(n >= 1)
-		return add(this, n)
-	}
-
-	private tailrec fun A.add(a: A, n: Int): A =
-		if (n == 1) this
-		else combine(a).add(a, n - 1)
 }
+
+fun <A> Semigroup<A>.times(n: Int): (A) -> A {
+	require(n >= 1)
+	return { a: A -> add(a, a, n) }
+}
+
+private tailrec fun <A> Semigroup<A>.add(a1: A, a2: A, n: Int): A =
+	if (n == 1) a1
+	else add(a1.combine(a2), a2, n - 1)
+
 
 fun <A> semigroup(combine: (A, A) -> A) = object: Semigroup<A> {
 	override fun A.combine(other: A) = combine(this, other)

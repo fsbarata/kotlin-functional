@@ -1,6 +1,9 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.*
+import com.fsbarata.fp.concepts.Context
+import com.fsbarata.fp.concepts.Foldable
+import com.fsbarata.fp.concepts.Functor
+import com.fsbarata.fp.concepts.Monad
 
 sealed class Optional<out A>:
 	Monad<Optional<*>, A>,
@@ -47,12 +50,12 @@ object None: Optional<Nothing>() {
 	override fun orNull() = null
 }
 
-infix fun <A> Optional<A>.orElse(a: A) = orElseGet { a }
-infix fun <A> Optional<A>.orElseGet(a: () -> A) = orNull() ?: a()
+infix fun <A> Optional<A>.orElse(a: A) = orNull() ?: a
+inline infix fun <A> Optional<A>.orElseGet(a: () -> A) = orNull() ?: a()
 infix fun <A> Optional<A>.orOptional(a: Optional<A>) =
 	orOptionalGet { a }
 
-infix fun <A> Optional<A>.orOptionalGet(a: () -> Optional<A>) =
+inline infix fun <A> Optional<A>.orOptionalGet(a: () -> Optional<A>) =
 	map { Optional.just(it) }.orElseGet(a)
 
 fun <A: Any> A?.toOptional() = Optional.ofNullable(this)

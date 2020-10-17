@@ -1,7 +1,7 @@
 package com.fsbarata.fp.extensions
 
 import com.fsbarata.fp.concepts.Foldable
-import com.fsbarata.fp.concepts.Semigroup
+import com.fsbarata.fp.concepts.Monoid
 import com.fsbarata.fp.types.NonEmptyList
 
 
@@ -11,5 +11,5 @@ fun <T, R> Foldable<T>.scan(initialValue: R, accumulator: (R, T) -> R): NonEmpty
 		Pair(newValue, list + newValue)
 	}.second
 
-fun <A> Foldable<A>.scan(initialValue: A, semigroup: Semigroup<A>) =
-	with(semigroup) { scan(initialValue) { acc, a -> acc.combine(a) } }
+fun <A> Foldable<A>.scan(monoid: Monoid<A>) =
+	with(monoid) { scan(empty) { acc, a -> acc.combine(a) } }

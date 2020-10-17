@@ -26,15 +26,9 @@ class ObservableF<A>(
 		wrapped.flatMap(f).f()
 
 	fun reduce(semigroup: Semigroup<A>) = with(semigroup) { reduce { a1, a2 -> a1.combine(a2) } }.f()
-	fun fold(initialValue: A, semigroup: Semigroup<A>) =
-		with(semigroup) { reduce(initialValue) { a1, a2 -> a1.combine(a2) } }.f()
-
-	fun fold(monoid: Monoid<A>) = with(monoid) { reduce(empty()) { a1, a2 -> a1.combine(a2) } }.f()
+	fun fold(monoid: Monoid<A>) = with(monoid) { reduce(empty) { a1, a2 -> a1.combine(a2) } }.f()
 	fun scan(semigroup: Semigroup<A>) = with(semigroup) { scan { a1, a2 -> a1.combine(a2) } }.f()
-	fun scan(initialValue: A, semigroup: Semigroup<A>) =
-		with(semigroup) { scan(initialValue) { a1, a2 -> a1.combine(a2) } }.f()
-
-	fun scan(monoid: Monoid<A>) = with(monoid) { scan(empty()) { a1, a2 -> a1.combine(a2) } }.f()
+	fun scan(monoid: Monoid<A>) = with(monoid) { scan(empty) { a1, a2 -> a1.combine(a2) } }.f()
 
 	companion object: Monad.Scope<ObservableF<*>> {
 		fun <A> empty() = Observable.empty<A>().f()
