@@ -1,5 +1,11 @@
 package com.fsbarata.fp.concepts
 
+/**
+ * A semigroup is a scope where a function that can combine values of a single type exists and
+ * respects the associativity property.
+ *
+ * For eg., for any type that defines a plus method, there exists a Semigroup where combine is plus
+ */
 fun interface Semigroup<A> {
 	fun A.combine(other: A): A
 }
