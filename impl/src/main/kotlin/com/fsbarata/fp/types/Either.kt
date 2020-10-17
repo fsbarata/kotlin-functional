@@ -1,11 +1,11 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.Applicative
 import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
+import java.io.Serializable
 
-sealed class Either<out E, out A>: Monad<Either<Nothing, *>, A> {
+sealed class Either<out E, out A>: Monad<Either<Nothing, *>, A>, Serializable {
 	data class Left<out E>(val value: E): Either<E, Nothing>()
 	data class Right<out A>(val value: A): Either<Nothing, A>()
 

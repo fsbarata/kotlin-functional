@@ -1,12 +1,17 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.*
+import com.fsbarata.fp.concepts.Context
+import com.fsbarata.fp.concepts.Foldable
+import com.fsbarata.fp.concepts.Functor
+import com.fsbarata.fp.concepts.Monad
+import java.io.Serializable
 
 data class ListF<A>(
 	private val wrapped: List<A>,
 ): Monad<ListF<*>, A>,
    Foldable<A>,
-   List<A> by wrapped {
+   List<A> by wrapped,
+   Serializable {
 	override val scope get() = Companion
 
 	override inline fun <B> map(f: (A) -> B) =

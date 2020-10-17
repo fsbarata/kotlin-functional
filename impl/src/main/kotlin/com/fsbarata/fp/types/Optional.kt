@@ -4,10 +4,12 @@ import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Foldable
 import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
+import java.io.Serializable
 
 sealed class Optional<out A>:
 	Monad<Optional<*>, A>,
-	Foldable<A> {
+	Foldable<A>,
+	Serializable {
 	override val scope get() = Companion
 
 	abstract fun orNull(): A?
