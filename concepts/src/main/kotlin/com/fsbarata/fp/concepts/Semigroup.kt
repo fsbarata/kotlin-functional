@@ -6,7 +6,7 @@ package com.fsbarata.fp.concepts
  *
  * For eg., for any type that defines a plus method, there exists a Semigroup where combine is plus
  */
-fun interface Semigroup<A> {
+interface Semigroup<A> {
 	fun A.combine(other: A): A
 }
 

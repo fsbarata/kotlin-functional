@@ -6,8 +6,8 @@ import org.junit.Test
 class SemigroupKtTest {
 	data class XInt(val i: Int)
 
-	private val XIntSG = Semigroup<XInt> { other ->
-		XInt(i + other.i)
+	private val XIntSG = object : Semigroup<XInt> {
+		override fun XInt.combine(other: XInt) = XInt(i + other.i)
 	}
 
 	@Test
