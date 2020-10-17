@@ -3,6 +3,7 @@ apply from: '../publish.gradle'
 
 dependencies {
     api project(':concepts')
+    api project(':impl')
     api "io.reactivex.rxjava3:rxjava:$rxjava_version"
     implementation "io.reactivex.rxjava3:rxkotlin:$rxkotlin_version"
 
