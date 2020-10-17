@@ -5,7 +5,7 @@ import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
 
 class Reader<D, out A>(val run: (D) -> A): Monad<Reader<D, *>, A> {
-	override fun <B> just(b: B): Reader<D, B> = Companion.just(b)
+	override val scope get() = ReaderScope<D>()
 
 	override fun <B> map(f: (A) -> B): Reader<D, B> =
 		Reader { f(run(it)) }
@@ -21,6 +21,10 @@ class Reader<D, out A>(val run: (D) -> A): Monad<Reader<D, *>, A> {
 
 	fun <E> leftMap(f: (E) -> D): Reader<E, A> =
 		Reader { e -> run(f(e)) }
+
+	class ReaderScope<D>: Monad.Scope<Reader<D, *>> {
+		override fun <A> just(a: A) = just<D, A>(a)
+	}
 
 	companion object {
 		fun <D, A> just(a: A): Reader<D, A> = Reader { a }

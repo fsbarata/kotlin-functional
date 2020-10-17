@@ -1,9 +1,14 @@
 package com.fsbarata.fp.types
 
+import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.test.MonadTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class NonEmptySequenceKtTest {
+class NonEmptySequenceKtTest: MonadTest<NonEmptySequence<*>>(NonEmptySequence) {
+	override fun Monad<NonEmptySequence<*>, Int>.equalTo(other: Monad<NonEmptySequence<*>, Int>): Boolean =
+		asNes.toList() == other.asNes.toList()
+
 	@Test
 	fun `non empty sequence from iterator`() {
 		assertEquals(

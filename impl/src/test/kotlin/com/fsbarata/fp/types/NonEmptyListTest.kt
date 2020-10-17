@@ -1,10 +1,15 @@
 package com.fsbarata.fp.types
 
+import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.test.MonadTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger
 
-class NonEmptyListTest {
+class NonEmptyListTest: MonadTest<NonEmptyList<*>>(NonEmptyList) {
+	override fun Monad<NonEmptyList<*>, Int>.equalTo(other: Monad<NonEmptyList<*>, Int>): Boolean =
+		asNel == other.asNel
+
 	val nel1 = NonEmptyList.just(9)
 	val nel2 = NonEmptyList.of(5, 1, 3)
 	val nel3 = NonEmptyList.of(2, NonEmptyList.of(4, 2, 5))

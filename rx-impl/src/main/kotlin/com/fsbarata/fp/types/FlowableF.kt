@@ -8,12 +8,11 @@ class FlowableF<A>(
 	private val wrapped: Flowable<A>,
 ): Flowable<A>(),
    Monad<FlowableF<*>, A> {
+	override val scope get() = Companion
+
 	override fun subscribeActual(observer: Subscriber<in A>) {
 		wrapped.subscribe(observer)
 	}
-
-	override fun <B> just(b: B): FlowableF<B> =
-		Companion.just(b)
 
 	override fun <B> map(f: (A) -> B) =
 		wrapped.map(f).f()
@@ -35,9 +34,9 @@ class FlowableF<A>(
 
 	fun scan(monoid: Monoid<A>) = with(monoid) { scan(empty()) { a1, a2 -> a1.combine(a2) } }.f()
 
-	companion object {
+	companion object: Monad.Scope<FlowableF<*>> {
 		fun <A> empty() = Flowable.empty<A>().f()
-		fun <A> just(a: A) = Flowable.just(a).f()
+		override fun <A> just(a: A) = Flowable.just(a).f()
 	}
 }
 

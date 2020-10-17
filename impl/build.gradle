@@ -3,6 +3,7 @@ apply from: '../publish.gradle'
 
 dependencies {
     api project(':concepts')
+    testImplementation project(':concepts-test')
 }
 
 

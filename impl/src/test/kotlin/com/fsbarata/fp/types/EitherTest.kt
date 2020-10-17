@@ -1,9 +1,14 @@
 package com.fsbarata.fp.types
 
+import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.test.MonadTest
 import org.junit.Assert.*
 import org.junit.Test
 
-class EitherTest {
+class EitherTest: MonadTest<Either<Nothing, *>>(Either) {
+	override fun Monad<Either<Nothing, *>, Int>.equalTo(other: Monad<Either<Nothing, *>, Int>): Boolean =
+		asEither == other.asEither
+
 	@Test
 	fun map() {
 		assertEquals(LEFT, LEFT.map { it * 2 })

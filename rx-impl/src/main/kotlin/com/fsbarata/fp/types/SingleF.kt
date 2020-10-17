@@ -12,11 +12,11 @@ class SingleF<A>(
 ): Single<A>(),
    Monad<SingleF<*>, A>,
    SingleSource<A> {
+	override val scope get() = Companion
+
 	override fun subscribeActual(observer: SingleObserver<in A>) {
 		wrapped.subscribe(observer)
 	}
-
-	override fun <B> just(b: B): SingleF<B> = Companion.just(b)
 
 	override fun <B> map(f: (A) -> B) = wrapped.map(f).f()
 
@@ -26,8 +26,8 @@ class SingleF<A>(
 	fun <B> flatMap(f: (A) -> Single<B>): SingleF<B> =
 		wrapped.flatMap(f).f()
 
-	companion object {
-		fun <A> just(a: A) = Single.just(a).f()
+	companion object: Monad.Scope<SingleF<*>> {
+		override fun <A> just(a: A) = Single.just(a).f()
 	}
 }
 

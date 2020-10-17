@@ -1,0 +1,9 @@
+apply from: '../kotlin.gradle'
+
+dependencies {
+	implementation project(':concepts')
+    implementation "junit:junit:4.13"
+}
+
+
+

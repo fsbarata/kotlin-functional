@@ -1,14 +1,13 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.concepts.Foldable
-import com.fsbarata.fp.concepts.Functor
-import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.*
 
 interface NonEmptySequence<out A>:
 	Sequence<A>,
 	Monad<NonEmptySequence<*>, A>,
 	Foldable<A> {
+	override val scope get() = Companion
+
 	override fun iterator(): NonEmptyIterator<A>
 
 	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
@@ -23,8 +22,6 @@ interface NonEmptySequence<out A>:
 	fun last() = iterator().let { it.tail.asSequence().lastOrNull() ?: it.head }
 
 	fun toList(): NonEmptyList<A> = iterator().toNel()
-
-	override fun <B> just(b: B) = Companion.just(b)
 
 	override fun <B> map(f: (A) -> B) = NonEmptySequence {
 		iterator().let {
@@ -48,8 +45,8 @@ interface NonEmptySequence<out A>:
 		}
 	}
 
-	companion object {
-		fun <A> just(a: A) = NonEmptySequence { NonEmptyIterator(a, EmptyIterator()) }
+	companion object: Monad.Scope<NonEmptySequence<*>> {
+		override fun <A> just(a: A) = NonEmptySequence { NonEmptyIterator(a, EmptyIterator()) }
 	}
 }
 

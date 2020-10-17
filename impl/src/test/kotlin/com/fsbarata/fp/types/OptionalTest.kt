@@ -1,9 +1,14 @@
 package com.fsbarata.fp.types
 
+import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.test.MonadTest
 import org.junit.Assert.*
 import org.junit.Test
 
-class OptionalTest {
+class OptionalTest: MonadTest<Optional<*>>(Optional) {
+	override fun Monad<Optional<*>, Int>.equalTo(other: Monad<Optional<*>, Int>): Boolean =
+		asOptional == other.asOptional
+
 	@Test
 	fun isPresent() {
 		assertTrue(Some(3).isPresent())

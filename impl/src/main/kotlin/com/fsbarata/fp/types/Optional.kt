@@ -1,18 +1,16 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.concepts.Foldable
-import com.fsbarata.fp.concepts.Functor
-import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.*
 
-sealed class Optional<out A> : Monad<Optional<*>, A>,
+sealed class Optional<out A>:
+	Monad<Optional<*>, A>,
 	Foldable<A> {
+	override val scope get() = Companion
+
 	abstract fun orNull(): A?
 
 	fun isPresent() = orNull() != null
 	fun isAbsent() = !isPresent()
-
-	override fun <B> just(b: B) = Optional.just(b)
 
 	inline fun filter(predicate: (A) -> Boolean) =
 		ofNullable(orNull()?.takeIf(predicate))
@@ -34,18 +32,18 @@ sealed class Optional<out A> : Monad<Optional<*>, A>,
 		return fold(ifEmpty = { initialValue }, ifSome = { accumulator(initialValue, it) })
 	}
 
-	companion object {
+	companion object: Monad.Scope<Optional<*>> {
 		fun <A> empty(): Optional<A> = None
-		fun <A> just(a: A): Optional<A> = Some(a)
+		override fun <A> just(a: A): Optional<A> = Some(a)
 		fun <A> ofNullable(a: A?) = if (a != null) Some(a) else None
 	}
 }
 
-data class Some<T>(val value: T) : Optional<T>() {
+data class Some<T>(val value: T): Optional<T>() {
 	override fun orNull() = value
 }
 
-object None : Optional<Nothing>() {
+object None: Optional<Nothing>() {
 	override fun orNull() = null
 }
 
@@ -57,8 +55,8 @@ infix fun <A> Optional<A>.orOptional(a: Optional<A>) =
 infix fun <A> Optional<A>.orOptionalGet(a: () -> Optional<A>) =
 	map { Optional.just(it) }.orElseGet(a)
 
-fun <A : Any> A?.toOptional() = Optional.ofNullable(this)
-fun <A : Any> A?.f() = toOptional()
+fun <A: Any> A?.toOptional() = Optional.ofNullable(this)
+fun <A: Any> A?.f() = toOptional()
 
 val <A> Context<Optional<*>, A>.asOptional
 	get() = this as Optional<A>

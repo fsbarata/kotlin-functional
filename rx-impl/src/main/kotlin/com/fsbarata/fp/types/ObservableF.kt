@@ -10,12 +10,11 @@ class ObservableF<A>(
 ): Observable<A>(),
    Monad<ObservableF<*>, A>,
    ObservableSource<A> {
+	override val scope get() = Companion
+
 	override fun subscribeActual(observer: Observer<in A>) {
 		wrapped.subscribe(observer)
 	}
-
-	override fun <B> just(b: B): ObservableF<B> =
-		Companion.just(b)
 
 	override fun <B> map(f: (A) -> B) =
 		wrapped.map(f).f()
@@ -37,9 +36,9 @@ class ObservableF<A>(
 
 	fun scan(monoid: Monoid<A>) = with(monoid) { scan(empty()) { a1, a2 -> a1.combine(a2) } }.f()
 
-	companion object {
+	companion object: Monad.Scope<ObservableF<*>> {
 		fun <A> empty() = Observable.empty<A>().f()
-		fun <A> just(a: A) = Observable.just(a).f()
+		override fun <A> just(a: A) = Observable.just(a).f()
 	}
 }
 

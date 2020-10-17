@@ -1,5 +1,6 @@
 package com.fsbarata.fp.types
 
+import com.fsbarata.fp.concepts.Applicative
 import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
@@ -7,7 +8,7 @@ import com.fsbarata.fp.concepts.Monad
 class State<S, A>(
 	val runState: (S) -> Pair<S, A>,
 ): Monad<State<S, *>, A> {
-	override fun <B> just(b: B) = Companion.just<S, B>(b)
+	override val scope get() = StateScope<S>()
 
 	override fun <B> map(f: (A) -> B): State<S, B> =
 		State { s ->
@@ -20,6 +21,13 @@ class State<S, A>(
 			val (newState, value) = runState(s)
 			f(value).asState.runState(newState)
 		}
+
+	class StateScope<S>: Monad.Scope<State<S, *>> {
+		override fun <A> just(a: A) = just<S, A>(a)
+
+		fun get() = State { s: S -> Pair(s, s) }
+		fun put(newState: S) = State<S, Unit> { Pair(newState, Unit) }
+	}
 
 	companion object {
 		fun <S, A> just(a: A) = State<S, A> { s -> Pair(s, a) }

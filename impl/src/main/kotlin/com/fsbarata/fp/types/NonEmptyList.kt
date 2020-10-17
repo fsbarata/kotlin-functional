@@ -1,9 +1,6 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.concepts.Foldable
-import com.fsbarata.fp.concepts.Functor
-import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.*
 import java.io.Serializable
 
 class NonEmptyList<out A> private constructor(
@@ -15,6 +12,8 @@ class NonEmptyList<out A> private constructor(
    Foldable<A>,
    NonEmptyIterable<A>,
    Serializable {
+	override val scope get() = Companion
+
 	override val size: Int = 1 + tail.size
 
 	override fun get(index: Int): A =
@@ -53,9 +52,6 @@ class NonEmptyList<out A> private constructor(
 		else -> tail.subList(fromIndex - 1, toIndex - 1)
 	}
 
-	override fun <B> just(b: B): NonEmptyList<B> =
-		Companion.just(b)
-
 	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
 
 	override fun <B> bind(f: (A) -> Functor<NonEmptyList<*>, B>): NonEmptyList<B> =
@@ -88,8 +84,8 @@ class NonEmptyList<out A> private constructor(
 
 	fun asSequence() = NonEmptySequence { iterator() }
 
-	companion object {
-		fun <T> just(item: T) = of(item, emptyList())
+	companion object: Monad.Scope<NonEmptyList<*>> {
+		override fun <A> just(a: A) = of(a, emptyList())
 		fun <T> of(head: T, vararg others: T) = of(head, others.toList())
 		fun <T> of(head: T, others: List<T>) = NonEmptyList(head, others)
 	}

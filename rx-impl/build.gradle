@@ -5,6 +5,8 @@ dependencies {
     api project(':concepts')
     api "io.reactivex.rxjava3:rxjava:$rxjava_version"
     implementation "io.reactivex.rxjava3:rxkotlin:$rxkotlin_version"
+
+    testImplementation project(':concepts-test')
 }
 
 
