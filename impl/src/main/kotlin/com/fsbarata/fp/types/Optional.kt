@@ -5,6 +5,11 @@ import com.fsbarata.fp.concepts.Foldable
 import com.fsbarata.fp.concepts.Monad
 import java.io.Serializable
 
+/**
+ * Optional (Maybe) Monad
+ *
+ * Wraps a value that may or may not be present.
+ */
 sealed class Optional<out A>:
 	Monad<Optional<*>, A>,
 	Foldable<A>,

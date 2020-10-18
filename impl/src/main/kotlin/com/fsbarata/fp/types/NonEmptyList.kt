@@ -6,6 +6,11 @@ import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.utils.iterators.*
 import java.io.Serializable
 
+/**
+ * A NonEmpty list.
+ *
+ * By definition, this object is guaranteed to have at least one item.
+ */
 class NonEmptyList<out A> private constructor(
 	override val head: A,
 	override val tail: List<A>,

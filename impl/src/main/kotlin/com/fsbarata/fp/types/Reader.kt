@@ -4,6 +4,11 @@ import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
 
+/**
+ * Reader Monad
+ *
+ * This object models a set of dependencies D, required to generate the value A.
+ */
 class Reader<D, out A>(val run: (D) -> A): Monad<Reader<D, *>, A> {
 	override val scope get() = ReaderScope<D>()
 
@@ -21,6 +26,8 @@ class Reader<D, out A>(val run: (D) -> A): Monad<Reader<D, *>, A> {
 
 	fun <E> leftMap(f: (E) -> D): Reader<E, A> =
 		Reader { e -> run(f(e)) }
+
+	operator fun invoke(d: D) = run(d)
 
 	class ReaderScope<D>: Monad.Scope<Reader<D, *>> {
 		override fun <A> just(a: A) = just<D, A>(a)

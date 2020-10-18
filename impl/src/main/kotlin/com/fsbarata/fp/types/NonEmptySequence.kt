@@ -7,6 +7,11 @@ import com.fsbarata.utils.iterators.EmptyIterator
 import com.fsbarata.utils.iterators.NonEmptyIterator
 import com.fsbarata.utils.iterators.toNel
 
+/**
+ * A NonEmpty sequence.
+ *
+ * By definition, this object is guaranteed to have at least one item. The head item is still lazily acquired.
+ */
 interface NonEmptySequence<out A>:
 	Sequence<A>,
 	Monad<NonEmptySequence<*>, A>,

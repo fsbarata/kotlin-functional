@@ -9,6 +9,11 @@ import com.fsbarata.fp.types.nonEmpty
 import com.fsbarata.utils.iterators.*
 import java.io.Serializable
 
+/**
+ * List union (sealed) that provides a full definition of a List such as:
+ * List = Empty | NonEmpty
+ *
+ */
 internal sealed class ListU<out A>
 	: Monad<ListU<*>, A>,
 	  Foldable<A>,
@@ -38,7 +43,11 @@ internal sealed class ListU<out A>
 		@Deprecated("Empty list does not contain anything", replaceWith = ReplaceWith("Nothing"))
 		override fun get(index: Int): Nothing = throw ArrayIndexOutOfBoundsException(index)
 
+		@Deprecated("Empty list flattens to empty", replaceWith = ReplaceWith("ListU.Empty"))
 		override fun <B> bind(f: (Nothing) -> Context<ListU<*>, B>) = this
+
+		@Deprecated("Empty list flattens to empty", replaceWith = ReplaceWith("ListU.Empty"))
+		inline fun flatMapIterable(f: (Nothing) -> Iterable<Nothing>) = this
 
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("-1"))
 		override fun indexOf(element: Nothing): Int = -1
@@ -46,6 +55,7 @@ internal sealed class ListU<out A>
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("-1"))
 		override fun lastIndexOf(element: Nothing): Int = -1
 
+		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("EmptyIterator", "com.fsbarata.utils.iterators.EmptyIterator"))
 		override fun iterator() = EmptyIterator
 	}
 

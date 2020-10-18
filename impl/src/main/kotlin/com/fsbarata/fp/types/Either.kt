@@ -4,6 +4,12 @@ import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Monad
 import java.io.Serializable
 
+/**
+ * Either Monad
+ *
+ * Union between two values, where one is assumed to be right/successful, which biases the Monad operators such as map
+ * and flatMap.
+ */
 sealed class Either<out E, out A>: Monad<Either<Nothing, *>, A>, Serializable {
 	data class Left<out E>(val value: E): Either<E, Nothing>()
 	data class Right<out A>(val value: A): Either<Nothing, A>()
