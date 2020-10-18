@@ -128,7 +128,7 @@ internal sealed class ListU<out A>
 
 		override fun equals(other: Any?): Boolean {
 			if (this === other) return true
-			if (!(other is List<*>)) return false
+			if (other !is List<*>) return false
 			return listEquals(this, other)
 		}
 
