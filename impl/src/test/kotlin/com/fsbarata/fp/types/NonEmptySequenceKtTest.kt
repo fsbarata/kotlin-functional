@@ -2,6 +2,7 @@ package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.test.MonadTest
+import com.fsbarata.utils.iterators.NonEmptyIterator
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

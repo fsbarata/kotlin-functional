@@ -1,4 +1,6 @@
-package com.fsbarata.fp.types
+package com.fsbarata.utils.iterators
+
+import com.fsbarata.fp.types.NonEmptyList
 
 
 class NonEmptyIterator<out A>(

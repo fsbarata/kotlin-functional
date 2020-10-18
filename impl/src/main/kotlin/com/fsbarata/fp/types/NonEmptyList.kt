@@ -3,20 +3,20 @@ package com.fsbarata.fp.types
 import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Foldable
 import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.utils.iterators.*
 import java.io.Serializable
 
 class NonEmptyList<out A> private constructor(
 	override val head: A,
 	override val tail: List<A>,
-): AbstractList<A>(),
-   List<A>,
+): List<A>,
    Monad<NonEmptyList<*>, A>,
    Foldable<A>,
    NonEmptyIterable<A>,
    Serializable {
 	override val scope get() = Companion
 
-	override val size: Int = 1 + tail.size
+	override val size: Int get() = 1 + tail.size
 
 	override fun get(index: Int): A =
 		if (index == 0) head
@@ -85,6 +85,17 @@ class NonEmptyList<out A> private constructor(
 	}
 
 	fun asSequence() = NonEmptySequence { iterator() }
+
+	override fun listIterator(): ListIterator<A> = LambdaListIterator(size) { get(it) }
+	override fun listIterator(index: Int): ListIterator<A> = LambdaListIterator(size, index) { get(it) }
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (!(other is List<*>)) return false
+		return listEquals(this, other)
+	}
+
+	override fun hashCode() = head.hashCode() + tail.hashCode()
 
 	companion object: Monad.Scope<NonEmptyList<*>> {
 		override fun <A> just(a: A) = of(a, emptyList())

@@ -3,7 +3,10 @@ package com.fsbarata.fp.types.experimental
 import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Foldable
 import com.fsbarata.fp.concepts.Monad
-import com.fsbarata.fp.types.*
+import com.fsbarata.fp.types.NonEmptyList
+import com.fsbarata.fp.types.NonEmptySequence
+import com.fsbarata.fp.types.nonEmpty
+import com.fsbarata.utils.iterators.*
 import java.io.Serializable
 
 internal sealed class ListU<out A>
@@ -13,7 +16,7 @@ internal sealed class ListU<out A>
 	  Serializable {
 	override val scope get() = Companion
 
-	object Empty: ListU<Nothing>() {
+	object Empty: ListU<Nothing>(), List<Nothing> by emptyList() {
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("true"))
 		override fun isEmpty() = true
 
@@ -34,6 +37,7 @@ internal sealed class ListU<out A>
 
 		@Deprecated("Empty list does not contain anything", replaceWith = ReplaceWith("Nothing"))
 		override fun get(index: Int): Nothing = throw ArrayIndexOutOfBoundsException(index)
+
 		override fun <B> bind(f: (Nothing) -> Context<ListU<*>, B>) = this
 
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("-1"))
@@ -41,33 +45,14 @@ internal sealed class ListU<out A>
 
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("-1"))
 		override fun lastIndexOf(element: Nothing): Int = -1
-
-		override fun iterator() = object: Iterator<Nothing> {
-			override fun hasNext() = false
-			override fun next() = throw NoSuchElementException()
-		}
-
-		override fun listIterator() = object: ListIterator<Nothing> {
-			override fun hasNext() = false
-			override fun hasPrevious() = false
-			override fun next() = throw NoSuchElementException()
-			override fun nextIndex() = 0
-			override fun previous() = throw NoSuchElementException()
-			override fun previousIndex() = -1
-		}
-
-		override fun listIterator(index: Int) = listIterator()
-
-		override fun subList(fromIndex: Int, toIndex: Int) =
-			if (fromIndex == 0 && toIndex == 0) this
-			else throw IndexOutOfBoundsException("Empty list cannot be split")
 	}
 
 	class NonEmpty<out A> private constructor(
 		override val head: A,
 		override val tail: List<A>,
 	): ListU<A>(),
-	   NonEmptyIterable<A> {
+	   NonEmptyIterable<A>,
+	   List<A> {
 		@Deprecated("Non empty list is never empty", replaceWith = ReplaceWith("false"))
 		override fun isEmpty(): Boolean = false
 
@@ -138,13 +123,16 @@ internal sealed class ListU<out A>
 
 		fun asSequence() = NonEmptySequence { iterator() }
 
-		override fun listIterator(): ListIterator<Nothing> {
-			TODO("Not yet implemented")
+		override fun listIterator(): ListIterator<A> = LambdaListIterator(size) { get(it) }
+		override fun listIterator(index: Int): ListIterator<A> = LambdaListIterator(size, index) { get(it) }
+
+		override fun equals(other: Any?): Boolean {
+			if (this === other) return true
+			if (!(other is List<*>)) return false
+			return listEquals(this, other)
 		}
 
-		override fun listIterator(index: Int): ListIterator<Nothing> {
-			TODO("Not yet implemented")
-		}
+		override fun hashCode() = head.hashCode() + tail.hashCode()
 
 		companion object {
 			fun <T> just(item: T) = of(item, emptyList())
@@ -159,6 +147,7 @@ internal sealed class ListU<out A>
 	inline fun <B> flatMap(f: (A) -> List<B>) =
 		(this as List<A>).flatMap(f).u()
 
+	@Suppress("USELESS_CAST")
 	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
 		when (this) {
 			is Empty -> initialValue

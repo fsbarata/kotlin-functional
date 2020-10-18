@@ -2,6 +2,10 @@ package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.test.MonadTest
+import com.fsbarata.utils.iterators.flatten
+import com.fsbarata.utils.iterators.max
+import com.fsbarata.utils.iterators.min
+import com.fsbarata.utils.iterators.runningReduceNel
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger
