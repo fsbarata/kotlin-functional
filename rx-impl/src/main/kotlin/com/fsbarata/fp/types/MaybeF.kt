@@ -1,7 +1,6 @@
 package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.MaybeObserver
@@ -21,7 +20,7 @@ class MaybeF<A>(
 	override fun <B> map(f: (A) -> B) =
 		wrapped.map(f).f()
 
-	override fun <B> bind(f: (A) -> Functor<MaybeF<*>, B>): MaybeF<B> =
+	override fun <B> bind(f: (A) -> Context<MaybeF<*>, B>): MaybeF<B> =
 		flatMap { f(it).asMaybe }
 
 	fun <B> flatMap(f: (A) -> Maybe<B>): MaybeF<B> =

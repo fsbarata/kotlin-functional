@@ -1,6 +1,8 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.*
+import com.fsbarata.fp.concepts.Context
+import com.fsbarata.fp.concepts.Foldable
+import com.fsbarata.fp.concepts.Monad
 import java.io.Serializable
 
 class NonEmptyList<out A> private constructor(
@@ -54,7 +56,7 @@ class NonEmptyList<out A> private constructor(
 
 	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
 
-	override fun <B> bind(f: (A) -> Functor<NonEmptyList<*>, B>): NonEmptyList<B> =
+	override fun <B> bind(f: (A) -> Context<NonEmptyList<*>, B>): NonEmptyList<B> =
 		flatMap { f(it).asNel }
 
 	inline fun <B> flatMap(f: (A) -> NonEmptyList<B>): NonEmptyList<B> = map(f).flatten()

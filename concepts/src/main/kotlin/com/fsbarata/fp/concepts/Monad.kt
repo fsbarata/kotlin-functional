@@ -3,7 +3,7 @@ package com.fsbarata.fp.concepts
 interface Monad<C, out A>: Applicative<C, A> {
 	override val scope: Scope<C>
 
-	fun <B> bind(f: (A) -> Functor<C, B>): Monad<C, B>
+	fun <B> bind(f: (A) -> Context<C, B>): Monad<C, B>
 
 	override fun <B> map(f: (A) -> B): Monad<C, B> = ap(scope.just(f))
 

@@ -1,7 +1,6 @@
 package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
 import java.io.Serializable
 
@@ -23,7 +22,7 @@ sealed class Either<out E, out A>: Monad<Either<Nothing, *>, A>, Serializable {
 		is Right -> ifRight(value)
 	}
 
-	override fun <B> bind(f: (A) -> Functor<Either<Nothing, *>, B>): Either<E, B> =
+	override fun <B> bind(f: (A) -> Context<Either<Nothing, *>, B>): Either<E, B> =
 		flatMap { f(it).asEither }
 
 	fun orNull() = fold({ null }, { it })

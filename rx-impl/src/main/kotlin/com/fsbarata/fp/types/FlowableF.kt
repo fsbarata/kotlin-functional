@@ -1,6 +1,9 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.*
+import com.fsbarata.fp.concepts.Context
+import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.Monoid
+import com.fsbarata.fp.concepts.Semigroup
 import io.reactivex.rxjava3.core.Flowable
 import org.reactivestreams.Subscriber
 
@@ -17,7 +20,7 @@ class FlowableF<A>(
 	override fun <B> map(f: (A) -> B) =
 		wrapped.map(f).f()
 
-	override fun <B> bind(f: (A) -> Functor<FlowableF<*>, B>): FlowableF<B> =
+	override fun <B> bind(f: (A) -> Context<FlowableF<*>, B>): FlowableF<B> =
 		flatMap { f(it).asFlowable }
 
 	fun <B> flatMap(f: (A) -> Flowable<B>): FlowableF<B> =

@@ -13,7 +13,7 @@ class Reader<D, out A>(val run: (D) -> A): Monad<Reader<D, *>, A> {
 	override fun <B> ap(ff: Functor<Reader<D, *>, (A) -> B>): Reader<D, B> =
 		Reader { d -> ff.map { it(run(d)) }.asReader.run(d) }
 
-	override fun <B> bind(f: (A) -> Functor<Reader<D, *>, B>): Reader<D, B> =
+	override fun <B> bind(f: (A) -> Context<Reader<D, *>, B>): Reader<D, B> =
 		flatMap { f(it).asReader }
 
 	fun <B> flatMap(f: (A) -> Reader<in D, B>) =

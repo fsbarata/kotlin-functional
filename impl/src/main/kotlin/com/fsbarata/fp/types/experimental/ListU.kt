@@ -1,6 +1,8 @@
 package com.fsbarata.fp.types.experimental
 
-import com.fsbarata.fp.concepts.*
+import com.fsbarata.fp.concepts.Context
+import com.fsbarata.fp.concepts.Foldable
+import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.types.*
 import java.io.Serializable
 
@@ -32,7 +34,7 @@ internal sealed class ListU<out A>
 
 		@Deprecated("Empty list does not contain anything", replaceWith = ReplaceWith("Nothing"))
 		override fun get(index: Int): Nothing = throw ArrayIndexOutOfBoundsException(index)
-		override fun <B> bind(f: (Nothing) -> Functor<ListU<*>, B>) = this
+		override fun <B> bind(f: (Nothing) -> Context<ListU<*>, B>) = this
 
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("-1"))
 		override fun indexOf(element: Nothing): Int = -1
@@ -151,7 +153,7 @@ internal sealed class ListU<out A>
 		}
 	}
 
-	override fun <B> bind(f: (A) -> Functor<ListU<*>, B>) =
+	override fun <B> bind(f: (A) -> Context<ListU<*>, B>) =
 		flatMap { f(it).asList }
 
 	inline fun <B> flatMap(f: (A) -> List<B>) =

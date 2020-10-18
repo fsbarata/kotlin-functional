@@ -1,6 +1,9 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.*
+import com.fsbarata.fp.concepts.Context
+import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.Monoid
+import com.fsbarata.fp.concepts.Semigroup
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableSource
 import io.reactivex.rxjava3.core.Observer
@@ -19,7 +22,7 @@ class ObservableF<A>(
 	override fun <B> map(f: (A) -> B) =
 		wrapped.map(f).f()
 
-	override fun <B> bind(f: (A) -> Functor<ObservableF<*>, B>): ObservableF<B> =
+	override fun <B> bind(f: (A) -> Context<ObservableF<*>, B>): ObservableF<B> =
 		flatMap { f(it).asObservable }
 
 	fun <B> flatMap(f: (A) -> Observable<B>): ObservableF<B> =

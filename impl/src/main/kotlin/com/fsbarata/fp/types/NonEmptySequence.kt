@@ -1,6 +1,8 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.*
+import com.fsbarata.fp.concepts.Context
+import com.fsbarata.fp.concepts.Foldable
+import com.fsbarata.fp.concepts.Monad
 
 interface NonEmptySequence<out A>:
 	Sequence<A>,
@@ -32,7 +34,7 @@ interface NonEmptySequence<out A>:
 		}
 	}
 
-	override fun <B> bind(f: (A) -> Functor<NonEmptySequence<*>, B>) =
+	override fun <B> bind(f: (A) -> Context<NonEmptySequence<*>, B>) =
 		flatMap { f(it).asNes }
 
 	fun <B> flatMap(f: (A) -> NonEmptySequence<B>) = NonEmptySequence {

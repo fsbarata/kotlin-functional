@@ -1,8 +1,6 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.Applicative
 import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
 
 class State<S, A>(
@@ -16,7 +14,7 @@ class State<S, A>(
 			Pair(newState, f(value))
 		}
 
-	override fun <B> bind(f: (A) -> Functor<State<S, *>, B>): State<S, B> =
+	override fun <B> bind(f: (A) -> Context<State<S, *>, B>): State<S, B> =
 		State { s ->
 			val (newState, value) = runState(s)
 			f(value).asState.runState(newState)

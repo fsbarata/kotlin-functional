@@ -20,7 +20,7 @@ data class ListF<A>(
 	override fun <B> ap(ff: Functor<ListF<*>, (A) -> B>): ListF<B> =
 		bind { item -> ff.map { it(item) } }
 
-	override fun <B> bind(f: (A) -> Functor<ListF<*>, B>) =
+	override fun <B> bind(f: (A) -> Context<ListF<*>, B>) =
 		flatMap { f(it).asList }
 
 	inline fun <B> flatMap(f: (A) -> List<B>) =

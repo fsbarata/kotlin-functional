@@ -2,7 +2,6 @@ package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Foldable
-import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
 import java.io.Serializable
 
@@ -23,7 +22,7 @@ sealed class Optional<out A>:
 	override fun <B> map(f: (A) -> B) =
 		flatMap { just(f(it)) }
 
-	override fun <B> bind(f: (A) -> Functor<Optional<*>, B>) =
+	override fun <B> bind(f: (A) -> Context<Optional<*>, B>) =
 		flatMap { f(it).asOptional }
 
 	inline fun <B> flatMap(f: (A) -> Optional<B>): Optional<B> =
