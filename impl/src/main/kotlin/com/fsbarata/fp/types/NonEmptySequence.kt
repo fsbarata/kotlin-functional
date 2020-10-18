@@ -3,6 +3,7 @@ package com.fsbarata.fp.types
 import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Foldable
 import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.utils.iterators.EmptyIterator
 import com.fsbarata.utils.iterators.NonEmptyIterator
 import com.fsbarata.utils.iterators.toNel
 
@@ -50,18 +51,11 @@ interface NonEmptySequence<out A>:
 	}
 
 	companion object: Monad.Scope<NonEmptySequence<*>> {
-		override fun <A> just(a: A) = NonEmptySequence { NonEmptyIterator(a, EmptyIterator()) }
+		override fun <A> just(a: A) = NonEmptySequence { NonEmptyIterator(a, EmptyIterator) }
 	}
 }
 
 val <A> Context<NonEmptySequence<*>, A>.asNes get() = this as NonEmptySequence<A>
-
-private class EmptyIterator<A>: Iterator<A> {
-	override fun hasNext(): Boolean = false
-
-	override fun next(): A = throw NoSuchElementException()
-
-}
 
 inline fun <A> NonEmptySequence(crossinline iterator: () -> NonEmptyIterator<A>): NonEmptySequence<A> =
 	object: NonEmptySequence<A> {

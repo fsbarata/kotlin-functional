@@ -45,6 +45,8 @@ internal sealed class ListU<out A>
 
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("-1"))
 		override fun lastIndexOf(element: Nothing): Int = -1
+
+		override fun iterator() = EmptyIterator
 	}
 
 	class NonEmpty<out A> private constructor(
