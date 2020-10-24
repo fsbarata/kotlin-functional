@@ -155,15 +155,6 @@ class NonEmptyListTest: MonadTest<NonEmptyList<*>>(NonEmptyList) {
 	}
 
 	@Test
-	fun concatNel() {
-		assertEquals(NonEmptyList.of(9, 3), listOf(9).concatNel(3))
-		assertEquals(NonEmptyList.of(5, 1, 3, 3), listOf(5, 1, 3).concatNel(3))
-		assertEquals(NonEmptyList.of(5, 1, 3, 3), listOf(5, 1).concatNel(NonEmptyList.of(3, 3)))
-		assertEquals(NonEmptyList.just(5), emptyList<Int>().concatNel(5))
-		assertEquals(NonEmptyList.just(5), emptyList<Int>().concatNel(NonEmptyList.just(5)))
-	}
-
-	@Test
 	fun reversed() {
 		assertEquals(nel1, nel1.reversed())
 		assertEquals(NonEmptyList.of(3, 1, 5), nel2.reversed())
@@ -244,12 +235,5 @@ class NonEmptyListTest: MonadTest<NonEmptyList<*>>(NonEmptyList) {
 		assertEquals(NonEmptyList.just(9), nel1.runningReduceNel { acc, i -> acc + i - 2 })
 		assertEquals(NonEmptyList.of(5, 4, 5), nel2.runningReduceNel { acc, i -> acc + i - 2 })
 		assertEquals(NonEmptyList.of(2, 4, 4, 7), nel3.runningReduceNel { acc, i -> acc + i - 2 })
-	}
-
-	@Test
-	fun scanNel() {
-		assertEquals(NonEmptyList.of(-4, 3), nel1.scanNel(-4) { acc, i -> acc + i - 2 })
-		assertEquals(NonEmptyList.of(-4, -1, -2, -1), nel2.scanNel(-4) { acc, i -> acc + i - 2 })
-		assertEquals(NonEmptyList.of(-4, -4, -2, -2, 1), nel3.scanNel(-4) { acc, i -> acc + i - 2 })
 	}
 }

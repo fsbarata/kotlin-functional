@@ -1,8 +1,8 @@
 package com.fsbarata.utils.iterators
 
 import com.fsbarata.fp.concepts.Foldable
+import com.fsbarata.fp.kotlin.scanNel
 import com.fsbarata.fp.types.NonEmptyList
-import com.fsbarata.fp.types.scanNel
 
 interface NonEmptyIterable<out A>:
 	Iterable<A>,
