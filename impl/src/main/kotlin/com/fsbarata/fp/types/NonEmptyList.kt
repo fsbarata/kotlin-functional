@@ -5,6 +5,7 @@ import com.fsbarata.fp.concepts.Foldable
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.utils.iterators.*
 import java.io.Serializable
+import kotlin.random.Random
 
 /**
  * A NonEmpty list.
@@ -38,6 +39,12 @@ class NonEmptyList<out A> private constructor(
 
 	@Deprecated("Non empty list always has a last", replaceWith = ReplaceWith("last()"))
 	fun lastOrNull(): Nothing = throw UnsupportedOperationException()
+
+	@Deprecated("Non empty list always has a random", replaceWith = ReplaceWith("random()"))
+	fun randomOrNull(): Nothing = throw UnsupportedOperationException()
+
+	@Deprecated("Non empty list always has a random", replaceWith = ReplaceWith("random()"))
+	fun randomOrNull(random: Random): Nothing = throw UnsupportedOperationException()
 
 	override fun contains(element: @UnsafeVariance A) = head == element || tail.contains(element)
 	override fun containsAll(elements: Collection<@UnsafeVariance A>) = elements.all(this::contains)
@@ -124,14 +131,6 @@ fun <A> Iterable<A>.toNel(): NonEmptyList<A>? {
 	}
 }
 
-fun <A> List<A>.concatNel(item: A) =
-	nonEmpty()?.plus(item) ?: NonEmptyList.just(item)
+operator fun <A> Iterable<A>.plus(other: NonEmptyList<A>) =
+	toNel()?.plus(other) ?: other
 
-fun <A> List<A>.concatNel(other: NonEmptyList<A>) = this + other
-operator fun <A> List<A>.plus(other: NonEmptyList<A>) =
-	nonEmpty()?.plus(other) ?: other
-
-fun <T, R> Iterable<T>.scanNel(initialValue: R, operation: (R, T) -> R) = NonEmptyList.of(
-	initialValue,
-	scan(initialValue, operation).drop(1)
-)
