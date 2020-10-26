@@ -5,7 +5,8 @@ import com.fsbarata.fp.concepts.test.MonadTest
 import org.junit.Assert.*
 import org.junit.Test
 
-class OptionalTest: MonadTest<Optional<*>>(Optional) {
+class OptionalTest: MonadTest<Optional<*>> {
+	override val monadScope = Optional
 	override fun Monad<Optional<*>, Int>.equalTo(other: Monad<Optional<*>, Int>): Boolean =
 		asOptional == other.asOptional
 

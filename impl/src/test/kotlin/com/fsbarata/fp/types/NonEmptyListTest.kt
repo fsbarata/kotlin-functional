@@ -10,7 +10,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger
 
-class NonEmptyListTest: MonadTest<NonEmptyList<*>>(NonEmptyList) {
+class NonEmptyListTest: MonadTest<NonEmptyList<*>> {
+	override val monadScope = NonEmptyList
 	override fun Monad<NonEmptyList<*>, Int>.equalTo(other: Monad<NonEmptyList<*>, Int>): Boolean =
 		asNel == other.asNel
 

@@ -4,12 +4,11 @@ import com.fsbarata.fp.concepts.Monad
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-abstract class MonadTest<C>(
-	private val monadScope: Monad.Scope<C>,
-) {
-	private val monad get() = monadScope.just(5)
+interface MonadTest<C> {
+	val monadScope: Monad.Scope<C>
+	fun Monad<C, Int>.equalTo(other: Monad<C, Int>): Boolean
 
-	abstract fun Monad<C, Int>.equalTo(other: Monad<C, Int>): Boolean
+	private val monad get() = monadScope.just(5)
 
 	private fun Monad<C, Int>.multiply(
 		x: Int,
