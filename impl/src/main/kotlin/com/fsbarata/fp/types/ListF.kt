@@ -4,11 +4,13 @@ import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Foldable
 import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.monad.MonadZip
 import java.io.Serializable
 
 data class ListF<A>(
 	private val wrapped: List<A>,
 ): Monad<ListF<*>, A>,
+   MonadZip<ListF<*>, A>,
    Foldable<A>,
    List<A> by wrapped,
    Serializable {
@@ -28,6 +30,9 @@ data class ListF<A>(
 
 	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
 		wrapped.fold(initialValue, accumulator)
+
+	override fun <B, R> zipWith(other: MonadZip<ListF<*>, B>, f: (A, B) -> R): ListF<R> =
+		zip(other.asList, f).f()
 
 	companion object: Monad.Scope<ListF<*>> {
 		fun <A> empty() = emptyList<A>().f()

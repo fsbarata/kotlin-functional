@@ -2,11 +2,12 @@ package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.test.MonadTest
+import com.fsbarata.fp.concepts.test.MonadZipTest
 import com.fsbarata.utils.iterators.NonEmptyIterator
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class NonEmptySequenceKtTest: MonadTest<NonEmptySequence<*>> {
+class NonEmptySequenceKtTest: MonadTest<NonEmptySequence<*>>, MonadZipTest<NonEmptySequence<*>> {
 	override val monadScope = NonEmptySequence
 	override fun Monad<NonEmptySequence<*>, Int>.equalTo(other: Monad<NonEmptySequence<*>, Int>): Boolean =
 		asNes.toList() == other.asNes.toList()

@@ -2,6 +2,7 @@ package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.test.MonadTest
+import com.fsbarata.fp.concepts.test.MonadZipTest
 import com.fsbarata.utils.iterators.flatten
 import com.fsbarata.utils.iterators.max
 import com.fsbarata.utils.iterators.min
@@ -10,7 +11,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger
 
-class NonEmptyListTest: MonadTest<NonEmptyList<*>> {
+class NonEmptyListTest: MonadTest<NonEmptyList<*>>, MonadZipTest<NonEmptyList<*>> {
 	override val monadScope = NonEmptyList
 	override fun Monad<NonEmptyList<*>, Int>.equalTo(other: Monad<NonEmptyList<*>, Int>): Boolean =
 		asNel == other.asNel

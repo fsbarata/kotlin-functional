@@ -3,6 +3,7 @@ package com.fsbarata.fp.types
 import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Foldable
 import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.monad.MonadZip
 import com.fsbarata.utils.iterators.*
 import java.io.Serializable
 import kotlin.random.Random
@@ -17,6 +18,7 @@ class NonEmptyList<out A> private constructor(
 	override val tail: List<A>,
 ): List<A>,
    Monad<NonEmptyList<*>, A>,
+   MonadZip<NonEmptyList<*>, A>,
    Foldable<A>,
    NonEmptyIterable<A>,
    Serializable {
@@ -77,6 +79,11 @@ class NonEmptyList<out A> private constructor(
 
 	operator fun plus(other: @UnsafeVariance A) = NonEmptyList(head, tail + other)
 	operator fun plus(other: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + other)
+
+	override fun <B, R> zipWith(other: MonadZip<NonEmptyList<*>, B>, f: (A, B) -> R): NonEmptyList<R> {
+		val otherNel = other.asNel
+		return of(f(head, otherNel.head), tail.zip(otherNel.tail, f))
+	}
 
 	fun reversed() = tail.asReversed().nonEmpty()?.plus(head) ?: this
 

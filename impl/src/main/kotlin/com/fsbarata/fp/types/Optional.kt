@@ -3,6 +3,7 @@ package com.fsbarata.fp.types
 import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Foldable
 import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.monad.MonadZip
 import java.io.Serializable
 
 /**
@@ -12,6 +13,7 @@ import java.io.Serializable
  */
 sealed class Optional<out A>:
 	Monad<Optional<*>, A>,
+	MonadZip<Optional<*>, A>,
 	Foldable<A>,
 	Serializable {
 	override val scope get() = Companion
@@ -39,6 +41,10 @@ sealed class Optional<out A>:
 
 	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R {
 		return fold(ifEmpty = { initialValue }, ifSome = { accumulator(initialValue, it) })
+	}
+
+	override fun <B, R> zipWith(other: MonadZip<Optional<*>, B>, f: (A, B) -> R): Optional<R> {
+		return flatMap { a -> other.asOptional.map { b -> f(a, b) } }
 	}
 
 	companion object: Monad.Scope<Optional<*>> {

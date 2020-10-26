@@ -15,3 +15,4 @@ interface Monad<C, out A>: Applicative<C, A> {
 	}
 }
 
+fun <A, B, C> liftM(f: (A) -> B): (Monad<C, A>) -> Monad<C, B> = { it.map(f) }

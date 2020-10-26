@@ -3,6 +3,7 @@ package com.fsbarata.fp.types
 import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Foldable
 import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.monad.MonadZip
 import com.fsbarata.utils.iterators.EmptyIterator
 import com.fsbarata.utils.iterators.NonEmptyIterator
 import com.fsbarata.utils.iterators.toNel
@@ -15,6 +16,7 @@ import com.fsbarata.utils.iterators.toNel
 interface NonEmptySequence<out A>:
 	Sequence<A>,
 	Monad<NonEmptySequence<*>, A>,
+	MonadZip<NonEmptySequence<*>, A>,
 	Foldable<A> {
 	override val scope get() = Companion
 
@@ -33,26 +35,36 @@ interface NonEmptySequence<out A>:
 
 	fun toList(): NonEmptyList<A> = iterator().toNel()
 
-	override fun <B> map(f: (A) -> B) = NonEmptySequence {
-		iterator().let {
+	override fun <B, R> zipWith(other: MonadZip<NonEmptySequence<*>, B>, f: (A, B) -> R): NonEmptySequence<R> {
+		val otherNes = other.asNes
+		return NonEmptySequence {
+			val iterator1 = iterator()
+			val iterator2 = otherNes.iterator()
 			NonEmptyIterator(
-				f(it.head),
-				it.tail.asSequence().map(f).iterator()
+				f(iterator1.head, iterator2.head),
+				iterator1.tail.asSequence().zip(iterator2.asSequence(), f).iterator()
 			)
 		}
+	}
+
+	override fun <B> map(f: (A) -> B) = NonEmptySequence {
+		val iterator = iterator()
+		NonEmptyIterator(
+			f(iterator.head),
+			iterator.tail.asSequence().map(f).iterator()
+		)
 	}
 
 	override fun <B> bind(f: (A) -> Context<NonEmptySequence<*>, B>) =
 		flatMap { f(it).asNes }
 
 	fun <B> flatMap(f: (A) -> NonEmptySequence<B>) = NonEmptySequence {
-		iterator().let {
-			val headIterator = f(it.head).asNes.iterator()
-			NonEmptyIterator(
-				headIterator.head,
-				(Sequence { headIterator.tail } + Sequence { it.tail }.flatMap(f)).iterator()
-			)
-		}
+		val iterator = iterator()
+		val headIterator = f(iterator.head).asNes.iterator()
+		NonEmptyIterator(
+			headIterator.head,
+			(headIterator.tail.asSequence() + iterator.tail.asSequence().flatMap(f)).iterator()
+		)
 	}
 
 	companion object: Monad.Scope<NonEmptySequence<*>> {

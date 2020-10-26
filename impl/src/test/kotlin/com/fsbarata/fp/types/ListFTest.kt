@@ -4,7 +4,7 @@ import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.test.MonadTest
 import com.fsbarata.fp.concepts.test.MonadZipTest
 
-class ListFTest: MonadTest<ListF<*>> {
+class ListFTest: MonadTest<ListF<*>>, MonadZipTest<ListF<*>> {
 	override val monadScope = ListF
 	override fun Monad<ListF<*>, Int>.equalTo(other: Monad<ListF<*>, Int>) =
 		asList == other.asList

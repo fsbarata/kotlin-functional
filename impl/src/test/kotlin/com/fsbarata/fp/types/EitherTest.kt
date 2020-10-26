@@ -5,7 +5,8 @@ import com.fsbarata.fp.concepts.test.MonadTest
 import org.junit.Assert.*
 import org.junit.Test
 
-class EitherTest: MonadTest<Either<Nothing, *>>(Either) {
+class EitherTest: MonadTest<Either<Nothing, *>> {
+	override val monadScope = Either
 	override fun Monad<Either<Nothing, *>, Int>.equalTo(other: Monad<Either<Nothing, *>, Int>): Boolean =
 		asEither == other.asEither
 
