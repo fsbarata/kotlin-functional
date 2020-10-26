@@ -25,8 +25,8 @@ interface MonadZipTest<C> {
 				.invoke(zip(monad1, monad2))
 				.map { (a, b) -> f3(a, b) }
 		val r2 =
-			zip(liftM<Int, Int, C>(f1)(monad1) as MonadZip<C, Int>,
-				liftM<Int, Int, C>(f2)(monad2) as MonadZip<C, Int>,
+			zip(monad1.map(f1) as MonadZip<C, Int>,
+				monad2.map(f2) as MonadZip<C, Int>,
 				f3)
 		assertTrue("$r1 should be the same as $r2", r1.equalTo(r2))
 	}
