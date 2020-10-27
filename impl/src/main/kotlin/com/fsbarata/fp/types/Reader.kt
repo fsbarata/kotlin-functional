@@ -1,7 +1,7 @@
 package com.fsbarata.fp.types
 
+import com.fsbarata.fp.concepts.Applicative
 import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Monad
 
 /**
@@ -15,7 +15,7 @@ class Reader<D, out A>(val run: (D) -> A): Monad<Reader<D, *>, A> {
 	override fun <B> map(f: (A) -> B): Reader<D, B> =
 		Reader { f(run(it)) }
 
-	override fun <B> ap(ff: Functor<Reader<D, *>, (A) -> B>): Reader<D, B> =
+	override fun <B> ap(ff: Applicative<Reader<D, *>, (A) -> B>): Reader<D, B> =
 		Reader { d -> ff.map { it(run(d)) }.asReader.run(d) }
 
 	override fun <B> bind(f: (A) -> Context<Reader<D, *>, B>): Reader<D, B> =

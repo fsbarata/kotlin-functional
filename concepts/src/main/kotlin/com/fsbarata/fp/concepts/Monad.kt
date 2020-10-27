@@ -7,7 +7,7 @@ interface Monad<C, out A>: Applicative<C, A> {
 
 	override fun <B> map(f: (A) -> B): Monad<C, B> = ap(scope.just(f))
 
-	override fun <B> ap(ff: Functor<C, (A) -> B>): Monad<C, B> =
+	override fun <B> ap(ff: Applicative<C, (A) -> B>): Monad<C, B> =
 		bind { a -> ff.map { it(a) } }
 
 	interface Scope<C>: Applicative.Scope<C> {

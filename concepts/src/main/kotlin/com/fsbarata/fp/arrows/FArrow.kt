@@ -2,8 +2,8 @@ package com.fsbarata.fp.arrows
 
 import com.fsbarata.fp.concepts.Arrow
 import com.fsbarata.fp.concepts.Category
-
-typealias F1<B, C> = (B) -> C
+import com.fsbarata.fp.concepts.F1
+import com.fsbarata.fp.concepts.compose
 
 interface FArrow<B, C>: F1<B, C>, Arrow<FArrow<*, *>, B, C> {
 	override val scope get() = Companion
@@ -33,12 +33,6 @@ fun <B, C> Arrow(f: (B) -> C): FArrow<B, C> = object: FArrow<B, C>, (B) -> C by 
 fun <B, C> Category<FArrow<*, *>, B, C>.asFArrow() =
 	this as FArrow<B, C>
 
-
-inline infix fun <B, C, D> F1<B, C>.compose(crossinline other: F1<C, D>): F1<B, D> =
-	{ other(this.invoke(it)) }
-
-inline infix fun <B, C, D> F1<C, D>.composeRight(crossinline other: F1<B, C>): F1<B, D> =
-	{ invoke(other(it)) }
 
 fun <B, C, D> F1<B, C>.first(): F1<Pair<B, D>, Pair<C, D>> =
 	{ Pair(invoke(it.first), it.second) }

@@ -1,12 +1,17 @@
 package com.fsbarata.fp.concepts.test
 
+import com.fsbarata.fp.concepts.Applicative
 import com.fsbarata.fp.concepts.Monad
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-interface MonadTest<C> {
+interface MonadTest<C>: ApplicativeTest<C> {
 	val monadScope: Monad.Scope<C>
 	fun Monad<C, Int>.equalTo(other: Monad<C, Int>): Boolean
+
+	override val applicativeScope: Applicative.Scope<C> get() = monadScope
+	override fun Applicative<C, Int>.equalTo(other: Applicative<C, Int>): Boolean =
+		(this as Monad<C, Int>).equalTo(other as Monad<C, Int>)
 
 	private val monad get() = monadScope.just(5)
 
