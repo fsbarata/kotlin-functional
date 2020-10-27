@@ -1,5 +1,6 @@
 package com.fsbarata.fp.concepts.test
 
+import com.fsbarata.fp.arrows.split
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.liftM
 import com.fsbarata.fp.monad.MonadZip
@@ -21,7 +22,7 @@ interface MonadZipTest<C> {
 		val f2 = { a: Int -> a + 2 }
 		val f3 = { a: Int, b: Int -> a / b }
 		val r1 =
-			liftM<Pair<Int, Int>, Pair<Int, Int>, C> { (a, b) -> Pair(f1(a), f2(b)) }
+			liftM<C>()(f1 split f2)
 				.invoke(zip(monad1, monad2))
 				.map { (a, b) -> f3(a, b) }
 		val r2 =
