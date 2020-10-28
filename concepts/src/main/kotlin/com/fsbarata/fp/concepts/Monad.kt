@@ -15,8 +15,8 @@ interface Monad<C, out A>: Applicative<C, A> {
 	}
 }
 
-fun <C> liftM(): LiftM<C> = object : LiftM<C> {}
+fun <C> liftM() = LiftM<C>()
 
-interface LiftM<C> {
+class LiftM<C> {
 	operator fun <A, B> invoke(f: (A) -> B): (Monad<C, A>) -> Monad<C, B> = { it.map(f) }
 }
