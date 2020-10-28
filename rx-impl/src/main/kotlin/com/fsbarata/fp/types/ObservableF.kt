@@ -4,6 +4,7 @@ import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.Monoid
 import com.fsbarata.fp.concepts.Semigroup
+import com.fsbarata.fp.monad.MonadZip
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableSource
 import io.reactivex.rxjava3.core.Observer
@@ -12,6 +13,7 @@ class ObservableF<A>(
 	private val wrapped: Observable<A>,
 ): Observable<A>(),
    Monad<ObservableF<*>, A>,
+   MonadZip<ObservableF<*>, A>,
    ObservableSource<A> {
 	override val scope get() = Companion
 
@@ -32,6 +34,9 @@ class ObservableF<A>(
 	fun fold(monoid: Monoid<A>) = with(monoid) { reduce(empty) { a1, a2 -> a1.combine(a2) } }.f()
 	fun scan(semigroup: Semigroup<A>) = with(semigroup) { scan { a1, a2 -> a1.combine(a2) } }.f()
 	fun scan(monoid: Monoid<A>) = with(monoid) { scan(empty) { a1, a2 -> a1.combine(a2) } }.f()
+
+	override fun <B, R> zipWith(other: MonadZip<ObservableF<*>, B>, f: (A, B) -> R) =
+		(this as Observable<A>).zipWith(other.asObservable, f).f()
 
 	companion object: Monad.Scope<ObservableF<*>> {
 		fun <A> empty() = Observable.empty<A>().f()
