@@ -5,7 +5,7 @@ import org.junit.Test
 
 interface ApplicativeTest<C>: FunctorTest<C> {
 	val applicativeScope: Applicative.Scope<C>
-	override fun createFunctor(a: Int): Applicative<C, Int> {
+	override fun <A> createFunctor(a: A): Applicative<C, A> {
 		return applicativeScope.just(a)
 	}
 
@@ -21,7 +21,7 @@ interface ApplicativeTest<C>: FunctorTest<C> {
 	}
 
 	@Test
-	fun composition() {
+	fun `ap composition`() {
 		val u = applicativeScope.just { a: Int -> a * 2 }
 		val v = applicativeScope.just { a: Int -> a + 2 }
 		val w = applicativeScope.just(5)
