@@ -4,13 +4,17 @@ import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.Monoid
 import com.fsbarata.fp.concepts.Semigroup
+import com.fsbarata.fp.monad.MonadZip
 import io.reactivex.rxjava3.core.Flowable
+import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 
 class FlowableF<A>(
 	private val wrapped: Flowable<A>,
 ): Flowable<A>(),
-   Monad<FlowableF<*>, A> {
+   Monad<FlowableF<*>, A>,
+   MonadZip<FlowableF<*>, A>,
+   Publisher<A> {
 	override val scope get() = Companion
 
 	override fun subscribeActual(observer: Subscriber<in A>) {
@@ -30,6 +34,9 @@ class FlowableF<A>(
 	fun fold(monoid: Monoid<A>) = with(monoid) { reduce(empty) { a1, a2 -> a1.combine(a2) } }.f()
 	fun scan(semigroup: Semigroup<A>) = with(semigroup) { scan { a1, a2 -> a1.combine(a2) } }.f()
 	fun scan(monoid: Monoid<A>) = with(monoid) { scan(empty) { a1, a2 -> a1.combine(a2) } }.f()
+
+	override fun <B, R> zipWith(other: MonadZip<FlowableF<*>, B>, f: (A, B) -> R) =
+		(this as Flowable<A>).zipWith(other.asFlowable, f).f()
 
 	companion object: Monad.Scope<FlowableF<*>> {
 		fun <A> empty() = Flowable.empty<A>().f()
