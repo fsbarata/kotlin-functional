@@ -1,6 +1,4 @@
-package com.fsbarata.fp.monad
-
-import com.fsbarata.fp.concepts.Monad
+package com.fsbarata.fp.concepts
 
 interface MonadZip<C, out A>: Monad<C, A> {
 	fun <B, R> zipWith(other: MonadZip<C, B>, f: (A, B) -> R): MonadZip<C, R>

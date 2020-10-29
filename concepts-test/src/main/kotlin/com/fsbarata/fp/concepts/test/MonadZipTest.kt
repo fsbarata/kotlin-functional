@@ -3,9 +3,9 @@ package com.fsbarata.fp.concepts.test
 import com.fsbarata.fp.arrows.split
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.liftM
-import com.fsbarata.fp.monad.MonadZip
-import com.fsbarata.fp.monad.unzip
-import com.fsbarata.fp.monad.zip
+import com.fsbarata.fp.concepts.MonadZip
+import com.fsbarata.fp.concepts.unzip
+import com.fsbarata.fp.concepts.zip
 import org.junit.Assert.assertTrue
 import org.junit.Test
 

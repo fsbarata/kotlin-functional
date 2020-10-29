@@ -4,7 +4,7 @@ import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.Monoid
 import com.fsbarata.fp.concepts.Semigroup
-import com.fsbarata.fp.monad.MonadZip
+import com.fsbarata.fp.concepts.MonadZip
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableSource
 import io.reactivex.rxjava3.core.Observer

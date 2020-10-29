@@ -2,7 +2,7 @@ package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Monad
-import com.fsbarata.fp.monad.MonadZip
+import com.fsbarata.fp.concepts.MonadZip
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleObserver
 import io.reactivex.rxjava3.core.SingleSource

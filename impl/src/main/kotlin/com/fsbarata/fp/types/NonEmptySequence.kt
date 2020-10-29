@@ -3,7 +3,7 @@ package com.fsbarata.fp.types
 import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Foldable
 import com.fsbarata.fp.concepts.Monad
-import com.fsbarata.fp.monad.MonadZip
+import com.fsbarata.fp.concepts.MonadZip
 import com.fsbarata.utils.iterators.EmptyIterator
 import com.fsbarata.utils.iterators.NonEmptyIterator
 import com.fsbarata.utils.iterators.toNel
