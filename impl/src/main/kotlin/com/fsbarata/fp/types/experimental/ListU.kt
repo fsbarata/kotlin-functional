@@ -3,23 +3,22 @@ package com.fsbarata.fp.types.experimental
 import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Foldable
 import com.fsbarata.fp.concepts.Monad
-import com.fsbarata.fp.types.NonEmptyList
+import com.fsbarata.fp.concepts.MonadZip
 import com.fsbarata.fp.types.NonEmptySequence
 import com.fsbarata.fp.types.nonEmpty
 import com.fsbarata.utils.iterators.*
 import java.io.Serializable
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * List union (sealed) that provides a full definition of a List such as:
  * List = Empty | NonEmpty
  *
  */
-internal sealed class ListU<out A>
-	: Monad<ListU<*>, A>,
-	  Foldable<A>,
-	  List<A>,
-	  Serializable {
-	override val scope get() = Companion
+internal sealed class ListU<out A>: List<A>,
+	Foldable<A>,
+	Serializable {
 
 	object Empty: ListU<Nothing>(), List<Nothing> by emptyList() {
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("true"))
@@ -44,9 +43,6 @@ internal sealed class ListU<out A>
 		override fun get(index: Int): Nothing = throw ArrayIndexOutOfBoundsException(index)
 
 		@Deprecated("Empty list flattens to empty", replaceWith = ReplaceWith("ListU.Empty"))
-		override fun <B> bind(f: (Nothing) -> Context<ListU<*>, B>) = this
-
-		@Deprecated("Empty list flattens to empty", replaceWith = ReplaceWith("ListU.Empty"))
 		inline fun flatMapIterable(f: (Nothing) -> Iterable<Nothing>) = this
 
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("-1"))
@@ -55,7 +51,10 @@ internal sealed class ListU<out A>
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("-1"))
 		override fun lastIndexOf(element: Nothing): Int = -1
 
-		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("EmptyIterator", "com.fsbarata.utils.iterators.EmptyIterator"))
+		@Deprecated(
+			"Empty list is always empty",
+			replaceWith = ReplaceWith("EmptyIterator", "com.fsbarata.utils.iterators.EmptyIterator")
+		)
 		override fun iterator() = EmptyIterator
 	}
 
@@ -63,8 +62,12 @@ internal sealed class ListU<out A>
 		override val head: A,
 		override val tail: List<A>,
 	): ListU<A>(),
-	   NonEmptyIterable<A>,
-	   List<A> {
+		Monad<NonEmpty<*>, A>,
+		MonadZip<NonEmpty<*>, A>,
+		NonEmptyIterable<A>,
+		List<A> {
+		override val scope get() = NonEmpty
+
 		@Deprecated("Non empty list is never empty", replaceWith = ReplaceWith("false"))
 		override fun isEmpty(): Boolean = false
 
@@ -108,7 +111,11 @@ internal sealed class ListU<out A>
 		override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
 			tail.fold(accumulator(initialValue, head), accumulator)
 
-		inline fun <B> flatMap(f: (A) -> NonEmptyList<B>): NonEmptyList<B> = map(f).flatten()
+		override fun <B> bind(f: (A) -> Context<NonEmpty<*>, B>) =
+			flatMap { f(it).asNel }
+
+		inline fun <B> flatMap(f: (A) -> NonEmpty<B>): NonEmpty<B> = map(f).flatten()
+			.let { of(it.head, it.tail) }
 
 		inline fun <B> flatMapIterable(f: (A) -> List<B>): List<B> = f(head) + tail.flatMap(f)
 
@@ -135,6 +142,11 @@ internal sealed class ListU<out A>
 
 		fun asSequence() = NonEmptySequence { iterator() }
 
+		override fun <B, R> zipWith(other: MonadZip<NonEmpty<*>, B>, f: (A, B) -> R): NonEmpty<R> {
+			val otherNel = other.asNel
+			return of(f(head, otherNel.head), tail.zip(otherNel.tail, f))
+		}
+
 		override fun listIterator(): ListIterator<A> = LambdaListIterator(size) { get(it) }
 		override fun listIterator(index: Int): ListIterator<A> = LambdaListIterator(size, index) { get(it) }
 
@@ -146,15 +158,12 @@ internal sealed class ListU<out A>
 
 		override fun hashCode() = head.hashCode() + tail.hashCode()
 
-		companion object {
-			fun <T> just(item: T) = of(item, emptyList())
+		companion object: Monad.Scope<NonEmpty<*>> {
+			override fun <A> just(a: A) = of(a, emptyList())
 			fun <T> of(head: T, vararg others: T) = of(head, others.toList())
 			fun <T> of(head: T, others: List<T>) = NonEmpty(head, others)
 		}
 	}
-
-	override fun <B> bind(f: (A) -> Context<ListU<*>, B>) =
-		flatMap { f(it).asList }
 
 	inline fun <B> flatMap(f: (A) -> List<B>) =
 		(this as List<A>).flatMap(f).u()
@@ -166,16 +175,25 @@ internal sealed class ListU<out A>
 			is NonEmpty -> (this as NonEmpty).fold(initialValue, accumulator)
 		}
 
-	companion object: Monad.Scope<ListU<*>> {
+	companion object {
 		fun <A> empty() = Empty
-		override fun <A> just(a: A) = NonEmpty.just(a)
 	}
+}
+
+@ExperimentalContracts
+internal fun <A> ListU<A>.isNotEmptyContract(): Boolean {
+	contract {
+		returns(true) implies (this@isNotEmptyContract is ListU.NonEmpty<A>)
+		returns(false) implies (this@isNotEmptyContract is ListU.Empty)
+	}
+
+	return isNotEmpty()
 }
 
 internal fun <A> List<A>.u() = toNel() ?: ListU.Empty
 
-internal val <A> Context<ListU<*>, A>.asList: ListU<A>
-	get() = this as ListU<A>
+internal val <A> Context<ListU.NonEmpty<*>, A>.asNel: ListU.NonEmpty<A>
+	get() = this as ListU.NonEmpty<A>
 
 
 internal fun <A> Iterable<A>.toNel(): ListU.NonEmpty<A>? {
