@@ -23,11 +23,21 @@ sealed class Validation<out E, out A>:
 		is Success -> Success(f(value))
 	}
 
-	fun toEither() = fold({ Either.Left(it) }, { Either.Right(it) })
+	fun toEither() = fold(ifFailure = { Either.Left(it) }, ifSuccess = { Either.Right(it) })
+	fun toOptional() = fold(ifFailure = { Optional.empty() }, ifSuccess = { Optional.just(it) })
+
+	inline fun <EE, AA> withEither(f: (Either<E, A>) -> Either<EE, AA>): Validation<EE, AA> =
+		fromEither(f(toEither()))
+
+	fun toValidationNel() =
+		fold({ Failure(nelOf(it)) }, { Success(it) })
 
 	companion object {
+		inline fun <E, A> fromOptional(optional: Optional<A>, e: () -> E): Validation<E, A> =
+			optional.toValidation(e)
+
 		fun <E, A> fromEither(either: Either<E, A>): Validation<E, A> =
-			either.fold({ Failure(it) }, { Success(it) })
+			either.toValidation()
 
 		fun <E, B, A> liftError(either: Either<B, A>, f: (B) -> E): Validation<E, A> =
 			either.fold({ Failure(f(it)) }, { Success(it) })
@@ -40,13 +50,22 @@ sealed class Validation<out E, out A>:
 val <A> Context<Validation<Nothing, *>, A>.asValidation: Validation<Nothing, A>
 	get() = this as Validation<Nothing, A>
 
+inline fun <E, A> Optional<A>.toValidation(e: () -> E) =
+	fold(ifEmpty = { Failure(e()) }, ifSome = { Success(it) })
+
+fun <E, A> Either<E, A>.toValidation() =
+	fold(ifLeft = { Failure(it) }, ifRight = { Success(it) })
+
 inline fun <A> Validation<*, A>.orElse(a: () -> A): A = fold(ifFailure = { a() }, ifSuccess = { it })
 inline fun <E, A> Validation<E, A>.valueOr(f: (E) -> A): A = fold(ifFailure = { f(it) }, ifSuccess = { it })
 
 inline fun <E, A, B> Validation<E, A>.ensure(e: E, f: (A) -> Optional<B>): Validation<E, B> =
-	bindValidation { a -> f(a).map { Success(it) }.orElseGet { Failure(e) } }
+	bindValidation { a -> f(a).toValidation { e } }
 
 fun <A> Validation<A, A>.codiagonal() = fold({ it }, { it })
+
+fun <E, A, EE, AA> validationed(f: (Either<E, A>) -> Either<EE, AA>): (Validation<E, A>) -> Validation<EE, AA> =
+	{ it.withEither(f) }
 
 inline fun <E, A, B> Validation<E, A>.bindValidation(f: (A) -> Validation<E, B>): Validation<E, B> =
 	fold(
@@ -54,17 +73,17 @@ inline fun <E, A, B> Validation<E, A>.bindValidation(f: (A) -> Validation<E, B>)
 		ifSuccess = f
 	)
 
-inline fun <E, A, B, R> Validation<E, A>.sequence(
-	errSg: Semigroup<E>,
-	other: Validation<E, B>,
+inline fun <E, A, B, R> Semigroup<E>.sequence(
+	v1: Validation<E, A>,
+	v2: Validation<E, B>,
 	f: (A, B) -> R,
 ): Validation<E, R> =
-	fold(
+	v1.fold(
 		ifFailure = { e1 ->
-			Failure(other.fold(
-				ifFailure = { with(errSg) { e1.combine(it) } },
+			Failure(v2.fold(
+				ifFailure = { e1.combine(it) },
 				ifSuccess = { e1 }
 			))
 		},
-		ifSuccess = { a -> other.map { f(a, it) } }
+		ifSuccess = { a -> v2.map { f(a, it) } }
 	)

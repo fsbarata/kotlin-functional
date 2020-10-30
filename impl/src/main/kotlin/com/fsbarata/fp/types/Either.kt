@@ -46,3 +46,11 @@ inline fun <E, A, B> Either<E, A>.flatMap(f: (A) -> Either<E, B>): Either<E, B> 
 	return fold(ifLeft = { Either.Left(it) }, ifRight = { f(it) })
 }
 
+inline fun <E, A> Optional<A>.toEither(e: () -> E) =
+	fold(ifEmpty = { Either.Left(e()) }, ifSome = { Either.Right(it) })
+
+inline fun <A> Either<*, A>.orElse(a: () -> A): A = fold(ifLeft = { a() }, ifRight = { it })
+inline fun <E, A> Either<E, A>.valueOr(f: (E) -> A): A = fold(ifLeft = { f(it) }, ifRight = { it })
+
+inline fun <E, A, B> Either<E, A>.ensure(e: E, f: (A) -> Optional<B>): Either<E, B> =
+	flatMap { a -> f(a).toEither { e } }
