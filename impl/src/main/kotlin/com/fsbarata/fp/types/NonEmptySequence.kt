@@ -35,6 +35,13 @@ interface NonEmptySequence<out A>:
 
 	fun toList(): NonEmptyList<A> = iterator().toNel()
 
+	operator fun plus(element: @UnsafeVariance A): NonEmptySequence<A> = plus(sequenceOf(element))
+
+	operator fun plus(elements: Sequence<@UnsafeVariance A>): NonEmptySequence<A> = NonEmptySequence {
+		val iterator = iterator()
+		NonEmptyIterator(iterator.head, (iterator.tail.asSequence() + elements).iterator())
+	}
+
 	override fun <B, R> zipWith(other: MonadZip<NonEmptySequence<*>, B>, f: (A, B) -> R): NonEmptySequence<R> {
 		val otherNes = other.asNes
 		return NonEmptySequence {

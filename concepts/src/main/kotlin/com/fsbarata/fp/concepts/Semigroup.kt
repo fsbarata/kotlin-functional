@@ -20,7 +20,7 @@ private tailrec fun <A> Semigroup<A>.add(a1: A, a2: A, n: Int): A =
 	else add(a1.combine(a2), a2, n - 1)
 
 
-fun <A> semigroup(combine: (A, A) -> A) = object: Semigroup<A> {
+fun <A> Semigroup(combine: (A, A) -> A) = object: Semigroup<A> {
 	override fun A.combine(other: A) = combine(this, other)
 }
 
