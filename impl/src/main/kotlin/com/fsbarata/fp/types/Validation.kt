@@ -19,6 +19,7 @@ sealed class Validation<out E, out A>:
 		is Success -> ifSuccess(value)
 	}
 
+	@Suppress("OVERRIDE_BY_INLINE")
 	final override inline fun <B> map(f: (A) -> B): Validation<E, B> = when (this) {
 		is Failure -> this
 		is Success -> Success(f(value))
