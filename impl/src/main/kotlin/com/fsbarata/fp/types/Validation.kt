@@ -3,6 +3,7 @@ package com.fsbarata.fp.types
 import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Functor
 import com.fsbarata.fp.concepts.Semigroup
+import com.fsbarata.fp.concepts.partial
 import com.fsbarata.fp.types.Validation.Failure
 import com.fsbarata.fp.types.Validation.Success
 import java.io.Serializable
@@ -73,17 +74,22 @@ inline fun <E, A, B> Validation<E, A>.bindValidation(f: (A) -> Validation<E, B>)
 		ifSuccess = f
 	)
 
-inline fun <E, A, B, R> Semigroup<E>.sequence(
-	v1: Validation<E, A>,
-	v2: Validation<E, B>,
-	f: (A, B) -> R,
-): Validation<E, R> =
-	v1.fold(
+fun <E, A, R> Semigroup<E>.ap(
+	v: Validation<E, A>,
+	vf: Validation<E, (A) -> R>,
+) =
+	vf.fold(
 		ifFailure = { e1 ->
-			Failure(v2.fold(
+			Failure(v.fold(
 				ifFailure = { combine(e1, it) },
 				ifSuccess = { e1 }
 			))
 		},
-		ifSuccess = { a -> v2.map { f(a, it) } }
+		ifSuccess = { f -> v.map { f(it) } }
 	)
+
+inline fun <E, A, B, R> Semigroup<E>.sequence(
+	v1: Validation<E, A>,
+	v2: Validation<E, B>,
+	f: (A, B) -> R,
+): Validation<E, R> = ap(v2, v1.map { f.partial(it) })
