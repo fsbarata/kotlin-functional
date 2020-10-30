@@ -15,17 +15,17 @@ class OptionalSumMonoidTest: MonoidTest<Optional<Int>>(
 		with(optionalMonoid(productIntMonoid())) {
 			assertEquals(
 				Optional.just(5),
-				Optional.just(5).combine(Optional.empty())
+				combine(Optional.just(5), Optional.empty())
 			)
 
 			assertEquals(
 				Optional.just(2),
-				Optional.empty<Int>().combine(Optional.just(2))
+				combine(Optional.empty<Int>(), Optional.just(2))
 			)
 
 			assertEquals(
 				Optional.just(4),
-				Optional.just(2).combine(Optional.just(2))
+				combine(Optional.just(2), Optional.just(2))
 			)
 		}
 	}

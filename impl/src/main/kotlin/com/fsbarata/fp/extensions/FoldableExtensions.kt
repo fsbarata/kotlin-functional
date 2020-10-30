@@ -11,5 +11,4 @@ fun <T, R> Foldable<T>.scan(initialValue: R, accumulator: (R, T) -> R): NonEmpty
 		Pair(newValue, list + newValue)
 	}.second
 
-fun <A> Foldable<A>.scan(monoid: Monoid<A>) =
-	with(monoid) { scan(empty) { acc, a -> acc.combine(a) } }
+fun <A> Foldable<A>.scan(monoid: Monoid<A>): NonEmptyList<A> = scan(monoid.empty, monoid::combine)

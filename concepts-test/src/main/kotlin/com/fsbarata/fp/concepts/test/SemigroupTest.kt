@@ -16,8 +16,8 @@ abstract class SemigroupTest<A>(
 		val val3 = factory()
 		with(semigroup) {
 			assert(equals(
-				val1.combine(val2).combine(val3),
-				val1.combine(val2.combine(val3))
+				combine(combine(val1, val2), val3),
+				combine(val1, combine(val2, val3))
 			))
 		}
 	}

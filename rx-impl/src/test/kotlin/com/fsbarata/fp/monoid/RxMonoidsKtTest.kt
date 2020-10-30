@@ -4,7 +4,6 @@ import com.fsbarata.fp.concepts.test.MonoidTest
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
-import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.random.Random
 
@@ -68,17 +67,17 @@ class MaybeSumMonoidTest: MonoidTest<Maybe<Int>>(
 		with(maybeMonoid(productIntMonoid())) {
 			assert(equals(
 				Maybe.just(5),
-				Maybe.just(5).combine(Maybe.empty())
+				combine(Maybe.just(5), Maybe.empty())
 			))
 
 			assert(equals(
 				Maybe.just(2),
-				Maybe.empty<Int>().combine(Maybe.just(2))
+				combine(Maybe.empty(), Maybe.just(2))
 			))
 
 			assert(equals(
 				Maybe.just(4),
-				Maybe.just(2).combine(Maybe.just(2))
+				combine(Maybe.just(2), Maybe.just(2))
 			))
 		}
 	}

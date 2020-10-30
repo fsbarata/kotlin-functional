@@ -12,7 +12,7 @@ abstract class MonoidTest<A>(
 		val nonEmpty = nonEmpty()
 		assert(equals(
 			nonEmpty,
-			with(monoid) { empty.combine(nonEmpty) }
+			monoid.combine(monoid.empty, nonEmpty)
 		))
 	}
 
@@ -21,7 +21,7 @@ abstract class MonoidTest<A>(
 		val nonEmpty = nonEmpty()
 		assert(equals(
 			nonEmpty,
-			with(monoid) { nonEmpty.combine(empty) }
+			monoid.combine(nonEmpty, monoid.empty)
 		))
 	}
 }

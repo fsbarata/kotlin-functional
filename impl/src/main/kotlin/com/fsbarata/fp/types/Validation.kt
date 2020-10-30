@@ -81,7 +81,7 @@ inline fun <E, A, B, R> Semigroup<E>.sequence(
 	v1.fold(
 		ifFailure = { e1 ->
 			Failure(v2.fold(
-				ifFailure = { e1.combine(it) },
+				ifFailure = { combine(e1, it) },
 				ifSuccess = { e1 }
 			))
 		},

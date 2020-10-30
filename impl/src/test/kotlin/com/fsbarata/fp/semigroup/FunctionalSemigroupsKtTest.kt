@@ -22,7 +22,7 @@ class ConcatNelSemigroupTest: SemigroupTest<NonEmptyList<Int>>(
 		val nel2 = factory()
 		assertEquals(
 			nel1 + nel2,
-			with(concatNelSemigroup<Int>()) { nel1.combine(nel2) }
+			concatNelSemigroup<Int>().combine(nel1, nel2)
 		)
 	}
 }

@@ -1,10 +1,6 @@
 package com.fsbarata.fp.types
 
-import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.concepts.Monad
-import com.fsbarata.fp.concepts.Monoid
-import com.fsbarata.fp.concepts.Semigroup
-import com.fsbarata.fp.concepts.MonadZip
+import com.fsbarata.fp.concepts.*
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableSource
 import io.reactivex.rxjava3.core.Observer
@@ -30,10 +26,10 @@ class ObservableF<A>(
 	fun <B> flatMap(f: (A) -> Observable<B>): ObservableF<B> =
 		wrapped.flatMap(f).f()
 
-	fun reduce(semigroup: Semigroup<A>) = with(semigroup) { reduce { a1, a2 -> a1.combine(a2) } }.f()
-	fun fold(monoid: Monoid<A>) = with(monoid) { reduce(empty) { a1, a2 -> a1.combine(a2) } }.f()
-	fun scan(semigroup: Semigroup<A>) = with(semigroup) { scan { a1, a2 -> a1.combine(a2) } }.f()
-	fun scan(monoid: Monoid<A>) = with(monoid) { scan(empty) { a1, a2 -> a1.combine(a2) } }.f()
+	fun reduce(semigroup: Semigroup<A>) = super.reduce(semigroup::combine).f()
+	fun fold(monoid: Monoid<A>) = super.reduce(monoid.empty, monoid::combine).f()
+	fun scan(semigroup: Semigroup<A>) = super.scan(semigroup::combine).f()
+	fun scan(monoid: Monoid<A>) = super.scan(monoid.empty, monoid::combine).f()
 
 	override fun <B, R> zipWith(other: MonadZip<ObservableF<*>, B>, f: (A, B) -> R) =
 		(this as Observable<A>).zipWith(other.asObservable, f).f()

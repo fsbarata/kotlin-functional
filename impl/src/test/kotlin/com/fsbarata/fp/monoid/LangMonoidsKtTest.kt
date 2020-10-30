@@ -14,7 +14,7 @@ class ConcatStringMonoidTest: MonoidTest<String>(
 ) {
 	@Test
 	fun concats() {
-		assertEquals("a2bb", with(concatStringMonoid()) { "a2".combine("bb") })
+		assertEquals("a2bb", concatStringMonoid().combine("a2", "bb"))
 	}
 }
 
@@ -24,7 +24,7 @@ class SumBigDecimalMonoidTest: MonoidTest<BigDecimal>(
 ) {
 	@Test
 	fun adds() {
-		assertEquals(BigDecimal("5.8"), with(sumBigDecimalMonoid()) { BigDecimal("1.3").combine(BigDecimal("4.5")) })
+		assertEquals(BigDecimal("5.8"), sumBigDecimalMonoid().combine(BigDecimal("1.3"), BigDecimal("4.5")))
 	}
 }
 
@@ -35,7 +35,7 @@ class ProductBigDecimalMonoidTest: MonoidTest<BigDecimal>(
 	@Test
 	fun multiplies() {
 		assertEquals(BigDecimal("6.75"),
-					 with(productBigDecimalMonoid()) { BigDecimal("1.5").combine(BigDecimal("4.5")) })
+					 productBigDecimalMonoid().combine(BigDecimal("1.5"), BigDecimal("4.5")))
 	}
 }
 
@@ -49,9 +49,8 @@ class ConcatArrayMonoidTest: MonoidTest<Array<Any>>(
 	fun concats() {
 		assertArrayEquals(
 			arrayOf("6", "5", "1", "1L", "ajfg"),
-			with(concatArrayMonoid<String>()) {
-				arrayOf("6", "5").combine(arrayOf("1", "1L", "ajfg"))
-			})
+			concatArrayMonoid<String>().combine(arrayOf("6", "5"), arrayOf("1", "1L", "ajfg"))
+		)
 	}
 }
 
@@ -69,9 +68,9 @@ class ConcatSequenceMonoid: MonoidTest<Sequence<Double>>(
 	fun concats() {
 		assertEquals(
 			listOf("6", "5", "1", "1L", "ajfg"),
-			with(concatSequenceMonoid<String>()) {
-				sequenceOf("6", "5").combine(sequenceOf("1", "1L", "ajfg"))
-			}.toList()
+			concatSequenceMonoid<String>()
+				.combine(sequenceOf("6", "5"), sequenceOf("1", "1L", "ajfg"))
+				.toList()
 		)
 	}
 }
@@ -87,9 +86,9 @@ class ConcatListMonoid: MonoidTest<List<Double>>(
 	fun concats() {
 		assertEquals(
 			listOf("6", "5", "1", "1L", "ajfg"),
-			with(concatListMonoid<String>()) {
-				listOf("6", "5").combine(listOf("1", "1L", "ajfg"))
-			}
+			concatListMonoid<String>()
+				.combine(listOf("6", "5"), listOf("1", "1L", "ajfg"))
+
 		)
 	}
 }

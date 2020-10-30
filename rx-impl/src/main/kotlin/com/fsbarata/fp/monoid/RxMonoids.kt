@@ -17,16 +17,15 @@ fun <A> maybeMonoid(sg: Semigroup<A>): Monoid<Maybe<A>> =
 	monoid(Maybe.empty()) { maybe1, maybe2 ->
 		maybe1
 			.flatMapSingle { a ->
-				maybe2.map { with(sg) { a.combine(it) } }
+				maybe2.map { sg.combine(a, it) }
 					.defaultIfEmpty(a)
 			}
 			.switchIfEmpty(maybe2)
 	}
 
-fun <A: Any> combineLatestObservableMonoid(monoid: Monoid<A>): Monoid<Observable<A>> = with(monoid) {
-	monoid(Observable.just(empty)) { obs1, obs2 ->
-		Observables.combineLatest(obs1, obs2) { a1: A, a2: A -> a1.combine(a2) }
+fun <A: Any> combineLatestObservableMonoid(monoid: Monoid<A>): Monoid<Observable<A>> =
+	monoid(Observable.just(monoid.empty)) { obs1, obs2 ->
+		Observables.combineLatest(obs1, obs2) { a1: A, a2: A -> monoid.combine(a1, a2) }
 	}
-}
 
 
