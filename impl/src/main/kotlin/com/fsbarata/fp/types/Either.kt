@@ -34,6 +34,8 @@ sealed class Either<out E, out A>: Monad<Either<Nothing, *>, A>, Serializable {
 	fun orNull() = fold({ null }, { it })
 	fun toOptional(): Optional<A> = fold({ Optional.empty() }, { Optional.just(it) })
 
+	fun swap() = fold(ifLeft = { Right(it) }, ifRight = { Left(it) })
+
 	companion object: Monad.Scope<Either<Nothing, *>> {
 		override fun <A> just(a: A) = Right(a)
 	}

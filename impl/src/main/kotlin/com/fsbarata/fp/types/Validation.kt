@@ -43,9 +43,6 @@ sealed class Validation<out E, out A>:
 
 		fun <E, B, A> liftError(either: Either<B, A>, f: (B) -> E): Validation<E, A> =
 			either.fold({ Failure(f(it)) }, { Success(it) })
-
-		fun <E, A> validationNel(either: Either<E, A>): Validation<NonEmptyList<E>, A> =
-			liftError(either) { nelOf(it) }
 	}
 }
 
@@ -57,6 +54,9 @@ inline fun <E, A> Optional<A>.toValidation(e: () -> E) =
 
 fun <E, A> Either<E, A>.toValidation() =
 	fold(ifLeft = { Failure(it) }, ifRight = { Success(it) })
+
+fun <E, A> Either<E, A>.toValidationNel(): Validation<NonEmptyList<E>, A> =
+	Validation.liftError(this) { nelOf(it) }
 
 inline fun <A> Validation<*, A>.orElse(a: () -> A): A = fold(ifFailure = { a() }, ifSuccess = { it })
 inline fun <E, A> Validation<E, A>.valueOr(f: (E) -> A): A = fold(ifFailure = { f(it) }, ifSuccess = { it })
