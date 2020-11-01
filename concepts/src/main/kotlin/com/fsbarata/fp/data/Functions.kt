@@ -27,7 +27,16 @@ inline fun <A, B, C, R> F3<A, B, C, R>.partial(a: A): F2<B, C, R> = { b, c -> in
 inline fun <A, B, R> F2<A, B, R>.curry(): (A) -> (B) -> R = { a -> partial(a) }
 
 @Suppress("NOTHING_TO_INLINE")
+inline fun <A, B, R> ((A) -> (B) -> R).uncurry(): F2<A, B, R> = { a, b -> invoke(a).invoke(b) }
+
+@Suppress("NOTHING_TO_INLINE")
 inline fun <A, B, C, R> F3<A, B, C, R>.curry(): (A) -> (B) -> (C) -> R = { a -> partial(a).curry() }
 
 @Suppress("NOTHING_TO_INLINE")
+inline fun <A, B, C, R> ((A) -> (B) -> (C) -> R).uncurry(): F3<A, B, C, R> =
+	{ a, b, c -> invoke(a).invoke(b).invoke(c) }
+
+@Suppress("NOTHING_TO_INLINE")
 inline fun <A, B, R> F2<A, B, R>.flip(): F2<B, A, R> = { b, a -> invoke(a, b) }
+
+fun <A, B, C> F1<B, C>.coerce(): (F1<A, B>) -> F1<A, C> = { f -> { a: A -> invoke(f(a)) } }

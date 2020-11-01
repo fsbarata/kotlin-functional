@@ -1,7 +1,6 @@
 package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.data.Foldable
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.MonadZip
 import com.fsbarata.utils.iterators.EmptyIterator
@@ -16,14 +15,13 @@ import com.fsbarata.utils.iterators.toNel
 interface NonEmptySequence<out A>:
 	Sequence<A>,
 	Monad<NonEmptySequence<*>, A>,
-	MonadZip<NonEmptySequence<*>, A>,
-	Foldable<A> {
+	MonadZip<NonEmptySequence<*>, A> {
 	override val scope get() = Companion
 
 	override fun iterator(): NonEmptyIterator<A>
 
-	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
-		(this as Sequence<A>).fold(initialValue, accumulator)
+	fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
+		fold(initialValue, accumulator)
 
 	@Deprecated("Non empty sequence always has a first", replaceWith = ReplaceWith("first()"))
 	fun firstOrNull(): Nothing = throw UnsupportedOperationException()

@@ -12,7 +12,7 @@ interface NonEmptyIterable<out A>:
 
 	override fun iterator() = NonEmptyIterator(head, tail.iterator())
 
-	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
+	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		tail.fold(accumulator(initialValue, head), accumulator)
 }
 

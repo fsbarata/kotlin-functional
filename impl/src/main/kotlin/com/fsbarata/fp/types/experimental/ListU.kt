@@ -109,8 +109,11 @@ internal sealed class ListU<out A>
 
 		override inline fun <B> map(f: (A) -> B): NonEmpty<B> = of(f(head), tail.map(f))
 
-		override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
+		override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 			tail.fold(accumulator(initialValue, head), accumulator)
+
+		override fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
+			foldRight(initialValue, accumulator)
 
 		override fun <B> bind(f: (A) -> Context<NonEmpty<*>, B>) =
 			flatMap { f(it).asNel }
@@ -170,10 +173,17 @@ internal sealed class ListU<out A>
 		(this as List<A>).flatMap(f).u()
 
 	@Suppress("USELESS_CAST")
-	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
+	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		when (this) {
 			is Empty -> initialValue
-			is NonEmpty -> (this as NonEmpty).fold(initialValue, accumulator)
+			is NonEmpty -> (this as NonEmpty).foldL(initialValue, accumulator)
+		}
+
+	@Suppress("USELESS_CAST")
+	override fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
+		when (this) {
+			is Empty -> initialValue
+			is NonEmpty -> (this as NonEmpty).foldR(initialValue, accumulator)
 		}
 
 	companion object {

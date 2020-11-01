@@ -1,7 +1,17 @@
 package com.fsbarata.fp.data
 
-interface Foldable<out T> {
-	fun <R> fold(initialValue: R, accumulator: (R, T) -> R): R
+interface Foldable<out A> {
+	fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
+		foldMap(
+			endoMonoid<R>().dual(),
+			(accumulator.flip()::partial)
+		)(initialValue)
+
+	fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
+		foldMap(endoMonoid(), accumulator::partial)(initialValue)
+
+	fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
+		foldR(monoid.empty, (f compose monoid::combine.curry()).uncurry())
 }
 
-fun <T> Foldable<T>.toList() = fold(emptyList<T>()) { list, item -> list + item }
+fun <A> Foldable<A>.fold(monoid: Monoid<A>) = foldMap(monoid, id())

@@ -39,8 +39,12 @@ sealed class Optional<out A>:
 		return ifSome(orNull() ?: return ifEmpty())
 	}
 
-	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R {
+	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R {
 		return fold(ifEmpty = { initialValue }, ifSome = { accumulator(initialValue, it) })
+	}
+
+	override fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R {
+		return fold(ifEmpty = { initialValue }, ifSome = { accumulator(it, initialValue) })
 	}
 
 	override fun <B, R> zipWith(other: MonadZip<Optional<*>, B>, f: (A, B) -> R): Optional<R> {

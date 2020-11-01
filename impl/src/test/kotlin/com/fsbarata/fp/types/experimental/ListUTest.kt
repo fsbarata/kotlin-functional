@@ -138,9 +138,9 @@ internal class NonEmptyTest: MonadTest<NonEmpty<*>>, MonadZipTest<NonEmpty<*>> {
 
 	@Test
 	fun fold() {
-		Assert.assertEquals(45L, nel1.fold(5L, Long::times))
-		Assert.assertEquals(30L, nel2.fold(2L, Long::times))
-		Assert.assertEquals(240L, nel3.fold(3L, Long::times))
+		Assert.assertEquals(45L, nel1.foldL(5L, Long::times))
+		Assert.assertEquals(30L, nel2.foldL(2L, Long::times))
+		Assert.assertEquals(240L, nel3.foldL(3L, Long::times))
 	}
 
 	@Test

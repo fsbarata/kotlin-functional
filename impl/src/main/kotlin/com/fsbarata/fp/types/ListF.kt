@@ -28,8 +28,11 @@ data class ListF<A>(
 	inline fun <B> flatMap(f: (A) -> List<B>) =
 		(this as List<A>).flatMap(f).f()
 
-	override fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R =
+	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		wrapped.fold(initialValue, accumulator)
+
+	override fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
+		wrapped.foldRight(initialValue, accumulator)
 
 	override fun <B, R> zipWith(other: MonadZip<ListF<*>, B>, f: (A, B) -> R): ListF<R> =
 		zip(other.asList, f).f()

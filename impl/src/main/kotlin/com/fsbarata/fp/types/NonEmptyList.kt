@@ -77,6 +77,12 @@ class NonEmptyList<out A> private constructor(
 
 	inline fun <B> flatMapIterable(f: (A) -> List<B>): List<B> = f(head) + tail.flatMap(f)
 
+	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
+		tail.fold(accumulator(initialValue, head), accumulator)
+
+	override fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
+		foldRight(initialValue, accumulator)
+
 	operator fun plus(other: @UnsafeVariance A) = NonEmptyList(head, tail + other)
 	operator fun plus(other: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + other)
 

@@ -19,3 +19,5 @@ private tailrec fun <A> Semigroup<A>.add(a1: A, a2: A, n: Int): A =
 	if (n == 1) a1
 	else add(combine(a1, a2), a2, n - 1)
 
+fun <A> Semigroup<A>.dual(): Semigroup<A> =
+	Semigroup { a1, a2 -> combine(a2, a1) }
