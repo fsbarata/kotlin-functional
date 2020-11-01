@@ -28,3 +28,6 @@ inline fun <A, B, R> F2<A, B, R>.curry(): (A) -> (B) -> R = { a -> partial(a) }
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun <A, B, C, R> F3<A, B, C, R>.curry(): (A) -> (B) -> (C) -> R = { a -> partial(a).curry() }
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun <A, B, R> F2<A, B, R>.flip(): F2<B, A, R> = { b, a -> invoke(a, b) }
