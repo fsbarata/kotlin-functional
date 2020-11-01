@@ -1,13 +1,13 @@
 package com.fsbarata.fp.concepts
 
 import com.fsbarata.fp.data.F1
-import com.fsbarata.fp.data.compose
+import com.fsbarata.fp.data.composeForward
 
 interface FArrow<B, C>: F1<B, C>, Arrow<FArrow<*, *>, B, C> {
 	override val scope get() = Companion
 
 	override fun <D> compose(other: Category<FArrow<*, *>, C, D>): Arrow<FArrow<*, *>, B, D> =
-		Arrow((this as F1<B, C>).compose(other.asFArrow()))
+		Arrow((this as F1<B, C>).composeForward(other.asFArrow()))
 
 	override fun <D> first(): Arrow<FArrow<*, *>, Pair<B, D>, Pair<C, D>> =
 		Arrow((this as F1<B, C>).first())

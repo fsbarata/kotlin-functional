@@ -22,5 +22,5 @@ fun <A> Monoid<A>.dual() =
 
 typealias Endo<A> = (A) -> A
 
-fun <A> endoMonoid(): Monoid<Endo<A>> = monoid(id(), Endo<A>::compose)
+fun <A> endoMonoid(): Monoid<Endo<A>> = monoid(id(), Endo<A>::composeForward)
 

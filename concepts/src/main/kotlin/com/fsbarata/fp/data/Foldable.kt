@@ -11,7 +11,7 @@ interface Foldable<out A> {
 		foldMap(endoMonoid(), accumulator::partial)(initialValue)
 
 	fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
-		foldR(monoid.empty, (f compose monoid::combine.curry()).uncurry())
+		foldR(monoid.empty, (f composeForward monoid::combine.curry()).uncurry())
 }
 
 fun <A> Foldable<A>.fold(monoid: Monoid<A>) = foldMap(monoid, id())

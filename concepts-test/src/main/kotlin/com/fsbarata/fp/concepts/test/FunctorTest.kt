@@ -1,7 +1,7 @@
 package com.fsbarata.fp.concepts.test
 
 import com.fsbarata.fp.concepts.Functor
-import com.fsbarata.fp.data.composeRight
+import com.fsbarata.fp.data.compose
 import org.junit.Test
 
 interface FunctorTest<C> {
@@ -19,9 +19,9 @@ interface FunctorTest<C> {
 		val fa = createFunctor("hello")
 		val f = { a: String -> a.length }
 		val g = { a: String -> a + "world" }
-		val r1 = fa.map(f.composeRight(g))
+		val r1 = fa.map(f.compose(g))
 		val r2 =
-			{ fx: Functor<C, String> -> fx.map(f) }.composeRight { fx: Functor<C, String> -> fx.map(g) }
+			{ fx: Functor<C, String> -> fx.map(f) }.compose { fx: Functor<C, String> -> fx.map(g) }
 				.invoke(fa)
 		assert(r1.equalTo(r2)) { "$r1 should be equal to $r2" }
 	}
