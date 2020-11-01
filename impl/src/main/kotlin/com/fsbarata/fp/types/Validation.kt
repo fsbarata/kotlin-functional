@@ -2,8 +2,8 @@ package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.concepts.Functor
-import com.fsbarata.fp.concepts.Semigroup
-import com.fsbarata.fp.concepts.partial
+import com.fsbarata.fp.data.Semigroup
+import com.fsbarata.fp.data.partial
 import com.fsbarata.fp.types.Validation.Failure
 import com.fsbarata.fp.types.Validation.Success
 import java.io.Serializable

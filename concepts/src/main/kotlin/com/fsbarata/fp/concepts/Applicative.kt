@@ -1,5 +1,7 @@
 package com.fsbarata.fp.concepts
 
+import com.fsbarata.fp.data.id
+
 interface Applicative<C, out A>: Functor<C, A> {
 	val scope: Scope<C>
 

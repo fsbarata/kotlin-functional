@@ -1,8 +1,8 @@
 package com.fsbarata.fp.monoid
 
-import com.fsbarata.fp.concepts.Monoid
-import com.fsbarata.fp.concepts.Semigroup
-import com.fsbarata.fp.concepts.monoid
+import com.fsbarata.fp.data.Monoid
+import com.fsbarata.fp.data.Semigroup
+import com.fsbarata.fp.data.monoid
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable

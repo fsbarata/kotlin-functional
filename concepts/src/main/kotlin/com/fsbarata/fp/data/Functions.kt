@@ -1,4 +1,4 @@
-package com.fsbarata.fp.concepts
+package com.fsbarata.fp.data
 
 
 typealias F0<R> = () -> R

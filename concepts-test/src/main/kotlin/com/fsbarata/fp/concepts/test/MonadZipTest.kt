@@ -1,6 +1,6 @@
 package com.fsbarata.fp.concepts.test
 
-import com.fsbarata.fp.arrows.split
+import com.fsbarata.fp.concepts.split
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.liftM
 import com.fsbarata.fp.concepts.MonadZip

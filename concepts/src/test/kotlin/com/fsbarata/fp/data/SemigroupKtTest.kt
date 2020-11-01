@@ -1,5 +1,7 @@
-package com.fsbarata.fp.concepts
+package com.fsbarata.fp.data
 
+import com.fsbarata.fp.data.Semigroup
+import com.fsbarata.fp.data.times
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

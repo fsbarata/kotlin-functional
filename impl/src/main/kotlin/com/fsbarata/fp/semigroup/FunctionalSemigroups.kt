@@ -1,6 +1,6 @@
 package com.fsbarata.fp.semigroup
 
-import com.fsbarata.fp.concepts.Semigroup
+import com.fsbarata.fp.data.Semigroup
 import com.fsbarata.fp.types.NonEmptyList
 import com.fsbarata.fp.types.NonEmptySequence
 

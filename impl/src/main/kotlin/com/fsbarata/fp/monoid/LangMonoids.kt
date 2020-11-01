@@ -1,7 +1,7 @@
 package com.fsbarata.fp.monoid
 
-import com.fsbarata.fp.concepts.Monoid
-import com.fsbarata.fp.concepts.monoid
+import com.fsbarata.fp.data.Monoid
+import com.fsbarata.fp.data.monoid
 import java.math.BigDecimal
 
 fun concatStringMonoid() = monoid("", String::plus)

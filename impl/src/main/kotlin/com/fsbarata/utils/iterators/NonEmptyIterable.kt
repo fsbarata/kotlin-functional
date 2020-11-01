@@ -1,6 +1,6 @@
 package com.fsbarata.utils.iterators
 
-import com.fsbarata.fp.concepts.Foldable
+import com.fsbarata.fp.data.Foldable
 import com.fsbarata.fp.kotlin.scanNel
 import com.fsbarata.fp.types.NonEmptyList
 

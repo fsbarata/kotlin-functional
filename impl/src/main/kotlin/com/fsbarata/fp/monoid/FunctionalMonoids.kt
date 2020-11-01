@@ -1,7 +1,7 @@
 package com.fsbarata.fp.monoid
 
-import com.fsbarata.fp.concepts.Monoid
-import com.fsbarata.fp.concepts.Semigroup
+import com.fsbarata.fp.data.Monoid
+import com.fsbarata.fp.data.Semigroup
 import com.fsbarata.fp.types.Optional
 import com.fsbarata.fp.types.orElse
 import com.fsbarata.fp.types.orOptional

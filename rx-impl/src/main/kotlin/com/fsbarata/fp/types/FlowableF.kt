@@ -1,6 +1,8 @@
 package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.*
+import com.fsbarata.fp.data.Monoid
+import com.fsbarata.fp.data.Semigroup
 import io.reactivex.rxjava3.core.Flowable
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber

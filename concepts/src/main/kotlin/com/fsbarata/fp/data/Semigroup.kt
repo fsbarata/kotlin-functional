@@ -1,4 +1,4 @@
-package com.fsbarata.fp.concepts
+package com.fsbarata.fp.data
 
 /**
  * A semigroup is a scope where a function that can combine values of a single type exists and

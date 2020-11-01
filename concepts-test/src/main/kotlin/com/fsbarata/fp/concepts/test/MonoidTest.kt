@@ -1,6 +1,6 @@
 package com.fsbarata.fp.concepts.test
 
-import com.fsbarata.fp.concepts.Monoid
+import com.fsbarata.fp.data.Monoid
 import org.junit.Test
 
 abstract class MonoidTest<A>(

@@ -1,6 +1,6 @@
 package com.fsbarata.fp.monoid
 
-import com.fsbarata.fp.concepts.monoid
+import com.fsbarata.fp.data.monoid
 
 fun sumIntMonoid() = monoid(0, Int::plus)
 fun productIntMonoid() = monoid(1, Int::times)

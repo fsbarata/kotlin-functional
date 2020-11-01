@@ -1,7 +1,7 @@
 package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.concepts.Foldable
+import com.fsbarata.fp.data.Foldable
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.MonadZip
 import com.fsbarata.utils.iterators.EmptyIterator

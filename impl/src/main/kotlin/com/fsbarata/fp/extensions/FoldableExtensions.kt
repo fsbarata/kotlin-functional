@@ -1,7 +1,7 @@
 package com.fsbarata.fp.extensions
 
-import com.fsbarata.fp.concepts.Foldable
-import com.fsbarata.fp.concepts.Monoid
+import com.fsbarata.fp.data.Foldable
+import com.fsbarata.fp.data.Monoid
 import com.fsbarata.fp.types.NonEmptyList
 
 

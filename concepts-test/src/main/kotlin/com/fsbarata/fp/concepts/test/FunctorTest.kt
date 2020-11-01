@@ -1,7 +1,7 @@
 package com.fsbarata.fp.concepts.test
 
 import com.fsbarata.fp.concepts.Functor
-import com.fsbarata.fp.concepts.composeRight
+import com.fsbarata.fp.data.composeRight
 import org.junit.Test
 
 interface FunctorTest<C> {

@@ -1,9 +1,7 @@
-package com.fsbarata.fp.arrows
+package com.fsbarata.fp.concepts
 
-import com.fsbarata.fp.concepts.Arrow
-import com.fsbarata.fp.concepts.Category
-import com.fsbarata.fp.concepts.F1
-import com.fsbarata.fp.concepts.compose
+import com.fsbarata.fp.data.F1
+import com.fsbarata.fp.data.compose
 
 interface FArrow<B, C>: F1<B, C>, Arrow<FArrow<*, *>, B, C> {
 	override val scope get() = Companion

@@ -1,6 +1,6 @@
 package com.fsbarata.fp.concepts.test
 
-import com.fsbarata.fp.concepts.Semigroup
+import com.fsbarata.fp.data.Semigroup
 import org.junit.Test
 
 abstract class SemigroupTest<A>(

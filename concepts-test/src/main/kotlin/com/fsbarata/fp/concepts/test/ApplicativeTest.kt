@@ -1,6 +1,9 @@
 package com.fsbarata.fp.concepts.test
 
 import com.fsbarata.fp.concepts.*
+import com.fsbarata.fp.data.F1
+import com.fsbarata.fp.data.composeRight
+import com.fsbarata.fp.data.id
 import org.junit.Test
 
 interface ApplicativeTest<C>: FunctorTest<C> {

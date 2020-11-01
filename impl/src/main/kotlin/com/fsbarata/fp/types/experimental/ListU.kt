@@ -1,9 +1,9 @@
 package com.fsbarata.fp.types.experimental
 
 import com.fsbarata.fp.concepts.Context
-import com.fsbarata.fp.concepts.Foldable
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.MonadZip
+import com.fsbarata.fp.data.Foldable
 import com.fsbarata.fp.types.NonEmptySequence
 import com.fsbarata.fp.types.nonEmpty
 import com.fsbarata.utils.iterators.*
@@ -16,9 +16,10 @@ import kotlin.contracts.contract
  * List = Empty | NonEmpty
  *
  */
-internal sealed class ListU<out A>: List<A>,
-	Foldable<A>,
-	Serializable {
+internal sealed class ListU<out A>
+	: List<A>,
+	  Foldable<A>,
+	  Serializable {
 
 	object Empty: ListU<Nothing>(), List<Nothing> by emptyList() {
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("true"))
@@ -62,10 +63,10 @@ internal sealed class ListU<out A>: List<A>,
 		override val head: A,
 		override val tail: List<A>,
 	): ListU<A>(),
-		Monad<NonEmpty<*>, A>,
-		MonadZip<NonEmpty<*>, A>,
-		NonEmptyIterable<A>,
-		List<A> {
+	   Monad<NonEmpty<*>, A>,
+	   MonadZip<NonEmpty<*>, A>,
+	   NonEmptyIterable<A>,
+	   List<A> {
 		override val scope get() = NonEmpty
 
 		@Deprecated("Non empty list is never empty", replaceWith = ReplaceWith("false"))
