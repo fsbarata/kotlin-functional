@@ -1,5 +1,12 @@
 package com.fsbarata.fp.data
 
+/**
+ * Foldable structure
+ *
+ * Can fold left or right as well as map within the accumulation.
+ *
+ * Minimum definition: foldL or foldMap
+ */
 interface Foldable<out A> {
 	/**
 	 * Fold the structure from the left
