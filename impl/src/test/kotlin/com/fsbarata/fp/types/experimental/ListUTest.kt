@@ -1,8 +1,10 @@
 package com.fsbarata.fp.types.experimental
 
 import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.test.FoldableTest
 import com.fsbarata.fp.concepts.test.MonadTest
 import com.fsbarata.fp.concepts.test.MonadZipTest
+import com.fsbarata.fp.data.Foldable
 import com.fsbarata.fp.types.experimental.ListU.NonEmpty
 import com.fsbarata.utils.iterators.flatten
 import com.fsbarata.utils.iterators.max
@@ -13,7 +15,7 @@ import org.junit.Test
 import java.math.BigInteger
 import kotlin.contracts.ExperimentalContracts
 
-internal class NonEmptyTest: MonadTest<NonEmpty<*>>, MonadZipTest<NonEmpty<*>> {
+internal class NonEmptyTest: MonadTest<NonEmpty<*>>, MonadZipTest<NonEmpty<*>>, FoldableTest {
 	override val monadScope = NonEmpty
 	override fun Monad<NonEmpty<*>, Int>.equalTo(other: Monad<NonEmpty<*>, Int>) =
 		asNel == other.asNel
@@ -21,6 +23,10 @@ internal class NonEmptyTest: MonadTest<NonEmpty<*>>, MonadZipTest<NonEmpty<*>> {
 	val nel1 = NonEmpty.just(9)
 	val nel2 = NonEmpty.of(5, 1, 3)
 	val nel3 = NonEmpty.of(2, NonEmpty.of(4, 2, 5))
+
+
+	override fun createFoldable(item1: Int, item2: Int, item3: Int): Foldable<Int> =
+		NonEmpty.of(item1, item2, item3)
 
 	@Test
 	fun size() {

@@ -1,15 +1,19 @@
 package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.test.FoldableTest
 import com.fsbarata.fp.concepts.test.MonadTest
 import com.fsbarata.fp.concepts.test.MonadZipTest
+import com.fsbarata.fp.data.Foldable
 import org.junit.Assert.*
 import org.junit.Test
 
-class OptionalTest: MonadTest<Optional<*>>, MonadZipTest<Optional<*>> {
+class OptionalTest: MonadTest<Optional<*>>, MonadZipTest<Optional<*>>, FoldableTest {
 	override val monadScope = Optional
 	override fun Monad<Optional<*>, Int>.equalTo(other: Monad<Optional<*>, Int>): Boolean =
 		asOptional == other.asOptional
+
+	override fun createFoldable(): Foldable<Int> = Optional.just(5)
 
 	@Test
 	fun isPresent() {

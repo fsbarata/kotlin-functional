@@ -9,10 +9,13 @@ typealias F3<A, B, C, R> = (A, B, C) -> R
 fun <A> id(): (A) -> A = { it }
 
 inline infix fun <B, C, D> F1<B, C>.composeForward(crossinline other: F1<C, D>): F1<B, D> =
-	{ other(this.invoke(it)) }
+	other compose this
 
 inline infix fun <B, C, D> F1<C, D>.compose(crossinline other: F1<B, C>): F1<B, D> =
 	{ invoke(other(it)) }
+
+inline infix fun <B, C, D, E> F2<C, D, E>.compose(crossinline other: F1<B, C>): F2<B, D, E> =
+	{ b, d -> invoke(other(b), d) }
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun <A, R> F1<A, R>.partial(a: A): F0<R> = { invoke(a) }

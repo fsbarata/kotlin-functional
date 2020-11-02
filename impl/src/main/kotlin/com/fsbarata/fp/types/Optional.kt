@@ -4,6 +4,7 @@ import com.fsbarata.fp.concepts.Context
 import com.fsbarata.fp.data.Foldable
 import com.fsbarata.fp.concepts.Monad
 import com.fsbarata.fp.concepts.MonadZip
+import com.fsbarata.fp.data.Monoid
 import java.io.Serializable
 
 /**
@@ -26,7 +27,8 @@ sealed class Optional<out A>:
 	inline fun filter(predicate: (A) -> Boolean) =
 		ofNullable(orNull()?.takeIf(predicate))
 
-	override fun <B> map(f: (A) -> B) =
+	@Suppress("OVERRIDE_BY_INLINE")
+	final override inline fun <B> map(f: (A) -> B) =
 		flatMap { just(f(it)) }
 
 	override fun <B> bind(f: (A) -> Context<Optional<*>, B>) =
@@ -39,6 +41,9 @@ sealed class Optional<out A>:
 		return ifSome(orNull() ?: return ifEmpty())
 	}
 
+	override fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
+		maybe(monoid.empty, f)
+
 	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R {
 		return fold(ifEmpty = { initialValue }, ifSome = { accumulator(initialValue, it) })
 	}
@@ -50,6 +55,8 @@ sealed class Optional<out A>:
 	override fun <B, R> zipWith(other: MonadZip<Optional<*>, B>, f: (A, B) -> R): Optional<R> {
 		return flatMap { a -> other.asOptional.map { b -> f(a, b) } }
 	}
+
+	inline fun <B> maybe(b: B, f: (A) -> B): B = map(f) orElse b
 
 	companion object: Monad.Scope<Optional<*>> {
 		fun <A> empty(): Optional<A> = None

@@ -1,8 +1,10 @@
 package com.fsbarata.fp.types
 
 import com.fsbarata.fp.concepts.Monad
+import com.fsbarata.fp.concepts.test.FoldableTest
 import com.fsbarata.fp.concepts.test.MonadTest
 import com.fsbarata.fp.concepts.test.MonadZipTest
+import com.fsbarata.fp.data.Foldable
 import com.fsbarata.utils.iterators.flatten
 import com.fsbarata.utils.iterators.max
 import com.fsbarata.utils.iterators.min
@@ -11,7 +13,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger
 
-class NonEmptyListTest: MonadTest<NonEmptyList<*>>, MonadZipTest<NonEmptyList<*>> {
+class NonEmptyListTest: MonadTest<NonEmptyList<*>>, MonadZipTest<NonEmptyList<*>>, FoldableTest {
 	override val monadScope = NonEmptyList
 	override fun Monad<NonEmptyList<*>, Int>.equalTo(other: Monad<NonEmptyList<*>, Int>): Boolean =
 		asNel == other.asNel
@@ -19,6 +21,9 @@ class NonEmptyListTest: MonadTest<NonEmptyList<*>>, MonadZipTest<NonEmptyList<*>
 	val nel1 = NonEmptyList.just(9)
 	val nel2 = NonEmptyList.of(5, 1, 3)
 	val nel3 = NonEmptyList.of(2, NonEmptyList.of(4, 2, 5))
+
+	override fun createFoldable(item1: Int, item2: Int, item3: Int): Foldable<Int> =
+		nelOf(item1, item2, item3)
 
 	@Test
 	fun size() {
