@@ -1,5 +1,7 @@
 # kotlin-functional
 
+[![](https://jitpack.io/v/fsbarata/kotlin-functional.svg)](https://jitpack.io/#fsbarata/kotlin-functional)
+
 ## Purpose
 
 This library provides a set of concepts and implementations of patterns commonly used in functional programming.
@@ -51,4 +53,13 @@ Most commonly used to accumulate/compose errors from multiple computations.
 You will find in this library other concepts such as Monad, Monoid and Foldable.
 
 
+## Dependency
+### Gradle
+
+```
+dependencies {
+    implementation 'com.github.fsbarata.kotlin-functional:concepts:$version'
+    implementation 'com.github.fsbarata.kotlin-functional:types:$version'
+}
+```
 
