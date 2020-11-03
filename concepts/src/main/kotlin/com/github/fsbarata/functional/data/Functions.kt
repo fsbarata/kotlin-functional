@@ -41,5 +41,3 @@ inline fun <A, B, C, R> ((A) -> (B) -> (C) -> R).uncurry(): F3<A, B, C, R> =
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun <A, B, R> F2<A, B, R>.flip(): F2<B, A, R> = { b, a -> invoke(a, b) }
-
-fun <A, B, C> F1<B, C>.coerce(): (F1<A, B>) -> F1<A, C> = { f -> { a: A -> invoke(f(a)) } }
