@@ -6,12 +6,12 @@ import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.monoid.concatListMonoid
 
-fun <T, R> Foldable<T>.scan(initialValue: R, accumulator: (R, T) -> R): NonEmptyList<R> =
-	foldL(Pair(initialValue, NonEmptyList.just(initialValue))) { (a, list), v ->
-		val newValue = accumulator(a, v)
-		Pair(newValue, list + newValue)
-	}.second
+fun <A, R> Foldable<A>.scanL(initialValue: R, accumulator: (R, A) -> R): NonEmptyList<R> =
+	foldL(NonEmptyList.just(initialValue)) { nel, v ->
+		nel + accumulator(nel.last(), v)
+	}
 
-fun <A> Foldable<A>.scan(monoid: Monoid<A>): NonEmptyList<A> = scan(monoid.empty, monoid::combine)
+fun <A> Foldable<A>.scan(monoid: Monoid<A>): NonEmptyList<A> =
+	scanL(monoid.empty, monoid::combine)
 
 fun <A> Foldable<A>.toList(): List<A> = foldMap(concatListMonoid(), ::nelOf)
