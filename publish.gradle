@@ -8,7 +8,7 @@ task sourceJar(type: Jar) {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = 'com.fsbarata.fp'
+            groupId = 'com.github.fsbarata.functional'
             artifactId = project.name
             version = '2.0'
 

@@ -1,0 +1,50 @@
+package com.github.fsbarata.functional.data.list
+
+import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.control.Context
+import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.data.Foldable
+import java.io.Serializable
+
+data class ListF<A>(
+	private val wrapped: List<A>,
+): Monad<ListF<*>, A>,
+	MonadZip<ListF<*>, A>,
+	Foldable<A>,
+	List<A> by wrapped,
+	Serializable {
+	override val scope get() = Companion
+
+	override inline fun <B> map(f: (A) -> B) =
+		(this as List<A>).map(f).f()
+
+	override fun <B> ap(ff: Applicative<ListF<*>, (A) -> B>): ListF<B> =
+		bind { item -> ff.map { it(item) } }
+
+	override fun <B> bind(f: (A) -> Context<ListF<*>, B>) =
+		flatMap { f(it).asList }
+
+	inline fun <B> flatMap(f: (A) -> List<B>) =
+		(this as List<A>).flatMap(f).f()
+
+	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
+		wrapped.fold(initialValue, accumulator)
+
+	override fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
+		wrapped.foldRight(initialValue, accumulator)
+
+	override fun <B, R> zipWith(other: MonadZip<ListF<*>, B>, f: (A, B) -> R): ListF<R> =
+		zip(other.asList, f).f()
+
+	companion object: Monad.Scope<ListF<*>> {
+		fun <A> empty() = emptyList<A>().f()
+		override fun <A> just(a: A) = listOf(a).f()
+	}
+}
+
+fun <A> List<A>.f() = ListF(this)
+
+val <A> Context<ListF<*>, A>.asList: ListF<A>
+	get() = this as ListF<A>
+
