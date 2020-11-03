@@ -121,6 +121,9 @@ class NonEmptyList<out A> private constructor(
 
 	override fun hashCode() = head.hashCode() + tail.hashCode()
 
+	override fun toString() =
+		joinToString(prefix = "[", postfix = "]")
+
 	companion object: Monad.Scope<NonEmptyList<*>> {
 		override fun <A> just(a: A) = of(a, emptyList())
 		fun <T> of(head: T, vararg others: T) = of(head, others.toList())
@@ -133,7 +136,7 @@ val <A> Context<NonEmptyList<*>, A>.asNel get() = this as NonEmptyList<A>
 fun <A> nelOf(head: A): NonEmptyList<A> = NonEmptyList.just(head)
 fun <A> nelOf(head: A, vararg tail: A): NonEmptyList<A> = NonEmptyList.of(head, *tail)
 
-fun <A> List<A>.startWithItem(item: A) = nelOf(item, this)
+fun <A> List<A>.startWithItem(item: A): NonEmptyList<A> = NonEmptyList.of(item, this)
 
 fun <A> List<A>.nonEmpty(): NonEmptyList<A>? = toNel()
 fun <A> Iterable<A>.toNel(): NonEmptyList<A>? {
