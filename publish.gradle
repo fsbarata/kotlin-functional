@@ -1,19 +1,17 @@
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
 
-task sourceJar(type: Jar) {
+task sourcesJar(type: Jar, dependsOn: classes) {
     archiveClassifier.set('sources')
     from sourceSets.main.java.srcDirs
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'com.github.fsbarata.functional'
-            artifactId = project.name
-            version = '2.0'
-
-            artifact sourceJar
-            from components.java
-        }
-    }
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set('javadoc')
+    from javadoc.destinationDir
 }
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+

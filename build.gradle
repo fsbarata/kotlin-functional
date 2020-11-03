@@ -24,5 +24,8 @@ allprojects {
         maven { url "https://jitpack.io" }
         mavenLocal()
     }
+
+    group = "com.github.fsbarata.functional"
 }
+
 
