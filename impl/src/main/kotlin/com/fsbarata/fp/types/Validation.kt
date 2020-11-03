@@ -58,16 +58,13 @@ fun <E, A> Either<E, A>.toValidation() =
 fun <E, A> Either<E, A>.toValidationNel(): Validation<NonEmptyList<E>, A> =
 	Validation.liftError(this) { nelOf(it) }
 
-inline fun <A> Validation<*, A>.orElse(a: () -> A): A = fold(ifFailure = { a() }, ifSuccess = { it })
+infix fun <A> Validation<*, A>.orElse(a: A): A = fold(ifFailure = { a }, ifSuccess = { it })
 inline fun <E, A> Validation<E, A>.valueOr(f: (E) -> A): A = fold(ifFailure = { f(it) }, ifSuccess = { it })
 
 inline fun <E, A, B> Validation<E, A>.ensure(e: E, f: (A) -> Optional<B>): Validation<E, B> =
 	bindValidation { a -> f(a).toValidation { e } }
 
 fun <A> Validation<A, A>.codiagonal() = fold({ it }, { it })
-
-fun <E, A, EE, AA> validationed(f: (Either<E, A>) -> Either<EE, AA>): (Validation<E, A>) -> Validation<EE, AA> =
-	{ it.withEither(f) }
 
 inline fun <E, A, B> Validation<E, A>.bindValidation(f: (A) -> Validation<E, B>): Validation<E, B> =
 	fold(

@@ -59,9 +59,9 @@ class ValidationTest: FunctorTest<Validation<Nothing, *>> {
 	fun withEither() {
 		assertEquals(Success(3), Success(3).withEither { it })
 		assertEquals(Failure("5"),
-					 Success(3).withEither { it.flatMap { Either.Left("${it + 2}") } })
+			Success(3).withEither { it.flatMap { Either.Left("${it + 2}") } })
 		assertEquals(Failure("3"),
-					 Failure(3).withEither { it.mapLeft { "$it" } })
+			Failure(3).withEither { it.mapLeft { "$it" } })
 		assertEquals(Success(3), Failure(3).withEither { it.swap() })
 	}
 
@@ -82,7 +82,7 @@ class ValidationTest: FunctorTest<Validation<Nothing, *>> {
 	@Test
 	fun orElse() {
 		assertEquals(3, Success(3).orElse { fail() })
-		assertEquals(5, Failure("3").orElse { 5 })
+		assertEquals(5, Failure("3") orElse 5)
 	}
 
 	@Test
@@ -102,23 +102,6 @@ class ValidationTest: FunctorTest<Validation<Nothing, *>> {
 	fun codiagonal() {
 		assertEquals(3, Success(3).codiagonal())
 		assertEquals(4, Failure(4).codiagonal())
-	}
-
-	@Test
-	fun validationed() {
-		assertEquals(Success(3),
-					 validationed { either: Either<String, Int> -> either }(Success(3)))
-		assertEquals(Failure("5"),
-					 validationed { either: Either<String, Int> ->
-						 either.flatMap { Either.Left("${it + 2}") }
-					 }(Success(3))
-		)
-		assertEquals(Failure("3"),
-					 validationed { either: Either<Int, Long> ->
-						 either.mapLeft { "${it + 2}" }
-					 }(Failure(1)))
-		assertEquals(Success(3),
-					 validationed { either: Either<Int, String> -> either.swap() }(Failure(3)))
 	}
 
 	@Test
