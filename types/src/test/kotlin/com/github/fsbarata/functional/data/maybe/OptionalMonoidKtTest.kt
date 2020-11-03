@@ -20,7 +20,7 @@ class OptionalSumMonoidTest: MonoidTest<Optional<Int>>(
 
 			assertEquals(
 				Optional.just(2),
-				combine(Optional.empty<Int>(), Optional.just(2))
+				combine(Optional.empty(), Optional.just(2))
 			)
 
 			assertEquals(

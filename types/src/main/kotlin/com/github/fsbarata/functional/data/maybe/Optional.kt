@@ -35,7 +35,7 @@ sealed class Optional<out A>:
 		flatMap { f(it).asOptional }
 
 	inline fun <B> flatMap(f: (A) -> Optional<B>): Optional<B> =
-		fold(ifEmpty = { empty<B>() }, ifSome = { f(it) })
+		fold(ifEmpty = { empty() }, ifSome = { f(it) })
 
 	inline fun <R> fold(ifEmpty: () -> R, ifSome: (A) -> R): R {
 		return ifSome(orNull() ?: return ifEmpty())

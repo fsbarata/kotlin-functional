@@ -10,8 +10,8 @@ import io.reactivex.rxjava3.kotlin.Observables
 
 fun concatCompletableMonoid() = monoid(Completable.complete(), Completable::concatWith)
 fun mergeCompletableMonoid() = monoid(Completable.never(), Completable::mergeWith)
-fun <A> concatObservableMonoid() = monoid(Observable.empty<A>(), Observable<A>::concatWith)
-fun <A> mergeObservableMonoid() = monoid(Observable.never<A>(), Observable<A>::mergeWith)
+fun <A> concatObservableMonoid() = monoid(Observable.empty(), Observable<A>::concatWith)
+fun <A> mergeObservableMonoid() = monoid(Observable.never(), Observable<A>::mergeWith)
 
 fun <A> maybeMonoid(sg: Semigroup<A>): Monoid<Maybe<A>> =
 	monoid(Maybe.empty()) { maybe1, maybe2 ->

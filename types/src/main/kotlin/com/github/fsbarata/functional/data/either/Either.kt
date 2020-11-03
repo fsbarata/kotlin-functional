@@ -17,6 +17,7 @@ sealed class Either<out E, out A>: Monad<Either<Nothing, *>, A>, Serializable {
 
 	override val scope get() = Companion
 
+	@Suppress("OVERRIDE_BY_INLINE")
 	final override inline fun <B> map(f: (A) -> B): Either<E, B> =
 		flatMap { Right(f(it)) }
 
@@ -42,6 +43,7 @@ sealed class Either<out E, out A>: Monad<Either<Nothing, *>, A>, Serializable {
 	}
 }
 
+@Suppress("UNCHECKED_CAST")
 val <A> Context<Either<Nothing, *>, A>.asEither: Either<Nothing, A>
 	get() = this as Either<Nothing, A>
 

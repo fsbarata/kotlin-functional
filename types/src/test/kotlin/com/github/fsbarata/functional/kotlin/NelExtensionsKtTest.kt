@@ -5,9 +5,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class NelExtensionsKtTest {
-	val nel1 = NonEmptyList.just(9)
-	val nel2 = NonEmptyList.of(5, 1, 3)
-	val nel3 = NonEmptyList.of(2, NonEmptyList.of(4, 2, 5))
+	private val nel1 = NonEmptyList.just(9)
+	private val nel2 = NonEmptyList.of(5, 1, 3)
+	private val nel3 = NonEmptyList.of(2, NonEmptyList.of(4, 2, 5))
 
 
 	@Test

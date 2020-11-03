@@ -14,9 +14,9 @@ class NonEmptyListTest: MonadTest<NonEmptyList<*>>, MonadZipTest<NonEmptyList<*>
 	override fun Monad<NonEmptyList<*>, Int>.equalTo(other: Monad<NonEmptyList<*>, Int>): Boolean =
 		asNel == other.asNel
 
-	val nel1 = NonEmptyList.just(9)
-	val nel2 = NonEmptyList.of(5, 1, 3)
-	val nel3 = NonEmptyList.of(2, NonEmptyList.of(4, 2, 5))
+	private val nel1 = NonEmptyList.just(9)
+	private val nel2 = NonEmptyList.of(5, 1, 3)
+	private val nel3 = NonEmptyList.of(2, NonEmptyList.of(4, 2, 5))
 
 	override fun createFoldable(item1: Int, item2: Int, item3: Int): Foldable<Int> =
 		nelOf(item1, item2, item3)

@@ -76,7 +76,7 @@ class ConcatSequenceMonoid: MonoidTest<Sequence<Double>>(
 }
 
 class ConcatListMonoid: MonoidTest<List<Double>>(
-	concatListMonoid<Double>(),
+	concatListMonoid(),
 	{
 		generateSequence(Random.nextDouble()) { (it - Random.nextDouble()).takeIf { it > 0 } }
 			.toList()

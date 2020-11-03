@@ -37,11 +37,13 @@ interface ApplicativeTest<C>: FunctorTest<C> {
 	}
 
 	@Test
-	fun homorphism() {
-		assert(applicativeScope.just(10)
-				   .equalTo(applicativeScope.just(5)
-								.ap(applicativeScope.just { it * 2 })
-				   )
+	fun homomorphism() {
+		assert(
+			applicativeScope.just(10)
+				.equalTo(
+					applicativeScope.just(5)
+						.ap(applicativeScope.just { it * 2 })
+				)
 		)
 	}
 

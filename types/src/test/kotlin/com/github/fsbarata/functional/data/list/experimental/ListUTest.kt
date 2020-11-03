@@ -17,9 +17,9 @@ internal class NonEmptyTest: MonadTest<NonEmpty<*>>, MonadZipTest<NonEmpty<*>>, 
 	override fun Monad<NonEmpty<*>, Int>.equalTo(other: Monad<NonEmpty<*>, Int>) =
 		asNel == other.asNel
 
-	val nel1 = NonEmpty.just(9)
-	val nel2 = NonEmpty.of(5, 1, 3)
-	val nel3 = NonEmpty.of(2, NonEmpty.of(4, 2, 5))
+	private val nel1 = NonEmpty.just(9)
+	private val nel2 = NonEmpty.of(5, 1, 3)
+	private val nel3 = NonEmpty.of(2, NonEmpty.of(4, 2, 5))
 
 
 	override fun createFoldable(item1: Int, item2: Int, item3: Int): Foldable<Int> =
@@ -169,20 +169,6 @@ internal class NonEmptyTest: MonadTest<NonEmpty<*>>, MonadZipTest<NonEmpty<*>>, 
 	}
 
 	@Test
-	fun max() {
-		Assert.assertEquals(9, nel1.max())
-		Assert.assertEquals(5, nel2.max())
-		Assert.assertEquals(5, nel3.max())
-	}
-
-	@Test
-	fun min() {
-		Assert.assertEquals(9, nel1.min())
-		Assert.assertEquals(1, nel2.min())
-		Assert.assertEquals(2, nel3.min())
-	}
-
-	@Test
 	fun maxOf() {
 		Assert.assertEquals(BigInteger.valueOf(9), nel1.maxOf { BigInteger.valueOf(it.toLong()) })
 		Assert.assertEquals(BigInteger.valueOf(2), nel2.maxOf { BigInteger.valueOf(it % 3L) })
@@ -246,7 +232,11 @@ internal class NonEmptyTest: MonadTest<NonEmpty<*>>, MonadZipTest<NonEmpty<*>>, 
 
 	@ExperimentalContracts
 	@Test
+	@Suppress("unused")
 	fun compilesNonEmpty() {
+		fun NonEmpty<*>.extensionNe() {}
+		fun ListU.Empty.extensionEmpty() {}
+
 		val list = listOf(3).u()
 		if (list.isNotEmptyContract()) {
 			list.extensionNe()
@@ -254,7 +244,4 @@ internal class NonEmptyTest: MonadTest<NonEmpty<*>>, MonadZipTest<NonEmpty<*>>, 
 			list.extensionEmpty()
 		}
 	}
-
-	private fun NonEmpty<*>.extensionNe() {}
-	private fun ListU.Empty.extensionEmpty() {}
 }

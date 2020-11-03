@@ -109,6 +109,7 @@ internal sealed class ListU<out A>
 			else -> tail.subList(fromIndex - 1, toIndex - 1)
 		}
 
+		@Suppress("OVERRIDE_BY_INLINE")
 		override inline fun <B> map(f: (A) -> B): NonEmpty<B> = of(f(head), tail.map(f))
 
 		override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =

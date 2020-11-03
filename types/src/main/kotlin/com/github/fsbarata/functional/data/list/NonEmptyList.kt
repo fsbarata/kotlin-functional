@@ -69,6 +69,7 @@ class NonEmptyList<out A> private constructor(
 		else -> tail.subList(fromIndex - 1, toIndex - 1)
 	}
 
+	@Suppress("OVERRIDE_BY_INLINE")
 	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
 
 	override fun <B> bind(f: (A) -> Context<NonEmptyList<*>, B>): NonEmptyList<B> =
@@ -136,8 +137,8 @@ fun <A> List<A>.startWithItem(item: A) = nelOf(item, this)
 
 fun <A> List<A>.nonEmpty(): NonEmptyList<A>? = toNel()
 fun <A> Iterable<A>.toNel(): NonEmptyList<A>? {
-	return when {
-		this is NonEmptyList<A> -> this
+	return when (this) {
+		is NonEmptyList<A> -> this
 		else -> iterator().nonEmpty()?.toNel()
 	}
 }

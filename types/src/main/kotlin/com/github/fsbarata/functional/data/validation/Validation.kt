@@ -50,6 +50,7 @@ sealed class Validation<out E, out A>:
 	}
 }
 
+@Suppress("UNCHECKED_CAST")
 val <A> Context<Validation<Nothing, *>, A>.asValidation: Validation<Nothing, A>
 	get() = this as Validation<Nothing, A>
 

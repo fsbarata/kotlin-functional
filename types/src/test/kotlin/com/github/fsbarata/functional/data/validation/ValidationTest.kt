@@ -13,6 +13,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test
 
+@Suppress("UNREACHABLE_CODE")
 class ValidationTest: FunctorTest<Validation<Nothing, *>> {
 	override fun <A> createFunctor(a: A): Validation<Nothing, A> = Success(a)
 
@@ -63,9 +64,13 @@ class ValidationTest: FunctorTest<Validation<Nothing, *>> {
 	fun withEither() {
 		assertEquals(Success(3), Success(3).withEither { it })
 		assertEquals(Failure("5"),
-			Success(3).withEither { it.flatMap { Either.Left("${it + 2}") } })
+			Success(3).withEither { validation ->
+				validation.flatMap { Either.Left("${it + 2}") }
+			})
 		assertEquals(Failure("3"),
-			Failure(3).withEither { it.mapLeft { "$it" } })
+			Failure(3).withEither { validation ->
+				validation.mapLeft { "$it" }
+			})
 		assertEquals(Success(3), Failure(3).withEither { it.swap() })
 	}
 
