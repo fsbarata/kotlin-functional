@@ -5,7 +5,7 @@ import com.github.fsbarata.functional.data.list.NonEmptyList
 
 class NonEmptyIterator<out A>(
 	val head: A,
-	val tail: Iterator<A>,
+	val tail: Iterator<A> = EmptyIterator,
 ): Iterator<A> {
 	private var begin: Boolean = true
 

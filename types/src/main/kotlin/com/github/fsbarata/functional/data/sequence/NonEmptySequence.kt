@@ -3,8 +3,8 @@ package com.github.fsbarata.functional.data.sequence
 import com.github.fsbarata.functional.control.Context
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.list.NonEmptyList
-import com.github.fsbarata.functional.iterators.EmptyIterator
 import com.github.fsbarata.functional.iterators.NonEmptyIterator
 import com.github.fsbarata.functional.iterators.toNel
 
@@ -15,13 +15,14 @@ import com.github.fsbarata.functional.iterators.toNel
  */
 interface NonEmptySequence<out A>:
 	Sequence<A>,
+	Foldable<A>,
 	Monad<NonEmptySequence<*>, A>,
 	MonadZip<NonEmptySequence<*>, A> {
 	override val scope get() = Companion
 
 	override fun iterator(): NonEmptyIterator<A>
 
-	fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
+	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		fold(initialValue, accumulator)
 
 	@Deprecated("Non empty sequence always has a first", replaceWith = ReplaceWith("first()"))
@@ -74,7 +75,7 @@ interface NonEmptySequence<out A>:
 	}
 
 	companion object: Monad.Scope<NonEmptySequence<*>> {
-		override fun <A> just(a: A) = NonEmptySequence { NonEmptyIterator(a, EmptyIterator) }
+		override fun <A> just(a: A) = NonEmptySequence { NonEmptyIterator(a) }
 	}
 }
 

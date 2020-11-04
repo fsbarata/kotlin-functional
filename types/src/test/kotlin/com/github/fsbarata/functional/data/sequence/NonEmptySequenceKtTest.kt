@@ -1,18 +1,23 @@
 package com.github.fsbarata.functional.data.sequence
 
 import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.test.FoldableTest
 import com.github.fsbarata.functional.control.test.MonadTest
 import com.github.fsbarata.functional.control.test.MonadZipTest
+import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.iterators.NonEmptyIterator
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class NonEmptySequenceKtTest: MonadTest<NonEmptySequence<*>>, MonadZipTest<NonEmptySequence<*>> {
+class NonEmptySequenceKtTest: MonadTest<NonEmptySequence<*>>, MonadZipTest<NonEmptySequence<*>>, FoldableTest {
 	override val monadScope = NonEmptySequence
 	override fun Monad<NonEmptySequence<*>, Int>.equalTo(other: Monad<NonEmptySequence<*>, Int>): Boolean =
 		asNes.toList() == other.asNes.toList()
+
+	override fun createFoldable(item1: Int, item2: Int, item3: Int): Foldable<Int> =
+		nonEmptySequenceOf(item1, item2, item3)
 
 	@Test
 	fun `non empty sequence from iterator`() {
