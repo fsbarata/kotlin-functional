@@ -41,3 +41,11 @@ inline fun <A, B, C, R> ((A) -> (B) -> (C) -> R).uncurry(): F3<A, B, C, R> =
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun <A, B, R> F2<A, B, R>.flip(): F2<B, A, R> = { b, a -> invoke(a, b) }
+
+fun <A, B, R> on(f1: F2<B, B, R>, f2: F1<A, B>): (A, A) -> R = { a1, a2 -> f1(f2(a1), f2(a2)) }
+fun <A, B, R> on(f1: (B) -> (B) -> R, f2: F1<A, B>): (A) -> (A) -> R =
+	{ a1 ->
+		val f11 = f1(f2(a1))
+		val r = { a2: A -> f11(f2(a2)) }
+		r
+	}
