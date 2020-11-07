@@ -12,10 +12,10 @@ import java.io.Serializable
 class ListF<A>(
 	private val wrapped: List<A>,
 ): Monad<ListContext, A>,
-   MonadZip<ListContext, A>,
-   Foldable<A>,
-   List<A> by wrapped,
-   Serializable {
+	MonadZip<ListContext, A>,
+	Foldable<A>,
+	List<A> by wrapped,
+	Serializable {
 	override val scope get() = ListF
 
 	@Suppress("OVERRIDE_BY_INLINE")

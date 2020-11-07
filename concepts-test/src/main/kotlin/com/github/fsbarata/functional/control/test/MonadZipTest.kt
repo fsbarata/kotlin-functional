@@ -4,12 +4,9 @@ import com.github.fsbarata.functional.control.*
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-interface MonadZipTest<C> {
-	val monadScope: Monad.Scope<C>
+interface MonadZipTest<C>: MonadTest<C> {
 	private val monad1 get() = monadScope.just(9) as MonadZip<C, Int>
 	private val monad2 get() = monadScope.just(3) as MonadZip<C, Int>
-
-	fun <A> Monad<C, A>.equalTo(other: Monad<C, A>): Boolean
 
 	@Test
 	fun naturality() {

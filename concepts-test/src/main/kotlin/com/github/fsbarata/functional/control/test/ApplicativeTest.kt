@@ -1,7 +1,6 @@
 package com.github.fsbarata.functional.control.test
 
 import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Functor
 import com.github.fsbarata.functional.control.apFromLift
 import com.github.fsbarata.functional.control.liftA2FromAp
 import com.github.fsbarata.functional.data.F1
@@ -16,10 +15,6 @@ interface ApplicativeTest<C>: FunctorTest<C> {
 	override fun <A> createFunctor(a: A): Applicative<C, A> {
 		return applicativeScope.just(a)
 	}
-
-	fun <A> Applicative<C, A>.equalTo(other: Applicative<C, A>): Boolean
-	override fun <A> Functor<C, A>.equalTo(other: Functor<C, A>): Boolean =
-		(this as Applicative<C, A>).equalTo(other as Applicative<C, A>)
 
 	@Test
 	fun `just identity`() {

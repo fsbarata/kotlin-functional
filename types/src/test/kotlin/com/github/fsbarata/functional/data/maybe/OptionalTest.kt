@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.data.maybe
 
-import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.Functor
 import com.github.fsbarata.functional.control.test.MonadTest
 import com.github.fsbarata.functional.control.test.MonadZipTest
 import com.github.fsbarata.functional.data.Foldable
@@ -10,7 +10,7 @@ import org.junit.Test
 
 class OptionalTest: MonadTest<Optional<*>>, MonadZipTest<Optional<*>>, FoldableTest {
 	override val monadScope = Optional
-	override fun <A> Monad<Optional<*>, A>.equalTo(other: Monad<Optional<*>, A>): Boolean =
+	override fun <A> Functor<Optional<*>, A>.equalTo(other: Functor<Optional<*>, A>): Boolean =
 		asOptional == other.asOptional
 
 	override fun <A> createFoldable(vararg items: A): Foldable<A> =

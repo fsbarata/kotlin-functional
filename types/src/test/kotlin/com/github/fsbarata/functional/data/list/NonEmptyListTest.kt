@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.data.list
 
-import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.Functor
 import com.github.fsbarata.functional.control.test.MonadTest
 import com.github.fsbarata.functional.control.test.MonadZipTest
 import com.github.fsbarata.functional.data.Foldable
@@ -11,7 +11,7 @@ import java.math.BigInteger
 
 class NonEmptyListTest: MonadTest<NonEmptyList<*>>, MonadZipTest<NonEmptyList<*>>, FoldableTest {
 	override val monadScope = NonEmptyList
-	override fun <A> Monad<NonEmptyList<*>, A>.equalTo(other: Monad<NonEmptyList<*>, A>): Boolean =
+	override fun <A> Functor<NonEmptyList<*>, A>.equalTo(other: Functor<NonEmptyList<*>, A>): Boolean =
 		asNel == other.asNel
 
 	private val nel1 = NonEmptyList.just(9)

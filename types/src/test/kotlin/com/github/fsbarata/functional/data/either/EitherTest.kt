@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.data.either
 
-import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.Functor
 import com.github.fsbarata.functional.control.test.MonadTest
 import com.github.fsbarata.functional.data.maybe.Optional
 import org.junit.Assert.*
@@ -8,7 +8,7 @@ import org.junit.Test
 
 class EitherTest: MonadTest<Either<Nothing, *>> {
 	override val monadScope = Either
-	override fun <A> Monad<Either<Nothing, *>, A>.equalTo(other: Monad<Either<Nothing, *>, A>): Boolean =
+	override fun <A> Functor<Either<Nothing, *>, A>.equalTo(other: Functor<Either<Nothing, *>, A>): Boolean =
 		asEither == other.asEither
 
 	@Test

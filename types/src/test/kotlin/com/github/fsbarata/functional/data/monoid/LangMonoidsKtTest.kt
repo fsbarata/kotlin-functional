@@ -5,7 +5,7 @@ import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigDecimal
-import java.util.UUID
+import java.util.*
 import kotlin.random.Random
 
 class ConcatStringMonoidTest: MonoidTest<String>(
@@ -35,7 +35,7 @@ class ProductBigDecimalMonoidTest: MonoidTest<BigDecimal>(
 	@Test
 	fun multiplies() {
 		assertEquals(BigDecimal("6.75"),
-					 productBigDecimalMonoid().combine(BigDecimal("1.5"), BigDecimal("4.5")))
+			productBigDecimalMonoid().combine(BigDecimal("1.5"), BigDecimal("4.5")))
 	}
 }
 

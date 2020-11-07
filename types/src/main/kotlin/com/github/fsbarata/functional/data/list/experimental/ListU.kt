@@ -20,8 +20,8 @@ import kotlin.contracts.contract
  */
 internal sealed class ListU<out A>
 	: List<A>,
-	  Foldable<A>,
-	  Serializable {
+	Foldable<A>,
+	Serializable {
 
 	object Empty: ListU<Nothing>(), List<Nothing> by emptyList() {
 		@Deprecated("Empty list is always empty", replaceWith = ReplaceWith("true"))
@@ -65,10 +65,10 @@ internal sealed class ListU<out A>
 		override val head: A,
 		override val tail: List<A>,
 	): ListU<A>(),
-	   Monad<NonEmpty<*>, A>,
-	   MonadZip<NonEmpty<*>, A>,
-	   NonEmptyIterable<A>,
-	   List<A> {
+		Monad<NonEmpty<*>, A>,
+		MonadZip<NonEmpty<*>, A>,
+		NonEmptyIterable<A>,
+		List<A> {
 		override val scope get() = NonEmpty
 
 		@Deprecated("Non empty list is never empty", replaceWith = ReplaceWith("false"))

@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.data.sequence
 
-import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.Functor
 import com.github.fsbarata.functional.control.test.MonadTest
 import com.github.fsbarata.functional.control.test.MonadZipTest
 import com.github.fsbarata.functional.data.Foldable
@@ -13,7 +13,7 @@ import org.junit.Test
 
 class NonEmptySequenceKtTest: MonadTest<NonEmptySequence<*>>, MonadZipTest<NonEmptySequence<*>>, FoldableTest {
 	override val monadScope = NonEmptySequence
-	override fun <A> Monad<NonEmptySequence<*>, A>.equalTo(other: Monad<NonEmptySequence<*>, A>): Boolean =
+	override fun <A> Functor<NonEmptySequence<*>, A>.equalTo(other: Functor<NonEmptySequence<*>, A>): Boolean =
 		asNes.toList() == other.asNes.toList()
 
 	override fun <A> createFoldable(vararg items: A): Foldable<A> =
@@ -61,7 +61,7 @@ class NonEmptySequenceKtTest: MonadTest<NonEmptySequence<*>>, MonadZipTest<NonEm
 			NonEmptyList.of(11),
 			generateSequence(null as Int?) { null }.nonEmpty {
 				NonEmptyIterator(11,
-								 emptySequence<Int>().iterator())
+					emptySequence<Int>().iterator())
 			}.toList()
 		)
 	}
