@@ -1,10 +1,10 @@
 package com.github.fsbarata.functional.data.maybe
 
 import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.control.test.FoldableTest
 import com.github.fsbarata.functional.control.test.MonadTest
 import com.github.fsbarata.functional.control.test.MonadZipTest
 import com.github.fsbarata.functional.data.Foldable
+import com.github.fsbarata.functional.data.test.FoldableTest
 import org.junit.Assert.*
 import org.junit.Test
 

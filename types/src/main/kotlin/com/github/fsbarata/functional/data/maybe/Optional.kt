@@ -13,11 +13,11 @@ import java.io.Serializable
  * Wraps a value that may or may not be present.
  */
 sealed class Optional<out A>:
-	Monad<Optional<*>, A>,
-	MonadZip<Optional<*>, A>,
+	Monad<OptionalContext, A>,
+	MonadZip<OptionalContext, A>,
 	Foldable<A>,
 	Serializable {
-	override val scope get() = Companion
+	override val scope get() = Optional
 
 	abstract fun orNull(): A?
 
@@ -31,7 +31,7 @@ sealed class Optional<out A>:
 	final override inline fun <B> map(f: (A) -> B) =
 		flatMap { just(f(it)) }
 
-	override fun <B> bind(f: (A) -> Context<Optional<*>, B>) =
+	override fun <B> bind(f: (A) -> Context<OptionalContext, B>) =
 		flatMap { f(it).asOptional }
 
 	inline fun <B> flatMap(f: (A) -> Optional<B>): Optional<B> =
@@ -52,13 +52,13 @@ sealed class Optional<out A>:
 		return fold(ifEmpty = { initialValue }, ifSome = { accumulator(it, initialValue) })
 	}
 
-	override fun <B, R> zipWith(other: MonadZip<Optional<*>, B>, f: (A, B) -> R): Optional<R> {
+	override fun <B, R> zipWith(other: MonadZip<OptionalContext, B>, f: (A, B) -> R): Optional<R> {
 		return flatMap { a -> other.asOptional.map { b -> f(a, b) } }
 	}
 
 	inline fun <B> maybe(b: B, f: (A) -> B): B = map(f) orElse b
 
-	companion object: Monad.Scope<Optional<*>> {
+	companion object: Monad.Scope<OptionalContext> {
 		fun <A> empty(): Optional<A> = None
 		override fun <A> just(a: A): Optional<A> = Some(a)
 		fun <A> ofNullable(a: A?) = if (a != null) Some(a) else None
@@ -73,6 +73,8 @@ object None: Optional<Nothing>() {
 	override fun orNull() = null
 }
 
+private typealias OptionalContext = Optional<*>
+
 infix fun <A> Optional<A>.orElse(a: A) = orNull() ?: a
 inline infix fun <A> Optional<A>.orElseGet(a: () -> A) = orNull() ?: a()
 infix fun <A> Optional<A>.orOptional(a: Optional<A>) =
@@ -84,5 +86,5 @@ inline infix fun <A> Optional<A>.orOptionalGet(a: () -> Optional<A>) =
 fun <A: Any> A?.toOptional() = Optional.ofNullable(this)
 fun <A: Any> A?.f() = toOptional()
 
-val <A> Context<Optional<*>, A>.asOptional
+val <A> Context<OptionalContext, A>.asOptional
 	get() = this as Optional<A>

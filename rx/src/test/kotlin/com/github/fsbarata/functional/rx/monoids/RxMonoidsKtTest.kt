@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.rx.monoids
 
-import com.github.fsbarata.functional.control.test.MonoidTest
 import com.github.fsbarata.functional.data.monoid.productIntMonoid
+import com.github.fsbarata.functional.data.test.MonoidTest
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable

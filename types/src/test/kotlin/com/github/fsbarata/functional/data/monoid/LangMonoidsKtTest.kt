@@ -1,11 +1,11 @@
 package com.github.fsbarata.functional.data.monoid
 
-import com.github.fsbarata.functional.control.test.MonoidTest
+import com.github.fsbarata.functional.data.test.MonoidTest
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigDecimal
-import java.util.*
+import java.util.UUID
 import kotlin.random.Random
 
 class ConcatStringMonoidTest: MonoidTest<String>(

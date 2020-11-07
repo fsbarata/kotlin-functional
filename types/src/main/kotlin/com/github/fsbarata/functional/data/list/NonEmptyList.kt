@@ -18,11 +18,11 @@ class NonEmptyList<out A> private constructor(
 	override val head: A,
 	override val tail: List<A>,
 ): List<A>,
-	Monad<NonEmptyList<*>, A>,
-	MonadZip<NonEmptyList<*>, A>,
-	Foldable<A>,
-	NonEmptyIterable<A>,
-	Serializable {
+   Monad<NonEmptyContext, A>,
+   MonadZip<NonEmptyContext, A>,
+   Foldable<A>,
+   NonEmptyIterable<A>,
+   Serializable {
 	override val scope get() = Companion
 
 	override val size: Int get() = 1 + tail.size
@@ -72,7 +72,7 @@ class NonEmptyList<out A> private constructor(
 	@Suppress("OVERRIDE_BY_INLINE")
 	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
 
-	override fun <B> bind(f: (A) -> Context<NonEmptyList<*>, B>): NonEmptyList<B> =
+	override fun <B> bind(f: (A) -> Context<NonEmptyContext, B>): NonEmptyList<B> =
 		flatMap { f(it).asNel }
 
 	inline fun <B> flatMap(f: (A) -> NonEmptyList<B>): NonEmptyList<B> = map(f).flatten()
@@ -85,7 +85,7 @@ class NonEmptyList<out A> private constructor(
 	operator fun plus(other: @UnsafeVariance A) = NonEmptyList(head, tail + other)
 	operator fun plus(other: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + other)
 
-	override fun <B, R> zipWith(other: MonadZip<NonEmptyList<*>, B>, f: (A, B) -> R): NonEmptyList<R> {
+	override fun <B, R> zipWith(other: MonadZip<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> {
 		val otherNel = other.asNel
 		return of(f(head, otherNel.head), tail.zip(otherNel.tail, f))
 	}
@@ -124,14 +124,16 @@ class NonEmptyList<out A> private constructor(
 	override fun toString() =
 		joinToString(prefix = "[", postfix = "]")
 
-	companion object: Monad.Scope<NonEmptyList<*>> {
+	companion object: Monad.Scope<NonEmptyContext> {
 		override fun <A> just(a: A) = of(a, emptyList())
 		fun <T> of(head: T, vararg others: T) = of(head, others.toList())
 		fun <T> of(head: T, others: List<T>) = NonEmptyList(head, others)
 	}
 }
 
-val <A> Context<NonEmptyList<*>, A>.asNel get() = this as NonEmptyList<A>
+private typealias NonEmptyContext = NonEmptyList<*>
+
+val <A> Context<NonEmptyContext, A>.asNel get() = this as NonEmptyList<A>
 
 fun <A> nelOf(head: A): NonEmptyList<A> = NonEmptyList.just(head)
 fun <A> nelOf(head: A, vararg tail: A): NonEmptyList<A> = NonEmptyList.of(head, *tail)

@@ -1,4 +1,4 @@
-package com.github.fsbarata.functional.control.test
+package com.github.fsbarata.functional.data.test
 
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Monoid

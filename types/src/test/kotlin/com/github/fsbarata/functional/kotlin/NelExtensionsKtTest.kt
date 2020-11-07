@@ -9,7 +9,6 @@ class NelExtensionsKtTest {
 	private val nel2 = NonEmptyList.of(5, 1, 3)
 	private val nel3 = NonEmptyList.of(2, NonEmptyList.of(4, 2, 5))
 
-
 	@Test
 	fun plusNel() {
 		assertEquals(NonEmptyList.of(9, 3), listOf(9).plusNel(3))

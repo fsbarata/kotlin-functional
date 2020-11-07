@@ -1,10 +1,10 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.control.test.FoldableTest
 import com.github.fsbarata.functional.control.test.MonadTest
 import com.github.fsbarata.functional.control.test.MonadZipTest
 import com.github.fsbarata.functional.data.Foldable
+import com.github.fsbarata.functional.data.test.FoldableTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger

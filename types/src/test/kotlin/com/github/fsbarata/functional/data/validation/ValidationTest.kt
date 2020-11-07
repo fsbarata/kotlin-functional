@@ -63,11 +63,13 @@ class ValidationTest: FunctorTest<Validation<Nothing, *>> {
 	@Test
 	fun withEither() {
 		assertEquals(Success(3), Success(3).withEither { it })
-		assertEquals(Failure("5"),
+		assertEquals(
+			Failure("5"),
 			Success(3).withEither { validation ->
 				validation.flatMap { Either.Left("${it + 2}") }
 			})
-		assertEquals(Failure("3"),
+		assertEquals(
+			Failure("3"),
 			Failure(3).withEither { validation ->
 				validation.mapLeft { "$it" }
 			})

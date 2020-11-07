@@ -1,12 +1,12 @@
 package com.github.fsbarata.functional.data.sequence
 
 import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.control.test.FoldableTest
 import com.github.fsbarata.functional.control.test.MonadTest
 import com.github.fsbarata.functional.control.test.MonadZipTest
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
+import com.github.fsbarata.functional.data.test.FoldableTest
 import com.github.fsbarata.functional.iterators.NonEmptyIterator
 import org.junit.Assert.assertEquals
 import org.junit.Test

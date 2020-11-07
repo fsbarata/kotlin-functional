@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.data.maybe
 
-import com.github.fsbarata.functional.control.test.MonoidTest
 import com.github.fsbarata.functional.data.monoid.productIntMonoid
+import com.github.fsbarata.functional.data.test.MonoidTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.random.Random

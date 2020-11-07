@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.data.list
 
-import com.github.fsbarata.functional.control.test.SemigroupTest
 import com.github.fsbarata.functional.data.sequence.nonEmptySequence
+import com.github.fsbarata.functional.data.test.SemigroupTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.random.Random
