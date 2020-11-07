@@ -20,13 +20,13 @@ interface MonadZipTest<C>: MonadTest<C> {
 			zip(monad1.map(f1) as MonadZip<C, Int>,
 				monad2.map(f2) as MonadZip<C, Int>,
 				f3)
-		assertEquals(r1, r2)
+		assertEqual(r1, r2)
 	}
 
 	@Test
 	fun `information preservation`() {
 		val (r1, r2) = unzip(zip(monad1, monad2))
-		assertEquals(r1, monad1)
-		assertEquals(r2, monad2)
+		assertEqual(r1, monad1)
+		assertEqual(r2, monad2)
 	}
 }

@@ -20,7 +20,7 @@ interface ApplicativeTest<C>: FunctorTest<C> {
 	fun `just identity`() {
 		val r1 = applicativeScope.just(5)
 		val r2 = r1.ap(applicativeScope.just(id()))
-		assertEquals(r1, r2)
+		assertEqual(r1, r2)
 	}
 
 	@Test
@@ -32,7 +32,7 @@ interface ApplicativeTest<C>: FunctorTest<C> {
 		val comp =
 			applicativeScope.just { f1: F1<Int, Int> -> { f2: F1<Int, Int> -> f1.compose(f2) } }
 		val r2 = w.ap(v.ap(u.ap(comp)))
-		assertEquals(r1, r2)
+		assertEqual(r1, r2)
 	}
 
 	@Test
@@ -40,7 +40,7 @@ interface ApplicativeTest<C>: FunctorTest<C> {
 		val r1 = applicativeScope.just(10)
 		val r2 = applicativeScope.just(5)
 			.ap(applicativeScope.just { it * 2 })
-		assertEquals(r1, r2)
+		assertEqual(r1, r2)
 	}
 
 	@Test
@@ -48,7 +48,7 @@ interface ApplicativeTest<C>: FunctorTest<C> {
 		val u = applicativeScope.just { a: Int -> a * 2 }
 		val r1 = applicativeScope.just(5).ap(u)
 		val r2 = u.ap(applicativeScope.just { it(5) })
-		assertEquals(r1, r2)
+		assertEqual(r1, r2)
 	}
 
 	@Test
@@ -58,7 +58,7 @@ interface ApplicativeTest<C>: FunctorTest<C> {
 		val f = { a: Int, b: Double -> (a * b).toString() }.curry()
 		val r1 = liftA2FromAp(u, v, f)
 		val r2 = u.liftA2(f)(v)
-		assertEquals(r1, r2)
+		assertEqual(r1, r2)
 	}
 
 	@Test
@@ -67,6 +67,6 @@ interface ApplicativeTest<C>: FunctorTest<C> {
 		val f = applicativeScope.just { a: Int -> (a * 0.5).roundToInt() }
 		val r1 = apFromLift(u, f)
 		val r2 = u.ap(f)
-		assertEquals(r1, r2)
+		assertEqual(r1, r2)
 	}
 }

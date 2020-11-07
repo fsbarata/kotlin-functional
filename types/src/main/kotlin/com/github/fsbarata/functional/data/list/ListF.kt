@@ -5,6 +5,7 @@ import com.github.fsbarata.functional.control.Context
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Foldable
+import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.compose
 import com.github.fsbarata.functional.data.composeForward
 import java.io.Serializable
@@ -14,6 +15,7 @@ class ListF<A>(
 ): Monad<ListContext, A>,
 	MonadZip<ListContext, A>,
 	Foldable<A>,
+	Traversable<ListContext, A>,
 	List<A> by wrapped,
 	Serializable {
 	override val scope get() = ListF
@@ -45,11 +47,17 @@ class ListF<A>(
 	override fun <B, R> zipWith(other: MonadZip<ListContext, B>, f: (A, B) -> R): ListF<R> =
 		zip(other.asList, f).f()
 
+	override fun <F, B> traverse(
+		appScope: Applicative.Scope<F>,
+		f: (A) -> Applicative<F, B>,
+	): Applicative<F, ListF<B>> =
+		(this as List<A>).traverse(appScope, f).map(List<B>::f)
+
 	override fun toString() = wrapped.toString()
 	override fun equals(other: Any?) = wrapped == other
 	override fun hashCode() = wrapped.hashCode()
 
-	companion object: Monad.Scope<ListContext> {
+	companion object: Monad.Scope<ListContext>, Traversable.Scope<ListContext> {
 		fun <A> empty() = emptyList<A>().f()
 		override fun <A> just(a: A) = listOf(a).f()
 	}

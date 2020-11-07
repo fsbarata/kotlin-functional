@@ -3,18 +3,24 @@ package com.github.fsbarata.functional.data.maybe
 import com.github.fsbarata.functional.control.Functor
 import com.github.fsbarata.functional.control.test.MonadTest
 import com.github.fsbarata.functional.control.test.MonadZipTest
-import com.github.fsbarata.functional.data.Foldable
-import com.github.fsbarata.functional.data.test.FoldableTest
+import com.github.fsbarata.functional.data.list.experimental.ListU.Empty.firstOrNull
+import com.github.fsbarata.functional.data.test.TraversableTest
 import org.junit.Assert.*
 import org.junit.Test
 
-class OptionalTest: MonadTest<Optional<*>>, MonadZipTest<Optional<*>>, FoldableTest {
+class OptionalTest:
+	MonadTest<Optional<*>>,
+	MonadZipTest<Optional<*>>,
+	TraversableTest<Optional<*>> {
+	override val traversableScope = Optional
 	override val monadScope = Optional
+
+	override fun <A> createTraversable(vararg items: A) = Optional.ofNullable(firstOrNull())
+
 	override fun <A> Functor<Optional<*>, A>.equalTo(other: Functor<Optional<*>, A>): Boolean =
 		asOptional == other.asOptional
 
-	override fun <A> createFoldable(vararg items: A): Foldable<A> =
-		items.firstOrNull().toOptional()
+	override fun <A> createFunctor(a: A) = Optional.just(a)
 
 	@Test
 	fun isPresent() {

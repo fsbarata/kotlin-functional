@@ -18,14 +18,14 @@ interface MonadTest<C>: ApplicativeTest<C> {
 		val k = { x: Int -> monadScope.just(x * 3) }
 		val r1 = k(a)
 		val r2 = monadScope.just(a).bind(k)
-		assertEquals(r1, r2)
+		assertEqual(r1, r2)
 	}
 
 	@Test
 	fun `right identity`() {
 		val m = monadScope.just(7)
 		val b = m.bind { monadScope.just(it) }
-		assertEquals(m, b)
+		assertEqual(m, b)
 	}
 
 	@Test
@@ -35,7 +35,7 @@ interface MonadTest<C>: ApplicativeTest<C> {
 		val h = { a: Int -> monadScope.just(a * 2) }
 		val r1 = m.bind { x -> k(x).bind { h(it) } }
 		val r2 = m.bind(k).bind(h)
-		assertEquals(r1, r2)
+		assertEqual(r1, r2)
 	}
 
 	@Test
@@ -44,12 +44,12 @@ interface MonadTest<C>: ApplicativeTest<C> {
 		val m2 = monadScope.just(5)
 		val r1 = m2.ap(m1)
 		val r2 = m1.bind { x1 -> m2.bind { x2 -> monadScope.just(x1(x2)) } }
-		assertEquals(r1, r2)
+		assertEqual(r1, r2)
 	}
 
 	@Test
 	fun `map is correct`() {
-		assertEquals(monad.map { it * 3 }, monad.bind { monad.scope.just(it * 3) })
+		assertEqual(monad.map { it * 3 }, monad.bind { monad.scope.just(it * 3) })
 	}
 
 	private fun Monad<C, Int>.multiply(

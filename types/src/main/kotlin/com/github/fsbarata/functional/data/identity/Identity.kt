@@ -52,3 +52,5 @@ private typealias IdentityContext = Identity<*>
 
 val <A> Context<IdentityContext, A>.asIdentity
 	get() = this as Identity<A>
+
+fun <A> Context<IdentityContext, A>.runIdentity() = asIdentity.a

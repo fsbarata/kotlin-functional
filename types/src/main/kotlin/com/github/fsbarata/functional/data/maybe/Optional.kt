@@ -1,10 +1,12 @@
 package com.github.fsbarata.functional.data.maybe
 
+import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Context
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Monoid
+import com.github.fsbarata.functional.data.Traversable
 import java.io.Serializable
 
 /**
@@ -15,6 +17,7 @@ import java.io.Serializable
 sealed class Optional<out A>:
 	Monad<OptionalContext, A>,
 	MonadZip<OptionalContext, A>,
+	Traversable<OptionalContext, A>,
 	Foldable<A>,
 	Serializable {
 	override val scope get() = Optional
@@ -58,7 +61,16 @@ sealed class Optional<out A>:
 
 	inline fun <B> maybe(b: B, f: (A) -> B): B = map(f) orElse b
 
-	companion object: Monad.Scope<OptionalContext> {
+	override fun <F, B> traverse(
+		appScope: Applicative.Scope<F>,
+		f: (A) -> Applicative<F, B>,
+	): Applicative<F, Optional<B>> =
+		fold(
+			ifEmpty = { appScope.just(None) },
+			ifSome = { f(it).map(::Some) },
+		)
+
+	companion object: Monad.Scope<OptionalContext>, Traversable.Scope<OptionalContext> {
 		fun <A> empty(): Optional<A> = None
 		override fun <A> just(a: A): Optional<A> = Some(a)
 		fun <A> ofNullable(a: A?) = if (a != null) Some(a) else None

@@ -2,6 +2,7 @@ apply from: '../kotlin.gradle'
 
 dependencies {
 	implementation project(':concepts')
+	implementation project(':types')
     implementation "junit:junit:4.13"
 }
 
