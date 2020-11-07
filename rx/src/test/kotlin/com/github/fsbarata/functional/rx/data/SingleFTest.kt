@@ -6,7 +6,7 @@ import com.github.fsbarata.functional.control.test.MonadZipTest
 
 class SingleFTest: MonadTest<SingleF<*>>, MonadZipTest<SingleF<*>> {
 	override val monadScope = SingleF
-	override fun Monad<SingleF<*>, Int>.equalTo(other: Monad<SingleF<*>, Int>): Boolean {
+	override fun <A> Monad<SingleF<*>, A>.equalTo(other: Monad<SingleF<*>, A>): Boolean {
 		val testObserver1 = asSingle.materialize().test()
 		val testObserver2 = other.asSingle.materialize().test()
 

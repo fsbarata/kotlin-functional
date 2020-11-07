@@ -9,7 +9,7 @@ interface MonadZipTest<C> {
 	private val monad1 get() = monadScope.just(9) as MonadZip<C, Int>
 	private val monad2 get() = monadScope.just(3) as MonadZip<C, Int>
 
-	fun Monad<C, Int>.equalTo(other: Monad<C, Int>): Boolean
+	fun <A> Monad<C, A>.equalTo(other: Monad<C, A>): Boolean
 
 	@Test
 	fun naturality() {

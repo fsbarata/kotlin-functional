@@ -6,7 +6,7 @@ import org.junit.Test
 
 interface FunctorTest<C> {
 	fun <A> createFunctor(a: A): Functor<C, A>
-	fun Functor<C, Int>.equalTo(other: Functor<C, Int>): Boolean
+	fun <A> Functor<C, A>.equalTo(other: Functor<C, A>): Boolean
 
 	@Test
 	fun `map identity`() {

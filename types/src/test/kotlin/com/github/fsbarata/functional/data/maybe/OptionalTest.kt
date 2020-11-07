@@ -10,7 +10,7 @@ import org.junit.Test
 
 class OptionalTest: MonadTest<Optional<*>>, MonadZipTest<Optional<*>>, FoldableTest {
 	override val monadScope = Optional
-	override fun Monad<Optional<*>, Int>.equalTo(other: Monad<Optional<*>, Int>): Boolean =
+	override fun <A> Monad<Optional<*>, A>.equalTo(other: Monad<Optional<*>, A>): Boolean =
 		asOptional == other.asOptional
 
 	override fun createFoldable(): Foldable<Int> = Optional.just(5)

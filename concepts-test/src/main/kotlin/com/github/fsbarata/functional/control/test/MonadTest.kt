@@ -7,11 +7,11 @@ import org.junit.Test
 
 interface MonadTest<C>: ApplicativeTest<C> {
 	val monadScope: Monad.Scope<C>
-	fun Monad<C, Int>.equalTo(other: Monad<C, Int>): Boolean
+	fun <A> Monad<C, A>.equalTo(other: Monad<C, A>): Boolean
 
 	override val applicativeScope: Applicative.Scope<C> get() = monadScope
-	override fun Applicative<C, Int>.equalTo(other: Applicative<C, Int>): Boolean =
-		(this as Monad<C, Int>).equalTo(other as Monad<C, Int>)
+	override fun <A> Applicative<C, A>.equalTo(other: Applicative<C, A>): Boolean =
+		(this as Monad<C, A>).equalTo(other as Monad<C, A>)
 
 	private val monad get() = monadScope.just(5)
 

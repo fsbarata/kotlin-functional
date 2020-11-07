@@ -11,7 +11,7 @@ import java.math.BigInteger
 
 class NonEmptyListTest: MonadTest<NonEmptyList<*>>, MonadZipTest<NonEmptyList<*>>, FoldableTest {
 	override val monadScope = NonEmptyList
-	override fun Monad<NonEmptyList<*>, Int>.equalTo(other: Monad<NonEmptyList<*>, Int>): Boolean =
+	override fun <A> Monad<NonEmptyList<*>, A>.equalTo(other: Monad<NonEmptyList<*>, A>): Boolean =
 		asNel == other.asNel
 
 	private val nel1 = NonEmptyList.just(9)

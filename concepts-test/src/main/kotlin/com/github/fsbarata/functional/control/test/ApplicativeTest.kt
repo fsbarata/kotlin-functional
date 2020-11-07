@@ -13,9 +13,9 @@ interface ApplicativeTest<C>: FunctorTest<C> {
 		return applicativeScope.just(a)
 	}
 
-	fun Applicative<C, Int>.equalTo(other: Applicative<C, Int>): Boolean
-	override fun Functor<C, Int>.equalTo(other: Functor<C, Int>): Boolean =
-		(this as Applicative<C, Int>).equalTo(other as Applicative<C, Int>)
+	fun <A> Applicative<C, A>.equalTo(other: Applicative<C, A>): Boolean
+	override fun <A> Functor<C, A>.equalTo(other: Functor<C, A>): Boolean =
+		(this as Applicative<C, A>).equalTo(other as Applicative<C, A>)
 
 	@Test
 	fun `just identity`() {
@@ -37,7 +37,7 @@ interface ApplicativeTest<C>: FunctorTest<C> {
 	}
 
 	@Test
-	fun homomorphism() {
+	fun `ap homomorphism`() {
 		assert(
 			applicativeScope.just(10)
 				.equalTo(
@@ -48,7 +48,7 @@ interface ApplicativeTest<C>: FunctorTest<C> {
 	}
 
 	@Test
-	fun interchange() {
+	fun `ap interchange`() {
 		val u = applicativeScope.just { a: Int -> a * 2 }
 		val r1 = applicativeScope.just(5).ap(u)
 		val r2 = u.ap(applicativeScope.just { it(5) })

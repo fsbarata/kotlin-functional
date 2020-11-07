@@ -14,7 +14,7 @@ import kotlin.contracts.ExperimentalContracts
 
 internal class NonEmptyTest: MonadTest<NonEmpty<*>>, MonadZipTest<NonEmpty<*>>, FoldableTest {
 	override val monadScope = NonEmpty
-	override fun Monad<NonEmpty<*>, Int>.equalTo(other: Monad<NonEmpty<*>, Int>) =
+	override fun <A> Monad<NonEmpty<*>, A>.equalTo(other: Monad<NonEmpty<*>, A>) =
 		asNel == other.asNel
 
 	private val nel1 = NonEmpty.just(9)

@@ -13,7 +13,7 @@ import org.junit.Test
 
 class NonEmptySequenceKtTest: MonadTest<NonEmptySequence<*>>, MonadZipTest<NonEmptySequence<*>>, FoldableTest {
 	override val monadScope = NonEmptySequence
-	override fun Monad<NonEmptySequence<*>, Int>.equalTo(other: Monad<NonEmptySequence<*>, Int>): Boolean =
+	override fun <A> Monad<NonEmptySequence<*>, A>.equalTo(other: Monad<NonEmptySequence<*>, A>): Boolean =
 		asNes.toList() == other.asNes.toList()
 
 	override fun createFoldable(item1: Int, item2: Int, item3: Int): Foldable<Int> =

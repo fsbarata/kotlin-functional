@@ -8,7 +8,7 @@ import org.junit.Test
 
 class EitherTest: MonadTest<Either<Nothing, *>> {
 	override val monadScope = Either
-	override fun Monad<Either<Nothing, *>, Int>.equalTo(other: Monad<Either<Nothing, *>, Int>): Boolean =
+	override fun <A> Monad<Either<Nothing, *>, A>.equalTo(other: Monad<Either<Nothing, *>, A>): Boolean =
 		asEither == other.asEither
 
 	@Test

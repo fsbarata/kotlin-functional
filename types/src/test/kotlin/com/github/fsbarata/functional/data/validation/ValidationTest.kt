@@ -17,7 +17,7 @@ import org.junit.Test
 class ValidationTest: FunctorTest<Validation<Nothing, *>> {
 	override fun <A> createFunctor(a: A): Validation<Nothing, A> = Success(a)
 
-	override fun Functor<Validation<Nothing, *>, Int>.equalTo(other: Functor<Validation<Nothing, *>, Int>) =
+	override fun <A> Functor<Validation<Nothing, *>, A>.equalTo(other: Functor<Validation<Nothing, *>, A>) =
 		asValidation == other.asValidation
 
 	@Test

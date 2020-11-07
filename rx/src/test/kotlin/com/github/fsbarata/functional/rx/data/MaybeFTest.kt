@@ -6,7 +6,7 @@ import com.github.fsbarata.functional.control.test.MonadZipTest
 
 class MaybeFTest: MonadTest<MaybeF<*>>, MonadZipTest<MaybeF<*>> {
 	override val monadScope = MaybeF
-	override fun Monad<MaybeF<*>, Int>.equalTo(other: Monad<MaybeF<*>, Int>): Boolean {
+	override fun <A> Monad<MaybeF<*>, A>.equalTo(other: Monad<MaybeF<*>, A>): Boolean {
 		val testObserver1 = asMaybe.materialize().test()
 		val testObserver2 = other.asMaybe.materialize().test()
 
