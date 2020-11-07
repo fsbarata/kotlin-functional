@@ -13,7 +13,8 @@ class OptionalTest: MonadTest<Optional<*>>, MonadZipTest<Optional<*>>, FoldableT
 	override fun <A> Monad<Optional<*>, A>.equalTo(other: Monad<Optional<*>, A>): Boolean =
 		asOptional == other.asOptional
 
-	override fun createFoldable(): Foldable<Int> = Optional.just(5)
+	override fun <A> createFoldable(vararg items: A): Foldable<A> =
+		items.firstOrNull().toOptional()
 
 	@Test
 	fun isPresent() {

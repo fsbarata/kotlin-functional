@@ -22,8 +22,8 @@ internal class NonEmptyTest: MonadTest<NonEmpty<*>>, MonadZipTest<NonEmpty<*>>, 
 	private val nel3 = NonEmpty.of(2, NonEmpty.of(4, 2, 5))
 
 
-	override fun createFoldable(item1: Int, item2: Int, item3: Int): Foldable<Int> =
-		NonEmpty.of(item1, item2, item3)
+	override fun <A> createFoldable(vararg items: A): Foldable<A> =
+		items.toList().u() as NonEmpty<A>
 
 	@Test
 	fun size() {

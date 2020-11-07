@@ -12,6 +12,6 @@ class ListFTest: MonadTest<ListF<*>>, MonadZipTest<ListF<*>>, FoldableTest, Trav
 	override fun <A> Monad<ListF<*>, A>.equalTo(other: Monad<ListF<*>, A>) =
 		asList == other.asList
 
-	override fun createFoldable(item1: Int, item2: Int, item3: Int): Foldable<Int> =
-		listOf(item1, item2, item3).f()
+	override fun <A> createFoldable(vararg items: A): Foldable<A> =
+		items.toList().f()
 }

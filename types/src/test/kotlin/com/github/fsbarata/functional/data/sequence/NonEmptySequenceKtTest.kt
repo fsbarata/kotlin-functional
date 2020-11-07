@@ -16,8 +16,8 @@ class NonEmptySequenceKtTest: MonadTest<NonEmptySequence<*>>, MonadZipTest<NonEm
 	override fun <A> Monad<NonEmptySequence<*>, A>.equalTo(other: Monad<NonEmptySequence<*>, A>): Boolean =
 		asNes.toList() == other.asNes.toList()
 
-	override fun createFoldable(item1: Int, item2: Int, item3: Int): Foldable<Int> =
-		nonEmptySequenceOf(item1, item2, item3)
+	override fun <A> createFoldable(vararg items: A): Foldable<A> =
+		nonEmptySequenceOf(items.first(), items.drop(1))
 
 	@Test
 	fun `non empty sequence from iterator`() {

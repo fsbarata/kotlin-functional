@@ -99,6 +99,12 @@ fun <A> Sequence<A>.startWithItem(item: A) =
 fun <A> nonEmptySequenceOf(head: A, vararg tail: A) =
 	NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
 
+fun <A> nonEmptySequenceOf(head: A, tail: Iterable<A>) =
+	NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
+
+fun <A> nonEmptySequence(head: A, tail: Sequence<A>) =
+	NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
+
 fun <A> Sequence<A>.nonEmpty(ifEmpty: NonEmptySequence<A>) = nonEmpty(ifEmpty::iterator)
 
 fun <A> Sequence<A>.nonEmpty(ifEmpty: () -> NonEmptyIterator<A>) =

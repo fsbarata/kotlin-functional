@@ -18,8 +18,8 @@ class NonEmptyListTest: MonadTest<NonEmptyList<*>>, MonadZipTest<NonEmptyList<*>
 	private val nel2 = NonEmptyList.of(5, 1, 3)
 	private val nel3 = NonEmptyList.of(2, NonEmptyList.of(4, 2, 5))
 
-	override fun createFoldable(item1: Int, item2: Int, item3: Int): Foldable<Int> =
-		nelOf(item1, item2, item3)
+	override fun <A> createFoldable(vararg items: A): Foldable<A> =
+		items.toList().toNel() ?: throw NoSuchElementException()
 
 	@Test
 	fun size() {
