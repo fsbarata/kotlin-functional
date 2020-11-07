@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.control
 
-interface Functor<C, out A>: Context<C, A> {
-	fun <B> map(f: (A) -> B): Functor<C, B>
+interface Functor<F, out A>: Context<F, A> {
+	fun <B> map(f: (A) -> B): Functor<F, B>
 }
 
-fun <A, B, C> lift(f: (A) -> B): (Functor<C, A>) -> Functor<C, B> = { it.map(f) }
+fun <A, B, F> lift(f: (A) -> B): (Functor<F, A>) -> Functor<F, B> = { it.map(f) }

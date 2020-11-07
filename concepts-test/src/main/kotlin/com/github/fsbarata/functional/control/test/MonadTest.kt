@@ -5,10 +5,10 @@ import com.github.fsbarata.functional.control.Monad
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-interface MonadTest<C>: ApplicativeTest<C> {
-	val monadScope: Monad.Scope<C>
+interface MonadTest<M>: ApplicativeTest<M> {
+	val monadScope: Monad.Scope<M>
 
-	override val applicativeScope: Applicative.Scope<C> get() = monadScope
+	override val applicativeScope: Applicative.Scope<M> get() = monadScope
 
 	private val monad get() = monadScope.just(5)
 
@@ -52,9 +52,9 @@ interface MonadTest<C>: ApplicativeTest<C> {
 		assertEqual(monad.map { it * 3 }, monad.bind { monad.scope.just(it * 3) })
 	}
 
-	private fun Monad<C, Int>.multiply(
+	private fun Monad<M, Int>.multiply(
 		x: Int,
-	): Monad<C, Int> =
+	): Monad<M, Int> =
 		if (x == 0) scope.just(0)
 		else bind { scope.just(x * it) }
 

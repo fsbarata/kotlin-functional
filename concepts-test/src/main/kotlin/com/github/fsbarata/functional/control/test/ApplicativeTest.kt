@@ -10,9 +10,9 @@ import com.github.fsbarata.functional.data.id
 import org.junit.Test
 import kotlin.math.roundToInt
 
-interface ApplicativeTest<C>: FunctorTest<C> {
-	val applicativeScope: Applicative.Scope<C>
-	override fun <A> createFunctor(a: A): Applicative<C, A> {
+interface ApplicativeTest<F>: FunctorTest<F> {
+	val applicativeScope: Applicative.Scope<F>
+	override fun <A> createFunctor(a: A): Applicative<F, A> {
 		return applicativeScope.just(a)
 	}
 

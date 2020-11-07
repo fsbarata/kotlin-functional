@@ -27,8 +27,8 @@ class ListF<A>(
 	override fun <B> ap(ff: Applicative<ListContext, (A) -> B>): ListF<B> =
 		wrapped.ap(ff.asList).f()
 
-	override fun <B, D> liftA2(f: (A) -> (B) -> D): (Applicative<ListContext, B>) -> ListF<D> =
-		wrapped.liftA2(f) compose (Applicative<ListContext, B>::asList) composeForward List<D>::f
+	override fun <B, R> liftA2(f: (A) -> (B) -> R): (Applicative<ListContext, B>) -> ListF<R> =
+		wrapped.liftA2(f) compose (Applicative<ListContext, B>::asList) composeForward List<R>::f
 
 	override fun <B> bind(f: (A) -> Context<ListContext, B>) =
 		flatMap { f(it).asList }

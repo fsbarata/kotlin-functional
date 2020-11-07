@@ -1,13 +1,13 @@
 package com.github.fsbarata.functional.control
 
-interface Monad<C, out A>: Applicative<C, A> {
-	override val scope: Scope<C>
+interface Monad<M, out A>: Applicative<M, A> {
+	override val scope: Scope<M>
 
-	fun <B> bind(f: (A) -> Context<C, B>): Monad<C, B>
+	fun <B> bind(f: (A) -> Context<M, B>): Monad<M, B>
 
-	override fun <B> map(f: (A) -> B): Monad<C, B> = ap(scope.just(f))
+	override fun <B> map(f: (A) -> B): Monad<M, B> = ap(scope.just(f))
 
-	override fun <B> ap(ff: Applicative<C, (A) -> B>): Monad<C, B> =
+	override fun <B> ap(ff: Applicative<M, (A) -> B>): Monad<M, B> =
 		bind { a -> ff.map { it(a) } }
 
 	interface Scope<C>: Applicative.Scope<C> {
@@ -15,8 +15,8 @@ interface Monad<C, out A>: Applicative<C, A> {
 	}
 }
 
-fun <C> liftM() = LiftM<C>()
+fun <M> liftM() = LiftM<M>()
 
-class LiftM<C> {
-	operator fun <A, B> invoke(f: (A) -> B): (Monad<C, A>) -> Monad<C, B> = { it.map(f) }
+class LiftM<M> {
+	operator fun <A, B> invoke(f: (A) -> B): (Monad<M, A>) -> Monad<M, B> = { it.map(f) }
 }

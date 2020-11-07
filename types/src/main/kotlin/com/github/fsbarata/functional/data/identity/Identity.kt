@@ -30,7 +30,7 @@ data class Identity<A>(
 		ff.map { it(a) }.asIdentity
 
 	@Suppress("OVERRIDE_BY_INLINE")
-	override inline fun <B, D> liftA2(f: (A) -> (B) -> D): (Applicative<IdentityContext, B>) -> Identity<D> {
+	override inline fun <B, R> liftA2(f: (A) -> (B) -> R): (Applicative<IdentityContext, B>) -> Identity<R> {
 		val f2 = f(a)
 		return { ib -> ib.asIdentity.map(f2) }
 	}

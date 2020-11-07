@@ -1,14 +1,14 @@
 package com.github.fsbarata.functional.control
 
-interface MonadZip<C, out A>: Monad<C, A> {
-	fun <B, R> zipWith(other: MonadZip<C, B>, f: (A, B) -> R): MonadZip<C, R>
+interface MonadZip<M, out A>: Monad<M, A> {
+	fun <B, R> zipWith(other: MonadZip<M, B>, f: (A, B) -> R): MonadZip<M, R>
 }
 
-fun <C, A, B, R> zip(monad1: MonadZip<C, A>, monad2: MonadZip<C, B>, f: (A, B) -> R) =
+fun <M, A, B, R> zip(monad1: MonadZip<M, A>, monad2: MonadZip<M, B>, f: (A, B) -> R) =
 	monad1.zipWith(monad2, f)
 
-fun <C, A, B> zip(monad1: MonadZip<C, A>, monad2: MonadZip<C, B>) =
+fun <M, A, B> zip(monad1: MonadZip<M, A>, monad2: MonadZip<M, B>) =
 	zip(monad1, monad2, ::Pair)
 
-fun <C, A, B> unzip(monad: MonadZip<C, Pair<A, B>>): Pair<Monad<C, A>, Monad<C, B>> =
+fun <M, A, B> unzip(monad: MonadZip<M, Pair<A, B>>): Pair<Monad<M, A>, Monad<M, B>> =
 	Pair(monad.map { it.first }, monad.map { it.second })

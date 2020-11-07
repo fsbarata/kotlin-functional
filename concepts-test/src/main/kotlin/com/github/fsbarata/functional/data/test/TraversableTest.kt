@@ -14,11 +14,11 @@ import com.github.fsbarata.functional.data.traverseFromSequence
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-interface TraversableTest<C>: FunctorTest<C>, FoldableTest {
-	val traversableScope: Traversable.Scope<C>
-	fun <A> createTraversable(vararg items: A): Traversable<C, A>
+interface TraversableTest<T>: FunctorTest<T>, FoldableTest {
+	val traversableScope: Traversable.Scope<T>
+	fun <A> createTraversable(vararg items: A): Traversable<T, A>
 
-	override fun <A> createFunctor(a: A): Functor<C, A> = createTraversable(a)
+	override fun <A> createFunctor(a: A): Functor<T, A> = createTraversable(a)
 	override fun <A> createFoldable(vararg items: A): Foldable<A> =
 		createTraversable(*items)
 
