@@ -10,18 +10,18 @@ abstract class MonoidTest<A>(
 	@Test
 	fun leftIdentity() {
 		val nonEmpty = nonEmpty()
-		assert(equals(
+		assertEquals(
 			nonEmpty,
 			monoid.combine(monoid.empty, nonEmpty)
-		))
+		)
 	}
 
 	@Test
 	fun rightIdentity() {
 		val nonEmpty = nonEmpty()
-		assert(equals(
+		assertEquals(
 			nonEmpty,
 			monoid.combine(nonEmpty, monoid.empty)
-		))
+		)
 	}
 }

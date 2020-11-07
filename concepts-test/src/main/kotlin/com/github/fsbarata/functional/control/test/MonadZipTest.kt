@@ -1,7 +1,6 @@
 package com.github.fsbarata.functional.control.test
 
 import com.github.fsbarata.functional.control.*
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 interface MonadZipTest<C>: MonadTest<C> {
@@ -21,13 +20,13 @@ interface MonadZipTest<C>: MonadTest<C> {
 			zip(monad1.map(f1) as MonadZip<C, Int>,
 				monad2.map(f2) as MonadZip<C, Int>,
 				f3)
-		assertTrue("$r1 should be the same as $r2", r1.equalTo(r2))
+		assertEquals(r1, r2)
 	}
 
 	@Test
 	fun `information preservation`() {
 		val (r1, r2) = unzip(zip(monad1, monad2))
-		assertTrue(r1.equalTo(monad1))
-		assertTrue(r2.equalTo(monad2))
+		assertEquals(r1, monad1)
+		assertEquals(r2, monad2)
 	}
 }
