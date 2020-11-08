@@ -4,7 +4,6 @@ import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.concatNelSemigroup
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.validation.Validation
-import com.github.fsbarata.functional.data.validation.sequence
 import java.util.regex.Pattern
 
 typealias Email = String
@@ -43,11 +42,13 @@ private fun PhoneNumber.isValidPhoneNumber() = all { it.isDigit() }
 fun validateData(
 	mail: String,
 	phoneNumber: String,
-) = concatNelSemigroup<ValidationError>().sequence(
-	mail.toValidatedEmail(),
-	phoneNumber.toValidatedPhoneNumber(),
-	::Pair
-)
+) = Validation.applicative(concatNelSemigroup<ValidationError>()) {
+	lift2(
+		mail.toValidatedEmail(),
+		phoneNumber.toValidatedPhoneNumber(),
+		::Pair
+	)
+}
 
 private fun NonEmptyList<ValidationError>.handleInvalid() = map {
 	handleInvalidField(it)

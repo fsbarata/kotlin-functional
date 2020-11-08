@@ -122,24 +122,4 @@ class ValidationTest: FunctorTest<Validation<Nothing, *>> {
 		assertEquals(Failure(3), Failure(3).bindValidation { Failure("$it a") })
 		assertEquals(Failure("5 a"), Success(5).bindValidation { Failure("$it a") })
 	}
-
-	@Test
-	fun ap() {
-		with(sumIntMonoid()) {
-			assertEquals(Success("31"), ap(Success("3"), Success { a: String -> a + 1 }))
-			assertEquals(Failure(3), ap(Failure(3), Success { a: String -> a + 1 }))
-			assertEquals(Failure(5), ap(Failure(3), Failure(2) as Validation<Int, (String) -> Long>))
-			assertEquals(Failure(2), ap(Success("3"), Failure(2) as Validation<Int, (String) -> Long>))
-		}
-	}
-
-	@Test
-	fun sequence() {
-		with(sumIntMonoid()) {
-			assertEquals(Success("35"), sequence(Success("3"), Success(5)) { a, b -> a + b })
-			assertEquals(Failure(3), sequence(Success("3"), Failure(3)) { a, b -> a + b })
-			assertEquals(Failure(5), sequence(Failure(2) as Validation<Int, String>, Failure(3)) { a, b -> a + b })
-			assertEquals(Failure(2), sequence(Failure(2) as Validation<Int, String>, Success(1)) { a, b -> a + b })
-		}
-	}
 }

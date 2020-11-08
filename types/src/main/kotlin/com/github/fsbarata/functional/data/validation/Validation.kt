@@ -7,13 +7,12 @@ import com.github.fsbarata.functional.data.either.Either
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.maybe.Optional
-import com.github.fsbarata.functional.data.partial
 import com.github.fsbarata.functional.data.validation.Validation.Failure
 import com.github.fsbarata.functional.data.validation.Validation.Success
 import java.io.Serializable
 
 sealed class Validation<out E, out A>:
-	Functor<ValidationContext, A>,
+	Functor<ValidationContext<@UnsafeVariance E>, A>,
 	Serializable {
 	data class Failure<out E>(val err: E): Validation<E, Nothing>()
 	data class Success<out A>(val value: A): Validation<Nothing, A>()
@@ -47,14 +46,20 @@ sealed class Validation<out E, out A>:
 
 		fun <E, B, A> liftError(either: Either<B, A>, f: (B) -> E): Validation<E, A> =
 			either.fold({ Failure(f(it)) }, { Success(it) })
+
+		fun <E> applicative(semigroup: Semigroup<E>) =
+			ValidationApplicative(semigroup)
+
+		fun <E, T> applicative(semigroup: Semigroup<E>, f: ValidationApplicative<E>.() -> T): T =
+			ValidationApplicative(semigroup).run(f)
 	}
 }
 
-internal typealias ValidationContext = Validation<Nothing, *>
+internal typealias ValidationContext<E> = Validation<E, *>
 
 @Suppress("UNCHECKED_CAST")
-val <A> Context<ValidationContext, A>.asValidation
-	get() = this as Validation<Nothing, A>
+val <E, A> Context<ValidationContext<E>, A>.asValidation
+	get() = this as Validation<E, A>
 
 inline fun <E, A> Optional<A>.toValidation(e: () -> E) =
 	fold(ifEmpty = { Failure(e()) }, ifSome = { Success(it) })
@@ -78,23 +83,3 @@ inline fun <E, A, B> Validation<E, A>.bindValidation(f: (A) -> Validation<E, B>)
 		ifFailure = ::Failure,
 		ifSuccess = f
 	)
-
-fun <E, A, R> Semigroup<E>.ap(
-	v: Validation<E, A>,
-	vf: Validation<E, (A) -> R>,
-) =
-	vf.fold(
-		ifFailure = { e1 ->
-			Failure(v.fold(
-				ifFailure = { combine(e1, it) },
-				ifSuccess = { e1 }
-			))
-		},
-		ifSuccess = { f -> v.map { f(it) } }
-	)
-
-inline fun <E, A, B, R> Semigroup<E>.sequence(
-	v1: Validation<E, A>,
-	v2: Validation<E, B>,
-	f: (A, B) -> R,
-): Validation<E, R> = ap(v2, v1.map { f.partial(it) })
