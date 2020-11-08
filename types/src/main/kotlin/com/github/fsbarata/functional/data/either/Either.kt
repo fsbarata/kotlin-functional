@@ -1,7 +1,10 @@
 package com.github.fsbarata.functional.data.either
 
+import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Context
 import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.data.Monoid
+import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.maybe.Optional
 import java.io.Serializable
 
@@ -11,7 +14,10 @@ import java.io.Serializable
  * Union between two values, where one is assumed to be right/successful, which biases the Monad operators such as map
  * and flatMap.
  */
-sealed class Either<out E, out A>: Monad<Either<Nothing, *>, A>, Serializable {
+sealed class Either<out E, out A>
+	: Monad<EitherContext, A>,
+	Traversable<EitherContext, A>,
+	Serializable {
 	data class Left<out E>(val value: E): Either<E, Nothing>()
 	data class Right<out A>(val value: A): Either<Nothing, A>()
 
@@ -30,21 +36,42 @@ sealed class Either<out E, out A>: Monad<Either<Nothing, *>, A>, Serializable {
 		is Right -> ifRight(value)
 	}
 
-	override fun <B> bind(f: (A) -> Context<Either<Nothing, *>, B>): Either<E, B> =
+	override fun <B> bind(f: (A) -> Context<EitherContext, B>): Either<E, B> =
 		flatMap { f(it).asEither }
+
+	override fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
+		map(f) orElse monoid.empty
+
+	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R) =
+		fold(ifLeft = { initialValue }, ifRight = { accumulator(initialValue, it) })
+
+	override fun <R> foldR(initialValue: R, accumulator: (A, R) -> R) =
+		fold(ifLeft = { initialValue }, ifRight = { accumulator(it, initialValue) })
+
+	override fun <F, B> traverse(
+		appScope: Applicative.Scope<F>,
+		f: (A) -> Applicative<F, B>,
+	): Applicative<F, Either<E, B>> = fold(
+		ifLeft = { appScope.just(Left(it)) },
+		ifRight = { f(it).map(::Right) }
+	)
 
 	fun orNull() = fold({ null }, { it })
 	fun toOptional(): Optional<A> = fold({ Optional.empty() }, { Optional.just(it) })
 
 	fun swap() = fold(ifLeft = { Right(it) }, ifRight = { Left(it) })
 
-	companion object: Monad.Scope<Either<Nothing, *>> {
+	companion object: Monad.Scope<EitherContext>, Traversable.Scope<EitherContext> {
 		override fun <A> just(a: A) = Right(a)
+		fun <E, A> ofNullable(a: A?, e: () -> E): Either<E, A> =
+			a?.let(::Right) ?: Left(e())
 	}
 }
 
+internal typealias EitherContext = Either<Nothing, *>
+
 @Suppress("UNCHECKED_CAST")
-val <A> Context<Either<Nothing, *>, A>.asEither: Either<Nothing, A>
+val <A> Context<EitherContext, A>.asEither
 	get() = this as Either<Nothing, A>
 
 inline fun <E, A, B> Either<E, A>.flatMap(f: (A) -> Either<E, B>): Either<E, B> {
@@ -54,8 +81,8 @@ inline fun <E, A, B> Either<E, A>.flatMap(f: (A) -> Either<E, B>): Either<E, B> 
 inline fun <E, A> Optional<A>.toEither(e: () -> E) =
 	fold(ifEmpty = { Either.Left(e()) }, ifSome = { Either.Right(it) })
 
-inline fun <A> Either<*, A>.orElse(a: () -> A): A = fold(ifLeft = { a() }, ifRight = { it })
-inline fun <E, A> Either<E, A>.valueOr(f: (E) -> A): A = fold(ifLeft = { f(it) }, ifRight = { it })
+infix fun <A> Either<*, A>.orElse(a: A): A = fold(ifLeft = { a }, ifRight = { it })
+inline infix fun <E, A> Either<E, A>.valueOr(f: (E) -> A): A = fold(ifLeft = { f(it) }, ifRight = { it })
 
 inline fun <E, A, B> Either<E, A>.ensure(e: E, f: (A) -> Optional<B>): Either<E, B> =
 	flatMap { a -> f(a).toEither { e } }

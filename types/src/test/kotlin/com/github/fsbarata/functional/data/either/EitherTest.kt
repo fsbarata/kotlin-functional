@@ -1,15 +1,19 @@
 package com.github.fsbarata.functional.data.either
 
-import com.github.fsbarata.functional.control.Functor
 import com.github.fsbarata.functional.control.test.MonadTest
 import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.test.TraversableTest
 import org.junit.Assert.*
 import org.junit.Test
 
-class EitherTest: MonadTest<Either<Nothing, *>> {
+class EitherTest: MonadTest<EitherContext>, TraversableTest<EitherContext> {
 	override val monadScope = Either
-	override fun <A> Functor<Either<Nothing, *>, A>.equalTo(other: Functor<Either<Nothing, *>, A>): Boolean =
-		asEither == other.asEither
+	override val traversableScope = Either
+
+	override fun <A> createTraversable(vararg items: A): Either<Nothing, A> =
+		Either.ofNullable(items.firstOrNull()) { throw IllegalStateException() }
+
+	override fun <A> createFunctor(a: A) = Either.just(a)
 
 	@Test
 	fun map() {

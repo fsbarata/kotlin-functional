@@ -47,13 +47,11 @@ sealed class Optional<out A>:
 	override fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 		maybe(monoid.empty, f)
 
-	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R {
-		return fold(ifEmpty = { initialValue }, ifSome = { accumulator(initialValue, it) })
-	}
+	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R) =
+		fold(ifEmpty = { initialValue }, ifSome = { accumulator(initialValue, it) })
 
-	override fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R {
-		return fold(ifEmpty = { initialValue }, ifSome = { accumulator(it, initialValue) })
-	}
+	override fun <R> foldR(initialValue: R, accumulator: (A, R) -> R) =
+		fold(ifEmpty = { initialValue }, ifSome = { accumulator(it, initialValue) })
 
 	override fun <B, R> zipWith(other: MonadZip<OptionalContext, B>, f: (A, B) -> R): Optional<R> {
 		return flatMap { a -> other.asOptional.map { b -> f(a, b) } }
