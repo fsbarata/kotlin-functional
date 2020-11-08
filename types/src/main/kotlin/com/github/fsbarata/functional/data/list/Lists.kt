@@ -1,8 +1,7 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.data.F1
-import com.github.fsbarata.functional.data.F2
+import com.github.fsbarata.functional.control.liftA2
 import com.github.fsbarata.functional.data.flip
 import com.github.fsbarata.functional.data.partial
 
@@ -16,8 +15,8 @@ import com.github.fsbarata.functional.data.partial
 inline fun <A, B> List<A>.ap(fs: List<(A) -> B>): List<B> =
 	flatMap { a -> fs.map { f -> f(a) } }
 
-inline fun <A, B, C> List<A>.liftA2(f: (A) -> (B) -> C): (List<B>) -> List<C> =
-	{ lb -> flatMap { a -> lb.map(f(a)) } }
+inline fun <A, B, C> List<A>.lift2(lb: List<B>, f: (A) -> (B) -> C): List<C> =
+	flatMap { a -> lb.map(f(a)) }
 
 inline fun <F, A, B> List<A>.traverse(
 	appScope: Applicative.Scope<F>,
@@ -25,6 +24,6 @@ inline fun <F, A, B> List<A>.traverse(
 ): Applicative<F, List<B>> {
 	val plus: List<B>.(B) -> List<B> = List<B>::plus
 	return fold(appScope.just(emptyList())) { app, a ->
-		f(a).liftA2(plus.flip()::partial)(app)
+		liftA2(f(a), plus.flip()::partial)(app)
 	}
 }

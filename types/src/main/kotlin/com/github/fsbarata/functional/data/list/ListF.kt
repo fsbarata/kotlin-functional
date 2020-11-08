@@ -6,8 +6,6 @@ import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Traversable
-import com.github.fsbarata.functional.data.compose
-import com.github.fsbarata.functional.data.composeForward
 import java.io.Serializable
 
 class ListF<A>(
@@ -27,8 +25,8 @@ class ListF<A>(
 	override fun <B> ap(ff: Applicative<ListContext, (A) -> B>): ListF<B> =
 		wrapped.ap(ff.asList).f()
 
-	override fun <B, R> liftA2(f: (A) -> (B) -> R): (Applicative<ListContext, B>) -> ListF<R> =
-		wrapped.liftA2(f) compose (Applicative<ListContext, B>::asList) composeForward List<R>::f
+	override fun <B, R> lift2(fb: Applicative<ListContext, B>, f: (A) -> (B) -> R): ListF<R> =
+		wrapped.lift2(fb.asList, f).f()
 
 	override fun <B> bind(f: (A) -> Context<ListContext, B>) =
 		flatMap { f(it).asList }

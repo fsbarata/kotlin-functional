@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.data.compose
 
 import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.control.liftA2
 import com.github.fsbarata.functional.data.curry
 
 class ComposeApplicative<F, G, A>(
@@ -15,11 +16,11 @@ class ComposeApplicative<F, G, A>(
 
 	override fun <B> ap(ff: Applicative<ComposeContext<F, G>, (A) -> B>): ComposeApplicative<F, G, B> {
 		val f: Applicative<G, A>.(Applicative<G, (A) -> B>) -> Applicative<G, B> = Applicative<G, A>::ap
-		return fg.liftA2(f.curry())(ff.asCompose.fg).compose(gScope)
+		return fg.lift2(ff.asCompose.fg, f.curry()).compose(gScope)
 	}
 
-	override fun <B, R> liftA2(f: (A) -> (B) -> R): (Applicative<ComposeContext<F, G>, B>) -> ComposeApplicative<F, G, R> =
-		{ app -> fg.liftA2 { it.liftA2(f) }(app.asCompose.fg).compose(gScope) }
+	override fun <B, R> lift2(app: Applicative<ComposeContext<F, G>, B>, f: (A) -> (B) -> R): ComposeApplicative<F, G, R> =
+		fg.lift2(app.asCompose.fg) { liftA2(it, f) }.compose(gScope)
 
 	class Scope<F, G>(
 		private val f: Applicative.Scope<F>,

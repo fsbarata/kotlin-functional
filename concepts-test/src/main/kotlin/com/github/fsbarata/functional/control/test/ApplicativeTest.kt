@@ -55,9 +55,9 @@ interface ApplicativeTest<F>: FunctorTest<F> {
 	fun `liftA2 = liftA2FromAp`() {
 		val u = applicativeScope.just(5)
 		val v = applicativeScope.just(1.3)
-		val f = { a: Int, b: Double -> (a * b).toString() }.curry()
-		val r1 = liftA2FromAp(u, v, f)
-		val r2 = u.liftA2(f)(v)
+		val f = { a: Int, b: Double -> (a * b).toString() }
+		val r1 = liftA2FromAp(u, v, f.curry())
+		val r2 = u.lift2(v, f.curry())
 		assertEqual(r1, r2)
 	}
 
