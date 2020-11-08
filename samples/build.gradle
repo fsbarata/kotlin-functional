@@ -1,0 +1,7 @@
+apply from: '../kotlin.gradle'
+
+dependencies {
+	implementation project(':types')
+    implementation "junit:junit:4.13"
+    testImplementation "org.hamcrest:java-hamcrest:2.0.0.0"
+}
