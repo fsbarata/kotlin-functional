@@ -58,8 +58,8 @@ You will find in this library other concepts such as Monad, Monoid and Foldable.
 
 ```
 dependencies {
-    implementation 'com.github.fsbarata.kotlin-functional:concepts:$version'
-    implementation 'com.github.fsbarata.kotlin-functional:types:$version'
+    implementation "com.github.fsbarata.kotlin-functional:concepts:$kfVersion"
+    implementation "com.github.fsbarata.kotlin-functional:types:$kfVersion"
 }
 ```
 
