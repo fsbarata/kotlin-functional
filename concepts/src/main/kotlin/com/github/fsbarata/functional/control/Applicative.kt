@@ -14,8 +14,8 @@ interface Applicative<F, out A>: Functor<F, A> {
 	override fun <B> map(f: (A) -> B): Applicative<F, B> =
 		ap(scope.just(f))
 
-	interface Scope<C> {
-		fun <A> just(a: A): Applicative<C, A>
+	interface Scope<F> {
+		fun <A> just(a: A): Applicative<F, A>
 	}
 }
 

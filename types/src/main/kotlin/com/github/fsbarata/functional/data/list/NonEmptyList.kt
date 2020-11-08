@@ -21,7 +21,6 @@ class NonEmptyList<out A> private constructor(
 	Monad<NonEmptyContext, A>,
 	MonadZip<NonEmptyContext, A>,
 	Foldable<A>,
-	Traversable<NonEmptyContext, A>,
 	NonEmptyIterable<A>,
 	Serializable {
 	override val scope get() = Companion
@@ -132,7 +131,7 @@ class NonEmptyList<out A> private constructor(
 	}
 }
 
-private typealias NonEmptyContext = NonEmptyList<*>
+internal typealias NonEmptyContext = NonEmptyList<*>
 
 val <A> Context<NonEmptyContext, A>.asNel get() = this as NonEmptyList<A>
 
@@ -149,6 +148,4 @@ fun <A> Iterable<A>.toNel(): NonEmptyList<A>? {
 	}
 }
 
-operator fun <A> Iterable<A>.plus(other: NonEmptyList<A>) =
-	toNel()?.plus(other) ?: other
 

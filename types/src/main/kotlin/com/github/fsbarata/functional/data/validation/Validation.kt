@@ -13,7 +13,7 @@ import com.github.fsbarata.functional.data.validation.Validation.Success
 import java.io.Serializable
 
 sealed class Validation<out E, out A>:
-	Functor<Validation<Nothing, *>, A>,
+	Functor<ValidationContext, A>,
 	Serializable {
 	data class Failure<out E>(val err: E): Validation<E, Nothing>()
 	data class Success<out A>(val value: A): Validation<Nothing, A>()
@@ -50,8 +50,10 @@ sealed class Validation<out E, out A>:
 	}
 }
 
+internal typealias ValidationContext = Validation<Nothing, *>
+
 @Suppress("UNCHECKED_CAST")
-val <A> Context<Validation<Nothing, *>, A>.asValidation: Validation<Nothing, A>
+val <A> Context<ValidationContext, A>.asValidation
 	get() = this as Validation<Nothing, A>
 
 inline fun <E, A> Optional<A>.toValidation(e: () -> E) =

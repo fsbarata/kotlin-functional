@@ -4,11 +4,14 @@ import com.github.fsbarata.functional.control.Functor
 import com.github.fsbarata.functional.control.test.FunctorTest
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Traversable
+import com.github.fsbarata.functional.data.compose.Compose
+import com.github.fsbarata.functional.data.compose.ComposeApplicative
 import com.github.fsbarata.functional.data.identity.Identity
 import com.github.fsbarata.functional.data.identity.runIdentity
 import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.list.asList
 import com.github.fsbarata.functional.data.list.f
+import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.sequenceFromTraverse
 import com.github.fsbarata.functional.data.traverseFromSequence
 import org.junit.Assert.assertEquals
@@ -27,6 +30,18 @@ interface TraversableTest<T>: FunctorTest<T>, FoldableTest {
 		val t = createTraversable(1, 5, 2)
 		val r1 = t.traverse(Identity, ::Identity)
 		assertEqual(r1.runIdentity(), t)
+	}
+
+	@Test
+	fun `traverse composition`() {
+		val t = createTraversable(1, 5, 2)
+		val f = { a: Int -> ListF.of(a - 5, a - 1) }
+		val g = { a: Int -> Optional.just(a + 3) }
+
+		val r1 =
+			t.traverse(ComposeApplicative.Scope(ListF, Optional)) { a -> ComposeApplicative(f(a).map(g), Optional) }
+		val r2 = Compose(t.traverse(ListF, f).map { it.traverse(Optional, g) })
+		assertEquals(r1, r2)
 	}
 
 	@Test

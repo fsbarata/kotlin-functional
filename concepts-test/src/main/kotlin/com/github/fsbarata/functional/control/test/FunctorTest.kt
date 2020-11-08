@@ -7,7 +7,7 @@ import org.junit.Test
 
 interface FunctorTest<F> {
 	fun <A> createFunctor(a: A): Functor<F, A>
-	fun <A> Functor<F, A>.equalTo(other: Functor<F, A>): Boolean
+	fun <A> Functor<F, A>.equalTo(other: Functor<F, A>): Boolean = this == other
 
 	fun <A> assertEqual(r1: Functor<F, A>, r2: Functor<F, A>) =
 		assert(r1.equalTo(r2)) { "$r1 should be equal to $r2" }

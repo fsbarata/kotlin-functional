@@ -6,6 +6,8 @@ import com.github.fsbarata.functional.control.Functor
 interface Traversable<T, out A>: Functor<T, A>, Foldable<A> {
 	val scope: Scope<T>
 
+	override fun <B> map(f: (A) -> B): Traversable<T, B>
+
 	fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Applicative<F, B>,

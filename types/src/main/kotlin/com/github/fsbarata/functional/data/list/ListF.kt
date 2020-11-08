@@ -60,6 +60,7 @@ class ListF<A>(
 	companion object: Monad.Scope<ListContext>, Traversable.Scope<ListContext> {
 		fun <A> empty() = emptyList<A>().f()
 		override fun <A> just(a: A) = listOf(a).f()
+		fun <A> of(vararg items: A) = listOf(*items).f()
 	}
 }
 
@@ -67,7 +68,8 @@ fun <A> List<A>.f() = ListF(this)
 fun <A> List<A>.asMonad(): Monad<ListF<*>, A> = f()
 fun <A> List<A>.asFoldable(): Foldable<A> = f()
 
+internal typealias ListContext = ListF<*>
+
 val <A> Context<ListContext, A>.asList: ListF<A>
 	get() = this as ListF<A>
 
-private typealias ListContext = ListF<*>
