@@ -28,7 +28,7 @@ fun <T, F, A, B> traverseFromSequence(
 		t: Traversable<T, A>,
 		f: (A) -> Applicative<F, B>,
 ): Applicative<F, Traversable<T, B>> =
-		t.scope.sequenceA(appScope, t.map(f) as Traversable<T, Applicative<F, B>>)
+		t.scope.sequenceA(appScope, t.map(f))
 
 
 fun <T, F, A> sequenceFromTraverse(

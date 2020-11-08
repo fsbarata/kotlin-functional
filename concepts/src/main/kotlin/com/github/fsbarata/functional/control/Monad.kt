@@ -14,9 +14,3 @@ interface Monad<M, out A>: Applicative<M, A> {
 		override fun <A> just(a: A): Monad<C, A>
 	}
 }
-
-fun <M> liftM() = LiftM<M>()
-
-class LiftM<M> {
-	operator fun <A, B> invoke(f: (A) -> B): (Monad<M, A>) -> Monad<M, B> = { it.map(f) }
-}
