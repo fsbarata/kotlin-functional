@@ -27,3 +27,15 @@ fun <F, A, B, R> liftA2FromAp(appA: Applicative<F, A>, appB: Applicative<F, B>, 
 
 fun <F, A, B, R> liftA2(fa: Applicative<F, A>, f: (A) -> (B) -> R): (Applicative<F, B>) -> Applicative<F, R> =
 	{ fa.lift2(it, f) }
+
+fun <F, A, B, C, R> Applicative<F, A>.lift3(
+	fb: Applicative<F, B>,
+	fc: Applicative<F, C>,
+	f: (A) -> (B) -> (C) -> R,
+): Applicative<F, R> = fc.ap(lift2(fb, f))
+
+fun <F, A, B, C, R> liftA3(
+	fa: Applicative<F, A>,
+	f: (A) -> (B) -> (C) -> R
+): (Applicative<F, B>, Applicative<F, C>) -> Applicative<F, R> =
+	{ fb, fc -> fa.lift3(fb, fc, f) }
