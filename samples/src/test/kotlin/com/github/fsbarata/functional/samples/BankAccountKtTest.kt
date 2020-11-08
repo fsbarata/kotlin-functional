@@ -17,8 +17,10 @@ class BankAccountKtTest {
 						Account(toAccountId, BigDecimal("0"))
 				)
 		)
-		val transferred = transferHalfOfTheMoney(from = fromAccountId, to = toAccountId).runState(bank).second
-		assertThat(transferred, Matchers.comparesEqualTo(BigDecimal("100")))
+		val (bankResult, amount) = transferHalfOfTheMoney(from = fromAccountId, to = toAccountId).runState(bank)
+		assertThat(amount, Matchers.comparesEqualTo(BigDecimal("100")))
+		assertThat(bankResult.accounts.find { it.id == fromAccountId }?.balance, Matchers.comparesEqualTo(BigDecimal("100")))
+		assertThat(bankResult.accounts.find { it.id == toAccountId }?.balance, Matchers.comparesEqualTo(BigDecimal("100")))
 	}
 
 	companion object {
