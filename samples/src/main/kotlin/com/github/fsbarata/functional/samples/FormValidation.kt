@@ -2,6 +2,7 @@ package com.github.fsbarata.functional.samples
 
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.concatNelSemigroup
+import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.validation.Validation
 import com.github.fsbarata.functional.data.validation.sequence
 import java.util.regex.Pattern
@@ -17,13 +18,13 @@ sealed class ValidationError {
 private fun Email.toValidatedEmail(): Validation<NonEmptyList<ValidationError>, Email> =
 		when {
 			isValidEmail() -> Validation.Success(this)
-			else -> Validation.Failure(ValidationError.InvalidMail).toValidationNel()
+			else -> Validation.Failure(nelOf(ValidationError.InvalidMail))
 		}
 
 private fun PhoneNumber.toValidatedPhoneNumber(): Validation<NonEmptyList<ValidationError>, PhoneNumber> =
 		when {
 			isValidPhoneNumber() -> Validation.Success(this)
-			else -> Validation.Failure(ValidationError.InvalidPhoneNumber).toValidationNel()
+			else -> Validation.Failure(nelOf(ValidationError.InvalidPhoneNumber))
 		}
 
 private val EMAIL_ADDRESS: Pattern = Pattern.compile(
