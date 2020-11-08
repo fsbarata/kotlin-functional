@@ -1,25 +1,23 @@
 package com.github.fsbarata.functional.data.list
 
-import com.github.fsbarata.functional.control.Functor
-import com.github.fsbarata.functional.control.test.MonadTest
 import com.github.fsbarata.functional.control.test.MonadZipTest
-import com.github.fsbarata.functional.data.Foldable
-import com.github.fsbarata.functional.data.test.FoldableTest
+import com.github.fsbarata.functional.data.test.TraversableTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger
 
-class NonEmptyListTest: MonadTest<NonEmptyList<*>>, MonadZipTest<NonEmptyList<*>>, FoldableTest {
+class NonEmptyListTest: MonadZipTest<NonEmptyContext>, TraversableTest<NonEmptyContext> {
 	override val monadScope = NonEmptyList
-	override fun <A> Functor<NonEmptyList<*>, A>.equalTo(other: Functor<NonEmptyList<*>, A>): Boolean =
-		asNel == other.asNel
+	override val traversableScope = NonEmptyList
+
+	override fun <A> createFunctor(a: A) = NonEmptyList.just(a)
+
+	override fun <A> createTraversable(vararg items: A) =
+		items.toList().toNel() ?: throw NoSuchElementException()
 
 	private val nel1 = NonEmptyList.just(9)
 	private val nel2 = NonEmptyList.of(5, 1, 3)
 	private val nel3 = NonEmptyList.of(2, NonEmptyList.of(4, 2, 5))
-
-	override fun <A> createFoldable(vararg items: A): Foldable<A> =
-		items.toList().toNel() ?: throw NoSuchElementException()
 
 	@Test
 	fun size() {

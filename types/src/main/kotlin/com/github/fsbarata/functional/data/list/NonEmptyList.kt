@@ -1,9 +1,11 @@
 package com.github.fsbarata.functional.data.list
 
+import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Context
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
-import com.github.fsbarata.functional.data.Foldable
+import com.github.fsbarata.functional.data.Traversable
+import com.github.fsbarata.functional.data.curry
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
 import com.github.fsbarata.functional.iterators.*
 import java.io.Serializable
@@ -20,7 +22,7 @@ class NonEmptyList<out A> private constructor(
 ): List<A>,
 	Monad<NonEmptyContext, A>,
 	MonadZip<NonEmptyContext, A>,
-	Foldable<A>,
+	Traversable<NonEmptyContext, A>,
 	NonEmptyIterable<A>,
 	Serializable {
 	override val scope get() = Companion
@@ -113,6 +115,14 @@ class NonEmptyList<out A> private constructor(
 	override fun listIterator(): ListIterator<A> = LambdaListIterator(size) { get(it) }
 	override fun listIterator(index: Int): ListIterator<A> = LambdaListIterator(size, index) { get(it) }
 
+	override fun <F, B> traverse(
+		appScope: Applicative.Scope<F>,
+		f: (A) -> Applicative<F, B>,
+	): Applicative<F, NonEmptyList<B>> =
+		tail.f().traverse(appScope, f)
+			.liftA2(List<B>::startWithItem.curry())
+			.invoke(f(head))
+
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (other !is List<*>) return false
@@ -124,7 +134,7 @@ class NonEmptyList<out A> private constructor(
 	override fun toString() =
 		joinToString(prefix = "[", postfix = "]")
 
-	companion object: Monad.Scope<NonEmptyContext> {
+	companion object: Monad.Scope<NonEmptyContext>, Traversable.Scope<NonEmptyContext> {
 		override fun <A> just(a: A) = of(a, emptyList())
 		fun <T> of(head: T, vararg others: T) = of(head, others.toList())
 		fun <T> of(head: T, others: List<T>) = NonEmptyList(head, others)
