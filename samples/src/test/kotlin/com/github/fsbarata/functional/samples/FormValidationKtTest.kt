@@ -11,8 +11,8 @@ class FormValidationKtTest {
 		var actual: NonEmptyList<ValidationError>? = null
 		val expected = NonEmptyList.of(ValidationError.InvalidMail, ValidationError.InvalidPhoneNumber)
 		validateData("a@", "123-").fold(
-				ifFailure = { actual = it },
-				ifSuccess = { throw Exception() })
+			ifFailure = { actual = it },
+			ifSuccess = { throw Exception() })
 
 		assertEquals(expected, actual)
 	}
@@ -22,8 +22,8 @@ class FormValidationKtTest {
 		var actual: NonEmptyList<ValidationError>? = null
 		val expected = NonEmptyList.of(ValidationError.InvalidMail)
 		validateData("a@", "123").fold(
-				ifFailure = { actual = it },
-				ifSuccess = { throw Exception() })
+			ifFailure = { actual = it },
+			ifSuccess = { throw Exception() })
 
 		assertEquals(expected, actual)
 	}
@@ -35,8 +35,8 @@ class FormValidationKtTest {
 		val phoneNumber = "123"
 		val expected = mail to phoneNumber
 		validateData(mail, phoneNumber).fold(
-				ifFailure = { throw Exception() },
-				ifSuccess = { actual = it })
+			ifFailure = { throw Exception() },
+			ifSuccess = { actual = it })
 
 		assertEquals(expected, actual)
 	}

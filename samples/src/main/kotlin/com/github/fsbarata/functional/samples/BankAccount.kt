@@ -34,8 +34,8 @@ private fun deposit(accountId: AccountId, amount: BigDecimal) = State<Bank, Bala
 }
 
 internal fun transferHalfOfTheMoney(from: AccountId, to: AccountId): State<Bank, Balance> =
-		getAccountBalance(from).bind { accountBalance ->
-			withdraw(from, accountBalance.multiply(BigDecimal("0.5"))).bind { withdrawn ->
-				deposit(to, withdrawn)
-			}
+	getAccountBalance(from).bind { accountBalance ->
+		withdraw(from, accountBalance.multiply(BigDecimal("0.5"))).bind { withdrawn ->
+			deposit(to, withdrawn)
 		}
+	}
