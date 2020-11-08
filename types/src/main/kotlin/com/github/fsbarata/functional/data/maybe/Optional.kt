@@ -1,10 +1,6 @@
 package com.github.fsbarata.functional.data.maybe
 
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Context
-import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.control.MonadZip
-import com.github.fsbarata.functional.data.Foldable
+import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
 import java.io.Serializable
@@ -18,7 +14,7 @@ sealed class Optional<out A>:
 	Monad<OptionalContext, A>,
 	MonadZip<OptionalContext, A>,
 	Traversable<OptionalContext, A>,
-	Foldable<A>,
+	Alternative<OptionalContext, A>,
 	Serializable {
 	override val scope get() = Optional
 
@@ -68,8 +64,14 @@ sealed class Optional<out A>:
 			ifSome = { f(it).map(::Some) },
 		)
 
-	companion object: Monad.Scope<OptionalContext>, Traversable.Scope<OptionalContext> {
-		fun <A> empty(): Optional<A> = None
+	override fun associateWith(other: Alternative<OptionalContext, @UnsafeVariance A>) =
+		orOptionalGet { other.asOptional }
+
+	companion object:
+		Monad.Scope<OptionalContext>,
+		Traversable.Scope<OptionalContext>,
+		Alternative.Scope<OptionalContext> {
+		override fun <A> empty(): Optional<A> = None
 		override fun <A> just(a: A): Optional<A> = Some(a)
 		fun <A> ofNullable(a: A?) = if (a != null) Some(a) else None
 	}
@@ -90,8 +92,8 @@ inline infix fun <A> Optional<A>.orElseGet(a: () -> A) = orNull() ?: a()
 infix fun <A> Optional<A>.orOptional(a: Optional<A>) =
 	orOptionalGet { a }
 
-inline infix fun <A> Optional<A>.orOptionalGet(a: () -> Optional<A>) =
-	map { Optional.just(it) }.orElseGet(a)
+inline infix fun <A> Optional<A>.orOptionalGet(a: () -> Optional<A>): Optional<A> =
+	fold(ifEmpty = a, ifSome = { Optional.just(it) })
 
 fun <A: Any> A?.toOptional() = Optional.ofNullable(this)
 fun <A: Any> A?.f() = toOptional()
