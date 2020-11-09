@@ -1,8 +1,6 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.liftAC2
-import com.github.fsbarata.functional.data.flip
 import com.github.fsbarata.functional.data.partial
 
 /**
@@ -22,8 +20,7 @@ inline fun <F, A, B> List<A>.traverse(
 	appScope: Applicative.Scope<F>,
 	f: (A) -> Applicative<F, B>,
 ): Applicative<F, List<B>> {
-	val plus: List<B>.(B) -> List<B> = List<B>::plus
 	return fold(appScope.just(emptyList())) { app, a ->
-		f(a).lift2(app, plus.flip()::invoke)
+		f(a).lift2(app) { b, lb -> lb + b }
 	}
 }
