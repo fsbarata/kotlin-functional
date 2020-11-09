@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.rx.monoids
 
 import com.github.fsbarata.functional.data.monoid.productIntMonoid
-import com.github.fsbarata.functional.data.test.MonoidTest
+import com.github.fsbarata.functional.data.test.MonoidLaws
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
@@ -20,7 +20,7 @@ private val completableFactory = {
 	}
 }
 
-class ConcatCompletableMonoidTest: MonoidTest<Completable>(
+class ConcatCompletableMonoidTest: MonoidLaws<Completable>(
 	concatCompletableMonoid(),
 	completableFactory
 ) {
@@ -42,7 +42,7 @@ private fun observableFactory(): Observable<Int> = when {
 	}
 }
 
-class ConcatObservableMonoidTest: MonoidTest<Observable<Int>>(
+class ConcatObservableMonoidTest: MonoidLaws<Observable<Int>>(
 	concatObservableMonoid<Int>(),
 	::observableFactory
 ) {
@@ -53,7 +53,7 @@ class ConcatObservableMonoidTest: MonoidTest<Observable<Int>>(
 	}
 }
 
-class MaybeSumMonoidTest: MonoidTest<Maybe<Int>>(
+class MaybeSumMonoidTest: MonoidLaws<Maybe<Int>>(
 	maybeMonoid(productIntMonoid()),
 	{ Maybe.just(Random.nextInt(1, 100)) }
 ) {

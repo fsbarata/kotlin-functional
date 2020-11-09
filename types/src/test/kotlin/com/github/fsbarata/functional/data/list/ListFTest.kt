@@ -1,19 +1,15 @@
 package com.github.fsbarata.functional.data.list
 
-import com.github.fsbarata.functional.control.Functor
-import com.github.fsbarata.functional.control.test.MonadTest
-import com.github.fsbarata.functional.control.test.MonadZipTest
-import com.github.fsbarata.functional.data.Foldable
-import com.github.fsbarata.functional.data.Traversable
-import com.github.fsbarata.functional.data.test.TraversableTest
+import com.github.fsbarata.functional.control.test.MonadLaws
+import com.github.fsbarata.functional.control.test.MonadZipLaws
+import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.test.TraversableLaws
 
-class ListFTest: MonadTest<ListF<*>>,
-	MonadZipTest<ListF<*>>,
-	TraversableTest<ListF<*>> {
+class ListFTest: MonadLaws<ListF<*>>,
+	MonadZipLaws<ListF<*>>,
+	TraversableLaws<ListF<*>> {
 	override val traversableScope = ListF
 	override val monadScope = ListF
-	override fun <A> Functor<ListF<*>, A>.equalTo(other: Functor<ListF<*>, A>) =
-		asList == other.asList
 
 	override fun <A> createFunctor(a: A) = ListF.just(a)
 

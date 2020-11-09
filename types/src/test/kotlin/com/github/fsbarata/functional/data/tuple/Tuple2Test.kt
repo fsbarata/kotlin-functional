@@ -1,8 +1,8 @@
 package com.github.fsbarata.functional.data.tuple
 
-import com.github.fsbarata.functional.data.test.TraversableTest
+import com.github.fsbarata.functional.data.test.TraversableLaws
 
-class Tuple2Test: TraversableTest<Tuple2Context<Double>> {
+class Tuple2Test: TraversableLaws<Tuple2Context<Double>> {
 	override val traversableScope = Tuple2.Scope<Double>()
 
 	override fun <A> createTraversable(vararg items: A) =

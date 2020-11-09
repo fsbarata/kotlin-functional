@@ -1,11 +1,10 @@
 package com.github.fsbarata.functional.rx.data
 
 import com.github.fsbarata.functional.control.Functor
-import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.control.test.MonadTest
-import com.github.fsbarata.functional.control.test.MonadZipTest
+import com.github.fsbarata.functional.control.test.MonadLaws
+import com.github.fsbarata.functional.control.test.MonadZipLaws
 
-class SingleFTest: MonadTest<SingleF<*>>, MonadZipTest<SingleF<*>> {
+class SingleFTest: MonadLaws<SingleF<*>>, MonadZipLaws<SingleF<*>> {
 	override val monadScope = SingleF
 	override fun <A> Functor<SingleF<*>, A>.equalTo(other: Functor<SingleF<*>, A>): Boolean {
 		val testObserver1 = asSingle.materialize().test()

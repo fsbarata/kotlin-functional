@@ -1,17 +1,17 @@
 package com.github.fsbarata.functional.data.maybe
 
 import com.github.fsbarata.functional.control.Functor
-import com.github.fsbarata.functional.control.test.MonadTest
-import com.github.fsbarata.functional.control.test.MonadZipTest
+import com.github.fsbarata.functional.control.test.MonadLaws
+import com.github.fsbarata.functional.control.test.MonadZipLaws
 import com.github.fsbarata.functional.data.list.experimental.ListU.Empty.firstOrNull
-import com.github.fsbarata.functional.data.test.TraversableTest
+import com.github.fsbarata.functional.data.test.TraversableLaws
 import org.junit.Assert.*
 import org.junit.Test
 
 class OptionalTest:
-	MonadTest<Optional<*>>,
-	MonadZipTest<Optional<*>>,
-	TraversableTest<Optional<*>> {
+	MonadLaws<Optional<*>>,
+	MonadZipLaws<Optional<*>>,
+	TraversableLaws<Optional<*>> {
 	override val traversableScope = Optional
 	override val monadScope = Optional
 

@@ -5,7 +5,7 @@ import com.github.fsbarata.functional.data.compose
 import com.github.fsbarata.functional.data.id
 import org.junit.Test
 
-interface FunctorTest<F> {
+interface FunctorLaws<F> {
 	fun <A> createFunctor(a: A): Functor<F, A>
 	fun <A> Functor<F, A>.equalTo(other: Functor<F, A>): Boolean = this == other
 

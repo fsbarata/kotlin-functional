@@ -5,7 +5,7 @@ import com.github.fsbarata.functional.data.Monoid
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-interface FoldableTest {
+interface FoldableLaws {
 	fun <A> createFoldable(vararg items: A): Foldable<A>
 
 	@Test

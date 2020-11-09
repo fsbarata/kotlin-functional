@@ -1,12 +1,12 @@
 package com.github.fsbarata.functional.data.list
 
-import com.github.fsbarata.functional.control.test.MonadZipTest
-import com.github.fsbarata.functional.data.test.TraversableTest
+import com.github.fsbarata.functional.control.test.MonadZipLaws
+import com.github.fsbarata.functional.data.test.TraversableLaws
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger
 
-class NonEmptyListTest: MonadZipTest<NonEmptyContext>, TraversableTest<NonEmptyContext> {
+class NonEmptyListTest: MonadZipLaws<NonEmptyContext>, TraversableLaws<NonEmptyContext> {
 	override val monadScope = NonEmptyList
 	override val traversableScope = NonEmptyList
 

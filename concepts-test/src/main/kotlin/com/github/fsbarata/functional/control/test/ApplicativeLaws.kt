@@ -5,12 +5,11 @@ import com.github.fsbarata.functional.control.apFromLift2
 import com.github.fsbarata.functional.control.lift2FromAp
 import com.github.fsbarata.functional.data.F1
 import com.github.fsbarata.functional.data.compose
-import com.github.fsbarata.functional.data.curry
 import com.github.fsbarata.functional.data.id
 import org.junit.Test
 import kotlin.math.roundToInt
 
-interface ApplicativeTest<F>: FunctorTest<F> {
+interface ApplicativeLaws<F>: FunctorLaws<F> {
 	val applicativeScope: Applicative.Scope<F>
 	override fun <A> createFunctor(a: A): Applicative<F, A> {
 		return applicativeScope.just(a)

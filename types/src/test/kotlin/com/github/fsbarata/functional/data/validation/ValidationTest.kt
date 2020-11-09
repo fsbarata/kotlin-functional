@@ -1,12 +1,11 @@
 package com.github.fsbarata.functional.data.validation
 
 import com.github.fsbarata.functional.control.Functor
-import com.github.fsbarata.functional.control.test.FunctorTest
+import com.github.fsbarata.functional.control.test.FunctorLaws
 import com.github.fsbarata.functional.data.either.Either
 import com.github.fsbarata.functional.data.either.flatMap
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.maybe.Optional
-import com.github.fsbarata.functional.data.monoid.sumIntMonoid
 import com.github.fsbarata.functional.data.validation.Validation.Failure
 import com.github.fsbarata.functional.data.validation.Validation.Success
 import org.junit.Assert.assertEquals
@@ -14,7 +13,7 @@ import org.junit.Assert.fail
 import org.junit.Test
 
 @Suppress("UNREACHABLE_CODE")
-class ValidationTest: FunctorTest<Validation<Nothing, *>> {
+class ValidationTest: FunctorLaws<Validation<Nothing, *>> {
 	override fun <A> createFunctor(a: A): Validation<Nothing, A> = Success(a)
 
 	override fun <A> Functor<Validation<Nothing, *>, A>.equalTo(other: Functor<Validation<Nothing, *>, A>) =

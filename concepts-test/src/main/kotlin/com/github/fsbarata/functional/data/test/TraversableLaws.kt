@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.data.test
 
 import com.github.fsbarata.functional.control.Functor
-import com.github.fsbarata.functional.control.test.FunctorTest
+import com.github.fsbarata.functional.control.test.FunctorLaws
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.compose.Compose
@@ -17,7 +17,7 @@ import com.github.fsbarata.functional.data.traverseFromSequence
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-interface TraversableTest<T>: FunctorTest<T>, FoldableTest {
+interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 	val traversableScope: Traversable.Scope<T>
 	fun <A> createTraversable(vararg items: A): Traversable<T, A>
 

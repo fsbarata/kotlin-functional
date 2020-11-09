@@ -1,18 +1,18 @@
 package com.github.fsbarata.functional.data.list.experimental
 
 import com.github.fsbarata.functional.control.Functor
-import com.github.fsbarata.functional.control.test.MonadTest
-import com.github.fsbarata.functional.control.test.MonadZipTest
+import com.github.fsbarata.functional.control.test.MonadLaws
+import com.github.fsbarata.functional.control.test.MonadZipLaws
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.list.experimental.ListU.NonEmpty
 import com.github.fsbarata.functional.data.list.runningReduceNel
-import com.github.fsbarata.functional.data.test.FoldableTest
+import com.github.fsbarata.functional.data.test.FoldableLaws
 import org.junit.Assert
 import org.junit.Test
 import java.math.BigInteger
 import kotlin.contracts.ExperimentalContracts
 
-internal class NonEmptyTest: MonadTest<NonEmpty<*>>, MonadZipTest<NonEmpty<*>>, FoldableTest {
+internal class NonEmptyTest: MonadLaws<NonEmpty<*>>, MonadZipLaws<NonEmpty<*>>, FoldableLaws {
 	override val monadScope = NonEmpty
 	override fun <A> Functor<NonEmpty<*>, A>.equalTo(other: Functor<NonEmpty<*>, A>) =
 		asNel == other.asNel

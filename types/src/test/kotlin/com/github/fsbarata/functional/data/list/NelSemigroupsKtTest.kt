@@ -1,12 +1,11 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.data.sequence.nonEmptySequence
-import com.github.fsbarata.functional.data.test.SemigroupTest
-import org.junit.Assert.assertEquals
+import com.github.fsbarata.functional.data.test.SemigroupLaws
 import org.junit.Test
 import kotlin.random.Random
 
-class ConcatNelSemigroupTest: SemigroupTest<NonEmptyList<Int>>(
+class ConcatNelSemigroupTest: SemigroupLaws<NonEmptyList<Int>>(
 	concatNelSemigroup(),
 	factory = {
 		nonEmptySequence(Random.nextInt(1, 100)) {

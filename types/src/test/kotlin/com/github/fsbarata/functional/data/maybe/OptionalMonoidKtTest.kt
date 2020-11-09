@@ -1,12 +1,11 @@
 package com.github.fsbarata.functional.data.maybe
 
 import com.github.fsbarata.functional.data.monoid.productIntMonoid
-import com.github.fsbarata.functional.data.test.MonoidTest
-import org.junit.Assert.assertEquals
+import com.github.fsbarata.functional.data.test.MonoidLaws
 import org.junit.Test
 import kotlin.random.Random
 
-class OptionalSumMonoidTest: MonoidTest<Optional<Int>>(
+class OptionalSumMonoidTest: MonoidLaws<Optional<Int>>(
 	optionalMonoid(productIntMonoid()),
 	{ Optional.just(Random.nextInt(1, 100)) }
 ) {

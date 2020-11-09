@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.data.monoid
 
-import com.github.fsbarata.functional.data.test.MonoidTest
+import com.github.fsbarata.functional.data.test.MonoidLaws
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -8,7 +8,7 @@ import java.math.BigDecimal
 import java.util.*
 import kotlin.random.Random
 
-class ConcatStringMonoidTest: MonoidTest<String>(
+class ConcatStringMonoidTest: MonoidLaws<String>(
 	concatStringMonoid(),
 	{ UUID.randomUUID().toString() }
 ) {
@@ -18,7 +18,7 @@ class ConcatStringMonoidTest: MonoidTest<String>(
 	}
 }
 
-class SumBigDecimalMonoidTest: MonoidTest<BigDecimal>(
+class SumBigDecimalMonoidTest: MonoidLaws<BigDecimal>(
 	sumBigDecimalMonoid(),
 	{ BigDecimal(Random.nextDouble(1.0, 50.0)) }
 ) {
@@ -28,7 +28,7 @@ class SumBigDecimalMonoidTest: MonoidTest<BigDecimal>(
 	}
 }
 
-class ProductBigDecimalMonoidTest: MonoidTest<BigDecimal>(
+class ProductBigDecimalMonoidTest: MonoidLaws<BigDecimal>(
 	productBigDecimalMonoid(),
 	{ BigDecimal(Random.nextDouble(2.0, 50.0)) }
 ) {
@@ -39,7 +39,7 @@ class ProductBigDecimalMonoidTest: MonoidTest<BigDecimal>(
 	}
 }
 
-class ConcatArrayMonoidTest: MonoidTest<Array<Any>>(
+class ConcatArrayMonoidTest: MonoidLaws<Array<Any>>(
 	concatArrayMonoid(),
 	{ arrayOf(if (Random.nextBoolean()) Random.nextInt(1, 5) else Random.nextDouble(1.0, 5.0)) }
 ) {
@@ -54,7 +54,7 @@ class ConcatArrayMonoidTest: MonoidTest<Array<Any>>(
 	}
 }
 
-class ConcatSequenceMonoid: MonoidTest<Sequence<Double>>(
+class ConcatSequenceMonoid: MonoidLaws<Sequence<Double>>(
 	concatSequenceMonoid(),
 	{
 		generateSequence(Random.nextDouble()) { (it - Random.nextDouble()).takeIf { it > 0 } }
@@ -75,7 +75,7 @@ class ConcatSequenceMonoid: MonoidTest<Sequence<Double>>(
 	}
 }
 
-class ConcatListMonoid: MonoidTest<List<Double>>(
+class ConcatListMonoid: MonoidLaws<List<Double>>(
 	concatListMonoid(),
 	{
 		generateSequence(Random.nextDouble()) { (it - Random.nextDouble()).takeIf { it > 0 } }

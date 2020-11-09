@@ -1,12 +1,12 @@
 package com.github.fsbarata.functional.data.either
 
-import com.github.fsbarata.functional.control.test.MonadTest
+import com.github.fsbarata.functional.control.test.MonadLaws
 import com.github.fsbarata.functional.data.maybe.Optional
-import com.github.fsbarata.functional.data.test.TraversableTest
+import com.github.fsbarata.functional.data.test.TraversableLaws
 import org.junit.Assert.*
 import org.junit.Test
 
-class EitherTest: MonadTest<EitherContext>, TraversableTest<EitherContext> {
+class EitherTest: MonadLaws<EitherContext>, TraversableLaws<EitherContext> {
 	override val monadScope = Either
 	override val traversableScope = Either
 

@@ -3,7 +3,7 @@ package com.github.fsbarata.functional.data.test
 import com.github.fsbarata.functional.data.Semigroup
 import org.junit.Test
 
-abstract class SemigroupTest<A>(
+abstract class SemigroupLaws<A>(
 	private val semigroup: Semigroup<A>,
 	protected val factory: () -> A,
 ) {

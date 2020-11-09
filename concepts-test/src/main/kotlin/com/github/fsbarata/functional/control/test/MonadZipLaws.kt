@@ -6,7 +6,7 @@ import com.github.fsbarata.functional.control.unzip
 import com.github.fsbarata.functional.control.zip
 import org.junit.Test
 
-interface MonadZipTest<M>: MonadTest<M> {
+interface MonadZipLaws<M>: MonadLaws<M> {
 	private val monad1 get() = monadScope.just(9) as MonadZip<M, Int>
 	private val monad2 get() = monadScope.just(3) as MonadZip<M, Int>
 

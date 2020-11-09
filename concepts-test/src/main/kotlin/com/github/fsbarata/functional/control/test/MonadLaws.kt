@@ -5,7 +5,7 @@ import com.github.fsbarata.functional.control.Monad
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-interface MonadTest<M>: ApplicativeTest<M> {
+interface MonadLaws<M>: ApplicativeLaws<M> {
 	val monadScope: Monad.Scope<M>
 
 	override val applicativeScope: Applicative.Scope<M> get() = monadScope

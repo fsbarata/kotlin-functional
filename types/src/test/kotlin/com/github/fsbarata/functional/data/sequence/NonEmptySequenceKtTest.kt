@@ -1,17 +1,17 @@
 package com.github.fsbarata.functional.data.sequence
 
 import com.github.fsbarata.functional.control.Functor
-import com.github.fsbarata.functional.control.test.MonadTest
-import com.github.fsbarata.functional.control.test.MonadZipTest
+import com.github.fsbarata.functional.control.test.MonadLaws
+import com.github.fsbarata.functional.control.test.MonadZipLaws
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
-import com.github.fsbarata.functional.data.test.FoldableTest
+import com.github.fsbarata.functional.data.test.FoldableLaws
 import com.github.fsbarata.functional.iterators.NonEmptyIterator
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class NonEmptySequenceKtTest: MonadTest<NonEmptySequence<*>>, MonadZipTest<NonEmptySequence<*>>, FoldableTest {
+class NonEmptySequenceKtTest: MonadLaws<NonEmptySequence<*>>, MonadZipLaws<NonEmptySequence<*>>, FoldableLaws {
 	override val monadScope = NonEmptySequence
 	override fun <A> Functor<NonEmptySequence<*>, A>.equalTo(other: Functor<NonEmptySequence<*>, A>): Boolean =
 		asNes.toList() == other.asNes.toList()
