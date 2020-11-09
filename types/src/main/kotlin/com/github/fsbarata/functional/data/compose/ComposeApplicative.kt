@@ -17,8 +17,8 @@ class ComposeApplicative<F, G, A>(
 		return fg.lift2(ff.asCompose.fg, f).compose(gScope)
 	}
 
-	override fun <B, R> lift2(app: Applicative<ComposeContext<F, G>, B>, f: (A, B) -> R): ComposeApplicative<F, G, R> =
-		fg.lift2(app.asCompose.fg) { a, b -> a.lift2(b, f) }.compose(gScope)
+	override fun <B, R> lift2(fb: Applicative<ComposeContext<F, G>, B>, f: (A, B) -> R): ComposeApplicative<F, G, R> =
+		fg.lift2(fb.asCompose.fg) { a, b -> a.lift2(b, f) }.compose(gScope)
 
 	class Scope<F, G>(
 		private val f: Applicative.Scope<F>,

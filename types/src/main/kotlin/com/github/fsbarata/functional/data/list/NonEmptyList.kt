@@ -13,6 +13,7 @@ import kotlin.random.Random
  *
  * By definition, this object is guaranteed to have at least one item.
  */
+@Suppress("OVERRIDE_BY_INLINE")
 class NonEmptyList<out A> private constructor(
 	override val head: A,
 	override val tail: List<A>,
@@ -69,10 +70,8 @@ class NonEmptyList<out A> private constructor(
 		else -> tail.subList(fromIndex - 1, toIndex - 1)
 	}
 
-	@Suppress("OVERRIDE_BY_INLINE")
 	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
 
-	@Suppress("OVERRIDE_BY_INLINE")
 	override inline fun <B> bind(f: (A) -> Context<NonEmptyContext, B>): NonEmptyList<B> =
 		flatMap { f(it).asNel }
 
@@ -80,13 +79,13 @@ class NonEmptyList<out A> private constructor(
 
 	inline fun <B> flatMapIterable(f: (A) -> List<B>): List<B> = f(head) + tail.flatMap(f)
 
-	override fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
+	override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
 		foldRight(initialValue, accumulator)
 
 	operator fun plus(other: @UnsafeVariance A) = NonEmptyList(head, tail + other)
 	operator fun plus(other: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + other)
 
-	override fun <B, R> zipWith(other: MonadZip<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> {
+	override inline fun <B, R> zipWith(other: MonadZip<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> {
 		val otherNel = other.asNel
 		return of(f(head, otherNel.head), tail.zip(otherNel.tail, f))
 	}
@@ -100,10 +99,10 @@ class NonEmptyList<out A> private constructor(
 		tail.minOfOrNull(selector)?.coerceAtMost(selector(head)) ?: selector(head)
 
 	fun distinct() = NonEmptyList(head, (tail.toSet() - head).toList())
-	fun <K> distinctBy(selector: (A) -> K): NonEmptyList<A> {
+	inline fun <K> distinctBy(selector: (A) -> K): NonEmptyList<A> {
 		val set = HashSet<K>()
 		set.add(selector(head))
-		return NonEmptyList(
+		return of(
 			head,
 			tail.filter { set.add(selector(it)) }
 		)
@@ -125,7 +124,7 @@ class NonEmptyList<out A> private constructor(
 		)
 	}
 
-	override fun <F, B> traverse(
+	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Applicative<F, B>,
 	): Applicative<F, NonEmptyList<B>> =

@@ -5,6 +5,7 @@ import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
 
+@Suppress("OVERRIDE_BY_INLINE")
 data class Tuple2<X, Y>(
 	val x: X,
 	val y: Y,
@@ -14,22 +15,21 @@ data class Tuple2<X, Y>(
 
 	override fun extract() = y
 
-	@Suppress("OVERRIDE_BY_INLINE")
 	override inline fun <B> map(f: (Y) -> B) =
 		Tuple2(x, f(y))
 
-	override fun <F, B> traverse(
+	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
 		f: (Y) -> Applicative<F, B>,
 	) = f(y).map { Tuple2(x, it) }
 
-	override fun <R> foldL(initialValue: R, accumulator: (R, Y) -> R): R =
+	override inline fun <R> foldL(initialValue: R, accumulator: (R, Y) -> R): R =
 		accumulator(initialValue, y)
 
-	override fun <R> foldR(initialValue: R, accumulator: (Y, R) -> R): R =
+	override inline fun <R> foldR(initialValue: R, accumulator: (Y, R) -> R): R =
 		accumulator(y, initialValue)
 
-	override fun <M> foldMap(monoid: Monoid<M>, f: (Y) -> M): M = f(y)
+	override inline fun <M> foldMap(monoid: Monoid<M>, f: (Y) -> M): M = f(y)
 
 	@Suppress("OVERRIDE_BY_INLINE")
 	override inline fun <B> extend(f: (Comonad<Tuple2Context<X>, Y>) -> B) =

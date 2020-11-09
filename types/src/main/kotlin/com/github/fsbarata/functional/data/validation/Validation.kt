@@ -11,6 +11,7 @@ import com.github.fsbarata.functional.data.validation.Validation.Failure
 import com.github.fsbarata.functional.data.validation.Validation.Success
 import java.io.Serializable
 
+@Suppress("OVERRIDE_BY_INLINE")
 sealed class Validation<out E, out A>:
 	Functor<ValidationContext<@UnsafeVariance E>, A>,
 	Serializable {
@@ -22,7 +23,6 @@ sealed class Validation<out E, out A>:
 		is Success -> ifSuccess(value)
 	}
 
-	@Suppress("OVERRIDE_BY_INLINE")
 	final override inline fun <B> map(f: (A) -> B): Validation<E, B> = when (this) {
 		is Failure -> this
 		is Success -> Success(f(value))

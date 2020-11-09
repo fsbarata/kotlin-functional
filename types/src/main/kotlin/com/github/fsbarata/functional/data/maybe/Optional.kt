@@ -10,6 +10,7 @@ import java.io.Serializable
  *
  * Wraps a value that may or may not be present.
  */
+@Suppress("OVERRIDE_BY_INLINE")
 sealed class Optional<out A>:
 	Monad<OptionalContext, A>,
 	MonadZip<OptionalContext, A>,
@@ -26,11 +27,10 @@ sealed class Optional<out A>:
 	inline fun filter(predicate: (A) -> Boolean) =
 		ofNullable(orNull()?.takeIf(predicate))
 
-	@Suppress("OVERRIDE_BY_INLINE")
 	final override inline fun <B> map(f: (A) -> B) =
 		flatMap { just(f(it)) }
 
-	override fun <B> bind(f: (A) -> Context<OptionalContext, B>) =
+	final override inline fun <B> bind(f: (A) -> Context<OptionalContext, B>) =
 		flatMap { f(it).asOptional }
 
 	inline fun <B> flatMap(f: (A) -> Optional<B>): Optional<B> =
@@ -40,22 +40,22 @@ sealed class Optional<out A>:
 		return ifSome(orNull() ?: return ifEmpty())
 	}
 
-	override fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
+	final override inline fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 		maybe(monoid.empty, f)
 
-	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R) =
+	final override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R) =
 		fold(ifEmpty = { initialValue }, ifSome = { accumulator(initialValue, it) })
 
-	override fun <R> foldR(initialValue: R, accumulator: (A, R) -> R) =
+	final override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R) =
 		fold(ifEmpty = { initialValue }, ifSome = { accumulator(it, initialValue) })
 
-	override fun <B, R> zipWith(other: MonadZip<OptionalContext, B>, f: (A, B) -> R): Optional<R> {
+	final override inline fun <B, R> zipWith(other: MonadZip<OptionalContext, B>, f: (A, B) -> R): Optional<R> {
 		return flatMap { a -> other.asOptional.map { b -> f(a, b) } }
 	}
 
 	inline fun <B> maybe(b: B, f: (A) -> B): B = map(f) orElse b
 
-	override fun <F, B> traverse(
+	final override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Applicative<F, B>,
 	): Applicative<F, Optional<B>> =

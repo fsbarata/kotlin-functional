@@ -14,6 +14,7 @@ import java.io.Serializable
  * Union between two values, where one is assumed to be right/successful, which biases the Monad operators such as map
  * and flatMap.
  */
+@Suppress("OVERRIDE_BY_INLINE")
 sealed class Either<out E, out A>
 	: Monad<EitherContext, A>,
 	Traversable<EitherContext, A>,
@@ -23,7 +24,6 @@ sealed class Either<out E, out A>
 
 	override val scope get() = Companion
 
-	@Suppress("OVERRIDE_BY_INLINE")
 	final override inline fun <B> map(f: (A) -> B): Either<E, B> =
 		flatMap { Right(f(it)) }
 
@@ -36,19 +36,19 @@ sealed class Either<out E, out A>
 		is Right -> ifRight(value)
 	}
 
-	override fun <B> bind(f: (A) -> Context<EitherContext, B>): Either<E, B> =
+	final override inline fun <B> bind(f: (A) -> Context<EitherContext, B>): Either<E, B> =
 		flatMap { f(it).asEither }
 
-	override fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
+	final override inline fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 		map(f) orElse monoid.empty
 
-	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R) =
+	final override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R) =
 		fold(ifLeft = { initialValue }, ifRight = { accumulator(initialValue, it) })
 
-	override fun <R> foldR(initialValue: R, accumulator: (A, R) -> R) =
+	final override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R) =
 		fold(ifLeft = { initialValue }, ifRight = { accumulator(it, initialValue) })
 
-	override fun <F, B> traverse(
+	final override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Applicative<F, B>,
 	): Applicative<F, Either<E, B>> = fold(

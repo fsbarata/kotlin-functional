@@ -10,17 +10,17 @@ fun <A> Iterable<A>.plusNel(item: A): NonEmptyList<A> =
 fun <A> Iterable<A>.plusNel(other: NonEmptyList<A>): NonEmptyList<A> =
 	toNel()?.plus(other) ?: other
 
-fun <T, K> Iterable<T>.groupByNel(keySelector: (T) -> K): Map<K, NonEmptyList<T>> =
+inline fun <T, K> Iterable<T>.groupByNel(crossinline keySelector: (T) -> K): Map<K, NonEmptyList<T>> =
 	groupByNel(keySelector) { it }
 
-fun <T, K, V> Iterable<T>.groupByNel(keySelector: (T) -> K, valueSelector: (T) -> V): Map<K, NonEmptyList<V>> =
+inline fun <T, K, V> Iterable<T>.groupByNel(crossinline keySelector: (T) -> K, valueSelector: (T) -> V): Map<K, NonEmptyList<V>> =
 	groupingBy(keySelector)
 		.aggregate { _, accumulator, element, _ ->
 			val value = valueSelector(element)
 			accumulator?.plus(value) ?: nelOf(value)
 		}
 
-fun <T, R> Iterable<T>.scanNel(initialValue: R, operation: (R, T) -> R) = NonEmptyList.of(
+inline fun <T, R> Iterable<T>.scanNel(initialValue: R, operation: (R, T) -> R) = NonEmptyList.of(
 	initialValue,
 	scan(initialValue, operation).drop(1)
 )

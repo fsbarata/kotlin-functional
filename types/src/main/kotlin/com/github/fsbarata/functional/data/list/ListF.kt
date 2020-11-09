@@ -5,6 +5,7 @@ import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Traversable
 import java.io.Serializable
 
+@Suppress("OVERRIDE_BY_INLINE")
 class ListF<A>(
 	private val wrapped: List<A>,
 ): Monad<ListContext, A>,
@@ -15,34 +16,31 @@ class ListF<A>(
 	Serializable {
 	override val scope get() = ListF
 
-	@Suppress("OVERRIDE_BY_INLINE")
 	override inline fun <B> map(f: (A) -> B) =
 		(this as List<A>).map(f).f()
 
 	override fun <B> ap(ff: Applicative<ListContext, (A) -> B>): ListF<B> =
 		wrapped.ap(ff.asList).f()
 
-	override fun <B, R> lift2(fb: Applicative<ListContext, B>, f: (A, B) -> R): ListF<R> =
-		wrapped.lift2(fb.asList, f).f()
+	override inline fun <B, R> lift2(fb: Applicative<ListContext, B>, f: (A, B) -> R): ListF<R> =
+		(this as List<A>).lift2(fb.asList, f).f()
 
-	override fun <B> bind(f: (A) -> Context<ListContext, B>) =
+	override inline fun <B> bind(f: (A) -> Context<ListContext, B>) =
 		flatMap { f(it).asList }
 
 	inline fun <B> flatMap(f: (A) -> List<B>) =
 		(this as List<A>).flatMap(f).f()
 
-	@Suppress("OVERRIDE_BY_INLINE")
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		(this as List<A>).fold(initialValue, accumulator)
 
-	@Suppress("OVERRIDE_BY_INLINE")
 	override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
 		(this as List<A>).foldRight(initialValue, accumulator)
 
-	override fun <B, R> zipWith(other: MonadZip<ListContext, B>, f: (A, B) -> R): ListF<R> =
+	override inline fun <B, R> zipWith(other: MonadZip<ListContext, B>, f: (A, B) -> R): ListF<R> =
 		zip(other.asList, f).f()
 
-	override fun <F, B> traverse(
+	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Applicative<F, B>,
 	): Applicative<F, ListF<B>> =
