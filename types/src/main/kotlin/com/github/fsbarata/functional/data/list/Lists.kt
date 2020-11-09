@@ -24,6 +24,6 @@ inline fun <F, A, B> List<A>.traverse(
 ): Applicative<F, List<B>> {
 	val plus: List<B>.(B) -> List<B> = List<B>::plus
 	return fold(appScope.just(emptyList())) { app, a ->
-		liftAC2(f(a), plus.flip()::partial)(app)
+		f(a).lift2(app, plus.flip()::invoke)
 	}
 }
