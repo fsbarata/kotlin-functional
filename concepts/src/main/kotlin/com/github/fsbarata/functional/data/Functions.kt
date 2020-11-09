@@ -56,3 +56,15 @@ fun <A, B, R> on(f1: (B) -> (B) -> R, f2: F1<A, B>): (A) -> (A) -> R =
 		val r = { a2: A -> f11(f2(a2)) }
 		r
 	}
+
+fun <B, C, D> F1<B, C>.first(): F1<Pair<B, D>, Pair<C, D>> =
+	{ Pair(invoke(it.first), it.second) }
+
+fun <B, C, D> F1<B, C>.second(): F1<Pair<D, B>, Pair<D, C>> =
+	{ Pair(it.first, invoke(it.second)) }
+
+inline infix fun <B, C, D, E> F1<B, C>.split(crossinline other: F1<D, E>): F1<Pair<B, D>, Pair<C, E>> =
+	{ Pair(this(it.first), other(it.second)) }
+
+inline infix fun <B, C, D> F1<B, C>.fanout(crossinline other: F1<B, D>): F1<B, Pair<C, D>> =
+	{ Pair(this(it), other(it)) }

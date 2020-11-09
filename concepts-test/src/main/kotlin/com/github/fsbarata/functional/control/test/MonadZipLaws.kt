@@ -1,9 +1,9 @@
 package com.github.fsbarata.functional.control.test
 
 import com.github.fsbarata.functional.control.MonadZip
-import com.github.fsbarata.functional.control.split
 import com.github.fsbarata.functional.control.unzip
 import com.github.fsbarata.functional.control.zip
+import com.github.fsbarata.functional.data.split
 import org.junit.Test
 
 interface MonadZipLaws<M>: MonadLaws<M> {

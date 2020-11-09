@@ -1,7 +1,6 @@
 package com.github.fsbarata.functional.control
 
-import com.github.fsbarata.functional.data.F1
-import com.github.fsbarata.functional.data.composeForward
+import com.github.fsbarata.functional.data.*
 
 interface FArrow<B, C>: F1<B, C>, Arrow<FArrow<*, *>, B, C> {
 	override val scope get() = Companion
@@ -31,15 +30,3 @@ fun <B, C> Arrow(f: (B) -> C): FArrow<B, C> = object: FArrow<B, C>, (B) -> C by 
 fun <B, C> Category<FArrow<*, *>, B, C>.asFArrow() =
 	this as FArrow<B, C>
 
-
-fun <B, C, D> F1<B, C>.first(): F1<Pair<B, D>, Pair<C, D>> =
-	{ Pair(invoke(it.first), it.second) }
-
-fun <B, C, D> F1<B, C>.second(): F1<Pair<D, B>, Pair<D, C>> =
-	{ Pair(it.first, invoke(it.second)) }
-
-inline infix fun <B, C, D, E> F1<B, C>.split(crossinline other: F1<D, E>): F1<Pair<B, D>, Pair<C, E>> =
-	{ Pair(this(it.first), other(it.second)) }
-
-inline infix fun <B, C, D> F1<B, C>.fanout(crossinline other: F1<B, D>): F1<B, Pair<C, D>> =
-	{ Pair(this(it), other(it)) }
