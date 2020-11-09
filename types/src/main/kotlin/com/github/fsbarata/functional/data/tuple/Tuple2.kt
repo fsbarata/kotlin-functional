@@ -1,16 +1,21 @@
 package com.github.fsbarata.functional.data.tuple
 
 import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
 
 data class Tuple2<X, Y>(
 	val x: X,
 	val y: Y,
-): Traversable<Tuple2Context<X>, Y> {
+): Traversable<Tuple2Context<X>, Y>,
+	Comonad<Tuple2Context<X>, Y> {
 	override val scope get() = Scope<X>()
 
-	override fun <B> map(f: (Y) -> B) =
+	override fun extract() = y
+
+	@Suppress("OVERRIDE_BY_INLINE")
+	override inline fun <B> map(f: (Y) -> B) =
 		Tuple2(x, f(y))
 
 	override fun <F, B> traverse(
@@ -25,6 +30,15 @@ data class Tuple2<X, Y>(
 		accumulator(y, initialValue)
 
 	override fun <M> foldMap(monoid: Monoid<M>, f: (Y) -> M): M = f(y)
+
+	@Suppress("OVERRIDE_BY_INLINE")
+	override inline fun <B> extend(f: (Comonad<Tuple2Context<X>, Y>) -> B) =
+		coflatMap(f)
+
+	inline fun <B> coflatMap(f: (Tuple2<X, Y>) -> B): Tuple2<X, B> =
+		Tuple2(x, f(this))
+
+	override fun duplicate() = Tuple2(x, this)
 
 	override fun toString(): String = "($x, $y)"
 

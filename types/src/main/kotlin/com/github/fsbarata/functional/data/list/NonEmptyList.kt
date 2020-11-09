@@ -1,9 +1,6 @@
 package com.github.fsbarata.functional.data.list
 
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Context
-import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.curry
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
@@ -23,6 +20,7 @@ class NonEmptyList<out A> private constructor(
 	Monad<NonEmptyContext, A>,
 	MonadZip<NonEmptyContext, A>,
 	Traversable<NonEmptyContext, A>,
+	Comonad<NonEmptyContext, A>,
 	NonEmptyIterable<A>,
 	Serializable {
 	override val scope get() = Companion
@@ -74,7 +72,8 @@ class NonEmptyList<out A> private constructor(
 	@Suppress("OVERRIDE_BY_INLINE")
 	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
 
-	override fun <B> bind(f: (A) -> Context<NonEmptyContext, B>): NonEmptyList<B> =
+	@Suppress("OVERRIDE_BY_INLINE")
+	override inline fun <B> bind(f: (A) -> Context<NonEmptyContext, B>): NonEmptyList<B> =
 		flatMap { f(it).asNel }
 
 	inline fun <B> flatMap(f: (A) -> NonEmptyList<B>): NonEmptyList<B> = map(f).flatten()
@@ -114,6 +113,17 @@ class NonEmptyList<out A> private constructor(
 
 	override fun listIterator(): ListIterator<A> = LambdaListIterator(size) { get(it) }
 	override fun listIterator(index: Int): ListIterator<A> = LambdaListIterator(size, index) { get(it) }
+
+	override fun extract(): A = head
+	override fun <B> extend(f: (Comonad<NonEmptyContext, A>) -> B): NonEmptyList<B> = coflatMap(f)
+
+	fun <B> coflatMap(f: (NonEmptyList<A>) -> B): NonEmptyList<B> {
+		val newHead = f(this)
+		return of(
+			newHead,
+			(tail.toNel() ?: return just(newHead)).coflatMap(f)
+		)
+	}
 
 	override fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,

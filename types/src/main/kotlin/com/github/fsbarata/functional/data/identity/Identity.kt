@@ -1,9 +1,6 @@
 package com.github.fsbarata.functional.data.identity
 
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Context
-import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.partial
@@ -12,8 +9,13 @@ data class Identity<A>(
 	val a: A,
 ): Monad<IdentityContext, A>,
 	MonadZip<IdentityContext, A>,
+	Comonad<IdentityContext, A>,
 	Foldable<A> {
 	override val scope = Identity
+
+	override fun extract(): A = a
+
+	override fun duplicate() = Identity(this)
 
 	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R) =
 		accumulator(initialValue, a)
@@ -46,7 +48,7 @@ data class Identity<A>(
 	}
 }
 
-private typealias IdentityContext = Identity<*>
+internal typealias IdentityContext = Identity<*>
 
 val <A> Context<IdentityContext, A>.asIdentity
 	get() = this as Identity<A>

@@ -1,12 +1,16 @@
 package com.github.fsbarata.functional.data.list
 
+import com.github.fsbarata.functional.control.test.ComonadLaws
 import com.github.fsbarata.functional.control.test.MonadZipLaws
 import com.github.fsbarata.functional.data.test.TraversableLaws
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger
 
-class NonEmptyListTest: MonadZipLaws<NonEmptyContext>, TraversableLaws<NonEmptyContext> {
+class NonEmptyListTest
+	: MonadZipLaws<NonEmptyContext>,
+	TraversableLaws<NonEmptyContext>,
+	ComonadLaws<NonEmptyContext> {
 	override val monadScope = NonEmptyList
 	override val traversableScope = NonEmptyList
 
@@ -229,6 +233,14 @@ class NonEmptyListTest: MonadZipLaws<NonEmptyContext>, TraversableLaws<NonEmptyC
 		assertEquals(listOf(9), nel1.asSequence().filter { it > 3 }.toList())
 		assertEquals(listOf(5), nel2.asSequence().filter { it > 3 }.toList())
 		assertEquals(listOf(4, 5), nel3.asSequence().filter { it > 3 }.toList())
+	}
+
+	@Test
+	fun coflatMap() {
+		val f = { nel: NonEmptyList<Int> -> nel.sum() }
+		assertEquals(NonEmptyList.of(9), nel1.coflatMap(f))
+		assertEquals(NonEmptyList.of(9, 4, 3), nel2.coflatMap(f))
+		assertEquals(NonEmptyList.of(13, 11, 7, 5), nel3.coflatMap(f))
 	}
 
 	@Test
