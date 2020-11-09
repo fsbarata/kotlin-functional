@@ -2,7 +2,6 @@ package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Traversable
-import com.github.fsbarata.functional.data.curry
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
 import com.github.fsbarata.functional.iterators.*
 import java.io.Serializable

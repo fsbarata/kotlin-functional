@@ -238,7 +238,7 @@ class NonEmptyListTest
 	@Test
 	fun coflatMap() {
 		val f = { nel: NonEmptyList<Int> -> nel.sum() }
-		assertEquals(NonEmptyList.of(9), nel1.coflatMap(f))
+		assertEquals(NonEmptyList.just(9), nel1.coflatMap(f))
 		assertEquals(NonEmptyList.of(9, 4, 3), nel2.coflatMap(f))
 		assertEquals(NonEmptyList.of(13, 11, 7, 5), nel3.coflatMap(f))
 	}
