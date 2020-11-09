@@ -120,7 +120,7 @@ class NonEmptyList<out A> private constructor(
 		f: (A) -> Applicative<F, B>,
 	): Applicative<F, NonEmptyList<B>> =
 		tail.f().traverse(appScope, f)
-			.lift2(f(head), List<B>::startWithItem.curry())
+			.lift2(f(head), List<B>::startWithItem)
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true

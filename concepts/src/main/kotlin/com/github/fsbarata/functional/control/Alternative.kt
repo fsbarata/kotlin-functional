@@ -14,7 +14,7 @@ interface Alternative<C, out A>: Applicative<C, A> {
 }
 
 fun <C, A> some(alt: Alternative<C, A>): Alternative<C, List<A>> =
-	liftA2(alt, { a: A, la: List<A> -> la + a }.curry())(many(alt)) as Alternative<C, List<A>>
+	liftAC2(alt, { a: A, la: List<A> -> la + a }.curry())(many(alt)) as Alternative<C, List<A>>
 
 fun <C, A> many(alt: Alternative<C, A>): Alternative<C, List<A>> =
 	some(alt).associateWith(alt.scope.just(emptyList()))

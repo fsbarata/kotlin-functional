@@ -22,7 +22,7 @@ class ListF<A>(
 	override fun <B> ap(ff: Applicative<ListContext, (A) -> B>): ListF<B> =
 		wrapped.ap(ff.asList).f()
 
-	override fun <B, R> lift2(fb: Applicative<ListContext, B>, f: (A) -> (B) -> R): ListF<R> =
+	override fun <B, R> lift2(fb: Applicative<ListContext, B>, f: (A, B) -> R): ListF<R> =
 		wrapped.lift2(fb.asList, f).f()
 
 	override fun <B> bind(f: (A) -> Context<ListContext, B>) =
