@@ -6,7 +6,9 @@ typealias F1<A, R> = (A) -> R
 typealias F2<A, B, R> = (A, B) -> R
 typealias F3<A, B, C, R> = (A, B, C) -> R
 
-fun <A> id(): (A) -> A = { it }
+@Suppress("NOTHING_TO_INLINE")
+inline fun <A> id(a: A): A = a
+fun <A> id(): (A) -> A = ::id
 
 inline infix fun <B, C, D> F1<B, C>.composeForward(crossinline other: F1<C, D>): F1<B, D> =
 	other compose this
@@ -14,7 +16,10 @@ inline infix fun <B, C, D> F1<B, C>.composeForward(crossinline other: F1<C, D>):
 inline infix fun <B, C, D> F1<C, D>.compose(crossinline other: F1<B, C>): F1<B, D> =
 	{ invoke(other(it)) }
 
-inline infix fun <B, C, D, E> F2<C, D, E>.compose(crossinline other: F1<B, C>): F2<B, D, E> =
+inline infix fun <A, B, C, R> F2<A, B, C>.composeForward(crossinline other: F1<C, R>): F2<A, B, R> =
+	{ a, b -> other(invoke(a, b)) }
+
+inline infix fun <B, C, D, R> F2<C, D, R>.compose(crossinline other: F1<B, C>): F2<B, D, R> =
 	{ b, d -> invoke(other(b), d) }
 
 @Suppress("NOTHING_TO_INLINE")
