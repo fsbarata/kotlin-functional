@@ -29,14 +29,14 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 
 	@Test
 	fun `traverse identity`() {
-		val t = createTraversable(1, 5, 2)
+		val t = createTraversable(1, 5, 2, -2, 0, 2)
 		val r1 = t.traverse(Identity, ::Identity)
 		assertEqual(r1.runIdentity(), t)
 	}
 
 	@Test
 	fun `traverse composition`() {
-		val t = createTraversable(1, 5, 2)
+		val t = createTraversable(1, 5, 2, -2, 0, 2)
 		val f = { a: Int -> ListF.of(a - 5, a - 1) }
 		val g = { a: Int -> Optional.just(a + 3) }
 
@@ -58,7 +58,7 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 
 	@Test
 	fun `traverse = traverseFromSequence`() {
-		val t = createTraversable(1, 5, 2)
+		val t = createTraversable(1, 5, 2, -2, 0, 2)
 		val f = { a: Int -> listOf(a.toString(), (a + 2).toString()).f() }
 		val r1 = t.traverse(ListF, f).asList
 		val r2 = traverseFromSequence(ListF, t, f).asList
@@ -68,7 +68,7 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 
 	@Test
 	fun `sequence = sequenceFromTraverse`() {
-		val t = createTraversable(listOf(1, 5, 2).f())
+		val t = createTraversable(listOf(1, 5, 2, -2, 0, 2).f())
 		val r1 = traversableScope.sequenceA(ListF, t).asList
 		val r2 = sequenceFromTraverse(ListF, t).asList
 		assertEquals(r2.size, r1.size)

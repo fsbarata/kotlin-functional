@@ -1,23 +1,20 @@
 package com.github.fsbarata.functional.data.tree
 
-import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Functor
-import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.test.ComonadLaws
 import com.github.fsbarata.functional.control.test.MonadLaws
-import com.github.fsbarata.functional.data.Foldable
-import com.github.fsbarata.functional.data.sequence.asNes
-import com.github.fsbarata.functional.data.test.FoldableLaws
+import com.github.fsbarata.functional.data.test.TraversableLaws
 
 class TreeSequenceTest:
 	MonadLaws<TreeSequenceContext>,
 	ComonadLaws<TreeSequenceContext>,
-	FoldableLaws {
+	TraversableLaws<TreeSequenceContext> {
 	override val monadScope = TreeSequence
+	override val traversableScope = TreeSequence
 
 	override fun <A> createFunctor(a: A) = TreeSequence(a)
 
-	override fun <A> createFoldable(vararg items: A) =
+	override fun <A> createTraversable(vararg items: A) =
 		TreeSequence(
 			items[0],
 			when (items.size) {

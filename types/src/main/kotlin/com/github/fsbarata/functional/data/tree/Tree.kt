@@ -64,6 +64,11 @@ data class Tree<out A>(
 	override fun duplicate(): Tree<Tree<A>> =
 		Tree(this, sub.map { it.duplicate() })
 
+	fun toTreeSequence(): TreeSequence<A> = TreeSequence(
+		root,
+		sub.asSequence().map { it.toTreeSequence() }
+	)
+
 	companion object
 		: Monad.Scope<TreeContext>,
 		Traversable.Scope<TreeContext> {

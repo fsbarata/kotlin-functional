@@ -4,12 +4,12 @@ import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.control.Context
 import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.partial
 import com.github.fsbarata.functional.data.sequence.NonEmptySequenceBase
 import com.github.fsbarata.functional.data.sequence.foldMap
+import com.github.fsbarata.functional.data.sequence.traverse
 import com.github.fsbarata.functional.iterators.NonEmptyIterator
 
 typealias ForestSequence<A> = Sequence<TreeSequence<A>>
@@ -22,7 +22,7 @@ class TreeSequence<out A>(
 	val sub: ForestSequence<A> = emptySequence(),
 ): Monad<TreeSequenceContext, A>,
 	Comonad<TreeSequenceContext, A>,
-	Foldable<A>,
+	Traversable<TreeSequenceContext, A>,
 	NonEmptySequenceBase<A> {
 	override val scope = TreeSequence
 
@@ -61,6 +61,12 @@ class TreeSequence<out A>(
 
 	override fun duplicate(): TreeSequence<TreeSequence<A>> =
 		TreeSequence(this, sub.map { it.duplicate() })
+
+	override fun <F, B> traverse(
+		appScope: Applicative.Scope<F>,
+		f: (A) -> Applicative<F, B>,
+	): Applicative<F, TreeSequence<B>> =
+		f(root).lift2(sub.traverse(appScope) { it.traverse(appScope, f) }, ::TreeSequence)
 
 	fun toTree(): Tree<A> = Tree(
 		root,
