@@ -11,9 +11,12 @@ import com.github.fsbarata.functional.iterators.NonEmptyIterator
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class NonEmptySequenceKtTest: MonadLaws<NonEmptySequence<*>>, MonadZipLaws<NonEmptySequence<*>>, FoldableLaws {
+class NonEmptySequenceKtTest:
+	MonadLaws<NonEmptySequenceContext>,
+	MonadZipLaws<NonEmptySequenceContext>,
+	FoldableLaws {
 	override val monadScope = NonEmptySequence
-	override fun <A> Functor<NonEmptySequence<*>, A>.equalTo(other: Functor<NonEmptySequence<*>, A>): Boolean =
+	override fun <A> Functor<NonEmptySequenceContext, A>.equalTo(other: Functor<NonEmptySequenceContext, A>): Boolean =
 		asNes.toList() == other.asNes.toList()
 
 	override fun <A> createFoldable(vararg items: A): Foldable<A> =

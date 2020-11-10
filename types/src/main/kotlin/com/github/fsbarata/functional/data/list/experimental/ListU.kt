@@ -147,7 +147,7 @@ internal sealed class ListU<out A>
 			)
 		}
 
-		fun asSequence() = NonEmptySequence { iterator() }
+		fun asSequence(): NonEmptySequence<@UnsafeVariance A> = NonEmptySequence { iterator() }
 
 		override fun <B, R> zipWith(other: MonadZip<NonEmpty<*>, B>, f: (A, B) -> R): NonEmpty<R> {
 			val otherNel = other.asNel

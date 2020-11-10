@@ -107,7 +107,7 @@ class NonEmptyList<out A> private constructor(
 		)
 	}
 
-	fun asSequence() = NonEmptySequence { iterator() }
+	fun asSequence(): NonEmptySequence<@UnsafeVariance A> = NonEmptySequence { iterator() }
 
 	override fun listIterator(): ListIterator<A> = LambdaListIterator(size) { get(it) }
 	override fun listIterator(index: Int): ListIterator<A> = LambdaListIterator(size, index) { get(it) }

@@ -8,18 +8,59 @@ import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.iterators.NonEmptyIterator
 import com.github.fsbarata.functional.iterators.toNel
 
+internal typealias NonEmptySequenceContext = NonEmptySequence<*>
+
 /**
  * A NonEmpty sequence.
  *
  * By definition, this object is guaranteed to have at least one item. The head item is still lazily acquired.
  */
-interface NonEmptySequence<out A>:
-	Sequence<A>,
-	Foldable<A>,
-	Monad<NonEmptySequence<*>, A>,
-	MonadZip<NonEmptySequence<*>, A> {
+interface NonEmptySequence<A>:
+	NonEmptySequenceBase<A>,
+	Monad<NonEmptySequenceContext, A>,
+	MonadZip<NonEmptySequenceContext, A> {
 	override val scope get() = Companion
 
+	override fun <B> map(f: (A) -> B): NonEmptySequence<B> = NonEmptySequence {
+		val iterator = iterator()
+		NonEmptyIterator(
+			f(iterator.head),
+			iterator.tail.asSequence().map(f).iterator()
+		)
+	}
+
+	override fun <B> bind(f: (A) -> Context<NonEmptySequenceContext, B>): NonEmptySequence<B> =
+		flatMap { f(it).asNes }
+
+	fun <B> flatMap(f: (A) -> NonEmptySequence<B>): NonEmptySequence<B> = NonEmptySequence {
+		val iterator = iterator()
+		val headIterator = f(iterator.head).iterator()
+		NonEmptyIterator(
+			headIterator.head,
+			(headIterator.tail.asSequence() + iterator.tail.asSequence().flatMap(f)).iterator()
+		)
+	}
+
+	override fun <B, R> zipWith(other: MonadZip<NonEmptySequenceContext, B>, f: (A, B) -> R): NonEmptySequence<R> {
+		val otherNes = other.asNes
+		return NonEmptySequence {
+			val iterator1 = iterator()
+			val iterator2 = otherNes.iterator()
+			NonEmptyIterator(
+				f(iterator1.head, iterator2.head),
+				iterator1.tail.asSequence().zip(iterator2.asSequence(), f).iterator()
+			)
+		}
+	}
+
+	companion object: Monad.Scope<NonEmptySequenceContext> {
+		override fun <A> just(a: A) = NonEmptySequence { NonEmptyIterator(a) }
+	}
+}
+
+interface NonEmptySequenceBase<out A>:
+	Sequence<A>,
+	Foldable<A> {
 	override fun iterator(): NonEmptyIterator<A>
 
 	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
@@ -35,51 +76,15 @@ interface NonEmptySequence<out A>:
 
 	fun toList(): NonEmptyList<A> = iterator().toNel()
 
-	operator fun plus(element: @UnsafeVariance A): NonEmptySequence<A> = plus(sequenceOf(element))
+	operator fun plus(element: @UnsafeVariance A): NonEmptySequence<@UnsafeVariance A> = plus(sequenceOf(element))
 
-	operator fun plus(elements: Sequence<@UnsafeVariance A>): NonEmptySequence<A> = NonEmptySequence {
+	operator fun plus(elements: Sequence<@UnsafeVariance A>): NonEmptySequence<@UnsafeVariance A> = NonEmptySequence {
 		val iterator = iterator()
 		NonEmptyIterator(iterator.head, (iterator.tail.asSequence() + elements).iterator())
 	}
-
-	override fun <B, R> zipWith(other: MonadZip<NonEmptySequence<*>, B>, f: (A, B) -> R): NonEmptySequence<R> {
-		val otherNes = other.asNes
-		return NonEmptySequence {
-			val iterator1 = iterator()
-			val iterator2 = otherNes.iterator()
-			NonEmptyIterator(
-				f(iterator1.head, iterator2.head),
-				iterator1.tail.asSequence().zip(iterator2.asSequence(), f).iterator()
-			)
-		}
-	}
-
-	override fun <B> map(f: (A) -> B) = NonEmptySequence {
-		val iterator = iterator()
-		NonEmptyIterator(
-			f(iterator.head),
-			iterator.tail.asSequence().map(f).iterator()
-		)
-	}
-
-	override fun <B> bind(f: (A) -> Context<NonEmptySequence<*>, B>) =
-		flatMap { f(it).asNes }
-
-	fun <B> flatMap(f: (A) -> NonEmptySequence<B>) = NonEmptySequence {
-		val iterator = iterator()
-		val headIterator = f(iterator.head).asNes.iterator()
-		NonEmptyIterator(
-			headIterator.head,
-			(headIterator.tail.asSequence() + iterator.tail.asSequence().flatMap(f)).iterator()
-		)
-	}
-
-	companion object: Monad.Scope<NonEmptySequence<*>> {
-		override fun <A> just(a: A) = NonEmptySequence { NonEmptyIterator(a) }
-	}
 }
 
-val <A> Context<NonEmptySequence<*>, A>.asNes get() = this as NonEmptySequence<A>
+val <A> Context<NonEmptySequenceContext, A>.asNes get() = this as NonEmptySequence<A>
 
 inline fun <A> NonEmptySequence(crossinline iterator: () -> NonEmptyIterator<A>): NonEmptySequence<A> =
 	object: NonEmptySequence<A> {
@@ -105,7 +110,7 @@ fun <A> nonEmptySequenceOf(head: A, tail: Iterable<A>) =
 fun <A> nonEmptySequence(head: A, tail: Sequence<A>) =
 	NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
 
-fun <A> Sequence<A>.nonEmpty(ifEmpty: NonEmptySequence<A>) = nonEmpty(ifEmpty::iterator)
+fun <A> Sequence<A>.nonEmpty(ifEmpty: NonEmptySequenceBase<A>) = nonEmpty(ifEmpty::iterator)
 
 fun <A> Sequence<A>.nonEmpty(ifEmpty: () -> NonEmptyIterator<A>) =
 	NonEmptySequence {
