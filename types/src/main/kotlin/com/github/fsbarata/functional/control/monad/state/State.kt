@@ -5,7 +5,7 @@ import com.github.fsbarata.functional.control.Monad
 
 class State<S, A>(
 	val runState: (S) -> Pair<S, A>,
-): Monad<State<S, *>, A> {
+): Monad<StateContext<S>, A> {
 	override val scope get() = StateScope<S>()
 
 	override fun <B> map(f: (A) -> B): State<S, B> =
@@ -14,13 +14,13 @@ class State<S, A>(
 			Pair(newState, f(value))
 		}
 
-	override fun <B> bind(f: (A) -> Context<State<S, *>, B>): State<S, B> =
+	override fun <B> bind(f: (A) -> Context<StateContext<S>, B>): State<S, B> =
 		State { s ->
 			val (newState, value) = runState(s)
 			f(value).asState.runState(newState)
 		}
 
-	class StateScope<S>: Monad.Scope<State<S, *>> {
+	class StateScope<S>: Monad.Scope<StateContext<S>> {
 		override fun <A> just(a: A) = just<S, A>(a)
 
 		fun get() = State { s: S -> Pair(s, s) }
@@ -32,8 +32,11 @@ class State<S, A>(
 	}
 }
 
+
 fun <S> getState(): State<S, S> = State { s -> Pair(s, s) }
 fun <S> putState(newState: S) = State<S, Unit> { Pair(newState, Unit) }
 
-val <S, A> Context<State<S, *>, A>.asState
+internal typealias StateContext<S> = State<S, *>
+
+val <S, A> Context<StateContext<S>, A>.asState
 	get() = this as State<S, A>
