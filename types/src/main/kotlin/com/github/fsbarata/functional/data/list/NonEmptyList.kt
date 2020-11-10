@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
 import com.github.fsbarata.functional.utils.*
@@ -143,6 +144,8 @@ class NonEmptyList<out A> private constructor(
 		override fun <A> just(a: A) = of(a, emptyList())
 		fun <T> of(head: T, vararg others: T) = of(head, others.toList())
 		fun <T> of(head: T, others: List<T>) = NonEmptyList(head, others)
+
+		fun <A> concatSemigroup() = Semigroup(NonEmptyList<A>::plus)
 	}
 }
 

@@ -2,6 +2,7 @@ package com.github.fsbarata.functional.data.maybe
 
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
+import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
 import java.io.Serializable
 
@@ -74,6 +75,12 @@ sealed class Optional<out A>:
 		override fun <A> empty(): Optional<A> = None
 		override fun <A> just(a: A): Optional<A> = Some(a)
 		fun <A> ofNullable(a: A?) = if (a != null) Some(a) else None
+
+		fun <A> monoid(sg: Semigroup<A>) = object: Monoid<Optional<A>> {
+			override val empty = empty<A>()
+			override fun combine(a1: Optional<A>, a2: Optional<A>): Optional<A> =
+				a1.map { a -> a2.map { otherA -> sg.combine(a, otherA) } orElse a } orOptional a2
+		}
 	}
 }
 

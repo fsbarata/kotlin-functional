@@ -2,6 +2,7 @@ package com.github.fsbarata.functional.data.sequence
 
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Foldable
+import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.utils.NonEmptyIterator
@@ -66,6 +67,8 @@ interface NonEmptySequence<A>:
 		Monad.Scope<NonEmptySequenceContext>,
 		Traversable.Scope<NonEmptySequenceContext> {
 		override fun <A> just(a: A) = NonEmptySequence { NonEmptyIterator(a) }
+
+		fun <A> concatSemigroup() = Semigroup(NonEmptySequence<A>::plus)
 	}
 }
 

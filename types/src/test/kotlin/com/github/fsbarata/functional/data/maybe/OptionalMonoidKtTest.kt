@@ -6,12 +6,12 @@ import org.junit.Test
 import kotlin.random.Random
 
 class OptionalSumMonoidTest: MonoidLaws<Optional<Int>>(
-	optionalMonoid(productIntMonoid()),
+	Optional.monoid(productIntMonoid()),
 	{ Optional.just(Random.nextInt(1, 100)) }
 ) {
 	@Test
 	fun combines() {
-		with(optionalMonoid(productIntMonoid())) {
+		with(Optional.monoid(productIntMonoid())) {
 			assertEquals(
 				Optional.just(5),
 				combine(Optional.just(5), Optional.empty())
