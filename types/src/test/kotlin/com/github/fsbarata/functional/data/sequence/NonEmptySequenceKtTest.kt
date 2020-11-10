@@ -3,10 +3,10 @@ package com.github.fsbarata.functional.data.sequence
 import com.github.fsbarata.functional.control.Functor
 import com.github.fsbarata.functional.control.test.MonadLaws
 import com.github.fsbarata.functional.control.test.MonadZipLaws
-import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.test.FoldableLaws
+import com.github.fsbarata.functional.data.test.TraversableLaws
 import com.github.fsbarata.functional.iterators.NonEmptyIterator
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -14,13 +14,18 @@ import org.junit.Test
 class NonEmptySequenceKtTest:
 	MonadLaws<NonEmptySequenceContext>,
 	MonadZipLaws<NonEmptySequenceContext>,
+	TraversableLaws<NonEmptySequenceContext>,
 	FoldableLaws {
 	override val monadScope = NonEmptySequence
+	override val traversableScope = NonEmptySequence
 	override fun <A> Functor<NonEmptySequenceContext, A>.equalTo(other: Functor<NonEmptySequenceContext, A>): Boolean =
 		asNes.toList() == other.asNes.toList()
+	override fun <A> Functor<NonEmptySequenceContext, A>.describe() = asNes.toList().toString()
 
-	override fun <A> createFoldable(vararg items: A): Foldable<A> =
-		nonEmptySequenceOf(items.first(), items.drop(1))
+	override fun <A> createFunctor(a: A) = nesOf(a)
+
+	override fun <A> createTraversable(vararg items: A) =
+		nesOf(items.first(), items.drop(1))
 
 	@Test
 	fun `non empty sequence from iterator`() {

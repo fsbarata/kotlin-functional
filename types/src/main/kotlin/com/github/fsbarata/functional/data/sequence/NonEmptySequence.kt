@@ -1,15 +1,12 @@
 package com.github.fsbarata.functional.data.sequence
 
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Context
-import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.list.NonEmptyList
-import com.github.fsbarata.functional.data.list.startWithItem
-import com.github.fsbarata.functional.data.list.traverse
 import com.github.fsbarata.functional.iterators.NonEmptyIterator
+import com.github.fsbarata.functional.iterators.coflatMap
+import com.github.fsbarata.functional.iterators.nonEmpty
 import com.github.fsbarata.functional.iterators.toNel
 
 internal typealias NonEmptySequenceContext = NonEmptySequence<*>
@@ -22,7 +19,8 @@ internal typealias NonEmptySequenceContext = NonEmptySequence<*>
 interface NonEmptySequence<A>:
 	NonEmptySequenceBase<A>,
 	Monad<NonEmptySequenceContext, A>,
-	MonadZip<NonEmptySequenceContext, A> {
+	MonadZip<NonEmptySequenceContext, A>,
+	Traversable<NonEmptySequenceContext, A> {
 	override val scope get() = Companion
 
 	override fun <B> map(f: (A) -> B): NonEmptySequence<B> = NonEmptySequence {
@@ -55,6 +53,15 @@ interface NonEmptySequence<A>:
 				iterator1.tail.asSequence().zip(iterator2.asSequence(), f).iterator()
 			)
 		}
+	}
+
+	override fun <F, B> traverse(
+		appScope: Applicative.Scope<F>,
+		f: (A) -> Applicative<F, B>
+	): Applicative<F, Traversable<NonEmptySequenceContext, B>> {
+		val iterator = iterator()
+		return iterator.tail.asSequence().traverse(appScope, f)
+			.lift2(f(iterator.head), Sequence<B>::startWithItem)
 	}
 
 	companion object:
@@ -107,13 +114,13 @@ fun <A: Any> nonEmptySequence(head: A, nextFunction: (A) -> A?) = NonEmptySequen
 fun <A> Sequence<A>.startWithItem(item: A) =
 	NonEmptySequence { NonEmptyIterator(item, iterator()) }
 
-fun <A> nonEmptySequenceOf(head: A, vararg tail: A) =
+fun <A> nesOf(head: A, vararg tail: A) =
 	NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
 
-fun <A> nonEmptySequenceOf(head: A, tail: Iterable<A>) =
+fun <A> nesOf(head: A, tail: Iterable<A>) =
 	NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
 
-fun <A> nonEmptySequence(head: A, tail: Sequence<A>) =
+fun <A> nesOf(head: A, tail: Sequence<A>) =
 	NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
 
 fun <A> Sequence<A>.nonEmpty(ifEmpty: NonEmptySequenceBase<A>) = nonEmpty(ifEmpty::iterator)
@@ -124,6 +131,5 @@ fun <A> Sequence<A>.nonEmpty(ifEmpty: () -> NonEmptyIterator<A>) =
 		if (iterator.hasNext()) NonEmptyIterator(iterator.next(), iterator)
 		else ifEmpty()
 	}
-
 
 

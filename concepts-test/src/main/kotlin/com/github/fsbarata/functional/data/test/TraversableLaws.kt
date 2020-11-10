@@ -6,12 +6,14 @@ import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.compose.Compose
 import com.github.fsbarata.functional.data.compose.ComposeApplicative
+import com.github.fsbarata.functional.data.compose.asCompose
 import com.github.fsbarata.functional.data.identity.Identity
 import com.github.fsbarata.functional.data.identity.runIdentity
 import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.list.asList
 import com.github.fsbarata.functional.data.list.f
 import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.maybe.asOptional
 import com.github.fsbarata.functional.data.sequenceFromTraverse
 import com.github.fsbarata.functional.data.traverseFromSequence
 import org.junit.Assert.assertEquals
@@ -41,7 +43,17 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 		val r1 =
 			t.traverse(ComposeApplicative.Scope(ListF, Optional)) { a -> ComposeApplicative(f(a).map(g), Optional) }
 		val r2 = Compose(t.traverse(ListF, f).map { it.traverse(Optional, g) })
-		assertEquals(r1, r2)
+		val r1Items = r1.asCompose.fg.asList
+		val r2Items = r2.fg.asList
+		assertEquals(r2Items.size, r1Items.size)
+		r1Items.zipWith(r2Items) { optional1, optional2 ->
+			val item1 = optional1.asOptional.orNull() ?: run {
+				assert(optional2.asOptional.isPresent()) { "Item from r2 is not null" }
+				return@zipWith Unit
+			}
+			val item2 = checkNotNull(optional2.asOptional.orNull())
+			assertEqual(item1, item2)
+		}
 	}
 
 	@Test
