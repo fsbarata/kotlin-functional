@@ -1,10 +1,14 @@
 package com.github.fsbarata.functional.data.sequence
 
+import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Context
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Foldable
+import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.list.NonEmptyList
+import com.github.fsbarata.functional.data.list.startWithItem
+import com.github.fsbarata.functional.data.list.traverse
 import com.github.fsbarata.functional.iterators.NonEmptyIterator
 import com.github.fsbarata.functional.iterators.toNel
 
@@ -53,7 +57,9 @@ interface NonEmptySequence<A>:
 		}
 	}
 
-	companion object: Monad.Scope<NonEmptySequenceContext> {
+	companion object:
+		Monad.Scope<NonEmptySequenceContext>,
+		Traversable.Scope<NonEmptySequenceContext> {
 		override fun <A> just(a: A) = NonEmptySequence { NonEmptyIterator(a) }
 	}
 }

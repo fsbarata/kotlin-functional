@@ -4,12 +4,12 @@ import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.control.Context
 import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.partial
 import com.github.fsbarata.functional.data.sequence.NonEmptySequenceBase
 import com.github.fsbarata.functional.data.sequence.foldMap
-import com.github.fsbarata.functional.data.sequence.traverse
 import com.github.fsbarata.functional.iterators.NonEmptyIterator
 
 typealias ForestSequence<A> = Sequence<TreeSequence<A>>
@@ -17,12 +17,12 @@ typealias ForestSequence<A> = Sequence<TreeSequence<A>>
 internal typealias TreeSequenceContext = TreeSequence<*>
 
 @Suppress("OVERRIDE_BY_INLINE")
-data class TreeSequence<out A>(
+class TreeSequence<out A>(
 	val root: A,
 	val sub: ForestSequence<A> = emptySequence(),
 ): Monad<TreeSequenceContext, A>,
-	Traversable<TreeSequenceContext, A>,
 	Comonad<TreeSequenceContext, A>,
+	Foldable<A>,
 	NonEmptySequenceBase<A> {
 	override val scope = TreeSequence
 
@@ -59,14 +59,13 @@ data class TreeSequence<out A>(
 	override fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 		monoid.combine(f(root), sub.foldMap(monoid) { ta -> ta.foldMap(monoid, f) })
 
-	override fun <F, B> traverse(
-		appScope: Applicative.Scope<F>,
-		f: (A) -> Applicative<F, B>,
-	): Applicative<F, TreeSequence<B>> =
-		f(root).lift2(sub.traverse(appScope) { it.traverse(appScope, f) }, ::TreeSequence)
-
 	override fun duplicate(): TreeSequence<TreeSequence<A>> =
 		TreeSequence(this, sub.map { it.duplicate() })
+
+	fun toTree(): Tree<A> = Tree(
+		root,
+		sub.map { it.toTree() }.toList()
+	)
 
 	companion object
 		: Monad.Scope<TreeSequenceContext>,
