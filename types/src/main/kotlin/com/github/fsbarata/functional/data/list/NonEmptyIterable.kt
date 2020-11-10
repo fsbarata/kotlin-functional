@@ -16,21 +16,8 @@ interface NonEmptyIterable<out A>:
 		tail.fold(accumulator(initialValue, head), accumulator)
 }
 
-fun <A> nonEmptyIterable(head: A, iterable: Iterable<A>) =
-	object: NonEmptyIterable<A> {
-		override val head = head
-		override val tail: Iterable<A> = iterable
-	}
-
-internal fun <A, B> NonEmptyIterable<A>.transform(f: NonEmptyIterator<A>.() -> B) = f(iterator())
-
-
-inline fun <A, B> NonEmptyIterable<A>.map(f: (A) -> B): NonEmptyList<B> = NonEmptyList.of(f(head), tail.map(f))
-
 fun <T> NonEmptyIterable<NonEmptyIterable<T>>.flatten() =
 	NonEmptyList.of(head.head, head.tail + tail.flatten())
-
-inline fun <A, B> NonEmptyIterable<A>.flatMap(f: (A) -> NonEmptyIterable<B>): NonEmptyList<B> = map(f).flatten()
 
 inline fun <A, B> NonEmptyIterable<A>.flatMapIterable(f: (A) -> Iterable<B>): List<B> = f(head) + tail.flatMap(f)
 
