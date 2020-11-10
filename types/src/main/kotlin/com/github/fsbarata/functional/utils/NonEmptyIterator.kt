@@ -1,4 +1,4 @@
-package com.github.fsbarata.functional.iterators
+package com.github.fsbarata.functional.utils
 
 import com.github.fsbarata.functional.data.list.NonEmptyList
 

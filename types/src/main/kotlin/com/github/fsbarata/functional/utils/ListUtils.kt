@@ -1,4 +1,4 @@
-package com.github.fsbarata.functional.iterators
+package com.github.fsbarata.functional.utils
 
 class LambdaListIterator<A>(
 	private val size: Int,

@@ -7,7 +7,7 @@ import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.test.FoldableLaws
 import com.github.fsbarata.functional.data.test.TraversableLaws
-import com.github.fsbarata.functional.iterators.NonEmptyIterator
+import com.github.fsbarata.functional.utils.NonEmptyIterator
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

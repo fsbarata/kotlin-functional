@@ -7,7 +7,7 @@ import com.github.fsbarata.functional.data.partial
 import com.github.fsbarata.functional.data.sequence.NonEmptySequenceBase
 import com.github.fsbarata.functional.data.sequence.foldMap
 import com.github.fsbarata.functional.data.sequence.traverse
-import com.github.fsbarata.functional.iterators.NonEmptyIterator
+import com.github.fsbarata.functional.utils.NonEmptyIterator
 
 typealias ForestSequence<A> = Sequence<TreeSequence<A>>
 

@@ -4,8 +4,8 @@ import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.list.NonEmptyList
-import com.github.fsbarata.functional.iterators.NonEmptyIterator
-import com.github.fsbarata.functional.iterators.toNel
+import com.github.fsbarata.functional.utils.NonEmptyIterator
+import com.github.fsbarata.functional.utils.toNel
 
 internal typealias NonEmptySequenceContext = NonEmptySequence<*>
 

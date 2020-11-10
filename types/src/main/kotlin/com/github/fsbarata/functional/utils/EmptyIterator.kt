@@ -1,4 +1,4 @@
-package com.github.fsbarata.functional.iterators
+package com.github.fsbarata.functional.utils
 
 object EmptyIterator: Iterator<Nothing> {
 	@Deprecated("Empty iterator has no next", replaceWith = ReplaceWith("false"))

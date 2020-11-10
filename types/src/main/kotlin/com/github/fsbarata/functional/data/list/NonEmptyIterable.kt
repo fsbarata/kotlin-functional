@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.data.Foldable
-import com.github.fsbarata.functional.iterators.NonEmptyIterator
+import com.github.fsbarata.functional.utils.NonEmptyIterator
 import com.github.fsbarata.functional.kotlin.scanNel
 
 interface NonEmptyIterable<out A>:
