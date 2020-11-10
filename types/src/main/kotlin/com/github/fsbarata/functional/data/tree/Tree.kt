@@ -28,7 +28,7 @@ data class Tree<out A>(
 	override val head: A = root
 	override val tail: Iterable<A> = Iterable { sub.asSequence().flatten().iterator() }
 
-	override fun extract() = head
+	override fun extract() = root
 
 	override inline fun <B> bind(f: (A) -> Context<TreeContext, B>) = flatMap { f(it).asTree }
 
@@ -36,17 +36,16 @@ data class Tree<out A>(
 		val newTree = f(root)
 		return Tree(
 			newTree.root,
-			newTree.sub + tail.map(f)
+			newTree.sub + sub.flatten().map(f)
 		)
 	}
 
 	override fun <B, R> lift2(fb: Applicative<TreeContext, B>, f: (A, B) -> R): Tree<R> {
 		val tb = fb.asTree
-		val x: Forest<R> = tb.sub.map { it.map(f.partial(root)) }
-		val y: Forest<R> = sub.map { it.lift2(tb, f) }
+		val fRoot = f.partial(root)
 		return Tree(
 			f(root, tb.root),
-			x + y
+			tb.sub.map { it.map(fRoot) } + sub.map { it.lift2(tb, f) }
 		)
 	}
 
