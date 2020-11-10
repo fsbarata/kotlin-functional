@@ -1,9 +1,6 @@
 package com.github.fsbarata.functional.data.tree
 
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Comonad
-import com.github.fsbarata.functional.control.Context
-import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.partial
@@ -20,7 +17,9 @@ internal typealias TreeSequenceContext = TreeSequence<*>
 class TreeSequence<out A>(
 	val root: A,
 	val sub: ForestSequence<A> = emptySequence(),
-): Monad<TreeSequenceContext, A>,
+):
+	Monad<TreeSequenceContext, A>,
+	MonadZip<TreeSequenceContext, A>,
 	Comonad<TreeSequenceContext, A>,
 	Traversable<TreeSequenceContext, A>,
 	NonEmptySequenceBase<A> {
@@ -58,6 +57,17 @@ class TreeSequence<out A>(
 
 	override fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 		monoid.combine(f(root), sub.foldMap(monoid) { ta -> ta.foldMap(monoid, f) })
+
+	override fun <B, R> zipWith(
+		other: MonadZip<TreeSequenceContext, B>,
+		f: (A, B) -> R,
+	): TreeSequence<R> {
+		val otherTree = other.asTreeSequence
+		return TreeSequence(
+			f(root, otherTree.root),
+			sub.zip(otherTree.sub) { ta, tb -> ta.zipWith(tb, f) }
+		)
+	}
 
 	override fun duplicate(): TreeSequence<TreeSequence<A>> =
 		TreeSequence(this, sub.map { it.duplicate() })

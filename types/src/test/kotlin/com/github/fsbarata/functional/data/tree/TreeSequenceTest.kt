@@ -3,10 +3,12 @@ package com.github.fsbarata.functional.data.tree
 import com.github.fsbarata.functional.control.Functor
 import com.github.fsbarata.functional.control.test.ComonadLaws
 import com.github.fsbarata.functional.control.test.MonadLaws
+import com.github.fsbarata.functional.control.test.MonadZipLaws
 import com.github.fsbarata.functional.data.test.TraversableLaws
 
 class TreeSequenceTest:
 	MonadLaws<TreeSequenceContext>,
+	MonadZipLaws<TreeSequenceContext>,
 	ComonadLaws<TreeSequenceContext>,
 	TraversableLaws<TreeSequenceContext> {
 	override val monadScope = TreeSequence

@@ -1,9 +1,6 @@
 package com.github.fsbarata.functional.data.tree
 
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Comonad
-import com.github.fsbarata.functional.control.Context
-import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.list.NonEmptyIterable
@@ -19,7 +16,9 @@ internal typealias TreeContext = Tree<*>
 data class Tree<out A>(
 	val root: A,
 	val sub: Forest<A> = emptyList(),
-): Monad<TreeContext, A>,
+):
+	Monad<TreeContext, A>,
+	MonadZip<TreeContext, A>,
 	Traversable<TreeContext, A>,
 	Comonad<TreeContext, A>,
 	NonEmptyIterable<A> {
@@ -46,6 +45,14 @@ data class Tree<out A>(
 		return Tree(
 			f(root, tb.root),
 			tb.sub.map { it.map(fRoot) } + sub.map { it.lift2(tb, f) }
+		)
+	}
+
+	override fun <B, R> zipWith(other: MonadZip<TreeContext, B>, f: (A, B) -> R): Tree<R> {
+		val otherTree = other.asTree
+		return Tree(
+			f(root, otherTree.root),
+			sub.zip(otherTree.sub) { ta, tb -> ta.zipWith(tb, f) }
 		)
 	}
 
