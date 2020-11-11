@@ -3,6 +3,7 @@ package com.github.fsbarata.functional.data.list
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
+import com.github.fsbarata.functional.data.partial
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
 import com.github.fsbarata.functional.utils.*
 import java.io.Serializable
@@ -71,6 +72,9 @@ class NonEmptyList<out A> private constructor(
 	}
 
 	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
+
+	override inline fun <B, R> lift2(fb: Applicative<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> =
+		flatMap { fb.asNel.map(f.partial(it)) }
 
 	override inline infix fun <B> bind(f: (A) -> Context<NonEmptyContext, B>): NonEmptyList<B> =
 		flatMap { f(it).asNel }

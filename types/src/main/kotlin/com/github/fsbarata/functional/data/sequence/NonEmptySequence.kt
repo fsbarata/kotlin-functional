@@ -30,6 +30,11 @@ interface NonEmptySequence<A>:
 		)
 	}
 
+	override fun <B, R> lift2(
+		fb: Applicative<NonEmptySequenceContext, B>,
+		f: (A, B) -> R
+	) = super<MonadZip>.lift2(fb, f).asNes
+
 	override infix fun <B> bind(f: (A) -> Context<NonEmptySequenceContext, B>): NonEmptySequence<B> =
 		flatMap { f(it).asNes }
 

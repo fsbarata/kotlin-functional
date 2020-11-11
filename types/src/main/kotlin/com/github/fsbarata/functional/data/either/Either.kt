@@ -6,6 +6,7 @@ import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.partial
 import java.io.Serializable
 
 /**
@@ -26,6 +27,9 @@ sealed class Either<out E, out A>
 
 	final override inline fun <B> map(f: (A) -> B): Either<E, B> =
 		flatMap { Right(f(it)) }
+
+	final override inline fun <B, R> lift2(fb: Applicative<EitherContext, B>, f: (A, B) -> R): Either<E, R> =
+		flatMap { fb.asEither.map(f.partial(it)) }
 
 	inline fun <B> mapLeft(f: (E) -> B): Either<B, A> {
 		return fold(ifLeft = { Left(f(it)) }, { Right(it) })

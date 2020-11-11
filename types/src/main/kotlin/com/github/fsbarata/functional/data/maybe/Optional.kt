@@ -4,6 +4,7 @@ import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
+import com.github.fsbarata.functional.data.partial
 import java.io.Serializable
 
 /**
@@ -30,6 +31,9 @@ sealed class Optional<out A>:
 
 	final override inline fun <B> map(f: (A) -> B) =
 		flatMap { just(f(it)) }
+
+	final override inline fun <B, R> lift2(fb: Applicative<OptionalContext, B>, f: (A, B) -> R) =
+		flatMap { fb.asOptional.map(f.partial(it)) }
 
 	final override inline infix fun <B> bind(f: (A) -> Context<OptionalContext, B>) =
 		flatMap { f(it).asOptional }
