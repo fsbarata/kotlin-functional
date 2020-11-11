@@ -19,13 +19,13 @@ class ListF<A>(
 	override inline fun <B> map(f: (A) -> B) =
 		(this as List<A>).map(f).f()
 
-	override fun <B> ap(ff: Applicative<ListContext, (A) -> B>): ListF<B> =
+	override infix fun <B> ap(ff: Applicative<ListContext, (A) -> B>): ListF<B> =
 		wrapped.ap(ff.asList).f()
 
 	override inline fun <B, R> lift2(fb: Applicative<ListContext, B>, f: (A, B) -> R): ListF<R> =
 		(this as List<A>).lift2(fb.asList, f).f()
 
-	override inline fun <B> bind(f: (A) -> Context<ListContext, B>) =
+	override inline infix fun <B> bind(f: (A) -> Context<ListContext, B>) =
 		flatMap { f(it).asList }
 
 	inline fun <B> flatMap(f: (A) -> List<B>) =

@@ -36,7 +36,7 @@ sealed class Either<out E, out A>
 		is Right -> ifRight(value)
 	}
 
-	final override inline fun <B> bind(f: (A) -> Context<EitherContext, B>): Either<E, B> =
+	final override inline infix fun <B> bind(f: (A) -> Context<EitherContext, B>): Either<E, B> =
 		flatMap { f(it).asEither }
 
 	final override inline fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =

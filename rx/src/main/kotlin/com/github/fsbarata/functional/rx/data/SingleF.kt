@@ -21,7 +21,7 @@ class SingleF<A>(
 
 	override fun <B> map(f: (A) -> B) = wrapped.map(f).f()
 
-	override fun <B> bind(f: (A) -> Context<SingleF<*>, B>): SingleF<B> =
+	override infix fun <B> bind(f: (A) -> Context<SingleF<*>, B>): SingleF<B> =
 		flatMap { f(it).asSingle }
 
 	fun <B> flatMap(f: (A) -> Single<B>): SingleF<B> =

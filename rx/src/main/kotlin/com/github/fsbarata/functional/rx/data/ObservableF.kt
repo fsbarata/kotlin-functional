@@ -24,7 +24,7 @@ class ObservableF<A>(
 	override fun <B> map(f: (A) -> B) =
 		wrapped.map(f).f()
 
-	override fun <B> bind(f: (A) -> Context<ObservableF<*>, B>): ObservableF<B> =
+	override infix fun <B> bind(f: (A) -> Context<ObservableF<*>, B>): ObservableF<B> =
 		flatMap { f(it).asObservable }
 
 	fun <B> flatMap(f: (A) -> Observable<B>): ObservableF<B> =

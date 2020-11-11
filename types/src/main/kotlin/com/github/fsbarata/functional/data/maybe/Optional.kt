@@ -31,7 +31,7 @@ sealed class Optional<out A>:
 	final override inline fun <B> map(f: (A) -> B) =
 		flatMap { just(f(it)) }
 
-	final override inline fun <B> bind(f: (A) -> Context<OptionalContext, B>) =
+	final override inline infix fun <B> bind(f: (A) -> Context<OptionalContext, B>) =
 		flatMap { f(it).asOptional }
 
 	inline fun <B> flatMap(f: (A) -> Optional<B>): Optional<B> =

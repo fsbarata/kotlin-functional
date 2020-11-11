@@ -32,7 +32,7 @@ class TreeSequence<out A>(
 
 	override fun extract() = root
 
-	override fun <B> bind(f: (A) -> Context<TreeSequenceContext, B>) = flatMap { f(it).asTreeSequence }
+	override infix fun <B> bind(f: (A) -> Context<TreeSequenceContext, B>) = flatMap { f(it).asTreeSequence }
 
 	fun <B> flatMap(f: (A) -> TreeSequence<B>): TreeSequence<B> {
 		val newTree = f(root)

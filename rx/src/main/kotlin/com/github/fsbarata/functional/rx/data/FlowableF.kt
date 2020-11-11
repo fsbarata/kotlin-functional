@@ -24,7 +24,7 @@ class FlowableF<A>(
 	override fun <B> map(f: (A) -> B) =
 		wrapped.map(f).f()
 
-	override fun <B> bind(f: (A) -> Context<FlowableF<*>, B>): FlowableF<B> =
+	override infix fun <B> bind(f: (A) -> Context<FlowableF<*>, B>): FlowableF<B> =
 		flatMap { f(it).asFlowable }
 
 	fun <B> flatMap(f: (A) -> Flowable<B>): FlowableF<B> =

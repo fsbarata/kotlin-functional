@@ -8,7 +8,7 @@ import com.github.fsbarata.functional.data.uncurry
 interface Applicative<F, out A>: Functor<F, A> {
 	val scope: Scope<F>
 
-	fun <R> ap(ff: Applicative<F, (A) -> R>): Applicative<F, R> =
+	infix fun <R> ap(ff: Applicative<F, (A) -> R>): Applicative<F, R> =
 		apFromLift2(this, ff)
 
 	fun <B, R> lift2(fb: Applicative<F, B>, f: (A, B) -> R): Applicative<F, R> =

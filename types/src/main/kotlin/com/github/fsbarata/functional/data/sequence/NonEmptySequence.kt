@@ -30,7 +30,7 @@ interface NonEmptySequence<A>:
 		)
 	}
 
-	override fun <B> bind(f: (A) -> Context<NonEmptySequenceContext, B>): NonEmptySequence<B> =
+	override infix fun <B> bind(f: (A) -> Context<NonEmptySequenceContext, B>): NonEmptySequence<B> =
 		flatMap { f(it).asNes }
 
 	fun <B> flatMap(f: (A) -> NonEmptySequence<B>): NonEmptySequence<B> = NonEmptySequence {

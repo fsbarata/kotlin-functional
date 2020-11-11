@@ -72,7 +72,7 @@ class NonEmptyList<out A> private constructor(
 
 	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
 
-	override inline fun <B> bind(f: (A) -> Context<NonEmptyContext, B>): NonEmptyList<B> =
+	override inline infix fun <B> bind(f: (A) -> Context<NonEmptyContext, B>): NonEmptyList<B> =
 		flatMap { f(it).asNel }
 
 	inline fun <B> flatMap(f: (A) -> NonEmptyList<B>): NonEmptyList<B> = map(f).flatten()

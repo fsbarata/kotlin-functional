@@ -22,7 +22,7 @@ class MaybeF<A>(
 	override fun <B> map(f: (A) -> B) =
 		wrapped.map(f).f()
 
-	override fun <B> bind(f: (A) -> Context<MaybeF<*>, B>): MaybeF<B> =
+	override infix fun <B> bind(f: (A) -> Context<MaybeF<*>, B>): MaybeF<B> =
 		flatMap { f(it).asMaybe }
 
 	fun <B> flatMap(f: (A) -> Maybe<B>): MaybeF<B> =

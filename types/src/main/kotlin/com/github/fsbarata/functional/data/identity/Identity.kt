@@ -32,13 +32,13 @@ data class Identity<A>(
 
 	override inline fun <B> map(f: (A) -> B) = Identity(f(a))
 
-	override fun <B> ap(ff: Applicative<IdentityContext, (A) -> B>): Identity<B> =
+	override infix fun <B> ap(ff: Applicative<IdentityContext, (A) -> B>): Identity<B> =
 		ff.map { it(a) }.asIdentity
 
 	override inline fun <B, R> lift2(fb: Applicative<IdentityContext, B>, f: (A, B) -> R): Identity<R> =
 		Identity(f(a, fb.asIdentity.a))
 
-	override inline fun <B> bind(f: (A) -> Context<IdentityContext, B>) = f(a).asIdentity
+	override inline infix fun <B> bind(f: (A) -> Context<IdentityContext, B>) = f(a).asIdentity
 
 	inline fun <B> flatMap(f: (A) -> Identity<B>) = f(a)
 

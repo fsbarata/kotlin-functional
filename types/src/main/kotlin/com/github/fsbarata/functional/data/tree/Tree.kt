@@ -29,7 +29,7 @@ data class Tree<out A>(
 
 	override fun extract() = root
 
-	override inline fun <B> bind(f: (A) -> Context<TreeContext, B>) = flatMap { f(it).asTree }
+	override inline infix fun <B> bind(f: (A) -> Context<TreeContext, B>) = flatMap { f(it).asTree }
 
 	inline fun <B> flatMap(f: (A) -> Tree<B>): Tree<B> {
 		val newTree = f(root)

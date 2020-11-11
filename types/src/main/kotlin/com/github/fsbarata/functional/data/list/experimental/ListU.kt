@@ -116,7 +116,7 @@ internal sealed class ListU<out A>
 		override fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
 			foldRight(initialValue, accumulator)
 
-		override fun <B> bind(f: (A) -> Context<NonEmpty<*>, B>) =
+		override infix fun <B> bind(f: (A) -> Context<NonEmpty<*>, B>) =
 			flatMap { f(it).asNel }
 
 		inline fun <B> flatMap(f: (A) -> NonEmpty<B>): NonEmpty<B> = map(f).flatten()
