@@ -1,7 +1,5 @@
 package com.github.fsbarata.functional.control
 
-import com.github.fsbarata.functional.data.curry
-
 interface Alternative<C, out A>: Applicative<C, A> {
 	override val scope: Scope<C>
 
@@ -14,7 +12,7 @@ interface Alternative<C, out A>: Applicative<C, A> {
 }
 
 fun <C, A> some(alt: Alternative<C, A>): Alternative<C, List<A>> =
-	liftAC2(alt, { a: A, la: List<A> -> la + a }.curry())(many(alt)) as Alternative<C, List<A>>
+	lift2 { a: A, la: List<A> -> la + a }(alt, many(alt)) as Alternative<C, List<A>>
 
 fun <C, A> many(alt: Alternative<C, A>): Alternative<C, List<A>> =
 	some(alt).associateWith(alt.scope.just(emptyList()))

@@ -28,17 +28,20 @@ fun <F, A, R> apFromLift2(app: Applicative<F, A>, ff: Applicative<F, (A) -> R>):
 fun <F, A, B, R> lift2FromAp(appA: Applicative<F, A>, appB: Applicative<F, B>, f: (A, B) -> R) =
 	appB.ap(appA.map(f.curry()))
 
-fun <F, A, B, R> liftAC2(fa: Applicative<F, A>, f: (A) -> (B) -> R): (Applicative<F, B>) -> Applicative<F, R> =
-	{ fa.lift2(it, f.uncurry()) }
+fun <A, B, R> lift2(f: (A, B) -> R) = Lift2(f)
 
-fun <F, A, B, C, R> Applicative<F, A>.liftA3(
-	fb: Applicative<F, B>,
-	fc: Applicative<F, C>,
-	f: (A, B, C) -> R,
-): Applicative<F, R> = fc.ap(lift2(fb, f.curry2()))
+class Lift2<A, B, R>(private val f: (A, B) -> R) {
+	operator fun <F> invoke(fa: Applicative<F, A>, fb: Applicative<F, B>): Applicative<F, R> =
+		fa.lift2(fb, f)
+}
 
-fun <F, A, B, C, R> liftAC3(
-	fa: Applicative<F, A>,
-	f: (A) -> (B) -> (C) -> R
-): (Applicative<F, B>, Applicative<F, C>) -> Applicative<F, R> =
-	{ fb, fc -> fa.liftA3(fb, fc, f.uncurry()) }
+fun <A, B, C, R> lift3(f: (A, B, C) -> R) = Lift3(f)
+
+class Lift3<A, B, C, R>(private val f: (A, B, C) -> R) {
+	operator fun <F> invoke(
+		fa: Applicative<F, A>,
+		fb: Applicative<F, B>,
+		fc: Applicative<F, C>,
+	): Applicative<F, R> =
+		fc.ap(lift2(f.curry2())(fa, fb))
+}

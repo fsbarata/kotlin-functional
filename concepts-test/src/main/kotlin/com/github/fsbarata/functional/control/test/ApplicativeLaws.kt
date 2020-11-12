@@ -51,7 +51,7 @@ interface ApplicativeLaws<F>: FunctorLaws<F> {
 	}
 
 	@Test
-	fun `liftA2 = liftA2FromAp`() {
+	fun `lift2 = lift2FromAp`() {
 		val u = applicativeScope.just(5)
 		val v = applicativeScope.just(1.3)
 		val f = { a: Int, b: Double -> (a * b).toString() }
@@ -61,7 +61,7 @@ interface ApplicativeLaws<F>: FunctorLaws<F> {
 	}
 
 	@Test
-	fun `ap = apFromLift`() {
+	fun `ap = apFromLift2`() {
 		val u = applicativeScope.just(5)
 		val f = applicativeScope.just { a: Int -> (a * 0.5).roundToInt() }
 		val r1 = apFromLift2(u, f)
