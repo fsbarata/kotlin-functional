@@ -27,10 +27,10 @@ interface ApplicativeLaws<F>: FunctorLaws<F> {
 		val u = applicativeScope.just { a: Int -> a * 2 }
 		val v = applicativeScope.just { a: Int -> a + 2 }
 		val w = applicativeScope.just(5)
-		val r1 = w.ap(v).ap(u)
+		val r1 = w ap v ap u
 		val comp =
 			applicativeScope.just { f1: F1<Int, Int> -> { f2: F1<Int, Int> -> f1.compose(f2) } }
-		val r2 = w.ap(v.ap(u.ap(comp)))
+		val r2 = w ap (v ap (u ap(comp)))
 		assertEqual(r1, r2)
 	}
 
