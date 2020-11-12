@@ -6,24 +6,20 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import org.junit.Test
-import kotlin.random.Random
 
 private val error = Throwable()
 
-private val completableFactory = {
-	when {
-		Random.nextBoolean() -> Completable.complete()
-		else -> when (Random.nextBoolean()) {
-			false -> Completable.never()
-			true -> Completable.error(error)
-		}
-	}
+private fun completableFactory(possibility: Int) = when (possibility) {
+	0 -> Completable.complete()
+	1 -> Completable.never()
+	else -> Completable.error(error)
 }
 
 class ConcatCompletableMonoidTest: MonoidLaws<Completable>(
 	concatCompletableMonoid(),
 ) {
-	override fun nonEmpty() = completableFactory()
+	override val possibilities: Int = 3
+	override fun nonEmpty(possibility: Int) = completableFactory(possibility)
 
 	override fun equals(a1: Completable, a2: Completable): Boolean {
 		val observer1 = a1.materialize<Unit>().test()
@@ -32,21 +28,18 @@ class ConcatCompletableMonoidTest: MonoidLaws<Completable>(
 	}
 }
 
-private fun observableFactory(): Observable<Int> = when {
-	Random.nextBoolean() -> when (Random.nextBoolean()) {
-		false -> Observable.empty()
-		true -> Observable.just(Random.nextInt()).concatWith(observableFactory())
-	}
-	else -> when (Random.nextBoolean()) {
-		false -> Observable.never()
-		true -> Observable.error(error)
-	}
+private fun observableFactory(possibility: Int) = when (possibility) {
+	0 -> Observable.empty()
+	1 -> Observable.never()
+	2 -> Observable.error(error)
+	else -> Observable.just(possibility)
 }
 
 class ConcatObservableMonoidTest: MonoidLaws<Observable<Int>>(
 	concatObservableMonoid<Int>(),
 ) {
-	override fun nonEmpty() = observableFactory()
+	override val possibilities: Int = 5
+	override fun nonEmpty(possibility: Int) = observableFactory(possibility)
 
 	override fun equals(a1: Observable<Int>, a2: Observable<Int>): Boolean {
 		val observer1 = a1.materialize().test()
@@ -58,7 +51,8 @@ class ConcatObservableMonoidTest: MonoidLaws<Observable<Int>>(
 class MaybeSumMonoidTest: MonoidLaws<Maybe<Int>>(
 	maybeMonoid(productIntMonoid()),
 ) {
-	override fun nonEmpty() = Maybe.just(Random.nextInt(1, 100))
+	override val possibilities: Int = 100
+	override fun nonEmpty(possibility: Int) = Maybe.just(possibility)
 
 	override fun equals(a1: Maybe<Int>, a2: Maybe<Int>): Boolean {
 		val observer1 = a1.materialize().test()

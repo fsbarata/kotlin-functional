@@ -6,13 +6,13 @@ import org.junit.Test
 abstract class MonoidLaws<A>(
 	private val monoid: Monoid<A>,
 ): SemigroupLaws<A>(monoid) {
-	abstract fun nonEmpty(): A
+	abstract fun nonEmpty(possibility: Int): A
 
-	final override fun factory() = nonEmpty()
+	final override fun factory(possibility: Int) = nonEmpty(possibility)
 
 	@Test
 	fun leftIdentity() {
-		val nonEmpty = nonEmpty()
+		val nonEmpty = nonEmpty(possibility())
 		assertEquals(
 			nonEmpty,
 			monoid.combine(monoid.empty, nonEmpty)
@@ -21,7 +21,7 @@ abstract class MonoidLaws<A>(
 
 	@Test
 	fun rightIdentity() {
-		val nonEmpty = nonEmpty()
+		val nonEmpty = nonEmpty(possibility())
 		assertEquals(
 			nonEmpty,
 			monoid.combine(nonEmpty, monoid.empty)

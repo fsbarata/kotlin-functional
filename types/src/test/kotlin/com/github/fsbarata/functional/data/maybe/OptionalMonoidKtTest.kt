@@ -3,12 +3,12 @@ package com.github.fsbarata.functional.data.maybe
 import com.github.fsbarata.functional.data.monoid.productIntMonoid
 import com.github.fsbarata.functional.data.test.MonoidLaws
 import org.junit.Test
-import kotlin.random.Random
 
 class OptionalSumMonoidTest: MonoidLaws<Optional<Int>>(
 	Optional.monoid(productIntMonoid()),
 ) {
-	override fun nonEmpty() = Optional.just(Random.nextInt(1, 100))
+	override val possibilities: Int = 100
+	override fun nonEmpty(possibility: Int) = Optional.just(possibility)
 
 	@Test
 	fun combines() {

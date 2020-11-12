@@ -5,13 +5,12 @@ import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigDecimal
-import java.util.UUID
-import kotlin.random.Random
 
 class ConcatStringMonoidTest: MonoidLaws<String>(
 	concatStringMonoid(),
 ) {
-	override fun nonEmpty() = UUID.randomUUID().toString()
+	override val possibilities: Int = 25
+	override fun nonEmpty(possibility: Int) = "$possibility"
 
 	@Test
 	fun concats() {
@@ -22,7 +21,8 @@ class ConcatStringMonoidTest: MonoidLaws<String>(
 class SumBigDecimalMonoidTest: MonoidLaws<BigDecimal>(
 	sumBigDecimalMonoid(),
 ) {
-	override fun nonEmpty() = BigDecimal(Random.nextDouble(1.0, 50.0))
+	override val possibilities: Int = 25
+	override fun nonEmpty(possibility: Int) = BigDecimal("$possibility")
 
 	@Test
 	fun adds() {
@@ -33,7 +33,8 @@ class SumBigDecimalMonoidTest: MonoidLaws<BigDecimal>(
 class ProductBigDecimalMonoidTest: MonoidLaws<BigDecimal>(
 	productBigDecimalMonoid(),
 ) {
-	override fun nonEmpty() = BigDecimal(Random.nextDouble(2.0, 50.0))
+	override val possibilities: Int = 25
+	override fun nonEmpty(possibility: Int) = BigDecimal("$possibility")
 
 	@Test
 	fun multiplies() {
@@ -45,10 +46,10 @@ class ProductBigDecimalMonoidTest: MonoidLaws<BigDecimal>(
 class ConcatArrayMonoidTest: MonoidLaws<Array<Any>>(
 	concatArrayMonoid(),
 ) {
-	override fun nonEmpty(): Array<Any> = arrayOf(
-		if (Random.nextBoolean()) Random.nextInt(1, 5)
-		else Random.nextDouble(1.0, 5.0)
-	)
+	override val possibilities: Int = 30
+	override fun nonEmpty(possibility: Int): Array<Any> =
+		(0..(possibility/2)).map { possibility - it }
+			.toTypedArray()
 
 	override fun equals(a1: Array<Any>, a2: Array<Any>): Boolean = a1.contentEquals(a2)
 
@@ -61,15 +62,15 @@ class ConcatArrayMonoidTest: MonoidLaws<Array<Any>>(
 	}
 }
 
-class ConcatSequenceMonoid: MonoidLaws<Sequence<Double>>(
+class ConcatSequenceMonoid: MonoidLaws<Sequence<Int>>(
 	concatSequenceMonoid(),
 ) {
-	override fun nonEmpty() =
-		generateSequence(Random.nextDouble()) { (it - Random.nextDouble()).takeIf { it > 0 } }
-			.toList()
+	override val possibilities: Int = 25
+	override fun nonEmpty(possibility: Int) =
+		(0..possibility).map { it % 13 }
 			.asSequence()
 
-	override fun equals(a1: Sequence<Double>, a2: Sequence<Double>): Boolean =
+	override fun equals(a1: Sequence<Int>, a2: Sequence<Int>): Boolean =
 		a1.toList() == a2.toList()
 
 	@Test
@@ -83,12 +84,12 @@ class ConcatSequenceMonoid: MonoidLaws<Sequence<Double>>(
 	}
 }
 
-class ConcatListMonoid: MonoidLaws<List<Double>>(
+class ConcatListMonoid: MonoidLaws<List<Int>>(
 	concatListMonoid(),
 ) {
-	override fun nonEmpty() =
-		generateSequence(Random.nextDouble()) { (it - Random.nextDouble()).takeIf { it > 0 } }
-			.toList()
+	override val possibilities: Int = 25
+	override fun nonEmpty(possibility: Int) =
+		(0..possibility).map { it % 13 }
 
 	@Test
 	fun concats() {
