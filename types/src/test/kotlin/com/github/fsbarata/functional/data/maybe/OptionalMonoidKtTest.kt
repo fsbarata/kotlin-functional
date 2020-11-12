@@ -7,8 +7,9 @@ import kotlin.random.Random
 
 class OptionalSumMonoidTest: MonoidLaws<Optional<Int>>(
 	Optional.monoid(productIntMonoid()),
-	{ Optional.just(Random.nextInt(1, 100)) }
 ) {
+	override fun nonEmpty() = Optional.just(Random.nextInt(1, 100))
+
 	@Test
 	fun combines() {
 		with(Optional.monoid(productIntMonoid())) {

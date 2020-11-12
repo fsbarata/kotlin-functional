@@ -5,8 +5,9 @@ import org.junit.Test
 
 abstract class SemigroupLaws<A>(
 	private val semigroup: Semigroup<A>,
-	protected val factory: () -> A,
 ) {
+	abstract fun factory(): A
+
 	open fun equals(a1: A, a2: A): Boolean = a1 == a2
 
 	fun assertEquals(a1: A, a2: A) =

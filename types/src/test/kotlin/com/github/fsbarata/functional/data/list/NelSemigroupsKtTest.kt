@@ -7,13 +7,13 @@ import kotlin.random.Random
 
 class ConcatNelSemigroupTest: SemigroupLaws<NonEmptyList<Int>>(
 	NonEmptyList.concatSemigroup(),
-	factory = {
+) {
+	override fun factory() =
 		nonEmptySequence(Random.nextInt(1, 100)) {
 			if (Random.nextBoolean()) it + Random.nextInt(-5, 5)
 			else null
 		}.toList()
-	}
-) {
+
 	@Test
 	fun combine() {
 		val nel1 = factory()

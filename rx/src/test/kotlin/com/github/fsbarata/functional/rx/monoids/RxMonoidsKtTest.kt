@@ -22,8 +22,9 @@ private val completableFactory = {
 
 class ConcatCompletableMonoidTest: MonoidLaws<Completable>(
 	concatCompletableMonoid(),
-	completableFactory
 ) {
+	override fun nonEmpty() = completableFactory()
+
 	override fun equals(a1: Completable, a2: Completable): Boolean {
 		val observer1 = a1.materialize<Unit>().test()
 		val observer2 = a2.materialize<Unit>().test()
@@ -44,8 +45,9 @@ private fun observableFactory(): Observable<Int> = when {
 
 class ConcatObservableMonoidTest: MonoidLaws<Observable<Int>>(
 	concatObservableMonoid<Int>(),
-	::observableFactory
 ) {
+	override fun nonEmpty() = observableFactory()
+
 	override fun equals(a1: Observable<Int>, a2: Observable<Int>): Boolean {
 		val observer1 = a1.materialize().test()
 		val observer2 = a2.materialize().test()
@@ -55,8 +57,9 @@ class ConcatObservableMonoidTest: MonoidLaws<Observable<Int>>(
 
 class MaybeSumMonoidTest: MonoidLaws<Maybe<Int>>(
 	maybeMonoid(productIntMonoid()),
-	{ Maybe.just(Random.nextInt(1, 100)) }
 ) {
+	override fun nonEmpty() = Maybe.just(Random.nextInt(1, 100))
+
 	override fun equals(a1: Maybe<Int>, a2: Maybe<Int>): Boolean {
 		val observer1 = a1.materialize().test()
 		val observer2 = a2.materialize().test()

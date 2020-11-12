@@ -5,8 +5,11 @@ import org.junit.Test
 
 abstract class MonoidLaws<A>(
 	private val monoid: Monoid<A>,
-	private val nonEmpty: () -> A,
-): SemigroupLaws<A>(monoid, nonEmpty) {
+): SemigroupLaws<A>(monoid) {
+	abstract fun nonEmpty(): A
+
+	final override fun factory() = nonEmpty()
+
 	@Test
 	fun leftIdentity() {
 		val nonEmpty = nonEmpty()
