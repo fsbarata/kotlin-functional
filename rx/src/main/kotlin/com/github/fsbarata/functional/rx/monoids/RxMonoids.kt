@@ -6,7 +6,6 @@ import com.github.fsbarata.functional.data.monoid
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.kotlin.Observables
 
 fun concatCompletableMonoid() = monoid(Completable.complete(), Completable::concatWith)
 fun mergeCompletableMonoid() = monoid(Completable.never(), Completable::mergeWith)
@@ -25,7 +24,7 @@ fun <A> maybeMonoid(sg: Semigroup<A>): Monoid<Maybe<A>> =
 
 fun <A: Any> combineLatestObservableMonoid(monoid: Monoid<A>): Monoid<Observable<A>> =
 	monoid(Observable.just(monoid.empty)) { obs1, obs2 ->
-		Observables.combineLatest(obs1, obs2) { a1: A, a2: A -> monoid.combine(a1, a2) }
+		Observable.combineLatest(obs1, obs2) { a1: A, a2: A -> monoid.combine(a1, a2) }
 	}
 
 
