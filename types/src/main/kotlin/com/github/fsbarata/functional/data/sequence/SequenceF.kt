@@ -3,6 +3,7 @@ package com.github.fsbarata.functional.data.sequence
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
+import com.github.fsbarata.functional.data.monoid
 import java.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
@@ -60,6 +61,8 @@ class SequenceF<A>(
 		override fun <A> empty() = emptySequence<A>().f()
 		override fun <A> just(a: A) = sequenceOf(a).f()
 		fun <A> of(vararg items: A) = sequenceOf(*items).f()
+
+		fun <A> concatMonoid() = monoid(empty(), Sequence<A>::plus)
 	}
 }
 

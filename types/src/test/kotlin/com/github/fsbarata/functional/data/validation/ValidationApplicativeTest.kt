@@ -19,6 +19,7 @@ class ValidationApplicativeTest {
 		}
 	}
 
+	@Suppress("UNREACHABLE_CODE")
 	@Test
 	fun lift2() {
 		ValidationApplicative(sumIntMonoid()).run {
