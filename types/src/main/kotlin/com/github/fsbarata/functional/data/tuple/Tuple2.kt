@@ -22,6 +22,12 @@ data class Tuple2<X, Y>(
 	override inline fun <B> map(f: (Y) -> B) =
 		Tuple2(x, f(y))
 
+	override fun <C> mapLeft(f: (X) -> C) =
+		Tuple2(f(x), y)
+
+	override fun <C, D> bimap(f: (X) -> C, g: (Y) -> D) =
+		Tuple2(f(x), g(y))
+
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
 		f: (Y) -> Applicative<F, B>,
