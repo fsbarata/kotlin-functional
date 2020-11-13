@@ -39,8 +39,17 @@ class EitherTest:
 
 	@Test
 	fun mapLeft() {
-		assertEquals(Either.Left("5 a"), LEFT.mapLeft { "$it a" })
-		assertEquals(RIGHT, RIGHT.mapLeft { "$it a" })
+		assertEquals(Either.Left("52"), LEFT.mapLeft { it + 2 })
+		assertEquals(Either.Left(5), LEFT.mapLeft { it.toInt() })
+		assertEquals(RIGHT, RIGHT.mapLeft { it + 2 })
+	}
+
+	@Test
+	fun bimap() {
+		assertEquals(Either.Left("52"), LEFT.bimap({ it + 2 }, { it + 2 }))
+		assertEquals(Either.Left(5), LEFT.bimap({ it.toInt() }, { it + 2 }))
+		assertEquals(Either.Right(7), RIGHT.bimap({ it + 2 }, { it + 2 }))
+		assertEquals(Either.Right("5 + 2"), RIGHT.bimap({ it + 2 }, { "$it + 2" }))
 	}
 
 	@Test
@@ -61,6 +70,24 @@ class EitherTest:
 	fun toOptional() {
 		assertEquals(Optional.empty<Int>(), LEFT.toOptional())
 		assertEquals(Optional.just(5), RIGHT.toOptional())
+	}
+
+	@Test
+	fun swap() {
+		assertEquals(Either.Right("5"), LEFT.swap())
+		assertEquals(Either.Left(5), RIGHT.swap())
+	}
+
+	@Test
+	fun orElse() {
+		assertEquals(1239, LEFT.orElse(1239))
+		assertEquals(5, RIGHT.orElse(1239))
+	}
+
+	@Test
+	fun valueOr() {
+		assertEquals(6, LEFT.valueOr { it.toInt() + 1 })
+		assertEquals(5, RIGHT.valueOr { fail() })
 	}
 
 	companion object {

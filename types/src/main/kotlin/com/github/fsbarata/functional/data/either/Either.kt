@@ -100,8 +100,8 @@ inline fun <E, A, B> Either<E, A>.flatMap(f: (A) -> Either<E, B>): Either<E, B> 
 inline fun <E, A> Optional<A>.toEither(e: () -> E) =
 	fold(ifEmpty = { Either.Left(e()) }, ifSome = { Either.Right(it) })
 
-infix fun <A> Either<*, A>.orElse(a: A): A = fold(ifLeft = { a }, ifRight = { it })
-inline infix fun <E, A> Either<E, A>.valueOr(f: (E) -> A): A = fold(ifLeft = { f(it) }, ifRight = { it })
+infix fun <A> Either<*, A>.orElse(a: A): A = valueOr { a }
+inline infix fun <E, A> Either<E, A>.valueOr(f: (E) -> A): A = fold(ifLeft = f, ifRight = { it })
 
 inline fun <E, A, B> Either<E, A>.ensure(e: E, f: (A) -> Optional<B>): Either<E, B> =
 	flatMap { a -> f(a).toEither { e } }
