@@ -1,5 +1,6 @@
 package com.github.fsbarata.functional.control
 
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.id
 
 interface Comonad<W, out A>: Functor<W, A> {

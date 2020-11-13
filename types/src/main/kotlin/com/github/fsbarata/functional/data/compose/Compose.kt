@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.data.compose
 
-import com.github.fsbarata.functional.control.Functor
+import com.github.fsbarata.functional.data.Functor
 
 internal typealias ComposeContext<F, G> = Compose<F, G, *>
 

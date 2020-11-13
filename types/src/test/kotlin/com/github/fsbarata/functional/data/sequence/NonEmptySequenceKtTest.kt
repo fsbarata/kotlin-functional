@@ -1,8 +1,8 @@
 package com.github.fsbarata.functional.data.sequence
 
-import com.github.fsbarata.functional.control.Functor
 import com.github.fsbarata.functional.control.test.MonadLaws
 import com.github.fsbarata.functional.control.test.MonadZipLaws
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.test.FoldableLaws

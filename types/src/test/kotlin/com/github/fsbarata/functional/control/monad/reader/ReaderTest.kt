@@ -1,9 +1,7 @@
 package com.github.fsbarata.functional.control.monad.reader
 
-import com.github.fsbarata.functional.control.Functor
-import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.test.MonadLaws
-import org.junit.Assert.*
+import com.github.fsbarata.functional.data.Functor
 
 private typealias Dependencies = Pair<String, Int>
 

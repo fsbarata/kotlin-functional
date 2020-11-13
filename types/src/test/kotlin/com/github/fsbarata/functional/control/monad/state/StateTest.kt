@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.control.monad.state
 
-import com.github.fsbarata.functional.control.Functor
 import com.github.fsbarata.functional.control.test.MonadLaws
+import com.github.fsbarata.functional.data.Functor
 
 private typealias MyState = Pair<String, Int>
 

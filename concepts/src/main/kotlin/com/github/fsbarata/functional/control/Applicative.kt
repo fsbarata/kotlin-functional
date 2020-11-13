@@ -1,9 +1,6 @@
 package com.github.fsbarata.functional.control
 
-import com.github.fsbarata.functional.data.curry
-import com.github.fsbarata.functional.data.curry2
-import com.github.fsbarata.functional.data.id
-import com.github.fsbarata.functional.data.uncurry
+import com.github.fsbarata.functional.data.*
 
 interface Applicative<F, out A>: Functor<F, A> {
 	val scope: Scope<F>

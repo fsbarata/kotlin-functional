@@ -1,7 +1,6 @@
 package com.github.fsbarata.functional.data
 
 import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Functor
 
 interface Traversable<T, out A>: Functor<T, A>, Foldable<A> {
 	val scope: Scope<T>

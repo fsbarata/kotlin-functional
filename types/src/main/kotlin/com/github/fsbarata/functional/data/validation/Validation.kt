@@ -1,8 +1,8 @@
 package com.github.fsbarata.functional.data.validation
 
 import com.github.fsbarata.functional.control.Context
-import com.github.fsbarata.functional.control.Functor
 import com.github.fsbarata.functional.data.BiFunctor
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.either.Either
 import com.github.fsbarata.functional.data.list.NonEmptyList
