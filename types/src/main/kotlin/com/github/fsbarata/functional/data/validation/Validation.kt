@@ -2,6 +2,7 @@ package com.github.fsbarata.functional.data.validation
 
 import com.github.fsbarata.functional.control.Context
 import com.github.fsbarata.functional.control.Functor
+import com.github.fsbarata.functional.data.BiFunctor
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.either.Either
 import com.github.fsbarata.functional.data.list.NonEmptyList
@@ -14,6 +15,7 @@ import java.io.Serializable
 @Suppress("OVERRIDE_BY_INLINE")
 sealed class Validation<out E, out A>:
 	Functor<ValidationContext<@UnsafeVariance E>, A>,
+	BiFunctor<ValidationContext<Nothing>, E, A>,
 	Serializable {
 	data class Failure<out E>(val err: E): Validation<E, Nothing>()
 	data class Success<out A>(val value: A): Validation<Nothing, A>()
@@ -23,9 +25,19 @@ sealed class Validation<out E, out A>:
 		is Success -> ifSuccess(value)
 	}
 
+	final override inline fun <C> mapLeft(f: (E) -> C): Validation<C, A> = when (this) {
+		is Failure -> Failure(f(err))
+		is Success -> this
+	}
+
 	final override inline fun <B> map(f: (A) -> B): Validation<E, B> = when (this) {
 		is Failure -> this
 		is Success -> Success(f(value))
+	}
+
+	final override inline fun <C, D> bimap(f: (E) -> C, g: (A) -> D): Validation<C, D> = when (this) {
+		is Failure -> Failure(f(err))
+		is Success -> Success(g(value))
 	}
 
 	fun toEither() = fold(ifFailure = { Either.Left(it) }, ifSuccess = { Either.Right(it) })
@@ -34,8 +46,7 @@ sealed class Validation<out E, out A>:
 	inline fun <EE, AA> withEither(f: (Either<E, A>) -> Either<EE, AA>): Validation<EE, AA> =
 		fromEither(f(toEither()))
 
-	fun toValidationNel() =
-		fold({ Failure(nelOf(it)) }, { Success(it) })
+	fun toValidationNel() = mapLeft { nelOf(it) }
 
 	companion object {
 		inline fun <E, A> fromOptional(optional: Optional<A>, e: () -> E): Validation<E, A> =

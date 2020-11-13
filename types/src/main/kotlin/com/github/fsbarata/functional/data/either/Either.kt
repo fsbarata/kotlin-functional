@@ -3,11 +3,8 @@ package com.github.fsbarata.functional.data.either
 import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Context
 import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.data.Monoid
-import com.github.fsbarata.functional.data.Semigroup
-import com.github.fsbarata.functional.data.Traversable
+import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.maybe.Optional
-import com.github.fsbarata.functional.data.partial
 import java.io.Serializable
 
 /**
@@ -17,8 +14,9 @@ import java.io.Serializable
  * and flatMap.
  */
 @Suppress("OVERRIDE_BY_INLINE")
-sealed class Either<out E, out A>
-	: Monad<EitherContext, A>,
+sealed class Either<out E, out A>:
+	Monad<EitherContext, A>,
+	BiFunctor<EitherContext, E, A>,
 	Traversable<EitherContext, A>,
 	Serializable {
 	data class Left<out E>(val value: E): Either<E, Nothing>()
@@ -32,8 +30,12 @@ sealed class Either<out E, out A>
 	final override inline fun <B, R> lift2(fb: Applicative<EitherContext, B>, f: (A, B) -> R): Either<E, R> =
 		flatMap { fb.asEither.map(f.partial(it)) }
 
-	inline fun <B> mapLeft(f: (E) -> B): Either<B, A> {
+	final override inline fun <B> mapLeft(f: (E) -> B): Either<B, A> {
 		return fold(ifLeft = { Left(f(it)) }, { Right(it) })
+	}
+
+	final override inline fun <C, D> bimap(f: (E) -> C, g: (A) -> D): Either<C, D> {
+		return fold(ifLeft = { Left(f(it)) }, { Right(g(it)) })
 	}
 
 	inline fun <R> fold(ifLeft: (E) -> R, ifRight: (A) -> R): R = when (this) {
