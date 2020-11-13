@@ -4,6 +4,7 @@ import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Context
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.data.Monoid
+import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.partial
@@ -69,6 +70,13 @@ sealed class Either<out E, out A>
 		override fun <A> just(a: A) = Right(a)
 		fun <E, A> ofNullable(a: A?, e: () -> E): Either<E, A> =
 			a?.let(::Right) ?: Left(e())
+
+		fun <E, A> semigroup() = Semigroup<Either<E, A>> { e1, e2 ->
+			e1.fold(
+				ifLeft = { e2 },
+				ifRight = { Right(it) },
+			)
+		}
 	}
 }
 
