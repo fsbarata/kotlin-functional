@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.control.monad.reader
 
 import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Context
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Monad
 
 /**

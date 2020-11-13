@@ -1,5 +1,6 @@
 package com.github.fsbarata.functional.data.maybe
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup

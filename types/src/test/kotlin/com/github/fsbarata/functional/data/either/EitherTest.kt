@@ -2,16 +2,23 @@ package com.github.fsbarata.functional.data.either
 
 import com.github.fsbarata.functional.control.test.MonadLaws
 import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.test.BiFunctorLaws
 import com.github.fsbarata.functional.data.test.TraversableLaws
 import org.junit.Assert.*
 import org.junit.Test
 
-class EitherTest: MonadLaws<EitherContext>, TraversableLaws<EitherContext> {
+class EitherTest:
+	MonadLaws<EitherContext>,
+	TraversableLaws<EitherContext>,
+	BiFunctorLaws<EitherBiContext> {
 	override val monadScope = Either
 	override val traversableScope = Either
 
 	override fun <A> createTraversable(vararg items: A): Either<Nothing, A> =
 		Either.ofNullable(items.firstOrNull()) { throw IllegalStateException() }
+
+	override fun <B, A> createBiFunctor(a: A, b: B) =
+		if (b == null) Either.Right(a) else Either.Left(b)
 
 	override fun <A> createFunctor(a: A) = Either.just(a)
 

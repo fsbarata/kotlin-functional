@@ -1,7 +1,8 @@
 package com.github.fsbarata.functional.data.either
 
+import com.github.fsbarata.functional.BiContext
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Context
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.maybe.Optional
@@ -16,7 +17,7 @@ import java.io.Serializable
 @Suppress("OVERRIDE_BY_INLINE")
 sealed class Either<out E, out A>:
 	Monad<EitherContext, A>,
-	BiFunctor<EitherContext, E, A>,
+	BiFunctor<EitherBiContext, E, A>,
 	Traversable<EitherContext, A>,
 	Serializable {
 	data class Left<out E>(val value: E): Either<E, Nothing>()
@@ -83,10 +84,14 @@ sealed class Either<out E, out A>:
 }
 
 internal typealias EitherContext = Either<Nothing, *>
+internal typealias EitherBiContext = Either<*, *>
 
 @Suppress("UNCHECKED_CAST")
 val <A> Context<EitherContext, A>.asEither
 	get() = this as Either<Nothing, A>
+
+val <E, A> BiContext<EitherBiContext, E, A>.asEither
+	get() = this as Either<E, A>
 
 inline fun <E, A, B> Either<E, A>.flatMap(f: (A) -> Either<E, B>): Either<E, B> {
 	return fold(ifLeft = { Either.Left(it) }, ifRight = { f(it) })

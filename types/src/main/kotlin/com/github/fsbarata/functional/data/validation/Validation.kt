@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.data.validation
 
-import com.github.fsbarata.functional.control.Context
+import com.github.fsbarata.functional.BiContext
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.data.BiFunctor
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Semigroup
@@ -15,7 +16,7 @@ import java.io.Serializable
 @Suppress("OVERRIDE_BY_INLINE")
 sealed class Validation<out E, out A>:
 	Functor<ValidationContext<@UnsafeVariance E>, A>,
-	BiFunctor<ValidationContext<Nothing>, E, A>,
+	BiFunctor<ValidationBiContext, E, A>,
 	Serializable {
 	data class Failure<out E>(val err: E): Validation<E, Nothing>()
 	data class Success<out A>(val value: A): Validation<Nothing, A>()
@@ -67,9 +68,12 @@ sealed class Validation<out E, out A>:
 }
 
 internal typealias ValidationContext<E> = Validation<E, *>
+internal typealias ValidationBiContext = Validation<*, *>
 
-@Suppress("UNCHECKED_CAST")
 val <E, A> Context<ValidationContext<E>, A>.asValidation
+	get() = this as Validation<E, A>
+
+val <E, A> BiContext<ValidationBiContext, E, A>.asValidation
 	get() = this as Validation<E, A>
 
 inline fun <E, A> Optional<A>.toValidation(e: () -> E) =

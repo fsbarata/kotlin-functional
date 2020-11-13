@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.rx.data
 
-import com.github.fsbarata.functional.control.Context
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Monoid

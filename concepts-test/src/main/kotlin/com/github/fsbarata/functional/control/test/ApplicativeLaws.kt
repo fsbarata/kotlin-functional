@@ -4,7 +4,7 @@ import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.apFromLift2
 import com.github.fsbarata.functional.control.lift2FromAp
 import com.github.fsbarata.functional.data.F1
-import com.github.fsbarata.functional.data.FunctorLaws
+import com.github.fsbarata.functional.data.test.FunctorLaws
 import com.github.fsbarata.functional.data.compose
 import com.github.fsbarata.functional.data.id
 import org.junit.Test

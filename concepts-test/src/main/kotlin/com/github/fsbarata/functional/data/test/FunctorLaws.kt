@@ -1,5 +1,8 @@
-package com.github.fsbarata.functional.data
+package com.github.fsbarata.functional.data.test
 
+import com.github.fsbarata.functional.data.Functor
+import com.github.fsbarata.functional.data.compose
+import com.github.fsbarata.functional.data.id
 import org.junit.Test
 
 interface FunctorLaws<F> {

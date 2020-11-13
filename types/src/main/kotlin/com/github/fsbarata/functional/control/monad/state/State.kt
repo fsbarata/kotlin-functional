@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.control.monad.state
 
-import com.github.fsbarata.functional.control.Context
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.data.tuple.Tuple2
 

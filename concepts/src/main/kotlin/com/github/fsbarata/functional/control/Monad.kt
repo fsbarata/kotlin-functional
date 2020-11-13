@@ -1,5 +1,6 @@
 package com.github.fsbarata.functional.control
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.data.partial
 
 interface Monad<M, out A>: Applicative<M, A> {

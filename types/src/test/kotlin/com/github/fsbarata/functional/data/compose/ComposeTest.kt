@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.data.compose
 
-import com.github.fsbarata.functional.data.FunctorLaws
+import com.github.fsbarata.functional.data.test.FunctorLaws
 import com.github.fsbarata.functional.data.list.NonEmptyContext
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.validation.Validation
