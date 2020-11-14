@@ -24,21 +24,3 @@ fun <F, A, R> apFromLift2(app: Applicative<F, A>, ff: Applicative<F, (A) -> R>):
 
 fun <F, A, B, R> lift2FromAp(appA: Applicative<F, A>, appB: Applicative<F, B>, f: (A, B) -> R) =
 	appB.ap(appA.map(f.curry()))
-
-fun <A, B, R> lift2(f: (A, B) -> R) = Lift2(f)
-
-class Lift2<A, B, R>(private val f: (A, B) -> R) {
-	operator fun <F> invoke(fa: Applicative<F, A>, fb: Applicative<F, B>): Applicative<F, R> =
-		fa.lift2(fb, f)
-}
-
-fun <A, B, C, R> lift3(f: (A, B, C) -> R) = Lift3(f)
-
-class Lift3<A, B, C, R>(private val f: (A, B, C) -> R) {
-	operator fun <F> invoke(
-		fa: Applicative<F, A>,
-		fb: Applicative<F, B>,
-		fc: Applicative<F, C>,
-	): Applicative<F, R> =
-		fc.ap(lift2(f.curry2())(fa, fb))
-}

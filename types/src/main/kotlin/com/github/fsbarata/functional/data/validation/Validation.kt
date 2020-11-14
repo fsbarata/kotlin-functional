@@ -61,10 +61,6 @@ sealed class Validation<out E, out A>:
 		fun <E, B, A> liftError(either: Either<B, A>, f: (B) -> E): Validation<E, A> =
 			either.fold({ Failure(f(it)) }, { Success(it) })
 
-		fun <E: Semigroup<E>> applicative() = ValidationApplicative<E>()
-
-		fun <E: Semigroup<E>, R> applicative(f: ValidationApplicative<E>.() -> R): R =
-			applicative<E>().f()
 	}
 }
 

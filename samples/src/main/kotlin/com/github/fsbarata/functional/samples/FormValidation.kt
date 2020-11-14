@@ -1,8 +1,8 @@
 package com.github.fsbarata.functional.samples
 
 import com.github.fsbarata.functional.data.list.NonEmptyList
-import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.validation.Validation
+import com.github.fsbarata.functional.data.validation.lift2
 import java.util.regex.Pattern
 
 typealias Email = String
@@ -13,16 +13,16 @@ sealed class ValidationError {
 	object InvalidPhoneNumber: ValidationError()
 }
 
-private fun Email.toValidatedEmail(): Validation<NonEmptyList<ValidationError>, Email> =
+private fun Email.toValidatedEmail(): Validation<ValidationError, Email> =
 	when {
 		isValidEmail() -> Validation.Success(this)
-		else -> Validation.Failure(nelOf(ValidationError.InvalidMail))
+		else -> Validation.Failure(ValidationError.InvalidMail)
 	}
 
-private fun PhoneNumber.toValidatedPhoneNumber(): Validation<NonEmptyList<ValidationError>, PhoneNumber> =
+private fun PhoneNumber.toValidatedPhoneNumber(): Validation<ValidationError, PhoneNumber> =
 	when {
 		isValidPhoneNumber() -> Validation.Success(this)
-		else -> Validation.Failure(nelOf(ValidationError.InvalidPhoneNumber))
+		else -> Validation.Failure(ValidationError.InvalidPhoneNumber)
 	}
 
 private val EMAIL_ADDRESS: Pattern = Pattern.compile(
@@ -41,13 +41,11 @@ private fun PhoneNumber.isValidPhoneNumber() = all { it.isDigit() }
 fun validateData(
 	mail: String,
 	phoneNumber: String,
-) = Validation.applicative<NonEmptyList<ValidationError>>().run {
-	lift2(
-		mail.toValidatedEmail(),
-		phoneNumber.toValidatedPhoneNumber(),
-		::Pair
-	)
-}
+) = lift2(
+	mail.toValidatedEmail().toValidationNel(),
+	phoneNumber.toValidatedPhoneNumber().toValidationNel(),
+	::Pair
+)
 
 private fun NonEmptyList<ValidationError>.handleInvalid() = map {
 	handleInvalidField(it)
