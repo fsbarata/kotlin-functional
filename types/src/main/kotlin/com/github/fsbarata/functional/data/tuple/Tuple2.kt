@@ -50,6 +50,8 @@ data class Tuple2<X, Y>(
 
 	override fun duplicate() = Tuple2(x, this)
 
+	fun swap() = Tuple2(y, x)
+
 	override fun toString(): String = "($x, $y)"
 
 	class Scope<X>: Traversable.Scope<Tuple2Context<X>>
