@@ -48,35 +48,35 @@ class ConcatObservableMonoidTest: MonoidLaws<Observable<Int>>(
 	}
 }
 
-class MaybeSumMonoidTest: MonoidLaws<Maybe<Int>>(
-	maybeMonoid(productIntMonoid()),
-) {
-	override val possibilities: Int = 100
-	override fun nonEmpty(possibility: Int) = Maybe.just(possibility)
-
-	override fun equals(a1: Maybe<Int>, a2: Maybe<Int>): Boolean {
-		val observer1 = a1.materialize().test()
-		val observer2 = a2.materialize().test()
-		return observer1.values() == observer2.values()
-	}
-
-	@Test
-	fun combines() {
-		with(maybeMonoid(productIntMonoid())) {
-			assert(equals(
-				Maybe.just(5),
-				combine(Maybe.just(5), Maybe.empty())
-			))
-
-			assert(equals(
-				Maybe.just(2),
-				combine(Maybe.empty(), Maybe.just(2))
-			))
-
-			assert(equals(
-				Maybe.just(4),
-				combine(Maybe.just(2), Maybe.just(2))
-			))
-		}
-	}
-}
+//class MaybeSumMonoidTest: MonoidLaws<Maybe<Int>>(
+//	maybeMonoid(productIntMonoid()),
+//) {
+//	override val possibilities: Int = 100
+//	override fun nonEmpty(possibility: Int) = Maybe.just(possibility)
+//
+//	override fun equals(a1: Maybe<Int>, a2: Maybe<Int>): Boolean {
+//		val observer1 = a1.materialize().test()
+//		val observer2 = a2.materialize().test()
+//		return observer1.values() == observer2.values()
+//	}
+//
+//	@Test
+//	fun combines() {
+//		with(maybeMonoid(productIntMonoid())) {
+//			assert(equals(
+//				Maybe.just(5),
+//				combine(Maybe.just(5), Maybe.empty())
+//			))
+//
+//			assert(equals(
+//				Maybe.just(2),
+//				combine(Maybe.empty(), Maybe.just(2))
+//			))
+//
+//			assert(equals(
+//				Maybe.just(4),
+//				combine(Maybe.just(2), Maybe.just(2))
+//			))
+//		}
+//	}
+//}

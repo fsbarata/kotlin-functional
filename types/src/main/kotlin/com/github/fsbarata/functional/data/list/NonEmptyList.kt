@@ -24,6 +24,7 @@ class NonEmptyList<out A> private constructor(
 	MonadZip<NonEmptyContext, A>,
 	Traversable<NonEmptyContext, A>,
 	Comonad<NonEmptyContext, A>,
+	Semigroup<NonEmptyList<@UnsafeVariance A>>,
 	NonEmptyIterable<A>,
 	Serializable {
 	override val scope get() = Companion
@@ -134,6 +135,8 @@ class NonEmptyList<out A> private constructor(
 		tail.traverse(appScope, f)
 			.lift2(f(head), List<B>::startWithItem)
 
+	override fun combineWith(other: NonEmptyList<@UnsafeVariance A>) = this + other
+
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (other !is List<*>) return false
@@ -149,8 +152,6 @@ class NonEmptyList<out A> private constructor(
 		override fun <A> just(a: A) = of(a, emptyList())
 		fun <T> of(head: T, vararg others: T) = of(head, others.toList())
 		fun <T> of(head: T, others: List<T>) = NonEmptyList(head, others)
-
-		fun <A> concatSemigroup() = Semigroup(NonEmptyList<A>::plus)
 	}
 }
 

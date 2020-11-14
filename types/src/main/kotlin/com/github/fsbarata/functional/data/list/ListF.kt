@@ -1,10 +1,11 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.*
-import com.github.fsbarata.functional.data.Foldable
-import com.github.fsbarata.functional.data.Traversable
-import com.github.fsbarata.functional.data.monoid
+import com.github.fsbarata.functional.control.Alternative
+import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.data.*
 import java.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
@@ -14,6 +15,7 @@ class ListF<A>(
 	MonadZip<ListContext, A>,
 	Traversable<ListContext, A>,
 	Alternative<ListContext, A>,
+	Semigroup<ListF<A>>,
 	List<A> by wrapped,
 	Serializable {
 	override val scope get() = ListF
@@ -39,6 +41,9 @@ class ListF<A>(
 	override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
 		(this as List<A>).foldRight(initialValue, accumulator)
 
+	override inline fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
+		(this as List<A>).foldMap(monoid, f)
+
 	override inline fun <B, R> zipWith(other: MonadZip<ListContext, B>, f: (A, B) -> R): ListF<R> =
 		zip(other.asList, f).f()
 
@@ -50,6 +55,8 @@ class ListF<A>(
 
 	override fun associateWith(other: Alternative<ListContext, A>) =
 		ListF(wrapped + (other.asList).wrapped)
+
+	override fun combineWith(other: ListF<A>) = associateWith(other)
 
 	override fun toString() = wrapped.toString()
 	override fun equals(other: Any?) = wrapped == other
@@ -63,7 +70,7 @@ class ListF<A>(
 		override fun <A> just(a: A) = listOf(a).f()
 		fun <A> of(vararg items: A) = listOf(*items).f()
 
-		fun <A> concatMonoid() = monoid(empty(), Iterable<A>::plus)
+		fun <A> monoid() = monoid(empty<A>())
 	}
 }
 

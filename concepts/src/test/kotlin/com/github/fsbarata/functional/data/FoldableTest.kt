@@ -17,7 +17,10 @@ class FoldableTest {
 	val v = "1"
 	val lf = { b: String, a: Int -> b + a }
 	val rf = { a: Int, b: String -> b + a }
-	val monoid = Semigroup { a1: String, a2: String -> a1 + a2 }.monoid(v)
+
+	class StringSemigroup(val str: String): Semigroup<StringSemigroup> {
+		override fun combineWith(other: StringSemigroup) = StringSemigroup(str + other.str)
+	}
 
 	@Test
 	fun foldL() {
@@ -26,7 +29,9 @@ class FoldableTest {
 
 	@Test
 	fun foldMap() {
-		assertEquals("1572", foldableList2.foldMap(monoid) { it.toString() })
+		assertEquals("1572", foldableList2.foldMap(monoid(StringSemigroup(""))) {
+			StringSemigroup(it.toString())
+		}.str)
 	}
 
 	@Test

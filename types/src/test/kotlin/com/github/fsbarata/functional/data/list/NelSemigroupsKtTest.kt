@@ -3,9 +3,7 @@ package com.github.fsbarata.functional.data.list
 import com.github.fsbarata.functional.data.test.SemigroupLaws
 import org.junit.Test
 
-class ConcatNelSemigroupTest: SemigroupLaws<NonEmptyList<Int>>(
-	NonEmptyList.concatSemigroup(),
-) {
+class ConcatNelSemigroupTest: SemigroupLaws<NonEmptyList<Int>> {
 	override val possibilities = 100
 
 	override fun factory(possibility: Int) =
@@ -18,7 +16,7 @@ class ConcatNelSemigroupTest: SemigroupLaws<NonEmptyList<Int>>(
 		val nel2 = factory(5)
 		assertEquals(
 			nel1 + nel2,
-			NonEmptyList.concatSemigroup<Int>().combine(nel1, nel2)
+			nel1.combineWith(nel2)
 		)
 	}
 }

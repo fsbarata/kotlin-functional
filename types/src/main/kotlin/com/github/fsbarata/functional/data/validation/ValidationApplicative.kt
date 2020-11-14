@@ -5,16 +5,14 @@ import com.github.fsbarata.functional.data.curry2
 import com.github.fsbarata.functional.data.partial
 
 
-class ValidationApplicative<E>(
-	private val semigroup: Semigroup<E>,
-) {
+class ValidationApplicative<E: Semigroup<E>>() {
 	fun <A, R> ap(
 		v: Validation<E, A>,
 		vf: Validation<E, (A) -> R>,
 	): Validation<E, R> = vf.fold(
 		ifFailure = { e1 ->
 			Validation.Failure(v.fold(
-				ifFailure = { semigroup.combine(e1, it) },
+				ifFailure = { e1.combineWith(it) },
 				ifSuccess = { e1 }
 			))
 		},

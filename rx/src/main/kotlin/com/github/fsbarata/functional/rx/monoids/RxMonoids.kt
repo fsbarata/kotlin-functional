@@ -12,11 +12,11 @@ fun mergeCompletableMonoid() = monoid(Completable.never(), Completable::mergeWit
 fun <A> concatObservableMonoid() = monoid(Observable.empty(), Observable<A>::concatWith)
 fun <A> mergeObservableMonoid() = monoid(Observable.never(), Observable<A>::mergeWith)
 
-fun <A> maybeMonoid(sg: Semigroup<A>): Monoid<Maybe<A>> =
+fun <A: Semigroup<A>> maybeMonoid(): Monoid<Maybe<A>> =
 	monoid(Maybe.empty()) { maybe1, maybe2 ->
 		maybe1
 			.flatMapSingle { a ->
-				maybe2.map { sg.combine(a, it) }
+				maybe2.map { a.combineWith(it) }
 					.defaultIfEmpty(a)
 			}
 			.switchIfEmpty(maybe2)

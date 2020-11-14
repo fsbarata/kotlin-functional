@@ -4,6 +4,7 @@ import com.github.fsbarata.functional.data.monoid
 import java.math.BigDecimal
 
 fun sumIntMonoid() = monoid(0, Int::plus)
+fun productIntSemigroup() = monoid(1, Int::times)
 fun productIntMonoid() = monoid(1, Int::times)
 fun sumLongMonoid() = monoid(0L, Long::plus)
 fun productLongMonoid() = monoid(1L, Long::times)

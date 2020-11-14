@@ -1,17 +1,16 @@
 package com.github.fsbarata.functional.data.foldable
 
 import com.github.fsbarata.functional.data.Foldable
-import com.github.fsbarata.functional.data.Monoid
+import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.list.NonEmptyList
-import com.github.fsbarata.functional.data.list.nelOf
 
 fun <A, R> Foldable<A>.scanL(initialValue: R, accumulator: (R, A) -> R): NonEmptyList<R> =
 	foldL(NonEmptyList.just(initialValue)) { nel, v ->
 		nel + accumulator(nel.last(), v)
 	}
 
-fun <A> Foldable<A>.scan(monoid: Monoid<A>): NonEmptyList<A> =
-	scanL(monoid.empty, monoid::combine)
+fun <A: Semigroup<A>> Foldable<A>.scan(initialValue: A): NonEmptyList<A> =
+	scanL(initialValue) { r, a -> r.combineWith(a) }
 
-fun <A> Foldable<A>.toList(): List<A> = foldMap(ListF.concatMonoid(), ::nelOf)
+fun <A> Foldable<A>.toList(): ListF<A> = foldMap(ListF.monoid()) { ListF.just(it) }

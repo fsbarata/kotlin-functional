@@ -19,6 +19,7 @@ sealed class Either<out E, out A>:
 	Monad<EitherContext, A>,
 	BiFunctor<EitherBiContext, E, A>,
 	Traversable<EitherContext, A>,
+	Semigroup<Either<@UnsafeVariance E, @UnsafeVariance A>>,
 	Serializable {
 	data class Left<out E>(val value: E): Either<E, Nothing>()
 	data class Right<out A>(val value: A): Either<Nothing, A>()
@@ -69,17 +70,16 @@ sealed class Either<out E, out A>:
 
 	fun swap() = fold(ifLeft = { Right(it) }, ifRight = { Left(it) })
 
+	override fun combineWith(other: Either<@UnsafeVariance E, @UnsafeVariance A>) =
+		fold(
+			ifLeft = { other },
+			ifRight = { Right(it) },
+		)
+
 	companion object: Monad.Scope<EitherContext>, Traversable.Scope<EitherContext> {
 		override fun <A> just(a: A) = Right(a)
 		fun <E, A> ofNullable(a: A?, e: () -> E): Either<E, A> =
 			a?.let(::Right) ?: Left(e())
-
-		fun <E, A> semigroup() = Semigroup<Either<E, A>> { e1, e2 ->
-			e1.fold(
-				ifLeft = { e2 },
-				ifRight = { Right(it) },
-			)
-		}
 	}
 }
 

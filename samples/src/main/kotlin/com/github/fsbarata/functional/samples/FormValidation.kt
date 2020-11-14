@@ -41,7 +41,7 @@ private fun PhoneNumber.isValidPhoneNumber() = all { it.isDigit() }
 fun validateData(
 	mail: String,
 	phoneNumber: String,
-) = Validation.applicative(NonEmptyList.concatSemigroup<ValidationError>()) {
+) = Validation.applicative<NonEmptyList<ValidationError>>().run {
 	lift2(
 		mail.toValidatedEmail(),
 		phoneNumber.toValidatedPhoneNumber(),

@@ -6,18 +6,19 @@ package com.github.fsbarata.functional.data
  *
  * For eg., for any type that defines a plus method, there exists a Semigroup where combine is plus
  */
-fun interface Semigroup<A> {
-	fun combine(a1: A, a2: A): A
+interface Semigroup<A> {
+	fun combineWith(other: A): A
 }
 
-fun <A> Semigroup<A>.times(n: Int): (A) -> A {
+fun <A: Semigroup<A>> A.times(n: Int): (A) -> A {
 	require(n >= 1)
-	return { a: A -> add(a, a, n) }
+	return { a: A -> add(a, n - 1) }
 }
 
-private tailrec fun <A> Semigroup<A>.add(a1: A, a2: A, n: Int): A =
-	if (n == 1) a1
-	else add(combine(a1, a2), a2, n - 1)
+private tailrec fun <A: Semigroup<A>> A.add(a: A, n: Int): A =
+	if (n == 0) this
+	else combineWith(a).add(a, n - 1)
 
-fun <A> Semigroup<A>.dual(): Semigroup<A> =
-	Semigroup(this::combine.flip())
+class Dual<A: Semigroup<A>>(val get: A): Semigroup<Dual<A>> {
+	override fun combineWith(other: Dual<A>) = Dual(other.get.combineWith(get))
+}

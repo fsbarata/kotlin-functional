@@ -1,8 +1,12 @@
 package com.github.fsbarata.functional.data.sequence
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.control.Alternative
+import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Monoid
+import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.monoid
 import java.io.Serializable
@@ -14,6 +18,7 @@ class SequenceF<A>(
 	MonadZip<SequenceContext, A>,
 	Traversable<SequenceContext, A>,
 	Alternative<SequenceContext, A>,
+	Semigroup<SequenceF<A>>,
 	Sequence<A> by wrapped,
 	Serializable {
 	override val scope get() = SequenceF
@@ -51,6 +56,8 @@ class SequenceF<A>(
 	override fun associateWith(other: Alternative<SequenceContext, A>) =
 		SequenceF(wrapped + (other.asSequence).wrapped)
 
+	override fun combineWith(other: SequenceF<A>): SequenceF<A> = associateWith(other)
+
 	override fun toString() = wrapped.toString()
 	override fun equals(other: Any?) = wrapped == other
 	override fun hashCode() = wrapped.hashCode()
@@ -59,11 +66,11 @@ class SequenceF<A>(
 		Monad.Scope<SequenceContext>,
 		Traversable.Scope<SequenceContext>,
 		Alternative.Scope<SequenceContext> {
-		override fun <A> empty() = emptySequence<A>().f()
+		override fun <A> empty(): SequenceF<A> = emptySequence<A>().f()
 		override fun <A> just(a: A) = sequenceOf(a).f()
 		fun <A> of(vararg items: A) = sequenceOf(*items).f()
 
-		fun <A> concatMonoid() = monoid(empty(), Sequence<A>::plus)
+		fun <A> monoid() = monoid(empty<A>())
 	}
 }
 

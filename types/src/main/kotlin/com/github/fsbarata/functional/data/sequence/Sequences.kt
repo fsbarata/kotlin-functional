@@ -14,8 +14,8 @@ inline fun <A, B> Sequence<A>.ap(fs: Sequence<(A) -> B>): Sequence<B> =
 fun <A, B, C> Sequence<A>.lift2(lb: Sequence<B>, f: (A, B) -> C): Sequence<C> =
 	flatMap { a -> lb.map(f.partial(a)) }
 
-fun <M, A> Sequence<A>.foldMap(monoid: Monoid<M>, f: (A) -> M): M =
-	fold(monoid.empty, (monoid.dual()::combine compose f).flip())
+fun <A, M> Sequence<A>.foldMap(monoid: Monoid<M>, f: (A) -> M): M =
+	fold(monoid.empty) { r, a -> monoid.combine(r, f(a)) }
 
 fun <F, A, B> Sequence<A>.traverse(
 	appScope: Applicative.Scope<F>,

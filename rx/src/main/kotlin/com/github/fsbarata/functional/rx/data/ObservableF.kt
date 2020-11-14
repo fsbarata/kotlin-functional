@@ -12,9 +12,9 @@ import io.reactivex.rxjava3.core.Observer
 class ObservableF<A>(
 	private val wrapped: Observable<A>,
 ): Observable<A>(),
-   Monad<ObservableF<*>, A>,
-   MonadZip<ObservableF<*>, A>,
-   ObservableSource<A> {
+	Monad<ObservableF<*>, A>,
+	MonadZip<ObservableF<*>, A>,
+	ObservableSource<A> {
 	override val scope get() = Companion
 
 	override fun subscribeActual(observer: Observer<in A>) {
@@ -30,9 +30,7 @@ class ObservableF<A>(
 	fun <B> flatMap(f: (A) -> Observable<B>): ObservableF<B> =
 		wrapped.flatMap(f).f()
 
-	fun reduce(semigroup: Semigroup<A>) = super.reduce(semigroup::combine).f()
 	fun fold(monoid: Monoid<A>) = super.reduce(monoid.empty, monoid::combine).f()
-	fun scan(semigroup: Semigroup<A>) = super.scan(semigroup::combine).f()
 	fun scan(monoid: Monoid<A>) = super.scan(monoid.empty, monoid::combine).f()
 
 	override fun <B, R> zipWith(other: MonadZip<ObservableF<*>, B>, f: (A, B) -> R) =
@@ -43,6 +41,11 @@ class ObservableF<A>(
 		override fun <A> just(a: A) = Observable.just(a).f()
 	}
 }
+
+fun <A: Semigroup<A>> Observable<A>.reduce() = reduce { a1, a2 -> a1.combineWith(a2) }.f()
+fun <A: Semigroup<A>> Observable<A>.fold(initialValue: A) = reduce(initialValue) { a1, a2 -> a1.combineWith(a2) }.f()
+fun <A: Semigroup<A>> Observable<A>.scan() = scan { a1, a2 -> a1.combineWith(a2) }.f()
+fun <A: Semigroup<A>> Observable<A>.scan(initialValue: A) = scan(initialValue) { a1, a2 -> a1.combineWith(a2) }.f()
 
 fun <A> Observable<A>.f() = ObservableF(this)
 

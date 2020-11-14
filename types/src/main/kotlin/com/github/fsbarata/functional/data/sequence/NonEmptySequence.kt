@@ -1,7 +1,9 @@
 package com.github.fsbarata.functional.data.sequence
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
@@ -20,8 +22,9 @@ interface NonEmptySequence<A>:
 	NonEmptySequenceBase<A>,
 	Monad<NonEmptySequenceContext, A>,
 	MonadZip<NonEmptySequenceContext, A>,
-	Traversable<NonEmptySequenceContext, A> {
-	override val scope get() = Companion
+	Traversable<NonEmptySequenceContext, A>,
+	Semigroup<NonEmptySequence<A>> {
+	override val scope get() = NonEmptySequence
 
 	override fun <B> map(f: (A) -> B): NonEmptySequence<B> = NonEmptySequence {
 		val iterator = iterator()
@@ -33,7 +36,7 @@ interface NonEmptySequence<A>:
 
 	override fun <B, R> lift2(
 		fb: Applicative<NonEmptySequenceContext, B>,
-		f: (A, B) -> R
+		f: (A, B) -> R,
 	) = super<MonadZip>.lift2(fb, f).asNes
 
 	override infix fun <B> bind(f: (A) -> Context<NonEmptySequenceContext, B>): NonEmptySequence<B> =
@@ -62,19 +65,20 @@ interface NonEmptySequence<A>:
 
 	override fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Applicative<F, B>
+		f: (A) -> Applicative<F, B>,
 	): Applicative<F, Traversable<NonEmptySequenceContext, B>> {
 		val iterator = iterator()
 		return iterator.tail.asSequence().traverse(appScope, f)
 			.lift2(f(iterator.head), Sequence<B>::startWithItem)
 	}
 
+	override fun combineWith(other: NonEmptySequence<A>) =
+		plus(other)
+
 	companion object:
 		Monad.Scope<NonEmptySequenceContext>,
 		Traversable.Scope<NonEmptySequenceContext> {
 		override fun <A> just(a: A) = NonEmptySequence { NonEmptyIterator(a) }
-
-		fun <A> concatSemigroup() = Semigroup(NonEmptySequence<A>::plus)
 	}
 }
 

@@ -1,7 +1,10 @@
 package com.github.fsbarata.functional.data.maybe
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.control.Alternative
+import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
@@ -50,10 +53,10 @@ sealed class Optional<out A>:
 		maybe(monoid.empty, f)
 
 	final override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R) =
-		fold(ifEmpty = { initialValue }, ifSome = { accumulator(initialValue, it) })
+		maybe(initialValue) { accumulator(initialValue, it) }
 
 	final override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R) =
-		fold(ifEmpty = { initialValue }, ifSome = { accumulator(it, initialValue) })
+		maybe(initialValue) { accumulator(it, initialValue) }
 
 	final override inline fun <B, R> zipWith(other: MonadZip<OptionalContext, B>, f: (A, B) -> R): Optional<R> {
 		return flatMap { a -> other.asOptional.map { b -> f(a, b) } }
@@ -81,11 +84,7 @@ sealed class Optional<out A>:
 		override fun <A> just(a: A): Optional<A> = Some(a)
 		fun <A> ofNullable(a: A?) = if (a != null) Some(a) else None
 
-		fun <A> monoid(sg: Semigroup<A>) = object: Monoid<Optional<A>> {
-			override val empty = empty<A>()
-			override fun combine(a1: Optional<A>, a2: Optional<A>): Optional<A> =
-				a1.map { a -> a2.map { otherA -> sg.combine(a, otherA) } orElse a } orOptional a2
-		}
+		fun <A: Semigroup<A>> monoid() = OptionalMonoid<A>()
 	}
 }
 

@@ -2,13 +2,16 @@ package com.github.fsbarata.functional.data.test
 
 import com.github.fsbarata.functional.data.Monoid
 import org.junit.Test
+import kotlin.random.Random
 
-abstract class MonoidLaws<A>(
-	private val monoid: Monoid<A>,
-): SemigroupLaws<A>(monoid) {
+abstract class MonoidLaws<A>(private val monoid: Monoid<A>) {
+	open val possibilities: Int get() = 1
 	abstract fun nonEmpty(possibility: Int): A
 
-	final override fun factory(possibility: Int) = nonEmpty(possibility)
+	open fun equals(a1: A, a2: A): Boolean = a1 == a2
+
+	open fun assertEquals(a1: A, a2: A) =
+		assert(equals(a1, a2)) { "$a1 should be equal to $a2" }
 
 	@Test
 	fun leftIdentity() {
@@ -28,3 +31,5 @@ abstract class MonoidLaws<A>(
 		)
 	}
 }
+
+private fun MonoidLaws<*>.possibility() = Random.nextInt(possibilities)

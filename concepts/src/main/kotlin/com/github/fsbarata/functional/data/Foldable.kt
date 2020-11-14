@@ -14,8 +14,8 @@ interface Foldable<out A> {
 	fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		foldMap(
 			endoMonoid<R>().dual(),
-			accumulator.flip().curry()
-		)(initialValue)
+			accumulator.flip().curry() composeForward ::Endo composeForward ::Dual
+		).get(initialValue)
 
 	/**
 	 * Fold the structure from the right
@@ -23,14 +23,14 @@ interface Foldable<out A> {
 	fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
 		foldMap(
 			endoMonoid(),
-			accumulator.curry()
+			accumulator.curry() composeForward ::Endo
 		)(initialValue)
 
 	/**
 	 * Fold the structure by mapping to a monoidal value
 	 */
 	fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
-		foldL(monoid.empty, (monoid.dual()::combine compose f).flip())
+		foldL(monoid.empty) { r, a -> monoid.combine(r, f(a)) }
 }
 
-fun <A> Foldable<A>.fold(monoid: Monoid<A>) = foldMap(monoid, id())
+fun <A: Semigroup<A>> Foldable<A>.fold(monoid: Monoid<A>) = foldMap(monoid, id())
