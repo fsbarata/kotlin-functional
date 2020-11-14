@@ -31,6 +31,12 @@ class ValidationTest:
 	}
 
 	@Test
+	fun mapLeft() {
+		assertEquals(Failure("3"), Failure(3).mapLeft { "$it" })
+		assertEquals(Success(3), Success(3).mapLeft { fail() })
+	}
+
+	@Test
 	fun map() {
 		assertEquals(Success("3"), Success(3).map { "$it" })
 		assertEquals(Failure(3), Failure(3).map { fail() })
@@ -86,6 +92,12 @@ class ValidationTest:
 		assertEquals(Failure(nelOf(5)), Failure(5).toValidationNel())
 		assertEquals(Success(3), Either.Right(3).toValidationNel())
 		assertEquals(Failure(nelOf(5)), Either.Left(5).toValidationNel())
+	}
+
+	@Test
+	fun swap() {
+		assertEquals(Failure("5"), Success("5").swap())
+		assertEquals(Success("5"), Failure("5").swap())
 	}
 
 	@Test

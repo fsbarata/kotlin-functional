@@ -49,6 +49,8 @@ sealed class Validation<out E, out A>:
 
 	fun toValidationNel() = mapLeft { nelOf(it) }
 
+	fun swap() = fold(ifFailure = { Success(it) }, ifSuccess = { Failure(it) })
+
 	companion object {
 		inline fun <E, A> fromOptional(optional: Optional<A>, e: () -> E): Validation<E, A> =
 			optional.toValidation(e)
@@ -62,8 +64,8 @@ sealed class Validation<out E, out A>:
 		fun <E> applicative(semigroup: Semigroup<E>) =
 			ValidationApplicative(semigroup)
 
-		fun <E, T> applicative(semigroup: Semigroup<E>, f: ValidationApplicative<E>.() -> T): T =
-			ValidationApplicative(semigroup).run(f)
+		fun <E, R> applicative(semigroup: Semigroup<E>, f: ValidationApplicative<E>.() -> R): R =
+			ValidationApplicative(semigroup).f()
 	}
 }
 
