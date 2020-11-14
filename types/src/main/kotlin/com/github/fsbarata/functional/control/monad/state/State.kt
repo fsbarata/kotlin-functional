@@ -21,16 +21,20 @@ class State<S, A>(
 			f(value).runState(newState)
 		}
 
+	operator fun invoke(s: S) = runState(s)
+
+	fun eval(s: S) = runState(s).y
+	fun exec(s: S) = runState(s).x
+
 	class StateScope<S>: Monad.Scope<StateContext<S>> {
 		override fun <A> just(a: A) = just<S, A>(a)
-
-		fun get() = State { s: S -> Tuple2(s, s) }
-		fun put(newState: S) = State<S, Unit> { Tuple2(newState, Unit) }
 	}
 
 	companion object {
 		fun <S, A> just(a: A) = State<S, A> { s -> Tuple2(s, a) }
+		fun <S> put(newState: S) = State<S, Unit> { Tuple2(newState, Unit) }
 		fun <S> modify(f: (S) -> S) = State<S, Unit> { s -> Tuple2(f(s), Unit) }
+		fun <S> get() = State<S, S> { Tuple2(it, it) }
 		fun <S, A> gets(f: (S) -> A) = State<S, A> { s -> Tuple2(s, f(s)) }
 	}
 }
