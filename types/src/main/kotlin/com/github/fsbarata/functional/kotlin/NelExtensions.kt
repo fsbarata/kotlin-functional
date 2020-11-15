@@ -1,14 +1,15 @@
 package com.github.fsbarata.functional.kotlin
 
+import com.github.fsbarata.functional.data.list.NonEmptyIterable
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.list.toNel
 
-fun <A> Iterable<A>.plusNel(item: A): NonEmptyList<A> =
+fun <A> Iterable<A>.plusElementNel(item: A): NonEmptyList<A> =
 	toNel()?.plus(item) ?: NonEmptyList.just(item)
 
-fun <A> Iterable<A>.plusNel(other: NonEmptyList<A>): NonEmptyList<A> =
-	toNel()?.plus(other) ?: other
+fun <A> Iterable<A>.plusNel(other: NonEmptyIterable<A>): NonEmptyList<A> =
+	toNel()?.plus(other) ?: other.toList()
 
 inline fun <T, K> Iterable<T>.groupByNel(crossinline keySelector: (T) -> K): Map<K, NonEmptyList<T>> =
 	groupByNel(keySelector) { it }

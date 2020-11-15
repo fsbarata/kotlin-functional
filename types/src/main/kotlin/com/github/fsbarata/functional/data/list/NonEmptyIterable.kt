@@ -14,6 +14,8 @@ interface NonEmptyIterable<out A>:
 
 	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		tail.fold(accumulator(initialValue, head), accumulator)
+
+	fun toList() = NonEmptyList.of(head, tail.toList())
 }
 
 fun <T> NonEmptyIterable<NonEmptyIterable<T>>.flatten() =
