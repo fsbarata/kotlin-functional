@@ -10,7 +10,7 @@ interface Semigroup<A> {
 	fun combineWith(other: A): A
 }
 
-fun <A: Semigroup<A>> A.times(n: Int): (A) -> A {
+fun <A: Semigroup<A>> A.stimes(n: Int): (A) -> A {
 	require(n >= 1)
 	return { a: A -> add(a, n - 1) }
 }
