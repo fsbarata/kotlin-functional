@@ -1,7 +1,5 @@
-package com.github.fsbarata.functional.data.foldable
+package com.github.fsbarata.functional.data
 
-import com.github.fsbarata.functional.data.Foldable
-import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.list.NonEmptyList
 
