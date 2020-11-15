@@ -16,19 +16,20 @@ class ValidationApplicativeTest {
 	fun ap() {
 		assertEquals(
 			Success("31"),
-			Success("3").ap(Success { a: String -> a + 1 })
+			Success("3").toApplicative().ap(Success { a: String -> a + 1 }.toApplicative()).unwrap()
 		)
 		assertEquals(
 			Failure(IntSemigroup(3)),
-			Failure(IntSemigroup(3)).ap(Success { a: String -> a + 1 })
+			Failure(IntSemigroup(3)).toApplicative().ap(Success { a: String -> a + 1 }.toApplicative()).unwrap()
 		)
 		assertEquals(
 			Failure(IntSemigroup(5)),
-			Failure(IntSemigroup(3)).ap<IntSemigroup, String, Long>(Failure(IntSemigroup(2)))
+			Failure(IntSemigroup(3)).toApplicative().ap<Long>(Failure(IntSemigroup(2)).toApplicative()).unwrap()
 		)
 		assertEquals(
 			Failure(IntSemigroup(2)),
-			Success("3").ap<IntSemigroup, String, Long>(Failure(IntSemigroup(2)))
+			Success("3").toApplicative<IntSemigroup, String>()
+				.ap<Long>(Failure(IntSemigroup(2)).toApplicative()).unwrap()
 		)
 	}
 
@@ -37,18 +38,27 @@ class ValidationApplicativeTest {
 	fun lift2() {
 		assertEquals(
 			Success("35"),
-			lift2(Success("3"), Success(5)) { a, b -> a + b }
+			Success("3").toApplicative()
+				.lift2(Success(5).toApplicative()) { a, b -> a + b }
+				.unwrap()
 		)
 		assertEquals(
 			Failure(IntSemigroup(3)),
-			lift2(Success("3"), Failure(IntSemigroup(3))) { a, b -> fail() }
+			Success("3").toApplicative<IntSemigroup, String>()
+				.lift2(Failure(IntSemigroup(3)).toApplicative()) { a, b -> fail() }
+				.unwrap()
 		)
 		assertEquals(
 			Failure(IntSemigroup(5)),
-			lift2(Failure(IntSemigroup(2)), Failure(IntSemigroup(3))) { a, b -> fail() }
+			Failure(IntSemigroup(2)).toApplicative()
+				.lift2(Failure(IntSemigroup(3)).toApplicative()) { a, b -> fail() }
+				.unwrap()
 		)
 		assertEquals(
 			Failure(IntSemigroup(2)),
-			lift2(Failure(IntSemigroup(2)), Success(1)) { a, b -> fail() })
+			Failure(IntSemigroup(2)).toApplicative()
+				.lift2(Success(1).toApplicative()) { a, b -> fail() }
+				.unwrap()
+		)
 	}
 }

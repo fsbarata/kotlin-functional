@@ -5,6 +5,7 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.data.BiFunctor
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.either.Either
+import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.maybe.Optional
@@ -25,15 +26,9 @@ sealed class Validation<out E, out A>:
 		is Success -> ifSuccess(value)
 	}
 
-	final override inline fun <C> mapLeft(f: (E) -> C): Validation<C, A> = when (this) {
-		is Failure -> Failure(f(err))
-		is Success -> this
-	}
+	final override inline fun <C> mapLeft(f: (E) -> C): Validation<C, A> = bimap(f, id())
 
-	final override inline fun <B> map(f: (A) -> B): Validation<E, B> = when (this) {
-		is Failure -> this
-		is Success -> Success(f(value))
-	}
+	final override inline fun <B> map(f: (A) -> B): Validation<E, B> = bimap(id(), f)
 
 	final override inline fun <C, D> bimap(f: (E) -> C, g: (A) -> D): Validation<C, D> = when (this) {
 		is Failure -> Failure(f(err))
