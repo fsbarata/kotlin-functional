@@ -25,7 +25,7 @@ class NonEmptySequenceKtTest:
 	override fun <A> createFunctor(a: A) = nesOf(a)
 
 	override fun <A> createTraversable(vararg items: A) =
-		nesOf(items.first(), items.drop(1))
+		NonEmptySequence.of(items.first(), items.drop(1))
 
 	@Test
 	fun `non empty sequence from iterator`() {

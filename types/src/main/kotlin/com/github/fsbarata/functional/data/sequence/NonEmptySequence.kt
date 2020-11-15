@@ -78,7 +78,12 @@ interface NonEmptySequence<A>:
 	companion object:
 		Monad.Scope<NonEmptySequenceContext>,
 		Traversable.Scope<NonEmptySequenceContext> {
+
 		override fun <A> just(a: A) = NonEmptySequence { NonEmptyIterator(a) }
+		fun <A> of(head: A, tail: Iterable<A>) =
+			NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
+		fun <A> of(head: A, tail: Sequence<A>) =
+			NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
 	}
 }
 
@@ -126,12 +131,6 @@ fun <A> Sequence<A>.startWithItem(item: A) =
 	NonEmptySequence { NonEmptyIterator(item, iterator()) }
 
 fun <A> nesOf(head: A, vararg tail: A) =
-	NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
-
-fun <A> nesOf(head: A, tail: Iterable<A>) =
-	NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
-
-fun <A> nesOf(head: A, tail: Sequence<A>) =
 	NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
 
 fun <A> Sequence<A>.nonEmpty(ifEmpty: NonEmptySequenceBase<A>) = nonEmpty(ifEmpty::iterator)
