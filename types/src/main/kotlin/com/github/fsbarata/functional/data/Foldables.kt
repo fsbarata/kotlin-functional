@@ -9,6 +9,6 @@ fun <A, R> Foldable<A>.scanL(initialValue: R, accumulator: (R, A) -> R): NonEmpt
 	}
 
 fun <A: Semigroup<A>> Foldable<A>.scan(initialValue: A): NonEmptyList<A> =
-	scanL(initialValue) { r, a -> r.combineWith(a) }
+	scanL(initialValue, ::combine)
 
 fun <A> Foldable<A>.toList(): ListF<A> = foldMap(ListF.monoid()) { ListF.just(it) }

@@ -10,6 +10,8 @@ interface Semigroup<A> {
 	fun combineWith(other: A): A
 }
 
+fun <A: Semigroup<A>> combine(a1: A, a2: A) = a1.combineWith(a2)
+
 fun <A: Semigroup<A>> A.stimes(n: Int): (A) -> A {
 	require(n >= 1)
 	return { a: A -> add(a, n - 1) }
@@ -22,3 +24,4 @@ private tailrec fun <A: Semigroup<A>> A.add(a: A, n: Int): A =
 class Dual<A: Semigroup<A>>(val get: A): Semigroup<Dual<A>> {
 	override fun combineWith(other: Dual<A>) = Dual(other.get.combineWith(get))
 }
+
