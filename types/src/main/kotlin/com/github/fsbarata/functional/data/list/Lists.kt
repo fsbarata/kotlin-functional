@@ -11,6 +11,10 @@ import com.github.fsbarata.functional.data.partial
  * Tested by ListFTest
  */
 
+fun <A: Semigroup<A>> List<A>.foldL(monoid: Monoid<A>) = fold(monoid.empty) { r, a -> r.combineWith(a) }
+
+fun <A: Semigroup<A>> List<A>.foldR(monoid: Monoid<A>) = foldRight(monoid.empty) { r, a -> r.combineWith(a) }
+
 @Suppress("NOTHING_TO_INLINE")
 inline fun <A, B> List<A>.ap(fs: List<(A) -> B>): List<B> =
 	flatMap { a -> fs.map { f -> f(a) } }

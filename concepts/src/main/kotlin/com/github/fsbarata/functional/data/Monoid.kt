@@ -15,13 +15,6 @@ fun <A: Semigroup<A>> monoid(empty: A) = object: Monoid<A> {
 	override fun combine(a1: A, a2: A) = a1.combineWith(a2)
 }
 
-fun <A: Semigroup<A>> List<A>.foldL(monoid: Monoid<A>) = fold(monoid.empty) { r, a -> r.combineWith(a) }
-
-fun <A: Semigroup<A>> Sequence<A>.foldL(monoid: Monoid<A>) = fold(monoid.empty) { r, a -> r.combineWith(a) }
-
-fun <A: Semigroup<A>> List<A>.foldR(monoid: Monoid<A>) = foldRight(monoid.empty) { r, a -> r.combineWith(a) }
-
-
 fun <A: Semigroup<A>> Monoid<A>.dual() = monoid(Dual(empty))
 
 class Endo<A>(private val f: (A) -> A): Semigroup<Endo<A>> {

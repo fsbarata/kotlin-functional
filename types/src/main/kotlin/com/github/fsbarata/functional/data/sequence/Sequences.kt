@@ -7,6 +7,8 @@ import com.github.fsbarata.functional.data.*
  * Extensions to kotlin Sequence
  */
 
+fun <A: Semigroup<A>> Sequence<A>.foldL(monoid: Monoid<A>) = fold(monoid.empty) { r, a -> r.combineWith(a) }
+
 @Suppress("NOTHING_TO_INLINE")
 inline fun <A, B> Sequence<A>.ap(fs: Sequence<(A) -> B>): Sequence<B> =
 	flatMap { a -> fs.map { f -> f(a) } }
