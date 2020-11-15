@@ -1,10 +1,14 @@
 package com.github.fsbarata.functional.data.maybe
 
+import com.github.fsbarata.functional.data.MonoidSemigroupFactory
+import com.github.fsbarata.functional.data.monoid.concatStringMonoid
+import com.github.fsbarata.functional.data.semigroupFactory
 import com.github.fsbarata.functional.data.string.StringF
 import com.github.fsbarata.functional.data.test.MonoidLaws
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class OptionalSumMonoidTest: MonoidLaws<Optional<StringF>>(
+class OptionalMonoidTest: MonoidLaws<Optional<StringF>>(
 	Optional.monoid(),
 ) {
 	override val possibilities: Int = 100
@@ -12,20 +16,21 @@ class OptionalSumMonoidTest: MonoidLaws<Optional<StringF>>(
 
 	@Test
 	fun combines() {
-		with(Optional.monoid<StringF>()) {
+		val semigroupFactory = concatStringMonoid().semigroupFactory()
+		with(Optional.monoid<MonoidSemigroupFactory<String>.WrappedMonoid>()) {
 			assertEquals(
-				Optional.just(StringF("5")),
-				combine(Optional.just(StringF("5")), Optional.empty())
+				Optional.just(semigroupFactory("5")),
+				combine(Optional.just(semigroupFactory("5")), Optional.empty())
 			)
 
 			assertEquals(
-				Optional.just(StringF("2")),
-				combine(Optional.empty(), Optional.just(StringF("2")))
+				Optional.just(semigroupFactory("2")),
+				combine(Optional.empty(), Optional.just(semigroupFactory("2")))
 			)
 
 			assertEquals(
-				Optional.just(StringF("42")),
-				combine(Optional.just(StringF("4")), Optional.just(StringF("2")))
+				Optional.just(semigroupFactory("42")),
+				combine(Optional.just(semigroupFactory("4")), Optional.just(semigroupFactory("2")))
 			)
 		}
 	}

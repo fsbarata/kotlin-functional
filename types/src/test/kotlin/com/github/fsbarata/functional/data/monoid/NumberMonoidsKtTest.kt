@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.data.monoid
 
 import com.github.fsbarata.functional.data.test.MonoidLaws
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigDecimal
 

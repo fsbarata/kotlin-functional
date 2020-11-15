@@ -10,13 +10,13 @@ abstract class MonoidLaws<A>(private val monoid: Monoid<A>) {
 
 	open fun equals(a1: A, a2: A): Boolean = a1 == a2
 
-	open fun assertEquals(a1: A, a2: A) =
+	open fun assertEqual(a1: A, a2: A) =
 		assert(equals(a1, a2)) { "$a1 should be equal to $a2" }
 
 	@Test
 	fun leftIdentity() {
 		val nonEmpty = nonEmpty(possibility())
-		assertEquals(
+		assertEqual(
 			nonEmpty,
 			monoid.combine(monoid.empty, nonEmpty)
 		)
@@ -25,7 +25,7 @@ abstract class MonoidLaws<A>(private val monoid: Monoid<A>) {
 	@Test
 	fun rightIdentity() {
 		val nonEmpty = nonEmpty(possibility())
-		assertEquals(
+		assertEqual(
 			nonEmpty,
 			monoid.combine(nonEmpty, monoid.empty)
 		)

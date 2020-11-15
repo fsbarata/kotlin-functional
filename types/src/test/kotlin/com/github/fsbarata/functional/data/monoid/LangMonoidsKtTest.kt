@@ -4,7 +4,6 @@ import com.github.fsbarata.functional.data.test.MonoidLaws
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.math.BigDecimal
 
 class ConcatStringMonoidTest: MonoidLaws<String>(
 	concatStringMonoid(),

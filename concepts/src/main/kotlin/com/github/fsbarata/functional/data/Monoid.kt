@@ -15,6 +15,29 @@ fun <A: Semigroup<A>> monoid(empty: A) = object: Monoid<A> {
 	override fun combine(a1: A, a2: A) = a1.combineWith(a2)
 }
 
+class MonoidSemigroupFactory<A>(val monoid: Monoid<A>) {
+	fun wrap(a: A) = WrappedMonoid(a)
+	operator fun invoke(a: A) = wrap(a)
+
+	inner class WrappedMonoid(private val a: A): Semigroup<WrappedMonoid> {
+		fun unwrap() = a
+
+		override fun combineWith(other: WrappedMonoid): WrappedMonoid =
+			wrap(monoid.combine(a, other.a))
+
+		override fun toString() = "Wrapped($a)"
+
+		override fun equals(other: Any?): Boolean {
+			if (this === other) return true
+			return other is MonoidSemigroupFactory<*>.WrappedMonoid && a == other.a
+		}
+
+		override fun hashCode() = a.hashCode()
+	}
+}
+
+fun <A> Monoid<A>.semigroupFactory() = MonoidSemigroupFactory(this)
+
 fun <A: Semigroup<A>> Monoid<A>.dual() = monoid(Dual(empty))
 
 class Endo<A>(private val f: (A) -> A): Semigroup<Endo<A>> {

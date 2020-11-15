@@ -4,7 +4,6 @@ import com.github.fsbarata.functional.BiContext
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.data.BiFunctor
 import com.github.fsbarata.functional.data.Functor
-import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.either.Either
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
