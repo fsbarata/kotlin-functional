@@ -2,15 +2,18 @@ package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.control.test.ComonadLaws
 import com.github.fsbarata.functional.control.test.MonadZipLaws
+import com.github.fsbarata.functional.data.test.SemigroupLaws
 import com.github.fsbarata.functional.data.test.TraversableLaws
+import com.github.fsbarata.functional.kotlin.plusElementNel
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger
 
-class NonEmptyListTest
-	: MonadZipLaws<NonEmptyContext>,
+class NonEmptyListTest:
+	MonadZipLaws<NonEmptyContext>,
 	TraversableLaws<NonEmptyContext>,
-	ComonadLaws<NonEmptyContext> {
+	ComonadLaws<NonEmptyContext>,
+	SemigroupLaws<NonEmptyList<Int>> {
 	override val monadScope = NonEmptyList
 	override val traversableScope = NonEmptyList
 
@@ -18,6 +21,9 @@ class NonEmptyListTest
 
 	override fun <A> createTraversable(vararg items: A) =
 		items.toList().toNel() ?: throw NoSuchElementException()
+
+	override val possibilities = 5
+	override fun factory(possibility: Int) = (0..possibility).map { it - 3 }.f().plusElementNel(-4)
 
 	private val nel1 = NonEmptyList.just(9)
 	private val nel2 = nelOf(5, 1, 3)

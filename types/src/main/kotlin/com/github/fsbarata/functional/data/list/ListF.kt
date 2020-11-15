@@ -9,9 +9,8 @@ import com.github.fsbarata.functional.data.*
 import java.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
-class ListF<A>(
-	private val wrapped: List<A>,
-): Monad<ListContext, A>,
+class ListF<A>(private val wrapped: List<A>):
+	Monad<ListContext, A>,
 	MonadZip<ListContext, A>,
 	Traversable<ListContext, A>,
 	Alternative<ListContext, A>,

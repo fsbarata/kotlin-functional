@@ -3,15 +3,21 @@ package com.github.fsbarata.functional.data.list
 import com.github.fsbarata.functional.control.test.MonadLaws
 import com.github.fsbarata.functional.control.test.MonadZipLaws
 import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.test.SemigroupLaws
 import com.github.fsbarata.functional.data.test.TraversableLaws
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class ListFTest: MonadLaws<ListF<*>>,
+class ListFTest:
+	MonadLaws<ListF<*>>,
 	MonadZipLaws<ListF<*>>,
+	SemigroupLaws<ListF<Int>>,
 	TraversableLaws<ListF<*>> {
 	override val traversableScope = ListF
 	override val monadScope = ListF
+
+	override val possibilities = 5
+	override fun factory(possibility: Int) = (0..possibility).map { it - 3 }.f()
 
 	override fun <A> createFunctor(a: A) = ListF.just(a)
 

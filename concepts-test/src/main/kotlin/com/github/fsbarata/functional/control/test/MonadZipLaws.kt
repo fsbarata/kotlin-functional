@@ -11,7 +11,7 @@ interface MonadZipLaws<M>: MonadLaws<M> {
 	private val monad2 get() = monadScope.just(3) as MonadZip<M, Int>
 
 	@Test
-	fun naturality() {
+	fun `zip naturality`() {
 		val f1 = { a: Int -> a * 2 }
 		val f2 = { a: Int -> a + 2 }
 		val f3 = { a: Int, b: Int -> a / b }
@@ -26,7 +26,7 @@ interface MonadZipLaws<M>: MonadLaws<M> {
 	}
 
 	@Test
-	fun `information preservation`() {
+	fun `zip information preservation`() {
 		val (r1, r2) = unzip(zip(monad1, monad2))
 		assertEqual(r1, monad1)
 		assertEqual(r2, monad2)

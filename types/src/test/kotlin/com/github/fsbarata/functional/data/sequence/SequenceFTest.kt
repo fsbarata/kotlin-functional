@@ -5,16 +5,22 @@ import com.github.fsbarata.functional.control.test.MonadZipLaws
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.maybe.asOptional
+import com.github.fsbarata.functional.data.test.SemigroupLaws
 import com.github.fsbarata.functional.data.test.TraversableLaws
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 
-class SequenceFTest: MonadLaws<SequenceContext>,
+class SequenceFTest:
+	MonadLaws<SequenceContext>,
 	MonadZipLaws<SequenceContext>,
-	TraversableLaws<SequenceContext> {
+	TraversableLaws<SequenceContext>,
+	SemigroupLaws<SequenceF<Int>> {
 	override val traversableScope = SequenceF
 	override val monadScope = SequenceF
+
+	override val possibilities = 5
+	override fun factory(possibility: Int) = (0..possibility).asSequence().map { it - 3 }.f()
 
 	override fun <A> createFunctor(a: A) = SequenceF.just(a)
 
@@ -23,6 +29,9 @@ class SequenceFTest: MonadLaws<SequenceContext>,
 
 	override fun <A> Functor<SequenceContext, A>.equalTo(other: Functor<SequenceContext, A>) =
 		asSequence.toList() == other.asSequence.toList()
+
+	override fun equals(a1: SequenceF<Int>, a2: SequenceF<Int>) =
+		a1.toList() == a2.toList()
 
 	@Test
 	fun traverse() {

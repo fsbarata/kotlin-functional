@@ -13,7 +13,7 @@ interface MonadLaws<M>: ApplicativeLaws<M> {
 	private val monad get() = monadScope.just(5)
 
 	@Test
-	fun `left identity`() {
+	fun `bind left identity`() {
 		val a = 7
 		val k = { x: Int -> monadScope.just(x * 3) }
 		val r1 = k(a)
@@ -22,14 +22,14 @@ interface MonadLaws<M>: ApplicativeLaws<M> {
 	}
 
 	@Test
-	fun `right identity`() {
+	fun `bind right identity`() {
 		val m = monadScope.just(7)
 		val b = m.bind { monadScope.just(it) }
 		assertEqual(m, b)
 	}
 
 	@Test
-	fun associativity() {
+	fun `bind associativity`() {
 		val m = monadScope.just(9)
 		val k = { a: Int -> monadScope.just(a + 2) }
 		val h = { a: Int -> monadScope.just(a * 2) }

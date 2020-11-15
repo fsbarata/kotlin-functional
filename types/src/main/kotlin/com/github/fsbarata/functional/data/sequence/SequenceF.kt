@@ -12,9 +12,8 @@ import com.github.fsbarata.functional.data.monoid
 import java.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
-class SequenceF<A>(
-	private val wrapped: Sequence<A>,
-): Monad<SequenceContext, A>,
+class SequenceF<A>(private val wrapped: Sequence<A>):
+	Monad<SequenceContext, A>,
 	MonadZip<SequenceContext, A>,
 	Traversable<SequenceContext, A>,
 	Alternative<SequenceContext, A>,

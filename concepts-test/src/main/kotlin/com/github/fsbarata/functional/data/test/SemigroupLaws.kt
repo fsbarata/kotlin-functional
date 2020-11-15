@@ -14,7 +14,7 @@ interface SemigroupLaws<A: Semigroup<A>> {
 		assert(equals(a1, a2)) { "$a1 should be equal to $a2" }
 
 	@Test
-	fun associativity() {
+	fun `combineWith associativity`() {
 		val val1 = factory(possibility())
 		val val2 = factory(possibility())
 		val val3 = factory(possibility())

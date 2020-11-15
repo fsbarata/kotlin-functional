@@ -83,9 +83,9 @@ class SumDoubleMonoidTest: MonoidLaws<Double>(sumDoubleMonoid()) {
 
 	@Test
 	fun adds() {
-		assertEquals(8.0, sumDoubleMonoid().combine(5.0, 3.0))
-		assertEquals(4.8, sumDoubleMonoid().combine(5.0, -0.2))
-		assertEquals(-8.1, sumDoubleMonoid().combine(-5.0, -3.1))
+		assertEquals(8.0, sumDoubleMonoid().combine(5.0, 3.0), 1e-8)
+		assertEquals(4.8, sumDoubleMonoid().combine(5.0, -0.2), 1e-8)
+		assertEquals(-8.1, sumDoubleMonoid().combine(-5.0, -3.1), 1e-8)
 	}
 }
 
@@ -95,9 +95,9 @@ class ProductDoubleMonoidTest: MonoidLaws<Double>(productDoubleMonoid()) {
 
 	@Test
 	fun multiplies() {
-		assertEquals(15.0, productDoubleMonoid().combine(5.0, 3.0))
-		assertEquals(-1.0, productDoubleMonoid().combine(5.0, -0.2))
-		assertEquals(15.5, productDoubleMonoid().combine(-5.0, -3.1))
+		assertEquals(15.0, productDoubleMonoid().combine(5.0, 3.0), 1e-8)
+		assertEquals(-1.0, productDoubleMonoid().combine(5.0, -0.2), 1e-8)
+		assertEquals(15.5, productDoubleMonoid().combine(-5.0, -3.1), 1e-8)
 	}
 }
 
