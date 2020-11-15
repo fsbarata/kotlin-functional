@@ -1,7 +1,10 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.control.Comonad
+import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.partial
@@ -150,7 +153,6 @@ class NonEmptyList<out A> private constructor(
 
 	companion object: Monad.Scope<NonEmptyContext>, Traversable.Scope<NonEmptyContext> {
 		override fun <A> just(a: A) = of(a, emptyList())
-		fun <T> of(head: T, vararg others: T) = of(head, others.toList())
 		fun <T> of(head: T, others: List<T>) = NonEmptyList(head, others)
 	}
 }
@@ -159,8 +161,7 @@ internal typealias NonEmptyContext = NonEmptyList<*>
 
 val <A> Context<NonEmptyContext, A>.asNel get() = this as NonEmptyList<A>
 
-fun <A> nelOf(head: A): NonEmptyList<A> = NonEmptyList.just(head)
-fun <A> nelOf(head: A, vararg tail: A): NonEmptyList<A> = NonEmptyList.of(head, *tail)
+fun <A> nelOf(head: A, vararg tail: A): NonEmptyList<A> = NonEmptyList.of(head, tail.toList())
 
 fun <A> List<A>.startWithItem(item: A): NonEmptyList<A> = NonEmptyList.of(item, this)
 

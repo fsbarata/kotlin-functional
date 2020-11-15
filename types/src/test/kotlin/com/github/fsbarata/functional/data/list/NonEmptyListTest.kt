@@ -20,8 +20,8 @@ class NonEmptyListTest
 		items.toList().toNel() ?: throw NoSuchElementException()
 
 	private val nel1 = NonEmptyList.just(9)
-	private val nel2 = NonEmptyList.of(5, 1, 3)
-	private val nel3 = NonEmptyList.of(2, NonEmptyList.of(4, 2, 5))
+	private val nel2 = nelOf(5, 1, 3)
+	private val nel3 = NonEmptyList.of(2, nelOf(4, 2, 5))
 
 	@Test
 	fun size() {
@@ -126,15 +126,15 @@ class NonEmptyListTest
 	@Test
 	fun map() {
 		assertEquals(NonEmptyList.just(45), nel1.map { it * 5 })
-		assertEquals(NonEmptyList.of(25, 5, 15), nel2.map { it * 5 })
-		assertEquals(NonEmptyList.of(10, 20, 10, 25), nel3.map { it * 5 })
+		assertEquals(nelOf(25, 5, 15), nel2.map { it * 5 })
+		assertEquals(nelOf(10, 20, 10, 25), nel3.map { it * 5 })
 	}
 
 	@Test
 	fun flatMap() {
-		assertEquals(NonEmptyList.of(90, 9), nel1.flatMap { NonEmptyList.of(10 * it, it) })
-		assertEquals(NonEmptyList.of(50, 5, 10, 1, 30, 3), nel2.flatMap { NonEmptyList.of(10 * it, it) })
-		assertEquals(NonEmptyList.of(20, 2, 40, 4, 20, 2, 50, 5), nel3.flatMap { NonEmptyList.of(10 * it, it) })
+		assertEquals(nelOf(90, 9), nel1.flatMap { nelOf(10 * it, it) })
+		assertEquals(nelOf(50, 5, 10, 1, 30, 3), nel2.flatMap { nelOf(10 * it, it) })
+		assertEquals(nelOf(20, 2, 40, 4, 20, 2, 50, 5), nel3.flatMap { nelOf(10 * it, it) })
 	}
 
 	@Test
@@ -146,24 +146,24 @@ class NonEmptyListTest
 
 	@Test
 	fun plus() {
-		assertEquals(NonEmptyList.of(9, 3), nel1 + 3)
-		assertEquals(NonEmptyList.of(5, 1, 3, 3), nel2 + 3)
-		assertEquals(NonEmptyList.of(2, 4, 2, 5, 3), nel3 + 3)
+		assertEquals(nelOf(9, 3), nel1 + 3)
+		assertEquals(nelOf(5, 1, 3, 3), nel2 + 3)
+		assertEquals(nelOf(2, 4, 2, 5, 3), nel3 + 3)
 
 		assertEquals(nel1, nel1 + emptyList())
 		assertEquals(nel2, nel2 + emptyList())
 		assertEquals(nel3, nel3 + emptyList())
 
-		assertEquals(NonEmptyList.of(9, 5, 5), nel1 + listOf(5, 5))
-		assertEquals(NonEmptyList.of(5, 1, 3, 1, 2, 6), nel2 + listOf(1, 2, 6))
-		assertEquals(NonEmptyList.of(2, 4, 2, 5, 3), nel3 + listOf(3))
+		assertEquals(nelOf(9, 5, 5), nel1 + listOf(5, 5))
+		assertEquals(nelOf(5, 1, 3, 1, 2, 6), nel2 + listOf(1, 2, 6))
+		assertEquals(nelOf(2, 4, 2, 5, 3), nel3 + listOf(3))
 	}
 
 	@Test
 	fun reversed() {
 		assertEquals(nel1, nel1.reversed())
-		assertEquals(NonEmptyList.of(3, 1, 5), nel2.reversed())
-		assertEquals(NonEmptyList.of(5, 2, 4, 2), nel3.reversed())
+		assertEquals(nelOf(3, 1, 5), nel2.reversed())
+		assertEquals(nelOf(5, 2, 4, 2), nel3.reversed())
 	}
 
 	@Test
@@ -198,26 +198,26 @@ class NonEmptyListTest
 	fun distinct() {
 		assertEquals(nel1, nel1.distinct())
 		assertEquals(nel2, nel2.distinct())
-		assertEquals(NonEmptyList.of(2, 4, 5), nel3.distinct())
-		assertEquals(NonEmptyList.just(2), NonEmptyList.of(2, 2, 2).distinct())
-		assertEquals(NonEmptyList.of(2, 4, 5), NonEmptyList.of(2, 4, 5, 4).distinct())
+		assertEquals(nelOf(2, 4, 5), nel3.distinct())
+		assertEquals(NonEmptyList.just(2), nelOf(2, 2, 2).distinct())
+		assertEquals(nelOf(2, 4, 5), nelOf(2, 4, 5, 4).distinct())
 	}
 
 	@Test
 	fun distinctBy() {
 		assertEquals(nel1, nel1.distinctBy { it })
-		assertEquals(NonEmptyList.of(5, 3), nel2.distinctBy { it % 4 })
-		assertEquals(NonEmptyList.of(2, 5), nel3.distinctBy { it % 2 })
+		assertEquals(nelOf(5, 3), nel2.distinctBy { it % 4 })
+		assertEquals(nelOf(2, 5), nel3.distinctBy { it % 2 })
 	}
 
 	@Test
 	fun flatten() {
 		assertEquals(
-			NonEmptyList.of(3, 5, 1, 3, 9),
+			nelOf(3, 5, 1, 3, 9),
 			NonEmptyList.of(
-				NonEmptyList.of(3, 5),
+				nelOf(3, 5),
 				listOf(
-					NonEmptyList.of(1, 3),
+					nelOf(1, 3),
 					NonEmptyList.just(9)
 				)
 			).flatten()
@@ -239,14 +239,14 @@ class NonEmptyListTest
 	fun coflatMap() {
 		val f = { nel: NonEmptyList<Int> -> nel.sum() }
 		assertEquals(NonEmptyList.just(9), nel1.coflatMap(f))
-		assertEquals(NonEmptyList.of(9, 4, 3), nel2.coflatMap(f))
-		assertEquals(NonEmptyList.of(13, 11, 7, 5), nel3.coflatMap(f))
+		assertEquals(nelOf(9, 4, 3), nel2.coflatMap(f))
+		assertEquals(nelOf(13, 11, 7, 5), nel3.coflatMap(f))
 	}
 
 	@Test
 	fun runningReduceNel() {
 		assertEquals(NonEmptyList.just(9), nel1.runningReduceNel { acc, i -> acc + i - 2 })
-		assertEquals(NonEmptyList.of(5, 4, 5), nel2.runningReduceNel { acc, i -> acc + i - 2 })
-		assertEquals(NonEmptyList.of(2, 4, 4, 7), nel3.runningReduceNel { acc, i -> acc + i - 2 })
+		assertEquals(nelOf(5, 4, 5), nel2.runningReduceNel { acc, i -> acc + i - 2 })
+		assertEquals(nelOf(2, 4, 4, 7), nel3.runningReduceNel { acc, i -> acc + i - 2 })
 	}
 }
