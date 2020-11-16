@@ -3,7 +3,7 @@ package com.github.fsbarata.functional.data.maybe
 import com.github.fsbarata.functional.data.MonoidSemigroupFactory
 import com.github.fsbarata.functional.data.monoid.concatStringMonoid
 import com.github.fsbarata.functional.data.semigroupFactory
-import com.github.fsbarata.functional.data.string.StringF
+import com.github.fsbarata.functional.data.StringF
 import com.github.fsbarata.functional.data.test.MonoidLaws
 import org.junit.Assert.assertEquals
 import org.junit.Test

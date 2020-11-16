@@ -1,6 +1,4 @@
-package com.github.fsbarata.functional.data.string
-
-import com.github.fsbarata.functional.data.Semigroup
+package com.github.fsbarata.functional.data
 
 
 data class StringF(val get: String): Semigroup<StringF> {
