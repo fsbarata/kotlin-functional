@@ -140,6 +140,12 @@ class NonEmptyList<out A> private constructor(
 
 	override fun combineWith(other: NonEmptyList<@UnsafeVariance A>) = this + other
 
+	fun <K: Comparable<K>> sortedBy(selector: (A) -> K): NonEmptyList<A> =
+		(this as List<A>).sortedBy(selector).toNelUnsafe()
+
+	fun sortedWith(comparator: Comparator<@UnsafeVariance A>): NonEmptyList<A> =
+		tail.sortedWith(comparator).toNelUnsafe()
+
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (other !is List<*>) return false
@@ -173,4 +179,4 @@ fun <A> Iterable<A>.toNel(): NonEmptyList<A>? {
 	}
 }
 
-
+private fun <A> Iterable<A>.toNelUnsafe() = toNel() ?: throw NoSuchElementException()
