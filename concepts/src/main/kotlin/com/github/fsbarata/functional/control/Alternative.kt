@@ -5,7 +5,19 @@ import com.github.fsbarata.functional.data.flip
 interface Alternative<C, out A>: Applicative<C, A> {
 	override val scope: Scope<C>
 
+	override fun <B> map(f: (A) -> B): Alternative<C, B> =
+		super.map(f) as Alternative<C, B>
+
+	override fun <B, R> lift2(fb: Applicative<C, B>, f: (A, B) -> R) =
+		super.lift2(fb, f) as Alternative<C, R>
+
 	fun associateWith(other: Alternative<C, @UnsafeVariance A>): Alternative<C, A>
+
+	fun some(): Alternative<C, List<A>> =
+		lift2(many(), List<A>::plusElement.flip())
+
+	fun many(): Alternative<C, List<A>> =
+		associate(some(), scope.just(emptyList()))
 
 	interface Scope<C>: Applicative.Scope<C> {
 		fun <A> empty(): Alternative<C, A>
@@ -13,8 +25,5 @@ interface Alternative<C, out A>: Applicative<C, A> {
 	}
 }
 
-fun <C, A> some(alt: Alternative<C, A>): Alternative<C, List<A>> =
-	lift2(List<A>::plusElement.flip())(alt, many(alt)) as Alternative<C, List<A>>
-
-fun <C, A> many(alt: Alternative<C, A>): Alternative<C, List<A>> =
-	some(alt).associateWith(alt.scope.just(emptyList()))
+fun <C, A> associate(alt1: Alternative<C, A>, alt2: Alternative<C, A>) =
+	alt1.associateWith(alt2)

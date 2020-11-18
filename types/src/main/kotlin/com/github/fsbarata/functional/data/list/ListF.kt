@@ -53,9 +53,10 @@ class ListF<A>(private val wrapped: List<A>):
 		(this as List<A>).traverse(appScope, f).map(List<B>::f)
 
 	override fun associateWith(other: Alternative<ListContext, A>) =
-		ListF(wrapped + (other.asList).wrapped)
+		combineWith(other.asList)
 
-	override fun combineWith(other: ListF<A>) = associateWith(other)
+	override fun combineWith(other: ListF<A>) =
+		ListF(wrapped + other.wrapped)
 
 	override fun toString() = wrapped.toString()
 	override fun equals(other: Any?) = wrapped == other

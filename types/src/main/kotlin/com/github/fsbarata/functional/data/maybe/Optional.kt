@@ -74,7 +74,7 @@ sealed class Optional<out A>:
 		)
 
 	override fun associateWith(other: Alternative<OptionalContext, @UnsafeVariance A>) =
-		orOptionalGet { other.asOptional }
+		orOptional(other.asOptional)
 
 	companion object:
 		Monad.Scope<OptionalContext>,
