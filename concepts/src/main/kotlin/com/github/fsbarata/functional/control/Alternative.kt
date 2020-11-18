@@ -1,7 +1,5 @@
 package com.github.fsbarata.functional.control
 
-import com.github.fsbarata.functional.data.flip
-
 interface Alternative<C, out A>: Applicative<C, A> {
 	override val scope: Scope<C>
 
@@ -12,12 +10,6 @@ interface Alternative<C, out A>: Applicative<C, A> {
 		super.lift2(fb, f) as Alternative<C, R>
 
 	fun associateWith(other: Alternative<C, @UnsafeVariance A>): Alternative<C, A>
-
-	fun some(): Alternative<C, List<A>> =
-		lift2(many(), List<A>::plusElement.flip())
-
-	fun many(): Alternative<C, List<A>> =
-		associate(some(), scope.just(emptyList()))
 
 	interface Scope<C>: Applicative.Scope<C> {
 		fun <A> empty(): Alternative<C, A>
