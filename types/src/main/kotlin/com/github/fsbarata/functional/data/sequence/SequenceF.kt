@@ -1,10 +1,7 @@
 package com.github.fsbarata.functional.data.sequence
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.Alternative
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
@@ -80,3 +77,21 @@ internal typealias SequenceContext = SequenceF<*>
 val <A> Context<SequenceContext, A>.asSequence: SequenceF<A>
 	get() = this as SequenceF<A>
 
+
+operator fun <A, B, R> Lift2<A, B, R>.invoke(
+	sequence1: SequenceF<A>,
+	sequence2: SequenceF<B>,
+): SequenceF<R> = app(sequence1, sequence2).asSequence
+
+operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
+	sequence1: SequenceF<A>,
+	sequence2: SequenceF<B>,
+	sequence3: SequenceF<C>,
+): SequenceF<R> = app(sequence1, sequence2, sequence3).asSequence
+
+operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
+	sequence1: SequenceF<A>,
+	sequence2: SequenceF<B>,
+	sequence3: SequenceF<C>,
+	sequence4: SequenceF<D>,
+): SequenceF<R> = app(sequence1, sequence2, sequence3, sequence4).asSequence

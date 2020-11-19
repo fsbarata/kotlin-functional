@@ -1,10 +1,7 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.Alternative
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import java.io.Serializable
 
@@ -83,3 +80,21 @@ internal typealias ListContext = ListF<*>
 val <A> Context<ListContext, A>.asList: ListF<A>
 	get() = this as ListF<A>
 
+
+operator fun <A, B, R> Lift2<A, B, R>.invoke(
+	list1: ListF<A>,
+	list2: ListF<B>,
+): ListF<R> = app(list1, list2).asList
+
+operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
+	list1: ListF<A>,
+	list2: ListF<B>,
+	list3: ListF<C>,
+): ListF<R> = app(list1, list2, list3).asList
+
+operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
+	list1: ListF<A>,
+	list2: ListF<B>,
+	list3: ListF<C>,
+	list4: ListF<D>,
+): ListF<R> = app(list1, list2, list3, list4).asList

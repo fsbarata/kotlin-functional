@@ -1,10 +1,7 @@
 package com.github.fsbarata.functional.data.maybe
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.Alternative
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
@@ -111,3 +108,21 @@ fun <A: Any> A?.f() = toOptional()
 
 val <A> Context<OptionalContext, A>.asOptional
 	get() = this as Optional<A>
+
+operator fun <A, B, R> Lift2<A, B, R>.invoke(
+	opt1: Optional<A>,
+	opt2: Optional<B>,
+): Optional<R> = app(opt1, opt2).asOptional
+
+operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
+	opt1: Optional<A>,
+	opt2: Optional<B>,
+	opt3: Optional<C>,
+): Optional<R> = app(opt1, opt2, opt3).asOptional
+
+operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
+	opt1: Optional<A>,
+	opt2: Optional<B>,
+	opt3: Optional<C>,
+	opt4: Optional<D>,
+): Optional<R> = app(opt1, opt2, opt3, opt4).asOptional

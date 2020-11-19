@@ -1,10 +1,7 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Comonad
-import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.partial
@@ -180,3 +177,22 @@ fun <A> Iterable<A>.toNel(): NonEmptyList<A>? {
 }
 
 private fun <A> Iterable<A>.toNelUnsafe() = toNel() ?: throw NoSuchElementException()
+
+
+operator fun <A, B, R> Lift2<A, B, R>.invoke(
+	list1: NonEmptyList<A>,
+	list2: NonEmptyList<B>,
+): NonEmptyList<R> = app(list1, list2).asNel
+
+operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
+	list1: NonEmptyList<A>,
+	list2: NonEmptyList<B>,
+	list3: NonEmptyList<C>,
+): NonEmptyList<R> = app(list1, list2, list3).asNel
+
+operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
+	list1: NonEmptyList<A>,
+	list2: NonEmptyList<B>,
+	list3: NonEmptyList<C>,
+	list4: NonEmptyList<D>,
+): NonEmptyList<R> = app(list1, list2, list3, list4).asNel
