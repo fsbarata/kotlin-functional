@@ -1,19 +1,11 @@
 package com.github.fsbarata.functional.rx.monoids
 
-import com.github.fsbarata.functional.data.monoid.productIntMonoid
 import com.github.fsbarata.functional.data.test.MonoidLaws
+import com.github.fsbarata.functional.rx.completableFactory
+import com.github.fsbarata.functional.rx.observableFactory
 import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
-import org.junit.Test
 
-private val error = Throwable()
-
-private fun completableFactory(possibility: Int) = when (possibility) {
-	0 -> Completable.complete()
-	1 -> Completable.never()
-	else -> Completable.error(error)
-}
 
 class ConcatCompletableMonoidTest: MonoidLaws<Completable>(
 	concatCompletableMonoid(),
@@ -26,13 +18,6 @@ class ConcatCompletableMonoidTest: MonoidLaws<Completable>(
 		val observer2 = a2.materialize<Unit>().test()
 		return observer1.values() == observer2.values()
 	}
-}
-
-private fun observableFactory(possibility: Int) = when (possibility) {
-	0 -> Observable.empty()
-	1 -> Observable.never()
-	2 -> Observable.error(error)
-	else -> Observable.just(possibility)
 }
 
 class ConcatObservableMonoidTest: MonoidLaws<Observable<Int>>(
