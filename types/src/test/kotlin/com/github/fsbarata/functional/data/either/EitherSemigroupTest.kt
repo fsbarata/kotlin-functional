@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.data.either
 
 import com.github.fsbarata.functional.data.test.SemigroupLaws
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class EitherSemigroupTest: SemigroupLaws<Either<String, Int>> {

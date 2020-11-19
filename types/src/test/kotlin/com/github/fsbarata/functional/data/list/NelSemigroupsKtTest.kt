@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.data.test.SemigroupLaws
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ConcatNelSemigroupTest: SemigroupLaws<NonEmptyList<Int>> {

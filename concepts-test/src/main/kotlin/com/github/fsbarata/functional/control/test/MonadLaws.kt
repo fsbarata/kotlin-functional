@@ -18,14 +18,14 @@ interface MonadLaws<M>: ApplicativeLaws<M> {
 		val k = { x: Int -> monadScope.just(x * 3) }
 		val r1 = k(a)
 		val r2 = monadScope.just(a).bind(k)
-		assertEqual(r1, r2)
+		assertEqualF(r1, r2)
 	}
 
 	@Test
 	fun `bind right identity`() {
 		val m = monadScope.just(7)
 		val b = m.bind { monadScope.just(it) }
-		assertEqual(m, b)
+		assertEqualF(m, b)
 	}
 
 	@Test
@@ -35,7 +35,7 @@ interface MonadLaws<M>: ApplicativeLaws<M> {
 		val h = { a: Int -> monadScope.just(a * 2) }
 		val r1 = m.bind { x -> k(x).bind { h(it) } }
 		val r2 = m.bind(k).bind(h)
-		assertEqual(r1, r2)
+		assertEqualF(r1, r2)
 	}
 
 	@Test
@@ -44,12 +44,12 @@ interface MonadLaws<M>: ApplicativeLaws<M> {
 		val m2 = monadScope.just(5)
 		val r1 = m2.ap(m1)
 		val r2 = m1.bind { x1 -> m2.bind { x2 -> monadScope.just(x1(x2)) } }
-		assertEqual(r1, r2)
+		assertEqualF(r1, r2)
 	}
 
 	@Test
 	fun `map is correct`() {
-		assertEqual(monad.map { it * 3 }, monad.bind { monad.scope.just(it * 3) })
+		assertEqualF(monad.map { it * 3 }, monad.bind { monad.scope.just(it * 3) })
 	}
 
 	private fun Monad<M, Int>.multiply(

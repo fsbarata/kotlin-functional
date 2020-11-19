@@ -14,7 +14,7 @@ interface ComonadLaws<W>: FunctorLaws<W> {
 	fun `comonad identity`() {
 		val r1 = createFunctor(3)
 		val r2 = r1.extend { it.extract() }
-		assertEqual(r1, r2)
+		assertEqualF(r1, r2)
 	}
 
 	@Test
@@ -33,7 +33,7 @@ interface ComonadLaws<W>: FunctorLaws<W> {
 		val g = { wa: Comonad<W, Int> -> wa.extract() + 5 }
 		val r1 = v.extend(g).extend(f)
 		val r2 = v.extend(f compose { wa: Comonad<W, Int> -> wa.extend(g) })
-		assertEqual(r1, r2)
+		assertEqualF(r1, r2)
 	}
 
 	@Test
@@ -41,7 +41,7 @@ interface ComonadLaws<W>: FunctorLaws<W> {
 		val v = createFunctor(3)
 		val r1 = v.duplicate()
 		val r2 = v.extend(id())
-		assertEqual(r1, r2)
+		assertEqualF(r1, r2)
 	}
 
 	@Test
@@ -50,6 +50,6 @@ interface ComonadLaws<W>: FunctorLaws<W> {
 		val f = { wa: Comonad<W, Int> -> (wa.extract() * 2).toString() }
 		val r1 = v.duplicate().map(f)
 		val r2 = v.extend(f)
-		assertEqual(r1, r2)
+		assertEqualF(r1, r2)
 	}
 }

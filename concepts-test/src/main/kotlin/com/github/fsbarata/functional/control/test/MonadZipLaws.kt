@@ -22,13 +22,13 @@ interface MonadZipLaws<M>: MonadLaws<M> {
 			zip(monad1.map(f1) as MonadZip<M, Int>,
 				monad2.map(f2) as MonadZip<M, Int>,
 				f3)
-		assertEqual(r1, r2)
+		assertEqualF(r1, r2)
 	}
 
 	@Test
 	fun `zip information preservation`() {
 		val (r1, r2) = unzip(zip(monad1, monad2))
-		assertEqual(r1, monad1)
-		assertEqual(r2, monad2)
+		assertEqualF(r1, monad1)
+		assertEqualF(r2, monad2)
 	}
 }

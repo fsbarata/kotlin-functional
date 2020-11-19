@@ -10,14 +10,14 @@ interface FunctorLaws<F> {
 	fun <A> Functor<F, A>.equalTo(other: Functor<F, A>): Boolean = this == other
 	fun <A> Functor<F, A>.describe() = toString()
 
-	fun <A> assertEqual(r1: Functor<F, A>, r2: Functor<F, A>) {
+	fun <A> assertEqualF(r1: Functor<F, A>, r2: Functor<F, A>) {
 		assert(r1.equalTo(r2)) { "${r1.describe()} should be equal to ${r2.describe()}" }
 	}
 
 	@Test
 	fun `map identity`() {
 		val f1 = createFunctor(5)
-		assertEqual(f1, f1.map(id()))
+		assertEqualF(f1, f1.map(id()))
 	}
 
 	@Test
@@ -29,6 +29,6 @@ interface FunctorLaws<F> {
 		val r2 =
 			{ fx: Functor<F, String> -> fx.map(f) }.compose { fx: Functor<F, String> -> fx.map(g) }
 				.invoke(fa)
-		assertEqual(r1, r2)
+		assertEqualF(r1, r2)
 	}
 }

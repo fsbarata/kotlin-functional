@@ -26,7 +26,7 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 	fun `traverse identity`() {
 		val t = createTraversable(1, 5, 2, -2, 0, 2)
 		val r1 = t.traverse(Identity, ::Identity)
-		assertEqual(r1.runIdentity(), t)
+		assertEqualF(r1.runIdentity(), t)
 	}
 
 	@Test
@@ -47,7 +47,7 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 				return@zipWith
 			}
 			val item2 = checkNotNull(optional2.asOptional.orNull())
-			assertEqual(item1, item2)
+			assertEqualF(item1, item2)
 		}
 	}
 
@@ -58,7 +58,7 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 		val r1 = t.traverse(ListF, f).asList
 		val r2 = traverseFromSequence(ListF, t, f).asList
 		assertEquals(r2.size, r1.size)
-		r1.indices.forEach { assertEqual(r1[it], r2[it]) }
+		r1.indices.forEach { assertEqualF(r1[it], r2[it]) }
 	}
 
 	@Test
@@ -67,6 +67,6 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 		val r1 = traversableScope.sequenceA(ListF, t).asList
 		val r2 = sequenceFromTraverse(ListF, t).asList
 		assertEquals(r2.size, r1.size)
-		r1.indices.forEach { assertEqual(r1[it], r2[it]) }
+		r1.indices.forEach { assertEqualF(r1[it], r2[it]) }
 	}
 }
