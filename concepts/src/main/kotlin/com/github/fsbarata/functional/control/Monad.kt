@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.control
 
 import com.github.fsbarata.functional.Context
+import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.partial
 
 interface Monad<M, out A>: Applicative<M, A> {
@@ -21,3 +22,5 @@ interface Monad<M, out A>: Applicative<M, A> {
 		override fun <A> just(a: A): Monad<C, A>
 	}
 }
+
+fun <M, A> Monad<M, Monad<M, A>>.flatten() = bind(::id)

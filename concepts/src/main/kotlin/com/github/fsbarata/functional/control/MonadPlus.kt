@@ -8,3 +8,6 @@ interface MonadPlus<M, out A>: Monad<M, A>, Alternative<M, A> {
 
 	interface Scope<M>: Monad.Scope<M>, Alternative.Scope<M>
 }
+
+fun <M, A> MonadPlus<M, A>.filter(predicate: (A) -> Boolean) =
+	bind { if (predicate(it)) scope.just(it) else scope.empty() }
