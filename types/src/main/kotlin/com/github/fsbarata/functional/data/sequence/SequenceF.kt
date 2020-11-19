@@ -10,10 +10,9 @@ import java.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
 class SequenceF<A>(private val wrapped: Sequence<A>):
-	Monad<SequenceContext, A>,
 	MonadZip<SequenceContext, A>,
+	MonadPlus<SequenceContext, A>,
 	Traversable<SequenceContext, A>,
-	Alternative<SequenceContext, A>,
 	Semigroup<SequenceF<A>>,
 	Sequence<A> by wrapped,
 	Serializable {
@@ -49,7 +48,7 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 	): Applicative<F, SequenceF<B>> =
 		(this as Sequence<A>).traverse(appScope, f).map(Sequence<B>::f)
 
-	override fun associateWith(other: Alternative<SequenceContext, A>) =
+	override fun associateWith(other: Context<SequenceContext, A>) =
 		SequenceF(wrapped + (other.asSequence).wrapped)
 
 	override fun combineWith(other: SequenceF<A>): SequenceF<A> = associateWith(other)
@@ -59,9 +58,8 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 	override fun hashCode() = wrapped.hashCode()
 
 	companion object:
-		Monad.Scope<SequenceContext>,
-		Traversable.Scope<SequenceContext>,
-		Alternative.Scope<SequenceContext> {
+		MonadPlus.Scope<SequenceContext>,
+		Traversable.Scope<SequenceContext> {
 		override fun <A> empty(): SequenceF<A> = emptySequence<A>().f()
 		override fun <A> just(a: A) = sequenceOf(a).f()
 		fun <A> of(vararg items: A) = sequenceOf(*items).f()

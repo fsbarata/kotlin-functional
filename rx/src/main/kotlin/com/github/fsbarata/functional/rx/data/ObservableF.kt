@@ -1,9 +1,8 @@
 package com.github.fsbarata.functional.rx.data
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.Alternative
 import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.MonadPlus
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
@@ -12,7 +11,7 @@ import io.reactivex.rxjava3.core.Observer
 
 class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	MonadZip<ObservableContext, A>,
-	Alternative<ObservableContext, A>,
+	MonadPlus<ObservableContext, A>,
 	Semigroup<ObservableF<A>> {
 	override val scope get() = ObservableF
 
@@ -45,13 +44,13 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	fun scan(monoid: Monoid<A>) = super.scan(monoid.empty, monoid::combine).f()
 
 	override fun combineWith(other: ObservableF<A>) = mergeWith(other).f()
-	override fun associateWith(other: Alternative<ObservableContext, A>) =
+	override fun associateWith(other: Context<ObservableContext, A>) =
 		combineWith(other.asObservable)
 
 	override fun <B, R> zipWith(other: MonadZip<ObservableContext, B>, f: (A, B) -> R) =
 		(this as Observable<A>).zipWith(other.asObservable, f).f()
 
-	companion object: Monad.Scope<ObservableContext>, Alternative.Scope<ObservableContext> {
+	companion object: MonadPlus.Scope<ObservableContext> {
 		override fun <A> empty() = Observable.empty<A>().f()
 		override fun <A> just(a: A) = Observable.just(a).f()
 	}

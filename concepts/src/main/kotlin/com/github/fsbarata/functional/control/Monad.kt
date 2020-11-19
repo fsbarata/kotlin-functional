@@ -8,7 +8,8 @@ interface Monad<M, out A>: Applicative<M, A> {
 
 	infix fun <B> bind(f: (A) -> Context<M, B>): Monad<M, B>
 
-	override fun <B> map(f: (A) -> B): Monad<M, B> = ap(scope.just(f))
+	override fun <B> map(f: (A) -> B): Monad<M, B> =
+		bind { scope.just(f(it)) }
 
 	override infix fun <B> ap(ff: Applicative<M, (A) -> B>): Monad<M, B> =
 		bind { a -> ff.map { it(a) } }

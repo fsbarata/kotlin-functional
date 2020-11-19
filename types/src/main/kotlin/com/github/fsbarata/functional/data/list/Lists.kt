@@ -33,4 +33,3 @@ inline fun <F, A, B> List<A>.traverse(
 		f(a).lift2(app) { b, lb -> lb + b }
 	}
 }
-

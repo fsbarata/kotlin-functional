@@ -5,8 +5,8 @@ import com.github.fsbarata.functional.data.sequence.NonEmptySequence
 import com.github.fsbarata.functional.kotlin.plusElementNes
 
 
-fun <C, A> Alternative<C, A>.some(): Alternative<C, NonEmptySequence<A>> =
+fun <F, A> Alternative<F, A>.some(): Alternative<F, NonEmptySequence<A>> =
 	lift2(many(), Sequence<A>::plusElementNes.flip())
 
-fun <C, A> Alternative<C, A>.many(): Alternative<C, Sequence<A>> =
+fun <F, A> Alternative<F, A>.many(): Alternative<F, Sequence<A>> =
 	associate(some(), scope.just(emptySequence()))

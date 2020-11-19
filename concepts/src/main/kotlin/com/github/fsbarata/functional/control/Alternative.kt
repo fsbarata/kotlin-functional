@@ -1,21 +1,19 @@
 package com.github.fsbarata.functional.control
 
-interface Alternative<C, out A>: Applicative<C, A> {
-	override val scope: Scope<C>
+import com.github.fsbarata.functional.Context
 
-	override fun <B> map(f: (A) -> B): Alternative<C, B> =
-		super.map(f) as Alternative<C, B>
+interface Alternative<F, out A>: Applicative<F, A> {
+	override val scope: Scope<F>
 
-	override fun <B, R> lift2(fb: Applicative<C, B>, f: (A, B) -> R) =
-		super.lift2(fb, f) as Alternative<C, R>
+	override fun <B, R> lift2(fb: Applicative<F, B>, f: (A, B) -> R) =
+		super.lift2(fb, f) as Alternative<F, R>
 
-	fun associateWith(other: Alternative<C, @UnsafeVariance A>): Alternative<C, A>
+	fun associateWith(other: Context<F, @UnsafeVariance A>): Alternative<F, A>
 
-	interface Scope<C>: Applicative.Scope<C> {
-		fun <A> empty(): Alternative<C, A>
-		override fun <A> just(a: A): Alternative<C, A>
+	interface Scope<F>: Applicative.Scope<F> {
+		fun <A> empty(): Alternative<F, A>
 	}
 }
 
-fun <C, A> associate(alt1: Alternative<C, A>, alt2: Alternative<C, A>) =
+fun <C, A> associate(alt1: Alternative<C, A>, alt2: Context<C, A>) =
 	alt1.associateWith(alt2)

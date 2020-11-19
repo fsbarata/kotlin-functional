@@ -16,8 +16,8 @@ import java.io.Serializable
 @Suppress("OVERRIDE_BY_INLINE")
 sealed class Optional<out A>:
 	MonadZip<OptionalContext, A>,
+	MonadPlus<OptionalContext, A>,
 	Traversable<OptionalContext, A>,
-	Alternative<OptionalContext, A>,
 	Serializable {
 	override val scope get() = Optional
 
@@ -69,13 +69,12 @@ sealed class Optional<out A>:
 			ifSome = { f(it).map(::Some) },
 		)
 
-	override fun associateWith(other: Alternative<OptionalContext, @UnsafeVariance A>) =
+	override fun associateWith(other: Context<OptionalContext, @UnsafeVariance A>) =
 		orOptional(other.asOptional)
 
 	companion object:
-		Monad.Scope<OptionalContext>,
-		Traversable.Scope<OptionalContext>,
-		Alternative.Scope<OptionalContext> {
+		MonadPlus.Scope<OptionalContext>,
+		Traversable.Scope<OptionalContext> {
 		override fun <A> empty(): Optional<A> = None
 		override fun <A> just(a: A): Optional<A> = Some(a)
 		fun <A> ofNullable(a: A?) = if (a != null) Some(a) else None
