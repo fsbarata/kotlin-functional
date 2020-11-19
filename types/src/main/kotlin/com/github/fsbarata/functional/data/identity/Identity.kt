@@ -1,18 +1,21 @@
 package com.github.fsbarata.functional.data.identity
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.control.Comonad
+import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.partial
+import java.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
-data class Identity<A>(
-	val a: A,
-): Monad<IdentityContext, A>,
+data class Identity<A>(val a: A):
 	MonadZip<IdentityContext, A>,
 	Comonad<IdentityContext, A>,
-	Foldable<A> {
+	Foldable<A>,
+	Serializable {
 	override val scope = Identity
 
 	override fun extract(): A = a

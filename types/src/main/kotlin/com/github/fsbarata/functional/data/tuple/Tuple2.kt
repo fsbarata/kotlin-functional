@@ -7,14 +7,14 @@ import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.data.BiFunctor
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
+import java.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
-data class Tuple2<X, Y>(
-	val x: X,
-	val y: Y,
-): Traversable<Tuple2Context<X>, Y>,
+data class Tuple2<X, Y>(val x: X, val y: Y):
+	Traversable<Tuple2Context<X>, Y>,
 	BiFunctor<Tuple2BiContext, X, Y>,
-	Comonad<Tuple2Context<X>, Y> {
+	Comonad<Tuple2Context<X>, Y>,
+	Serializable {
 	override val scope get() = Scope<X>()
 
 	override fun extract() = y

@@ -6,15 +6,10 @@ import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
 import io.reactivex.rxjava3.core.Flowable
-import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 
-class FlowableF<A>(
-	private val wrapped: Flowable<A>,
-): Flowable<A>(),
-	Monad<FlowableF<*>, A>,
-	MonadZip<FlowableF<*>, A>,
-	Publisher<A> {
+class FlowableF<A>(private val wrapped: Flowable<A>): Flowable<A>(),
+	MonadZip<FlowableF<*>, A> {
 	override val scope get() = Companion
 
 	override fun subscribeActual(observer: Subscriber<in A>) {

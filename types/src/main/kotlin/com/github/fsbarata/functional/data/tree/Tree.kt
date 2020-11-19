@@ -1,28 +1,29 @@
 package com.github.fsbarata.functional.data.tree
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.control.Comonad
+import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.list.NonEmptyIterable
 import com.github.fsbarata.functional.data.list.f
 import com.github.fsbarata.functional.data.list.traverse
 import com.github.fsbarata.functional.data.partial
+import java.io.Serializable
 
 typealias Forest<A> = List<Tree<A>>
 
 internal typealias TreeContext = Tree<*>
 
 @Suppress("OVERRIDE_BY_INLINE")
-data class Tree<out A>(
-	val root: A,
-	val sub: Forest<A> = emptyList(),
-):
+data class Tree<out A>(val root: A, val sub: Forest<A> = emptyList()): NonEmptyIterable<A>,
 	Monad<TreeContext, A>,
 	MonadZip<TreeContext, A>,
 	Traversable<TreeContext, A>,
 	Comonad<TreeContext, A>,
-	NonEmptyIterable<A> {
+	Serializable {
 	override val scope = Tree
 
 	override val head: A = root

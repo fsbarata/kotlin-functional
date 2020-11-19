@@ -5,14 +5,9 @@ import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.MaybeObserver
-import io.reactivex.rxjava3.core.MaybeSource
 
-class MaybeF<A>(
-	private val wrapped: Maybe<A>,
-): Maybe<A>(),
-   Monad<MaybeF<*>, A>,
-   MonadZip<MaybeF<*>, A>,
-   MaybeSource<A> {
+class MaybeF<A>(private val wrapped: Maybe<A>): Maybe<A>(),
+	MonadZip<MaybeF<*>, A> {
 	override val scope get() = Companion
 
 	override fun subscribeActual(observer: MaybeObserver<in A>) {

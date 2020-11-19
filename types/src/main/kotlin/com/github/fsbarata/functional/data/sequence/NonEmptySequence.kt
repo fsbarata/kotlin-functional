@@ -20,7 +20,6 @@ internal typealias NonEmptySequenceContext = NonEmptySequence<*>
  */
 interface NonEmptySequence<A>:
 	NonEmptySequenceBase<A>,
-	Monad<NonEmptySequenceContext, A>,
 	MonadZip<NonEmptySequenceContext, A>,
 	Traversable<NonEmptySequenceContext, A>,
 	Semigroup<NonEmptySequence<A>> {
@@ -82,6 +81,7 @@ interface NonEmptySequence<A>:
 		override fun <A> just(a: A) = NonEmptySequence { NonEmptyIterator(a) }
 		fun <A> of(head: A, tail: Iterable<A>) =
 			NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
+
 		fun <A> of(head: A, tail: Sequence<A>) =
 			NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
 	}

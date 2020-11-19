@@ -8,17 +8,12 @@ import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableSource
 import io.reactivex.rxjava3.core.Observer
 
-class ObservableF<A>(
-	private val wrapped: Observable<A>,
-): Observable<A>(),
-	Monad<ObservableContext, A>,
+class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	MonadZip<ObservableContext, A>,
 	Alternative<ObservableContext, A>,
-	Semigroup<ObservableF<A>>,
-	ObservableSource<A> {
+	Semigroup<ObservableF<A>> {
 	override val scope get() = ObservableF
 
 	override fun subscribeActual(observer: Observer<in A>) {
@@ -37,7 +32,7 @@ class ObservableF<A>(
 
 	override fun <B, R> lift2(
 		fb: Applicative<ObservableContext, B>,
-		f: (A, B) -> R
+		f: (A, B) -> R,
 	) = combineLatest(this, fb.asObservable, f).f()
 
 	override infix fun <B> bind(f: (A) -> Context<ObservableContext, B>): ObservableF<B> =

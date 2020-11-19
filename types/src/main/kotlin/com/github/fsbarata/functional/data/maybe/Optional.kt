@@ -15,7 +15,6 @@ import java.io.Serializable
  */
 @Suppress("OVERRIDE_BY_INLINE")
 sealed class Optional<out A>:
-	Monad<OptionalContext, A>,
 	MonadZip<OptionalContext, A>,
 	Traversable<OptionalContext, A>,
 	Alternative<OptionalContext, A>,

@@ -5,14 +5,9 @@ import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleObserver
-import io.reactivex.rxjava3.core.SingleSource
 
-class SingleF<A>(
-	private val wrapped: Single<A>,
-): Single<A>(),
-   Monad<SingleF<*>, A>,
-   MonadZip<SingleF<*>, A>,
-   SingleSource<A> {
+class SingleF<A>(private val wrapped: Single<A>): Single<A>(),
+	MonadZip<SingleF<*>, A> {
 	override val scope get() = Companion
 
 	override fun subscribeActual(observer: SingleObserver<in A>) {

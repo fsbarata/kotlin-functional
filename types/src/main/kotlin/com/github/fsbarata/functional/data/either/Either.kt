@@ -2,8 +2,7 @@ package com.github.fsbarata.functional.data.either
 
 import com.github.fsbarata.functional.BiContext
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.maybe.Optional
 import java.io.Serializable

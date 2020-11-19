@@ -20,13 +20,12 @@ class NonEmptyList<out A> private constructor(
 	override val head: A,
 	override val tail: List<A>,
 ): List<A>,
-	Monad<NonEmptyContext, A>,
+	NonEmptyIterable<A>,
+	Serializable,
 	MonadZip<NonEmptyContext, A>,
 	Traversable<NonEmptyContext, A>,
 	Comonad<NonEmptyContext, A>,
-	Semigroup<NonEmptyList<@UnsafeVariance A>>,
-	NonEmptyIterable<A>,
-	Serializable {
+	Semigroup<NonEmptyList<@UnsafeVariance A>> {
 	override val scope get() = Companion
 
 	override val size: Int get() = 1 + tail.size
