@@ -8,7 +8,7 @@ import com.github.fsbarata.functional.control.monad.state.State
  * Why `State` is useful here?
  * 1. Ability to model state updates in the universe, nothing gets executed until we pass the `initial seed`
  * 2. Universe is by definition a State that keeps changing/evolving in each generation. `State` monad
- * allows us to pass that state through.
+ * allows us to pass that state through, and importantly, not store it.
  */
 
 internal fun gameOfLife(maxGenerations: Int) = gameOfLife(maxGenerations, 0)
