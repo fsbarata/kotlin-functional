@@ -1,7 +1,6 @@
 package com.github.fsbarata.functional.samples
 
 import com.github.fsbarata.functional.control.monad.state.State
-import com.github.fsbarata.functional.data.tuple.Tuple2
 import java.math.BigDecimal
 
 typealias Balance = BigDecimal
@@ -35,8 +34,8 @@ private fun deposit(accountId: AccountId, amount: BigDecimal) = State.modify<Ban
 }.map { amount }
 
 internal fun transferHalfOfTheMoney(from: AccountId, to: AccountId): State<Bank, Balance> =
-	getAccountBalance(from).bind { accountBalance ->
-		withdraw(from, accountBalance.multiply(BigDecimal("0.5"))).bind { withdrawn ->
+	getAccountBalance(from).flatMap { accountBalance ->
+		withdraw(from, accountBalance.multiply(BigDecimal("0.5"))).flatMap { withdrawn ->
 			deposit(to, withdrawn)
 		}
 	}
