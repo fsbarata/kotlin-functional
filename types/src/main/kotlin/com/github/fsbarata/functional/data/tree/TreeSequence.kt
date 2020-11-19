@@ -19,7 +19,6 @@ class TreeSequence<out A>(
 	val root: A,
 	val sub: ForestSequence<A> = emptySequence(),
 ):
-	Monad<TreeSequenceContext, A>,
 	MonadZip<TreeSequenceContext, A>,
 	Comonad<TreeSequenceContext, A>,
 	Traversable<TreeSequenceContext, A>,

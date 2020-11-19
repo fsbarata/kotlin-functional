@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.data.sequence
 
-import com.github.fsbarata.functional.control.test.MonadLaws
+import com.github.fsbarata.functional.control.test.MonadPlusLaws
 import com.github.fsbarata.functional.control.test.MonadZipLaws
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.maybe.Optional
@@ -12,7 +12,7 @@ import org.junit.Test
 
 
 class SequenceFTest:
-	MonadLaws<SequenceContext>,
+	MonadPlusLaws<SequenceContext>,
 	MonadZipLaws<SequenceContext>,
 	TraversableLaws<SequenceContext>,
 	SemigroupLaws<SequenceF<Int>> {

@@ -91,7 +91,7 @@ object None: Optional<Nothing>() {
 	override fun orNull() = null
 }
 
-private typealias OptionalContext = Optional<*>
+internal typealias OptionalContext = Optional<*>
 
 infix fun <A> Optional<A>.orElse(a: A) = orNull() ?: a
 inline infix fun <A> Optional<A>.orElseGet(a: () -> A) = orNull() ?: a()

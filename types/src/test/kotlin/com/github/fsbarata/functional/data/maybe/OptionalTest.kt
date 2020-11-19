@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.data.maybe
 
-import com.github.fsbarata.functional.control.test.MonadLaws
+import com.github.fsbarata.functional.control.test.MonadPlusLaws
 import com.github.fsbarata.functional.control.test.MonadZipLaws
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.test.TraversableLaws
@@ -8,15 +8,15 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class OptionalTest:
-	MonadLaws<Optional<*>>,
-	MonadZipLaws<Optional<*>>,
-	TraversableLaws<Optional<*>> {
+	MonadPlusLaws<OptionalContext>,
+	MonadZipLaws<OptionalContext>,
+	TraversableLaws<OptionalContext> {
 	override val traversableScope = Optional
 	override val monadScope = Optional
 
 	override fun <A> createTraversable(vararg items: A) = Optional.ofNullable(items.firstOrNull())
 
-	override fun <A> Functor<Optional<*>, A>.equalTo(other: Functor<Optional<*>, A>): Boolean =
+	override fun <A> Functor<OptionalContext, A>.equalTo(other: Functor<OptionalContext, A>): Boolean =
 		asOptional == other.asOptional
 
 	override fun <A> createFunctor(a: A) = Optional.just(a)

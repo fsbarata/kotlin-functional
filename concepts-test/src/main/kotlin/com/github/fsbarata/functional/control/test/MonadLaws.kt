@@ -2,7 +2,6 @@ package com.github.fsbarata.functional.control.test
 
 import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Monad
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 interface MonadLaws<M>: ApplicativeLaws<M> {
@@ -60,7 +59,7 @@ interface MonadLaws<M>: ApplicativeLaws<M> {
 
 	@Test
 	fun `multiply accepts monad`() {
-		assertTrue(monadScope.just(15).equalTo(monad.multiply(3)))
-		assertTrue(monadScope.just(0).equalTo(monad.multiply(0)))
+		assertEqualF(monadScope.just(15), monad.multiply(3))
+		assertEqualF(monadScope.just(0), monad.multiply(0))
 	}
 }

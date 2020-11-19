@@ -11,7 +11,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class NonEmptySequenceKtTest:
-	MonadLaws<NonEmptySequenceContext>,
 	MonadZipLaws<NonEmptySequenceContext>,
 	TraversableLaws<NonEmptySequenceContext>,
 	FoldableLaws {

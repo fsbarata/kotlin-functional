@@ -19,7 +19,6 @@ internal typealias TreeContext = Tree<*>
 
 @Suppress("OVERRIDE_BY_INLINE")
 data class Tree<out A>(val root: A, val sub: Forest<A> = emptyList()): NonEmptyIterable<A>,
-	Monad<TreeContext, A>,
 	MonadZip<TreeContext, A>,
 	Traversable<TreeContext, A>,
 	Comonad<TreeContext, A>,
@@ -78,8 +77,8 @@ data class Tree<out A>(val root: A, val sub: Forest<A> = emptyList()): NonEmptyI
 		sub.asSequence().map { it.toTreeSequence() }
 	)
 
-	companion object
-		: Monad.Scope<TreeContext>,
+	companion object:
+		Monad.Scope<TreeContext>,
 		Traversable.Scope<TreeContext> {
 		override fun <A> just(a: A) = Tree(a)
 	}
