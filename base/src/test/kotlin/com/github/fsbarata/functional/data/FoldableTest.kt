@@ -29,7 +29,7 @@ class FoldableTest {
 
 	@Test
 	fun foldMap() {
-		assertEquals("1572", foldableList2.foldMap(monoid(StringSemigroup(""))) {
+		assertEquals("572", foldableList2.foldMap(monoid(StringSemigroup(""))) {
 			StringSemigroup(it.toString())
 		}.str)
 	}

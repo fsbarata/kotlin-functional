@@ -3,6 +3,7 @@ apply from: '../kotlin.gradle'
 apply from: '../publish.gradle'
 
 dependencies {
+    testImplementation project(':concepts-test')
 }
 
 
