@@ -45,19 +45,19 @@ class ValidationApplicativeTest {
 		assertEquals(
 			Failure(IntSemigroup(3)),
 			Success("3").toApplicative<IntSemigroup, String>()
-				.lift2(Failure(IntSemigroup(3)).toApplicative()) { a, b -> fail() }
+				.lift2(Failure(IntSemigroup(3)).toApplicative()) { _, _ -> fail() }
 				.unwrap()
 		)
 		assertEquals(
 			Failure(IntSemigroup(5)),
 			Failure(IntSemigroup(2)).toApplicative()
-				.lift2(Failure(IntSemigroup(3)).toApplicative()) { a, b -> fail() }
+				.lift2(Failure(IntSemigroup(3)).toApplicative()) { _, _ -> fail() }
 				.unwrap()
 		)
 		assertEquals(
 			Failure(IntSemigroup(2)),
 			Failure(IntSemigroup(2)).toApplicative()
-				.lift2(Success(1).toApplicative()) { a, b -> fail() }
+				.lift2(Success(1).toApplicative()) { _, _ -> fail() }
 				.unwrap()
 		)
 	}

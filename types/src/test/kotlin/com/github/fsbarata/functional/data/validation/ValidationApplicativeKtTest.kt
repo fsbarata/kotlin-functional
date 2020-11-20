@@ -41,14 +41,14 @@ class ValidationApplicativeKtTest {
 		)
 		assertEquals(
 			Failure(IntSemigroup(3)),
-			lift2(Success("3"), Failure(IntSemigroup(3))) { a, b -> fail() }
+			lift2(Success("3"), Failure(IntSemigroup(3))) { _, _ -> fail() }
 		)
 		assertEquals(
 			Failure(IntSemigroup(5)),
-			lift2(Failure(IntSemigroup(2)), Failure(IntSemigroup(3))) { a, b -> fail() }
+			lift2(Failure(IntSemigroup(2)), Failure(IntSemigroup(3))) { _, _ -> fail() }
 		)
 		assertEquals(
 			Failure(IntSemigroup(2)),
-			lift2(Failure(IntSemigroup(2)), Success(1)) { a, b -> fail() })
+			lift2(Failure(IntSemigroup(2)), Success(1)) { _, _ -> fail() })
 	}
 }
