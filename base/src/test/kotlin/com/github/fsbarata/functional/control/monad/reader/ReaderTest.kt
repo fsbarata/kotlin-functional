@@ -1,5 +1,8 @@
 package com.github.fsbarata.functional.control.monad.reader
 
+import com.github.fsbarata.functional.control.reader.Reader
+import com.github.fsbarata.functional.control.reader.ReaderContext
+import com.github.fsbarata.functional.control.reader.asReader
 import com.github.fsbarata.functional.control.test.MonadLaws
 import com.github.fsbarata.functional.data.Functor
 import org.junit.Assert.assertEquals

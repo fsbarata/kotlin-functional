@@ -1,5 +1,7 @@
 package com.github.fsbarata.functional.data
 
+import com.github.fsbarata.functional.data.list.NonEmptyList
+
 /**
  * A semigroup is a scope where a function that can combine values of a single type exists and
  * respects the associativity property.
@@ -26,3 +28,6 @@ class Dual<A: Semigroup<A>>(val get: A): Semigroup<Dual<A>> {
 }
 
 fun <A: Semigroup<A>> A.dual() = Dual(this)
+
+fun <A: Semigroup<A>> NonEmptyList<A>.sconcat() =
+	reduce { a1, a2 -> a1.combineWith(a2) }

@@ -1,4 +1,4 @@
-package com.github.fsbarata.functional.control.monad.state
+package com.github.fsbarata.functional.control.state
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Monad

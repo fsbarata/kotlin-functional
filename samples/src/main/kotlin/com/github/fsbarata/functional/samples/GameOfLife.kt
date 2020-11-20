@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.samples
 
-import com.github.fsbarata.functional.control.monad.state.State
+import com.github.fsbarata.functional.control.state.State
 
 /**
  * https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life

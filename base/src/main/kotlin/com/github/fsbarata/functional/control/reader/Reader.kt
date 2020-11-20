@@ -1,4 +1,4 @@
-package com.github.fsbarata.functional.control.monad.reader
+package com.github.fsbarata.functional.control.reader
 
 import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.Context

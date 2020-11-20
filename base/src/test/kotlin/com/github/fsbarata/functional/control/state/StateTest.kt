@@ -1,4 +1,4 @@
-package com.github.fsbarata.functional.control.monad.state
+package com.github.fsbarata.functional.control.state
 
 import com.github.fsbarata.functional.control.test.MonadLaws
 import com.github.fsbarata.functional.data.Functor

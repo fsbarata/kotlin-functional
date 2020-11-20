@@ -1,6 +1,9 @@
 package com.github.fsbarata.functional.control
 
 import com.github.fsbarata.functional.data.*
+import com.github.fsbarata.functional.data.list.NonEmptyList
+import com.github.fsbarata.functional.data.list.nelOf
+import com.github.fsbarata.functional.data.list.startWithItem
 
 interface Applicative<F, out A>: Functor<F, A> {
 	val scope: Scope<F>
@@ -24,3 +27,7 @@ fun <F, A, R> apFromLift2(app: Applicative<F, A>, ff: Applicative<F, (A) -> R>):
 
 fun <F, A, B, R> lift2FromAp(appA: Applicative<F, A>, appB: Applicative<F, B>, f: (A, B) -> R) =
 	appB.ap(appA.map(f.curry()))
+
+fun <F, A> Applicative<F, A>.replicate(times: Int): Applicative<F, NonEmptyList<A>> =
+	if (times <= 1) map { nelOf(it) }
+	else lift2(replicate(times - 1), NonEmptyList<A>::startWithItem.flip())

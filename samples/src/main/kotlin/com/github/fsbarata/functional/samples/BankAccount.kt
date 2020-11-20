@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.samples
 
-import com.github.fsbarata.functional.control.monad.state.State
+import com.github.fsbarata.functional.control.state.State
 import java.math.BigDecimal
 
 typealias Balance = BigDecimal
