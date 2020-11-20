@@ -1,6 +1,6 @@
 apply from: '../kotlin.gradle'
 
 dependencies {
-    implementation project(':types')
+    implementation project(':base')
     testImplementation "org.hamcrest:java-hamcrest:2.0.0.0"
 }

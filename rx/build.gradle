@@ -3,8 +3,7 @@ apply from: '../kotlin.gradle'
 apply from: '../publish.gradle'
 
 dependencies {
-    api project(':concepts')
-    api project(':types')
+    api project(':base')
     api "io.reactivex.rxjava3:rxjava:$rxjava_version"
 
     testImplementation project(':concepts-test')
