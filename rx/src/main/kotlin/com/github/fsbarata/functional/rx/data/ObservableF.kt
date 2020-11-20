@@ -31,7 +31,7 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	override fun <B, R> lift2(
 		fb: Applicative<ObservableContext, B>,
 		f: (A, B) -> R,
-	) = combineLatest(this, fb.asObservable, f).f()
+	) = lift2(f).invoke(this, fb.asObservable)
 
 	override infix fun <B> bind(f: (A) -> Context<ObservableContext, B>): ObservableF<B> =
 		wrapped.switchMap { f(it).asObservable }.f()
@@ -52,6 +52,9 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	companion object: MonadPlus.Scope<ObservableContext> {
 		override fun <A> empty() = Observable.empty<A>().f()
 		override fun <A> just(a: A) = Observable.just(a).f()
+
+		fun <A> on(block: () -> Monad<ObservableContext, A>) =
+			block().asObservable
 	}
 }
 
