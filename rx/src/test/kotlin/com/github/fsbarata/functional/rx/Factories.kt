@@ -4,6 +4,7 @@ import com.github.fsbarata.functional.rx.data.ObservableF
 import com.github.fsbarata.functional.rx.data.f
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
+import java.util.concurrent.TimeUnit
 
 internal val error = Throwable()
 
@@ -19,6 +20,7 @@ internal fun observableFactory(possibility: Int): ObservableF<Int> = when (possi
 	2 -> Observable.error<Int>(error).f()
 	3 -> ObservableF.just(0)
 	else -> Observable.just(possibility)
+		.delay((possibility.toLong() - 3) * 10L, TimeUnit.MILLISECONDS)
 		.concatWith(observableFactory(possibility - 3))
 		.f()
 }

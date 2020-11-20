@@ -1,8 +1,7 @@
 package com.github.fsbarata.functional.rx.data
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.control.*
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleObserver
 
@@ -34,3 +33,21 @@ fun <A> Single<A>.f() = SingleF(this)
 
 val <A> Context<SingleF<*>, A>.asSingle
 	get() = this as SingleF<A>
+
+operator fun <A, B, R> Lift2<A, B, R>.invoke(
+	single1: SingleF<A>,
+	single2: SingleF<B>,
+): SingleF<R> = app(single1, single2).asSingle
+
+operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
+	single1: SingleF<A>,
+	single2: SingleF<B>,
+	single3: SingleF<C>,
+): SingleF<R> = app(single1, single2, single3).asSingle
+
+operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
+	single1: SingleF<A>,
+	single2: SingleF<B>,
+	single3: SingleF<C>,
+	single4: SingleF<D>,
+): SingleF<R> = app(single1, single2, single3, single4).asSingle

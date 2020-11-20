@@ -1,12 +1,11 @@
 package com.github.fsbarata.functional.rx.data
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.MonadPlus
-import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.ObservableSource
 import io.reactivex.rxjava3.core.Observer
 
 class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
@@ -35,9 +34,9 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	) = combineLatest(this, fb.asObservable, f).f()
 
 	override infix fun <B> bind(f: (A) -> Context<ObservableContext, B>): ObservableF<B> =
-		flatMap { f(it).asObservable }
+		wrapped.switchMap { f(it).asObservable }.f()
 
-	fun <B> flatMap(f: (A) -> Observable<B>): ObservableF<B> =
+	fun <B> flatMap(f: (A) -> ObservableSource<B>): ObservableF<B> =
 		wrapped.flatMap(f).f()
 
 	fun fold(monoid: Monoid<A>) = super.reduce(monoid.empty, monoid::combine).f()
@@ -67,3 +66,21 @@ internal typealias ObservableContext = ObservableF<*>
 
 val <A> Context<ObservableContext, A>.asObservable
 	get() = this as ObservableF<A>
+
+operator fun <A, B, R> Lift2<A, B, R>.invoke(
+	obs1: ObservableF<A>,
+	obs2: ObservableF<B>,
+): ObservableF<R> = app(obs1, obs2).asObservable
+
+operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
+	obs1: ObservableF<A>,
+	obs2: ObservableF<B>,
+	obs3: ObservableF<C>,
+): ObservableF<R> = app(obs1, obs2, obs3).asObservable
+
+operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
+	obs1: ObservableF<A>,
+	obs2: ObservableF<B>,
+	obs3: ObservableF<C>,
+	obs4: ObservableF<D>,
+): ObservableF<R> = app(obs1, obs2, obs3, obs4).asObservable

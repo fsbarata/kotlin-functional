@@ -47,6 +47,16 @@ interface MonadLaws<M>: ApplicativeLaws<M> {
 	}
 
 	@Test
+	fun `lift2 is correct`() {
+		val f = { a: Int, b: Int -> (a + 2) * 3 }
+		val m1 = monadScope.just(3)
+		val m2 = monadScope.just(5)
+		val r1 = m2.lift2(m1, f)
+		val r2 = m1.bind { x1 -> m2.bind { x2 -> monadScope.just(f(x2, x1)) } }
+		assertEqualF(r1, r2)
+	}
+
+	@Test
 	fun `map is correct`() {
 		assertEqualF(monad.map { it * 3 }, monad.bind { monad.scope.just(it * 3) })
 	}
