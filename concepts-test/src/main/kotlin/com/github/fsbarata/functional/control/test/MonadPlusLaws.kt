@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.control.test
 
 import com.github.fsbarata.functional.control.MonadPlus
+import com.github.fsbarata.functional.control.filterFromBind
 import org.junit.Test
 
 interface MonadPlusLaws<M>: MonadLaws<M> {
@@ -25,5 +26,14 @@ interface MonadPlusLaws<M>: MonadLaws<M> {
 		val v2 = create(2).associateWith(create(4)) as MonadPlus<M, Int>
 		assertEqualF(empty, v1.bind { empty })
 		assertEqualF(empty, v2.bind { empty })
+	}
+
+	@Test
+	fun `filter from bind`() {
+		val f = { a: Int -> a > 3 }
+		val v1 = create(4)
+		val v2 = create(2).associateWith(create(4)) as MonadPlus<M, Int>
+		assertEqualF(v1.filterFromBind(f), v1.filter(f))
+		assertEqualF(v2.filterFromBind(f), v2.filter(f))
 	}
 }

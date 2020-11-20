@@ -39,6 +39,9 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	fun <B> flatMap(f: (A) -> ObservableSource<B>): ObservableF<B> =
 		wrapped.flatMap(f).f()
 
+	override fun filter(predicate: (A) -> Boolean) =
+		wrapped.filter(predicate).f()
+
 	fun fold(monoid: Monoid<A>) = super.reduce(monoid.empty, monoid::combine).f()
 	fun scan(monoid: Monoid<A>) = super.scan(monoid.empty, monoid::combine).f()
 

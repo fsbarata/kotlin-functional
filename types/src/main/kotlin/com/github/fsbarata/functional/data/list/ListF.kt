@@ -29,6 +29,9 @@ class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
 	inline fun <B> flatMap(f: (A) -> List<B>) =
 		(this as List<A>).flatMap(f).f()
 
+	override inline fun filter(predicate: (A) -> Boolean) =
+		(this as List<A>).filter(predicate).f()
+
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		(this as List<A>).fold(initialValue, accumulator)
 

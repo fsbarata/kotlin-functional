@@ -26,7 +26,7 @@ sealed class Optional<out A>:
 	fun isPresent() = orNull() != null
 	fun isAbsent() = !isPresent()
 
-	inline fun filter(predicate: (A) -> Boolean) =
+	final override inline fun filter(predicate: (A) -> Boolean) =
 		ofNullable(orNull()?.takeIf(predicate))
 
 	final override inline fun <B> map(f: (A) -> B) =

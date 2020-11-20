@@ -19,19 +19,22 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 	override val scope get() = SequenceF
 
 	override fun <B> map(f: (A) -> B) =
-		(this as Sequence<A>).map(f).f()
+		wrapped.map(f).f()
 
 	override infix fun <B> ap(ff: Applicative<SequenceContext, (A) -> B>): SequenceF<B> =
 		wrapped.ap(ff.asSequence).f()
 
 	override fun <B, R> lift2(fb: Applicative<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
-		(this as Sequence<A>).lift2(fb.asSequence, f).f()
+		wrapped.lift2(fb.asSequence, f).f()
 
 	override infix fun <B> bind(f: (A) -> Context<SequenceContext, B>) =
 		flatMap { f(it).asSequence }
 
 	fun <B> flatMap(f: (A) -> Sequence<B>) =
-		(this as Sequence<A>).flatMap(f).f()
+		wrapped.flatMap(f).f()
+
+	override fun filter(predicate: (A) -> Boolean) =
+		wrapped.filter(predicate).f()
 
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		(this as Sequence<A>).fold(initialValue, accumulator)
