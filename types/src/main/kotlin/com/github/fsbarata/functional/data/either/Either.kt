@@ -104,3 +104,21 @@ inline infix fun <E, A> Either<E, A>.valueOr(f: (E) -> A): A = fold(ifLeft = f, 
 
 inline fun <E, A, B> Either<E, A>.ensure(e: E, f: (A) -> Optional<B>): Either<E, B> =
 	flatMap { a -> f(a).toEither { e } }
+
+operator fun <E, A, B, R> Lift2<A, B, R>.invoke(
+	either1: Either<E, A>,
+	either2: Either<E, B>,
+): Either<E, R> = app(either1, either2).asEither
+
+operator fun <E, A, B, C, R> Lift3<A, B, C, R>.invoke(
+	either1: Either<E, A>,
+	either2: Either<E, B>,
+	either3: Either<E, C>,
+): Either<E, R> = app(either1, either2, either3).asEither
+
+operator fun <E, A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
+	either1: Either<E, A>,
+	either2: Either<E, B>,
+	either3: Either<E, C>,
+	either4: Either<E, D>,
+): Either<E, R> = app(either1, either2, either3, either4).asEither
