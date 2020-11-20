@@ -45,7 +45,7 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 	override fun <B, R> zipWith(other: MonadZip<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
 		zip(other.asSequence, f).f()
 
-	override fun <F, B> traverse(
+	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Applicative<F, B>,
 	): Applicative<F, SequenceF<B>> =
