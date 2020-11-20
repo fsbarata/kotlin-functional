@@ -79,8 +79,8 @@ operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
 ): ObservableF<R> = Observable.combineLatest(obs1, obs2, obs3, f).f()
 
 operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
-	obs1: ObservableF<A>,
-	obs2: ObservableF<B>,
-	obs3: ObservableF<C>,
-	obs4: ObservableF<D>,
+	obs1: Observable<A>,
+	obs2: Observable<B>,
+	obs3: Observable<C>,
+	obs4: Observable<D>,
 ): ObservableF<R> = Observable.combineLatest(obs1, obs2, obs3, obs4, f).f()

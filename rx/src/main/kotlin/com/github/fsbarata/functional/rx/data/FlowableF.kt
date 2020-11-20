@@ -59,8 +59,8 @@ operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
 ): FlowableF<R> = Flowable.combineLatest(flow1, flow2, flow3, f).f()
 
 operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
-	flow1: FlowableF<A>,
-	flow2: FlowableF<B>,
-	flow3: FlowableF<C>,
-	flow4: FlowableF<D>,
+	flow1: Flowable<A>,
+	flow2: Flowable<B>,
+	flow3: Flowable<C>,
+	flow4: Flowable<D>,
 ): FlowableF<R> = Flowable.combineLatest(flow1, flow2, flow3, flow4, f).f()
