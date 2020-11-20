@@ -48,19 +48,19 @@ val <A> Context<FlowableF<*>, A>.asFlowable
 	get() = this as FlowableF<A>
 
 operator fun <A, B, R> Lift2<A, B, R>.invoke(
-	flow1: FlowableF<A>,
-	flow2: FlowableF<B>,
-): FlowableF<R> = app(flow1, flow2).asFlowable
+	flow1: Flowable<A>,
+	flow2: Flowable<B>,
+): FlowableF<R> = Flowable.combineLatest(flow1, flow2, f).f()
 
 operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
-	flow1: FlowableF<A>,
-	flow2: FlowableF<B>,
-	flow3: FlowableF<C>,
-): FlowableF<R> = app(flow1, flow2, flow3).asFlowable
+	flow1: Flowable<A>,
+	flow2: Flowable<B>,
+	flow3: Flowable<C>,
+): FlowableF<R> = Flowable.combineLatest(flow1, flow2, flow3, f).f()
 
 operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 	flow1: FlowableF<A>,
 	flow2: FlowableF<B>,
 	flow3: FlowableF<C>,
 	flow4: FlowableF<D>,
-): FlowableF<R> = app(flow1, flow2, flow3, flow4).asFlowable
+): FlowableF<R> = Flowable.combineLatest(flow1, flow2, flow3, flow4, f).f()

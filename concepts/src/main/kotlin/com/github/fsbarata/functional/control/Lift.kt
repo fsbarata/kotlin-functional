@@ -11,7 +11,7 @@ class Lift2<A, B, R>(val f: (A, B) -> R) {
 
 fun <A, B, C, R> lift3(f: (A, B, C) -> R) = Lift3(f)
 
-class Lift3<A, B, C, R>(private val f: (A, B, C) -> R) {
+class Lift3<A, B, C, R>(val f: (A, B, C) -> R) {
 	fun <F> app(
 		fa: Applicative<F, A>,
 		fb: Applicative<F, B>,
@@ -22,7 +22,7 @@ class Lift3<A, B, C, R>(private val f: (A, B, C) -> R) {
 
 fun <A, B, C, D, R> lift4(f: (A, B, C, D) -> R) = Lift4(f)
 
-class Lift4<A, B, C, D, R>(private val f: (A, B, C, D) -> R) {
+class Lift4<A, B, C, D, R>(val f: (A, B, C, D) -> R) {
 	fun <F> app(
 		fa: Applicative<F, A>,
 		fb: Applicative<F, B>,

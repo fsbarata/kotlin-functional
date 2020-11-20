@@ -68,19 +68,19 @@ val <A> Context<ObservableContext, A>.asObservable
 	get() = this as ObservableF<A>
 
 operator fun <A, B, R> Lift2<A, B, R>.invoke(
-	obs1: ObservableF<A>,
-	obs2: ObservableF<B>,
-): ObservableF<R> = app(obs1, obs2).asObservable
+	obs1: Observable<A>,
+	obs2: Observable<B>,
+): ObservableF<R> = Observable.combineLatest(obs1, obs2, f).f()
 
 operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
-	obs1: ObservableF<A>,
-	obs2: ObservableF<B>,
-	obs3: ObservableF<C>,
-): ObservableF<R> = app(obs1, obs2, obs3).asObservable
+	obs1: Observable<A>,
+	obs2: Observable<B>,
+	obs3: Observable<C>,
+): ObservableF<R> = Observable.combineLatest(obs1, obs2, obs3, f).f()
 
 operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 	obs1: ObservableF<A>,
 	obs2: ObservableF<B>,
 	obs3: ObservableF<C>,
 	obs4: ObservableF<D>,
-): ObservableF<R> = app(obs1, obs2, obs3, obs4).asObservable
+): ObservableF<R> = Observable.combineLatest(obs1, obs2, obs3, obs4, f).f()
