@@ -12,6 +12,9 @@ interface Alternative<F, out A>: Applicative<F, A> {
 
 	interface Scope<F>: Applicative.Scope<F> {
 		fun <A> empty(): Alternative<F, A>
+
+		fun <A> fromList(list: List<A>): Alternative<F, A> =
+			list.fold(empty()) { r, a -> r.associateWith(just(a)) }
 	}
 }
 
