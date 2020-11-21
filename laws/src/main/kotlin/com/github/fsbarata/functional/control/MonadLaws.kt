@@ -5,9 +5,8 @@ import org.junit.Test
 interface MonadLaws<M>: ApplicativeLaws<M> {
 	val monadScope: Monad.Scope<M>
 
-	private fun <T> eachPossibilityMonad(block: (Monad<M, Int>) -> T): List<T> {
-		return eachPossibility { block(it as Monad<M, Int>) }
-	}
+	private fun <T> eachPossibilityMonad(block: (Monad<M, Int>) -> T) =
+		eachPossibility { block(it as Monad<M, Int>) }
 
 	override val applicativeScope: Applicative.Scope<M> get() = monadScope
 
