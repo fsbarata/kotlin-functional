@@ -22,9 +22,4 @@ fun <A: Semigroup<A>> maybeMonoid(): Monoid<Maybe<A>> =
 			.switchIfEmpty(maybe2)
 	}
 
-fun <A: Any> combineLatestObservableMonoid(monoid: Monoid<A>): Monoid<Observable<A>> =
-	monoid(Observable.just(monoid.empty)) { obs1, obs2 ->
-		Observable.combineLatest(obs1, obs2) { a1: A, a2: A -> monoid.combine(a1, a2) }
-	}
-
 
