@@ -4,8 +4,6 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
-import com.github.fsbarata.functional.data.list.ListF
-import com.github.fsbarata.functional.data.list.f
 import com.github.fsbarata.functional.data.maybe.Optional
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
