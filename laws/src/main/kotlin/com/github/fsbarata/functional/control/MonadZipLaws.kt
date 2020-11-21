@@ -32,7 +32,7 @@ interface MonadZipLaws<M>: MonadLaws<M> {
 			eachPossibilityMonadZip { mz2 ->
 				val mconst1 = mz1.map { 10 }
 				val mconst2 = mz2.map { 10 }
-				if (mconst1 == mconst2) {
+				if (mconst1.equalTo(mconst2)) {
 					val (r1, r2) = unzip(zip(mz1, mz2))
 					assertEqualF(r1, mz1)
 					assertEqualF(r2, mz2)
