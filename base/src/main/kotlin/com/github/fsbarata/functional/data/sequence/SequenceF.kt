@@ -5,6 +5,7 @@ import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
+import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.monoid
 import java.io.Serializable
 
@@ -68,6 +69,9 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 		fun <A> of(vararg items: A) = sequenceOf(*items).f()
 
 		fun <A> monoid() = monoid(empty<A>())
+
+		override fun <A> fromList(list: List<A>) = list.asSequence().f()
+		override fun <A> fromOptional(optional: Optional<A>) = optional.maybe(empty(), ::just)
 	}
 }
 

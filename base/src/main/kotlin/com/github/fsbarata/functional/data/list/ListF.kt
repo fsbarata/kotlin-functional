@@ -3,6 +3,7 @@ package com.github.fsbarata.functional.data.list
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
+import com.github.fsbarata.functional.data.maybe.Optional
 import java.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
@@ -68,6 +69,12 @@ class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
 		fun <A> of(vararg items: A) = listOf(*items).f()
 
 		fun <A> monoid() = monoid(empty<A>())
+
+		@Deprecated("Can be simplified", replaceWith = ReplaceWith("f()"))
+		override fun <A> fromList(list: List<A>) = list.f()
+
+		override fun <A> fromOptional(optional: Optional<A>) =
+			optional.maybe(empty(), ::just)
 	}
 }
 

@@ -28,7 +28,7 @@ interface Alternative<F, out A>: Applicative<F, A> {
 			list.fold(empty()) { r, a -> r.associateWith(just(a)) }
 
 		fun <A> fromOptional(optional: Optional<A>): Alternative<F, A> =
-			optional.fold(ifEmpty = { empty() }, ifSome = { just(it) })
+			optional.maybe(empty(), ::just)
 	}
 }
 

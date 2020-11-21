@@ -4,6 +4,7 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
+import com.github.fsbarata.functional.data.maybe.Optional
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableSource
 import io.reactivex.rxjava3.core.Observer
@@ -58,6 +59,9 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 
 		fun <A> on(block: () -> Monad<ObservableContext, A>) =
 			block().asObservable
+
+		override fun <A> fromList(list: List<A>) = fromIterable(list).f()
+		override fun <A> fromOptional(optional: Optional<A>) = optional.maybe(empty(), ::just)
 	}
 }
 

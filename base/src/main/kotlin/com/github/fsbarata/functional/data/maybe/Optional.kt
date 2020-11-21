@@ -80,6 +80,11 @@ sealed class Optional<out A>:
 		fun <A> ofNullable(a: A?) = if (a != null) Some(a) else None
 
 		fun <A: Semigroup<A>> monoid() = OptionalMonoid<A>()
+
+		override fun <A> fromList(list: List<A>) = list.firstOrNull().toOptional()
+
+		@Deprecated("Does not need conversion", replaceWith = ReplaceWith("optional"))
+		override fun <A> fromOptional(optional: Optional<A>) = optional
 	}
 }
 
