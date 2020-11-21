@@ -2,6 +2,8 @@ package com.github.fsbarata.functional.rx.data
 
 import com.github.fsbarata.functional.control.MonadZipLaws
 import com.github.fsbarata.functional.data.Functor
+import com.github.fsbarata.functional.rx.observableFactory
+import io.reactivex.rxjava3.core.BackpressureStrategy
 
 class FlowableFTest: MonadZipLaws<FlowableF<*>> {
 	override val monadScope = FlowableF
@@ -11,4 +13,8 @@ class FlowableFTest: MonadZipLaws<FlowableF<*>> {
 
 		return testObserver2.values() == testObserver1.values()
 	}
+
+	override val possibilities: Int = 5
+	override fun factory(possibility: Int) =
+		observableFactory(possibility).toFlowable(BackpressureStrategy.BUFFER).f()
 }
