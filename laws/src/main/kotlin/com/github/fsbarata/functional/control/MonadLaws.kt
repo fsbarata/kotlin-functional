@@ -5,9 +5,11 @@ import org.junit.Test
 interface MonadLaws<M>: ApplicativeLaws<M> {
 	val monadScope: Monad.Scope<M>
 
-	override val applicativeScope: Applicative.Scope<M> get() = monadScope
+	private fun <T> eachPossibilityMonad(block: (Monad<M, Int>) -> T): List<T> {
+		return eachPossibility { block(it as Monad<M, Int>) }
+	}
 
-	private val monad get() = monadScope.just(5)
+	override val applicativeScope: Applicative.Scope<M> get() = monadScope
 
 	@Test
 	fun `bind left identity`() {
@@ -20,43 +22,52 @@ interface MonadLaws<M>: ApplicativeLaws<M> {
 
 	@Test
 	fun `bind right identity`() {
-		val m = monadScope.just(7)
-		val b = m.bind { monadScope.just(it) }
-		assertEqualF(m, b)
+		eachPossibilityMonad { m ->
+			val b = m.bind { monadScope.just(it) }
+			assertEqualF(m, b)
+		}
 	}
 
 	@Test
 	fun `bind associativity`() {
-		val m = monadScope.just(9)
-		val k = { a: Int -> monadScope.just(a + 2) }
-		val h = { a: Int -> monadScope.just(a * 2) }
-		val r1 = m.bind { x -> k(x).bind { h(it) } }
-		val r2 = m.bind(k).bind(h)
-		assertEqualF(r1, r2)
+		eachPossibilityMonad { m ->
+			val k = { a: Int -> monadScope.just(a + 2) }
+			val h = { a: Int -> monadScope.just(a * 2) }
+			val r1 = m.bind { x -> k(x).bind { h(it) } }
+			val r2 = m.bind(k).bind(h)
+			assertEqualF(r1, r2)
+		}
 	}
 
 	@Test
 	fun `ap is correct`() {
-		val m1 = monadScope.just { a: Int -> a * 2 }
-		val m2 = monadScope.just(5)
-		val r1 = m2.ap(m1)
-		val r2 = m1.bind { x1 -> m2.bind { x2 -> monadScope.just(x1(x2)) } }
-		assertEqualF(r1, r2)
+		eachPossibilityMonad { m ->
+			val mf = monadScope.just { a: Int -> a * 2 }
+			val r1 = m.ap(mf)
+			val r2 = mf.bind { x1 -> m.bind { x2 -> monadScope.just(x1(x2)) } }
+			assertEqualF(r1, r2)
+		}
 	}
 
 	@Test
 	fun `lift2 is correct`() {
-		val f = { a: Int, b: Int -> (a + 2) * 3 + b }
-		val m1 = monadScope.just(3)
-		val m2 = monadScope.just(5)
-		val r1 = m2.lift2(m1, f)
-		val r2 = m1.bind { x1 -> m2.bind { x2 -> monadScope.just(f(x2, x1)) } }
-		assertEqualF(r1, r2)
+		eachPossibilityMonad { m1 ->
+			eachPossibilityMonad { m2 ->
+				val f = { a: Int, b: Int -> (a + 2) * 3 + b }
+				val r1 = m1.lift2(m2, f)
+				val r2 = m1.bind { x1 -> m2.bind { x2 -> monadScope.just(f(x1, x2)) } }
+				assertEqualF(r1, r2)
+			}
+		}
 	}
 
 	@Test
 	fun `map is correct`() {
-		assertEqualF(monad.map { it * 3 }, monad.bind { monad.scope.just(it * 3) })
+		eachPossibilityMonad { m ->
+			assertEqualF(
+				m.map { it * 3 },
+				m.bind { monadScope.just(it * 3) })
+		}
 	}
 
 	private fun Monad<M, Int>.multiply(
@@ -67,7 +78,10 @@ interface MonadLaws<M>: ApplicativeLaws<M> {
 
 	@Test
 	fun `multiply accepts monad`() {
-		assertEqualF(monadScope.just(15), monad.multiply(3))
-		assertEqualF(monadScope.just(0), monad.multiply(0))
+		assertEqualF(monadScope.just(15), monadScope.just(5).multiply(3))
+		assertEqualF(monadScope.just(0), monadScope.just(5).multiply(0))
+		eachPossibilityMonad {
+			assertEqualF(monadScope.just(0), it.multiply(0))
+		}
 	}
 }
