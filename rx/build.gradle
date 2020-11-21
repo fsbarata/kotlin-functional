@@ -6,7 +6,7 @@ dependencies {
     api project(':base')
     api "io.reactivex.rxjava3:rxjava:$rxjava_version"
 
-    testImplementation project(':concepts-test')
+    testImplementation project(':laws')
 }
 
 
