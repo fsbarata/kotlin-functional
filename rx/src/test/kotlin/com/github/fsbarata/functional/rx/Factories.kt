@@ -1,8 +1,10 @@
 package com.github.fsbarata.functional.rx
 
+import com.github.fsbarata.functional.rx.data.MaybeF
 import com.github.fsbarata.functional.rx.data.ObservableF
 import com.github.fsbarata.functional.rx.data.f
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import java.util.concurrent.TimeUnit
 
@@ -12,6 +14,15 @@ internal fun completableFactory(possibility: Int) = when (possibility) {
 	0 -> Completable.complete()
 	1 -> Completable.never()
 	else -> Completable.error(error)
+}
+
+internal fun maybeFactory(possibility: Int) = when (possibility) {
+	0 -> MaybeF.empty()
+	1 -> MaybeF.just(1)
+	2 -> Maybe.error<Int>(error).f()
+	else -> Completable.timer(10L * possibility, TimeUnit.MILLISECONDS)
+		.andThen(Maybe.just(possibility))
+		.f()
 }
 
 internal fun observableFactory(possibility: Int): ObservableF<Int> = when (possibility) {
