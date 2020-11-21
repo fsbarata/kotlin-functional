@@ -23,9 +23,9 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 
 	override fun <B> ap(ff: Applicative<ObservableContext, (A) -> B>) =
 		combineLatest(
-			this,
 			ff.asObservable,
-		) { a, f -> f(a) }
+			this,
+		) { f, a -> f(a) }
 			.f()
 
 	override fun <B, R> lift2(
