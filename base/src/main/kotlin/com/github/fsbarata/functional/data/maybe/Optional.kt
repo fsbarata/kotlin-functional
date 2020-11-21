@@ -29,6 +29,15 @@ sealed class Optional<out A>:
 	final override inline fun filter(predicate: (A) -> Boolean) =
 		ofNullable(orNull()?.takeIf(predicate))
 
+	final override inline fun partition(predicate: (A) -> Boolean) =
+		Pair(filter(predicate), filter { !predicate(it) })
+
+	final override inline fun <B> mapNotNull(f: (A) -> B?) =
+		flatMap { f(it).toOptional() }
+
+	@Deprecated("Same as flatMap", replaceWith = ReplaceWith("flatMap"))
+	final override inline fun <B> mapNotNone(f: (A) -> Optional<B>) = flatMap(f)
+
 	final override inline fun <B> map(f: (A) -> B) =
 		flatMap { just(f(it)) }
 

@@ -33,6 +33,17 @@ class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
 	override inline fun filter(predicate: (A) -> Boolean) =
 		(this as List<A>).filter(predicate).f()
 
+	override inline fun partition(predicate: (A) -> Boolean): Pair<ListF<A>, ListF<A>> {
+		val p = (this as List<A>).partition(predicate)
+		return Pair(p.first.f(), p.second.f())
+	}
+
+	override inline fun <B> mapNotNull(f: (A) -> B?) =
+		(this as List<A>).mapNotNull(f).f()
+
+	override inline fun <B> mapNotNone(f: (A) -> Optional<B>) =
+		(this as List<A>).mapNotNull { f(it).orNull() }.f()
+
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		(this as List<A>).fold(initialValue, accumulator)
 

@@ -37,6 +37,17 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 	override fun filter(predicate: (A) -> Boolean) =
 		wrapped.filter(predicate).f()
 
+	override inline fun partition(predicate: (A) -> Boolean): Pair<SequenceF<A>, SequenceF<A>> {
+		val p = (this as Sequence<A>).partition(predicate)
+		return Pair(p.first.asSequence().f(), p.second.asSequence().f())
+	}
+
+	override fun <B> mapNotNull(f: (A) -> B?) =
+		(this as Sequence<A>).mapNotNull(f).f()
+
+	override fun <B> mapNotNone(f: (A) -> Optional<B>) =
+		(this as Sequence<A>).mapNotNull { f(it).orNull() }.f()
+
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		(this as Sequence<A>).fold(initialValue, accumulator)
 

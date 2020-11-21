@@ -4,7 +4,10 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
+import com.github.fsbarata.functional.data.list.ListF
+import com.github.fsbarata.functional.data.list.f
 import com.github.fsbarata.functional.data.maybe.Optional
+import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableSource
 import io.reactivex.rxjava3.core.Observer
@@ -42,6 +45,15 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 
 	override fun filter(predicate: (A) -> Boolean) =
 		wrapped.filter(predicate).f()
+
+	override fun partition(predicate: (A) -> Boolean) =
+		Pair(filter(predicate), filter { !predicate(it) })
+
+	override fun <B> mapNotNull(f: (A) -> B?) =
+		flatMapMaybe { Maybe.just(f(it) ?: return@flatMapMaybe Maybe.empty()) }.f()
+
+	override fun <B> mapNotNone(f: (A) -> Optional<B>) =
+		flatMapMaybe { Maybe.just(f(it).orNull() ?: return@flatMapMaybe Maybe.empty()) }.f()
 
 	fun fold(monoid: Monoid<A>) = super.reduce(monoid.empty, monoid::combine).f()
 	fun scan(monoid: Monoid<A>) = super.scan(monoid.empty, monoid::combine).f()
