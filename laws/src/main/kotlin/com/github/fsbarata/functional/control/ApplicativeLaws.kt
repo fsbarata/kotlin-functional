@@ -1,8 +1,5 @@
 package com.github.fsbarata.functional.control
 
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.apFromLift2
-import com.github.fsbarata.functional.control.lift2FromAp
 import com.github.fsbarata.functional.data.F1
 import com.github.fsbarata.functional.data.FunctorLaws
 import com.github.fsbarata.functional.data.compose
@@ -31,7 +28,7 @@ interface ApplicativeLaws<F>: FunctorLaws<F> {
 		val r1 = w ap v ap u
 		val comp =
 			applicativeScope.just { f1: F1<Int, Int> -> { f2: F1<Int, Int> -> f1.compose(f2) } }
-		val r2 = w ap (v ap (u ap(comp)))
+		val r2 = w ap (v ap (u ap (comp)))
 		assertEqualF(r1, r2)
 	}
 

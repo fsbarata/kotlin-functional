@@ -12,7 +12,7 @@ class OptionalMonoidTest: MonoidLaws<Optional<StringF>>(
 	Optional.monoid(),
 ) {
 	override val possibilities: Int = 100
-	override fun nonEmpty(possibility: Int) = Optional.just(StringF("$possibility"))
+	override fun factory(possibility: Int) = Optional.just(StringF("$possibility"))
 
 	@Test
 	fun combines() {

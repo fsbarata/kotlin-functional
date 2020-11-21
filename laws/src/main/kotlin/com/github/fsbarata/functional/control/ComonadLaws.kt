@@ -1,6 +1,5 @@
 package com.github.fsbarata.functional.control
 
-import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.data.FunctorLaws
 import com.github.fsbarata.functional.data.compose
 import com.github.fsbarata.functional.data.id

@@ -11,7 +11,7 @@ class ConcatCompletableMonoidTest: MonoidLaws<Completable>(
 	concatCompletableMonoid(),
 ) {
 	override val possibilities: Int = 3
-	override fun nonEmpty(possibility: Int) = completableFactory(possibility)
+	override fun factory(possibility: Int) = completableFactory(possibility)
 
 	override fun equals(a1: Completable, a2: Completable): Boolean {
 		val observer1 = a1.materialize<Unit>().test()
@@ -24,7 +24,7 @@ class ConcatObservableMonoidTest: MonoidLaws<Observable<Int>>(
 	concatObservableMonoid<Int>(),
 ) {
 	override val possibilities: Int = 5
-	override fun nonEmpty(possibility: Int) = observableFactory(possibility)
+	override fun factory(possibility: Int) = observableFactory(possibility)
 
 	override fun equals(a1: Observable<Int>, a2: Observable<Int>): Boolean {
 		val observer1 = a1.materialize().test()

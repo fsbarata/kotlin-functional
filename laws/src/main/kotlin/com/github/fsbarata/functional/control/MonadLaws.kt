@@ -1,7 +1,5 @@
 package com.github.fsbarata.functional.control
 
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Monad
 import org.junit.Test
 
 interface MonadLaws<M>: ApplicativeLaws<M> {

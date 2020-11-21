@@ -1,13 +1,9 @@
 package com.github.fsbarata.functional.data
 
-import com.github.fsbarata.functional.data.Semigroup
+import com.github.fsbarata.functional.PossibilitiesTest
 import org.junit.Test
-import kotlin.random.Random
 
-interface SemigroupLaws<A: Semigroup<A>> {
-	val possibilities: Int get() = 1
-	fun factory(possibility: Int): A
-
+interface SemigroupLaws<A: Semigroup<A>>: PossibilitiesTest<A> {
 	fun equals(a1: A, a2: A): Boolean = a1 == a2
 
 	fun assertEqual(a1: A, a2: A) {
@@ -16,14 +12,15 @@ interface SemigroupLaws<A: Semigroup<A>> {
 
 	@Test
 	fun `combineWith associativity`() {
-		val val1 = factory(possibility())
-		val val2 = factory(possibility())
-		val val3 = factory(possibility())
-		assertEqual(
-			val1.combineWith(val2.combineWith(val3)),
-			val1.combineWith(val2).combineWith(val3),
-		)
+		eachPossibility { val1 ->
+			eachPossibility { val2 ->
+				eachPossibility { val3 ->
+					assertEqual(
+						val1.combineWith(val2.combineWith(val3)),
+						val1.combineWith(val2).combineWith(val3),
+					)
+				}
+			}
+		}
 	}
 }
-
-private fun SemigroupLaws<*>.possibility() = Random.nextInt(possibilities)

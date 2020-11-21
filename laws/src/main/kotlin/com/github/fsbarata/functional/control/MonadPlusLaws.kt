@@ -1,7 +1,5 @@
 package com.github.fsbarata.functional.control
 
-import com.github.fsbarata.functional.control.MonadPlus
-import com.github.fsbarata.functional.control.filterFromBind
 import org.junit.Test
 
 interface MonadPlusLaws<M>: MonadLaws<M> {

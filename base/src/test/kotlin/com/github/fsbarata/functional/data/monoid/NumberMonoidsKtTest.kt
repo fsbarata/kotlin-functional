@@ -7,7 +7,7 @@ import java.math.BigDecimal
 
 class SumIntMonoidTest: MonoidLaws<Int>(sumIntMonoid()) {
 	override val possibilities: Int = 20
-	override fun nonEmpty(possibility: Int) = possibility - 10
+	override fun factory(possibility: Int) = possibility - 10
 
 	@Test
 	fun adds() {
@@ -19,7 +19,7 @@ class SumIntMonoidTest: MonoidLaws<Int>(sumIntMonoid()) {
 
 class ProductIntMonoidTest: MonoidLaws<Int>(productIntMonoid()) {
 	override val possibilities: Int = 20
-	override fun nonEmpty(possibility: Int) = possibility - 10
+	override fun factory(possibility: Int) = possibility - 10
 
 	@Test
 	fun multiplies() {
@@ -31,7 +31,7 @@ class ProductIntMonoidTest: MonoidLaws<Int>(productIntMonoid()) {
 
 class SumLongMonoidTest: MonoidLaws<Long>(sumLongMonoid()) {
 	override val possibilities: Int = 20
-	override fun nonEmpty(possibility: Int) = (possibility - 10).toLong()
+	override fun factory(possibility: Int) = (possibility - 10).toLong()
 
 	@Test
 	fun adds() {
@@ -43,7 +43,7 @@ class SumLongMonoidTest: MonoidLaws<Long>(sumLongMonoid()) {
 
 class ProductLongMonoidTest: MonoidLaws<Long>(productLongMonoid()) {
 	override val possibilities: Int = 20
-	override fun nonEmpty(possibility: Int) = (possibility - 10).toLong()
+	override fun factory(possibility: Int) = (possibility - 10).toLong()
 
 	@Test
 	fun multiplies() {
@@ -55,7 +55,7 @@ class ProductLongMonoidTest: MonoidLaws<Long>(productLongMonoid()) {
 
 class SumFloatMonoidTest: MonoidLaws<Float>(sumFloatMonoid()) {
 	override val possibilities: Int = 20
-	override fun nonEmpty(possibility: Int) = (possibility - 10) * 0.25f
+	override fun factory(possibility: Int) = (possibility - 10) * 0.25f
 
 	@Test
 	fun adds() {
@@ -67,7 +67,7 @@ class SumFloatMonoidTest: MonoidLaws<Float>(sumFloatMonoid()) {
 
 class ProductFloatMonoidTest: MonoidLaws<Float>(productFloatMonoid()) {
 	override val possibilities: Int = 20
-	override fun nonEmpty(possibility: Int) = (possibility - 10) * 0.25f
+	override fun factory(possibility: Int) = (possibility - 10) * 0.25f
 
 	@Test
 	fun multiplies() {
@@ -79,7 +79,7 @@ class ProductFloatMonoidTest: MonoidLaws<Float>(productFloatMonoid()) {
 
 class SumDoubleMonoidTest: MonoidLaws<Double>(sumDoubleMonoid()) {
 	override val possibilities: Int = 20
-	override fun nonEmpty(possibility: Int) = (possibility - 10) * 0.25
+	override fun factory(possibility: Int) = (possibility - 10) * 0.25
 
 	@Test
 	fun adds() {
@@ -91,7 +91,7 @@ class SumDoubleMonoidTest: MonoidLaws<Double>(sumDoubleMonoid()) {
 
 class ProductDoubleMonoidTest: MonoidLaws<Double>(productDoubleMonoid()) {
 	override val possibilities: Int = 20
-	override fun nonEmpty(possibility: Int) = (possibility - 10) * 0.25
+	override fun factory(possibility: Int) = (possibility - 10) * 0.25
 
 	@Test
 	fun multiplies() {
@@ -103,7 +103,7 @@ class ProductDoubleMonoidTest: MonoidLaws<Double>(productDoubleMonoid()) {
 
 class SumBigDecimalMonoidTest: MonoidLaws<BigDecimal>(sumBigDecimalMonoid()) {
 	override val possibilities: Int = 25
-	override fun nonEmpty(possibility: Int) = BigDecimal("$possibility")
+	override fun factory(possibility: Int) = BigDecimal("$possibility")
 
 	@Test
 	fun adds() {
@@ -113,7 +113,7 @@ class SumBigDecimalMonoidTest: MonoidLaws<BigDecimal>(sumBigDecimalMonoid()) {
 
 class ProductBigDecimalMonoidTest: MonoidLaws<BigDecimal>(productBigDecimalMonoid()) {
 	override val possibilities: Int = 25
-	override fun nonEmpty(possibility: Int) = BigDecimal("$possibility")
+	override fun factory(possibility: Int) = BigDecimal("$possibility")
 
 	@Test
 	fun multiplies() {

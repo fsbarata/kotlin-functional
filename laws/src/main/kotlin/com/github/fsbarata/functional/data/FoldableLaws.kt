@@ -1,7 +1,5 @@
 package com.github.fsbarata.functional.data
 
-import com.github.fsbarata.functional.data.Foldable
-import com.github.fsbarata.functional.data.Monoid
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

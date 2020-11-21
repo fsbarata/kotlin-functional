@@ -1,13 +1,9 @@
 package com.github.fsbarata.functional.data
 
-import com.github.fsbarata.functional.data.Monoid
+import com.github.fsbarata.functional.PossibilitiesTest
 import org.junit.Test
-import kotlin.random.Random
 
-abstract class MonoidLaws<A>(private val monoid: Monoid<A>) {
-	open val possibilities: Int get() = 1
-	abstract fun nonEmpty(possibility: Int): A
-
+abstract class MonoidLaws<A>(private val monoid: Monoid<A>): PossibilitiesTest<A> {
 	open fun equals(a1: A, a2: A): Boolean = a1 == a2
 
 	open fun assertEqual(a1: A, a2: A) =
@@ -15,21 +11,21 @@ abstract class MonoidLaws<A>(private val monoid: Monoid<A>) {
 
 	@Test
 	fun leftIdentity() {
-		val nonEmpty = nonEmpty(possibility())
-		assertEqual(
-			nonEmpty,
-			monoid.combine(monoid.empty, nonEmpty)
-		)
+		eachPossibility {
+			assertEqual(
+				it,
+				monoid.combine(monoid.empty, it)
+			)
+		}
 	}
 
 	@Test
 	fun rightIdentity() {
-		val nonEmpty = nonEmpty(possibility())
-		assertEqual(
-			nonEmpty,
-			monoid.combine(nonEmpty, monoid.empty)
-		)
+		eachPossibility {
+			assertEqual(
+				it,
+				monoid.combine(it, monoid.empty)
+			)
+		}
 	}
 }
-
-private fun MonoidLaws<*>.possibility() = Random.nextInt(possibilities)

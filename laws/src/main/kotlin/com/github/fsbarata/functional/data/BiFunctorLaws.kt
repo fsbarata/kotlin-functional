@@ -1,8 +1,5 @@
 package com.github.fsbarata.functional.data
 
-import com.github.fsbarata.functional.data.BiFunctor
-import com.github.fsbarata.functional.data.compose
-import com.github.fsbarata.functional.data.id
 import org.junit.Test
 
 interface BiFunctorLaws<P> {

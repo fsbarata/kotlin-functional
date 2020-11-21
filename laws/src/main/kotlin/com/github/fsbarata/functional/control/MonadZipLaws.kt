@@ -1,8 +1,5 @@
 package com.github.fsbarata.functional.control
 
-import com.github.fsbarata.functional.control.MonadZip
-import com.github.fsbarata.functional.control.unzip
-import com.github.fsbarata.functional.control.zip
 import com.github.fsbarata.functional.data.split
 import org.junit.Test
 

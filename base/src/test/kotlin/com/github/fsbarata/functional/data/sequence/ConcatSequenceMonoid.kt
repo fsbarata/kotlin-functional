@@ -7,7 +7,7 @@ import org.junit.Test
 
 class ConcatSequenceMonoid: MonoidLaws<SequenceF<Int>>(SequenceF.monoid()) {
 	override val possibilities: Int = 25
-	override fun nonEmpty(possibility: Int) =
+	override fun factory(possibility: Int) =
 		(0..possibility).map { it % 13 }
 			.asSequence()
 			.f()

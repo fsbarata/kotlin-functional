@@ -1,6 +1,5 @@
 package com.github.fsbarata.functional.data
 
-import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.compose.Compose
 import com.github.fsbarata.functional.data.compose.ComposeApplicative
 import com.github.fsbarata.functional.data.compose.asCompose

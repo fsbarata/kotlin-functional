@@ -9,7 +9,7 @@ class ConcatStringMonoidTest: MonoidLaws<String>(
 	concatStringMonoid(),
 ) {
 	override val possibilities: Int = 25
-	override fun nonEmpty(possibility: Int) = "$possibility"
+	override fun factory(possibility: Int) = "$possibility"
 
 	@Test
 	fun concats() {
@@ -21,7 +21,7 @@ class ConcatArrayMonoidTest: MonoidLaws<Array<Any>>(
 	concatArrayMonoid(),
 ) {
 	override val possibilities: Int = 30
-	override fun nonEmpty(possibility: Int): Array<Any> =
+	override fun factory(possibility: Int): Array<Any> =
 		(0..(possibility/2)).map { possibility - it }
 			.toTypedArray()
 

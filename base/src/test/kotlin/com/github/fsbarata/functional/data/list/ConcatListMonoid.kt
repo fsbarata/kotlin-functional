@@ -6,7 +6,7 @@ import org.junit.Test
 
 class ConcatListMonoid: MonoidLaws<ListF<Int>>(ListF.monoid()) {
 	override val possibilities: Int = 25
-	override fun nonEmpty(possibility: Int) =
+	override fun factory(possibility: Int) =
 		(0..possibility).map { it % 13 }.f()
 
 	@Test
