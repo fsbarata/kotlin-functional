@@ -7,8 +7,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 interface ComonadLaws<W>: FunctorLaws<W> {
-	fun <A> createComonad(a: A): Comonad<W, A>
-
 	private fun <T> eachPossibilityComonad(block: (Comonad<W, Int>) -> T): List<T> {
 		return eachPossibility { block(it as Comonad<W, Int>) }
 	}

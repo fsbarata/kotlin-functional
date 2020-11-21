@@ -11,8 +11,6 @@ class TreeTest:
 	override val monadScope = Tree
 	override val traversableScope = Tree
 
-	override fun <A> createComonad(a: A) = Tree(a)
-
 	override val possibilities: Int = 10
 	override fun factory(possibility: Int) = createTreeSequence(possibility).toTree()
 

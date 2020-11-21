@@ -1,11 +1,8 @@
 package com.github.fsbarata.functional.data.list
 
-import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.control.ComonadLaws
 import com.github.fsbarata.functional.control.MonadZipLaws
-import com.github.fsbarata.functional.data.SemigroupLaws
 import com.github.fsbarata.functional.data.TraversableLaws
-import com.github.fsbarata.functional.kotlin.plusElementNel
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger
@@ -22,8 +19,6 @@ class NonEmptyListTest:
 
 	override val possibilities = 10
 	override fun factory(possibility: Int) = createNel(possibility)
-
-	override fun <A> createComonad(a: A) = NonEmptyList.just(a)
 
 	private val nel1 = NonEmptyList.just(9)
 	private val nel2 = nelOf(5, 1, 3)
