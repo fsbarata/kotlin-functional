@@ -9,7 +9,9 @@ interface MonadPlus<M, out A>: Monad<M, A>, Alternative<M, A> {
 	fun filter(predicate: (A) -> Boolean) =
 		filterFromBind(predicate)
 
-	interface Scope<M>: Monad.Scope<M>, Alternative.Scope<M>
+	interface Scope<M>: Monad.Scope<M>, Alternative.Scope<M> {
+		override fun <A> just(a: A): MonadPlus<M, A>
+	}
 }
 
 fun <M, A> MonadPlus<M, A>.filterFromBind(predicate: (A) -> Boolean) =
