@@ -1,4 +1,4 @@
-package com.github.fsbarata.functional.data.test
+package com.github.fsbarata.functional.data
 
 import com.github.fsbarata.functional.data.Monoid
 import org.junit.Test

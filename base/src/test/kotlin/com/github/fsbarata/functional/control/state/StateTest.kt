@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.control.state
 
-import com.github.fsbarata.functional.control.test.MonadLaws
+import com.github.fsbarata.functional.control.MonadLaws
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.tuple.Tuple2
 import org.junit.Assert.assertEquals

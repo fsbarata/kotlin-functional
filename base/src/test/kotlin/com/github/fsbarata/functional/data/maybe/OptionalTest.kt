@@ -1,9 +1,9 @@
 package com.github.fsbarata.functional.data.maybe
 
-import com.github.fsbarata.functional.control.test.MonadPlusLaws
-import com.github.fsbarata.functional.control.test.MonadZipLaws
+import com.github.fsbarata.functional.control.MonadPlusLaws
+import com.github.fsbarata.functional.control.MonadZipLaws
 import com.github.fsbarata.functional.data.Functor
-import com.github.fsbarata.functional.data.test.TraversableLaws
+import com.github.fsbarata.functional.data.TraversableLaws
 import org.junit.Assert.*
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package com.github.fsbarata.functional.control.test
+package com.github.fsbarata.functional.control
 
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.control.unzip

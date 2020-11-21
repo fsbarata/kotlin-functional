@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.data.list
 
-import com.github.fsbarata.functional.data.test.SemigroupLaws
+import com.github.fsbarata.functional.data.SemigroupLaws
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

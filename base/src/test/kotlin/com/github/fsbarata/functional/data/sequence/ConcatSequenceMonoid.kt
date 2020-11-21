@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.data.sequence
 
-import com.github.fsbarata.functional.data.test.MonoidLaws
+import com.github.fsbarata.functional.data.MonoidLaws
 import org.junit.Assert
 import org.junit.Test
 

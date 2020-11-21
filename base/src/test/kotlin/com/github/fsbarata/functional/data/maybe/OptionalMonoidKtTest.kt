@@ -4,7 +4,7 @@ import com.github.fsbarata.functional.data.MonoidSemigroupFactory
 import com.github.fsbarata.functional.data.monoid.concatStringMonoid
 import com.github.fsbarata.functional.data.semigroupFactory
 import com.github.fsbarata.functional.data.StringF
-import com.github.fsbarata.functional.data.test.MonoidLaws
+import com.github.fsbarata.functional.data.MonoidLaws
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

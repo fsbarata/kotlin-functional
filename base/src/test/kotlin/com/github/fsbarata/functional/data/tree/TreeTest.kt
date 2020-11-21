@@ -1,8 +1,8 @@
 package com.github.fsbarata.functional.data.tree
 
-import com.github.fsbarata.functional.control.test.ComonadLaws
-import com.github.fsbarata.functional.control.test.MonadZipLaws
-import com.github.fsbarata.functional.data.test.TraversableLaws
+import com.github.fsbarata.functional.control.ComonadLaws
+import com.github.fsbarata.functional.control.MonadZipLaws
+import com.github.fsbarata.functional.data.TraversableLaws
 
 class TreeTest:
 	MonadZipLaws<TreeContext>,

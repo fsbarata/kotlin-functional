@@ -1,9 +1,9 @@
 package com.github.fsbarata.functional.rx.data
 
-import com.github.fsbarata.functional.control.test.MonadPlusLaws
-import com.github.fsbarata.functional.control.test.MonadZipLaws
+import com.github.fsbarata.functional.control.MonadPlusLaws
+import com.github.fsbarata.functional.control.MonadZipLaws
 import com.github.fsbarata.functional.data.Functor
-import com.github.fsbarata.functional.data.test.SemigroupLaws
+import com.github.fsbarata.functional.data.SemigroupLaws
 import com.github.fsbarata.functional.rx.observableFactory
 import org.junit.Assert.assertEquals
 

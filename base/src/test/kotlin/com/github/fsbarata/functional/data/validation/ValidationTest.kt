@@ -5,8 +5,8 @@ import com.github.fsbarata.functional.data.either.Either
 import com.github.fsbarata.functional.data.either.flatMap
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.maybe.Optional
-import com.github.fsbarata.functional.data.test.BiFunctorLaws
-import com.github.fsbarata.functional.data.test.FunctorLaws
+import com.github.fsbarata.functional.data.BiFunctorLaws
+import com.github.fsbarata.functional.data.FunctorLaws
 import com.github.fsbarata.functional.data.validation.Validation.Failure
 import com.github.fsbarata.functional.data.validation.Validation.Success
 import org.junit.Assert.assertEquals

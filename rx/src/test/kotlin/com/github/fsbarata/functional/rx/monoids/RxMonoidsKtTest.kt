@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.rx.monoids
 
-import com.github.fsbarata.functional.data.test.MonoidLaws
+import com.github.fsbarata.functional.data.MonoidLaws
 import com.github.fsbarata.functional.rx.completableFactory
 import com.github.fsbarata.functional.rx.observableFactory
 import io.reactivex.rxjava3.core.Completable

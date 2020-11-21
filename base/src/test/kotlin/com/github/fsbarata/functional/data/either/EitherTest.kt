@@ -1,9 +1,9 @@
 package com.github.fsbarata.functional.data.either
 
-import com.github.fsbarata.functional.control.test.MonadLaws
+import com.github.fsbarata.functional.control.MonadLaws
 import com.github.fsbarata.functional.data.maybe.Optional
-import com.github.fsbarata.functional.data.test.BiFunctorLaws
-import com.github.fsbarata.functional.data.test.TraversableLaws
+import com.github.fsbarata.functional.data.BiFunctorLaws
+import com.github.fsbarata.functional.data.TraversableLaws
 import org.junit.Assert.*
 import org.junit.Test
 

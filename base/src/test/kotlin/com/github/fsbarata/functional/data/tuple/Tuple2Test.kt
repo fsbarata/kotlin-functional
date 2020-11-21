@@ -1,9 +1,9 @@
 package com.github.fsbarata.functional.data.tuple
 
-import com.github.fsbarata.functional.control.test.ComonadLaws
+import com.github.fsbarata.functional.control.ComonadLaws
 import com.github.fsbarata.functional.data.maybe.Optional
-import com.github.fsbarata.functional.data.test.BiFunctorLaws
-import com.github.fsbarata.functional.data.test.TraversableLaws
+import com.github.fsbarata.functional.data.BiFunctorLaws
+import com.github.fsbarata.functional.data.TraversableLaws
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

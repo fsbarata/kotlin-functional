@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.rx.data
 
-import com.github.fsbarata.functional.control.test.MonadZipLaws
+import com.github.fsbarata.functional.control.MonadZipLaws
 import com.github.fsbarata.functional.data.Functor
 
 class FlowableFTest: MonadZipLaws<FlowableF<*>> {

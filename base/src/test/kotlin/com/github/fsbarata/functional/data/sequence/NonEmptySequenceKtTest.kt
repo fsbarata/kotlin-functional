@@ -1,11 +1,10 @@
 package com.github.fsbarata.functional.data.sequence
 
-import com.github.fsbarata.functional.control.test.MonadLaws
-import com.github.fsbarata.functional.control.test.MonadZipLaws
+import com.github.fsbarata.functional.control.MonadZipLaws
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.list.nelOf
-import com.github.fsbarata.functional.data.test.FoldableLaws
-import com.github.fsbarata.functional.data.test.TraversableLaws
+import com.github.fsbarata.functional.data.FoldableLaws
+import com.github.fsbarata.functional.data.TraversableLaws
 import com.github.fsbarata.functional.utils.NonEmptyIterator
 import org.junit.Assert.assertEquals
 import org.junit.Test
