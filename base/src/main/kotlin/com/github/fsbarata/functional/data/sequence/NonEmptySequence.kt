@@ -57,7 +57,7 @@ interface NonEmptySequence<A>:
 			val iterator2 = otherNes.iterator()
 			NonEmptyIterator(
 				f(iterator1.head, iterator2.head),
-				iterator1.tail.asSequence().zip(iterator2.asSequence(), f).iterator()
+				iterator1.tail.asSequence().zip(iterator2.tail.asSequence(), f).iterator()
 			)
 		}
 	}
