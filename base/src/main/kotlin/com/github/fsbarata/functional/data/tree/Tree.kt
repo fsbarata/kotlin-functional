@@ -30,13 +30,13 @@ data class Tree<out A>(val root: A, val sub: Forest<A> = emptyList()): NonEmptyI
 
 	override fun extract() = root
 
-	override inline infix fun <B> bind(f: (A) -> Context<TreeContext, B>) = flatMap { f(it).asTree }
+	override infix fun <B> bind(f: (A) -> Context<TreeContext, B>) = flatMap { f(it).asTree }
 
-	inline fun <B> flatMap(f: (A) -> Tree<B>): Tree<B> {
-		val newTree = f(root)
+	fun <B> flatMap(f: (A) -> Tree<B>): Tree<B> {
+		val newTs = f(root)
 		return Tree(
-			newTree.root,
-			newTree.sub + sub.flatten().map(f)
+			newTs.root,
+			newTs.sub + sub.map { t -> t.flatMap(f) }
 		)
 	}
 

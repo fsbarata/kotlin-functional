@@ -38,10 +38,10 @@ class TreeSequence<out A>(
 	override infix fun <B> bind(f: (A) -> Context<TreeSequenceContext, B>) = flatMap { f(it).asTreeSequence }
 
 	fun <B> flatMap(f: (A) -> TreeSequence<B>): TreeSequence<B> {
-		val newTree = f(root)
+		val newTs = f(root)
 		return TreeSequence(
-			newTree.root,
-			newTree.sub + sub.flatten().map(f)
+			newTs.root,
+			newTs.sub + sub.map { t -> t.flatMap(f) }
 		)
 	}
 
