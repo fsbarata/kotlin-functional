@@ -1,11 +1,12 @@
 package com.github.fsbarata.functional.data.either
 
 import com.github.fsbarata.functional.control.MonadLaws
-import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.BiFunctorLaws
 import com.github.fsbarata.functional.data.TraversableLaws
+import com.github.fsbarata.functional.data.maybe.Optional
 import org.junit.Assert.*
 import org.junit.Test
+import java.io.IOException
 
 class EitherTest:
 	MonadLaws<EitherContext>,
@@ -14,13 +15,18 @@ class EitherTest:
 	override val monadScope = Either
 	override val traversableScope = Either
 
+	val error = IOException()
+	override val possibilities: Int = 5
+	override fun factory(possibility: Int) = when (possibility) {
+		0 -> Either.Left(error)
+		else -> Either.Right(possibility - 1)
+	}
+
 	override fun <A> createTraversable(vararg items: A): Either<Nothing, A> =
 		Either.ofNullable(items.firstOrNull()) { throw IllegalStateException() }
 
 	override fun <B, A> createBiFunctor(a: A, b: B) =
 		if (b == null) Either.Right(a) else Either.Left(b)
-
-	override fun <A> createFunctor(a: A) = Either.just(a)
 
 	@Test
 	fun map() {

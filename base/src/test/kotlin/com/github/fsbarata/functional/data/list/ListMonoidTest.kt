@@ -4,10 +4,9 @@ import com.github.fsbarata.functional.data.MonoidLaws
 import org.junit.Assert
 import org.junit.Test
 
-class ConcatListMonoid: MonoidLaws<ListF<Int>>(ListF.monoid()) {
-	override val possibilities: Int = 25
-	override fun factory(possibility: Int) =
-		(0..possibility).map { it % 13 }.f()
+class ListMonoidTest: MonoidLaws<ListF<Int>>(ListF.monoid()) {
+	override val possibilities: Int = 10
+	override fun factory(possibility: Int) = createList(possibility)
 
 	@Test
 	fun concats() {

@@ -17,7 +17,7 @@ fun <A: Semigroup<A>> List<A>.foldR(monoid: Monoid<A>) = foldRight(monoid.empty)
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun <A, B> List<A>.ap(fs: List<(A) -> B>): List<B> =
-	flatMap { a -> fs.map { f -> f(a) } }
+	fs.flatMap(this::map)
 
 inline fun <A, B, C> List<A>.lift2(lb: List<B>, f: (A, B) -> C): List<C> =
 	flatMap { a -> lb.map(f.partial(a)) }

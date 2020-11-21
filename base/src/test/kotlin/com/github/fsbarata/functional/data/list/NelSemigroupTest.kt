@@ -4,14 +4,10 @@ import com.github.fsbarata.functional.data.SemigroupLaws
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class ConcatNelSemigroupTest: SemigroupLaws<NonEmptyList<Int>> {
+class NelSemigroupTest: SemigroupLaws<NonEmptyList<Int>> {
 	override val possibilities = 10
 
-	override fun factory(possibility: Int): NonEmptyList<Int> = when (possibility) {
-		0 -> NonEmptyList.just(1)
-		1 -> nelOf(3, 2)
-		else -> NonEmptyList.of(1, factory(possibility - 2))
-	}
+	override fun factory(possibility: Int): NonEmptyList<Int> = createNel(possibility)
 
 	@Test
 	fun combine() {

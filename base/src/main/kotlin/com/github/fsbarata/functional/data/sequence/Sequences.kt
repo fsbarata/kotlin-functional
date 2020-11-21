@@ -1,7 +1,9 @@
 package com.github.fsbarata.functional.data.sequence
 
 import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.data.*
+import com.github.fsbarata.functional.data.Monoid
+import com.github.fsbarata.functional.data.Semigroup
+import com.github.fsbarata.functional.data.partial
 
 /**
  * Extensions to kotlin Sequence
@@ -10,7 +12,7 @@ import com.github.fsbarata.functional.data.*
 fun <A: Semigroup<A>> Sequence<A>.foldL(monoid: Monoid<A>) = fold(monoid.empty) { r, a -> r.combineWith(a) }
 
 fun <A, B> Sequence<A>.ap(fs: Sequence<(A) -> B>): Sequence<B> =
-	flatMap { a -> fs.map { f -> f(a) } }
+	fs.flatMap(this::map)
 
 fun <A, B, C> Sequence<A>.lift2(lb: Sequence<B>, f: (A, B) -> C): Sequence<C> =
 	flatMap { a -> lb.map(f.partial(a)) }

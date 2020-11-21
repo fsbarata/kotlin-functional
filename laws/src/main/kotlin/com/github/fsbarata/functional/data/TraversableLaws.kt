@@ -17,7 +17,6 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 	val traversableScope: Traversable.Scope<T>
 	fun <A> createTraversable(vararg items: A): Traversable<T, A>
 
-	override fun <A> createFunctor(a: A): Functor<T, A> = createTraversable(a)
 	override fun <A> createFoldable(vararg items: A): Foldable<A> =
 		createTraversable(*items)
 

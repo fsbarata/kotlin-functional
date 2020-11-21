@@ -5,6 +5,6 @@ interface PossibilitiesTest<A> {
 	fun factory(possibility: Int): A
 
 	fun <T> eachPossibility(block: (A) -> T) =
-		(0..possibilities).map { block(factory(it)) }
+		(0 until possibilities).map { block(factory(it)) }
 
 }

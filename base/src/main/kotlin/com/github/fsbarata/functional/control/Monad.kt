@@ -2,7 +2,6 @@ package com.github.fsbarata.functional.control
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.data.id
-import com.github.fsbarata.functional.data.partial
 
 interface Monad<M, out A>: Applicative<M, A> {
 	override val scope: Scope<M>
@@ -13,10 +12,10 @@ interface Monad<M, out A>: Applicative<M, A> {
 		bind { scope.just(f(it)) }
 
 	override infix fun <B> ap(ff: Applicative<M, (A) -> B>): Monad<M, B> =
-		bind { a -> ff.map { it(a) } }
+		(ff as Monad<M, (A) -> B>).bind(this::map)
 
 	override fun <B, R> lift2(fb: Applicative<M, B>, f: (A, B) -> R): Monad<M, R> =
-		bind { a -> fb.map(f.partial(a)) }
+		bind { a -> fb.map { b -> f(a, b) } }
 
 	interface Scope<C>: Applicative.Scope<C> {
 		override fun <A> just(a: A): Monad<C, A>

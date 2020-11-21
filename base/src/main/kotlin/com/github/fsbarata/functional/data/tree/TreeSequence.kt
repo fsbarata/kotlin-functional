@@ -1,7 +1,10 @@
 package com.github.fsbarata.functional.data.tree
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.control.Comonad
+import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.partial
@@ -39,6 +42,16 @@ class TreeSequence<out A>(
 		return TreeSequence(
 			newTree.root,
 			newTree.sub + sub.flatten().map(f)
+		)
+	}
+
+	override fun <B> ap(ff: Applicative<TreeSequenceContext, (A) -> B>): TreeSequence<B> {
+		val s = ff.asTreeSequence
+		val f = s.root
+		val tfs = s.sub
+		return TreeSequence(
+			f(root),
+			sub.map { ta -> ta.map(f) } + tfs.map(this::ap)
 		)
 	}
 

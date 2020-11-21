@@ -1,8 +1,10 @@
 package com.github.fsbarata.functional.data.tuple
 
+import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.control.ComonadLaws
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.BiFunctorLaws
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.TraversableLaws
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -16,8 +18,12 @@ class Tuple2Test:
 
 	override val traversableScope = Tuple2.Scope<Double>()
 
-	override fun <A> createTraversable(vararg items: A) = createFunctor(items.first())
-	override fun <A> createFunctor(a: A) = Tuple2(2.0, a)
+	override fun <A> createTraversable(vararg items: A) = createComonad(items.first())
+
+	override fun <A> createComonad(a: A) = Tuple2(2.0, a)
+
+	override val possibilities: Int = 2
+	override fun factory(possibility: Int) = Tuple2(1.5, possibility)
 
 	@Test
 	fun extract() {

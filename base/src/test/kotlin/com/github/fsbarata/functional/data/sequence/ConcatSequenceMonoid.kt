@@ -6,11 +6,8 @@ import org.junit.Test
 
 
 class ConcatSequenceMonoid: MonoidLaws<SequenceF<Int>>(SequenceF.monoid()) {
-	override val possibilities: Int = 25
-	override fun factory(possibility: Int) =
-		(0..possibility).map { it % 13 }
-			.asSequence()
-			.f()
+	override val possibilities: Int = 10
+	override fun factory(possibility: Int) = createSequence(possibility)
 
 	override fun equals(a1: SequenceF<Int>, a2: SequenceF<Int>): Boolean =
 		a1.toList() == a2.toList()

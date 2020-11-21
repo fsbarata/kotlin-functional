@@ -1,8 +1,5 @@
-package com.github.fsbarata.functional.control.monad.reader
+package com.github.fsbarata.functional.control.reader
 
-import com.github.fsbarata.functional.control.reader.Reader
-import com.github.fsbarata.functional.control.reader.ReaderContext
-import com.github.fsbarata.functional.control.reader.asReader
 import com.github.fsbarata.functional.control.MonadLaws
 import com.github.fsbarata.functional.data.Functor
 import org.junit.Assert.assertEquals
@@ -14,6 +11,10 @@ private typealias Dependencies = Pair<String, Int>
 class ReaderTest:
 	MonadLaws<ReaderContext<Dependencies>> {
 	override val monadScope = Reader.ReaderScope<Dependencies>()
+
+	override val possibilities: Int = 10
+	override fun factory(possibility: Int) =
+		Reader<Dependencies, Int> { it.first.sumBy { it.toInt() } * possibility + it.second }
 
 	private val basicDependencies = Pair("ab", -38)
 

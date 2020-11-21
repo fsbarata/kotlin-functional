@@ -12,10 +12,8 @@ class ComposeApplicative<F, G, A>(
 	override fun <B> map(f: (A) -> B): ComposeApplicative<F, G, B> =
 		fg.map { g -> g.map(f) }.compose(gScope)
 
-	override infix fun <B> ap(ff: Applicative<ComposeContext<F, G>, (A) -> B>): ComposeApplicative<F, G, B> {
-		val f: Applicative<G, A>.(Applicative<G, (A) -> B>) -> Applicative<G, B> = Applicative<G, A>::ap
-		return fg.lift2(ff.asCompose.fg, f).compose(gScope)
-	}
+	override infix fun <B> ap(ff: Applicative<ComposeContext<F, G>, (A) -> B>): ComposeApplicative<F, G, B> =
+		ff.asCompose.fg.lift2(fg) { f, a -> a.ap(f) }.compose(gScope)
 
 	override fun <B, R> lift2(fb: Applicative<ComposeContext<F, G>, B>, f: (A, B) -> R): ComposeApplicative<F, G, R> =
 		fg.lift2(fb.asCompose.fg) { a, b -> a.lift2(b, f) }.compose(gScope)

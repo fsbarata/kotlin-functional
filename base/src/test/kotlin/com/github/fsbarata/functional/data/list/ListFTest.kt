@@ -1,28 +1,38 @@
 package com.github.fsbarata.functional.data.list
 
-import com.github.fsbarata.functional.control.MonadLaws
 import com.github.fsbarata.functional.control.MonadZipLaws
-import com.github.fsbarata.functional.data.maybe.Optional
-import com.github.fsbarata.functional.data.SemigroupLaws
 import com.github.fsbarata.functional.data.TraversableLaws
+import com.github.fsbarata.functional.data.maybe.Optional
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ListFTest:
-	MonadLaws<ListF<*>>,
 	MonadZipLaws<ListF<*>>,
-	SemigroupLaws<ListF<Int>>,
 	TraversableLaws<ListF<*>> {
 	override val traversableScope = ListF
 	override val monadScope = ListF
 
-	override val possibilities = 5
-	override fun factory(possibility: Int) = (0..possibility).map { it - 3 }.f()
-
-	override fun <A> createFunctor(a: A) = ListF.just(a)
+	override val possibilities = 10
+	override fun factory(possibility: Int) = createList(possibility)
 
 	override fun <A> createTraversable(vararg items: A) =
 		items.toList().f()
+
+	@Test
+	fun lift2() {
+		assertEquals(
+			listOf(1.3, 2.2, 2.3, 3.2, 3.3, 4.2),
+			ListF.of(1, 2, 3).lift2(ListF.of(0.3, 1.2), Int::plus)
+		)
+	}
+
+	@Test
+	fun ap() {
+		assertEquals(
+			listOf(3, 4, 5, 2, 1, 0),
+			ListF.of(1, 2, 3).ap(ListF.of({ a: Int -> a + 2 }, { a: Int -> 3 - a }))
+		)
+	}
 
 	@Test
 	fun traverse() {
@@ -42,3 +52,4 @@ class ListFTest:
 		)
 	}
 }
+

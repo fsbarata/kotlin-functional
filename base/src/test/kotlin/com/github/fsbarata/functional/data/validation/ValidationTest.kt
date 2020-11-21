@@ -1,27 +1,34 @@
 package com.github.fsbarata.functional.data.validation
 
+import com.github.fsbarata.functional.data.BiFunctorLaws
 import com.github.fsbarata.functional.data.Functor
+import com.github.fsbarata.functional.data.FunctorLaws
 import com.github.fsbarata.functional.data.either.Either
 import com.github.fsbarata.functional.data.either.flatMap
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.maybe.Optional
-import com.github.fsbarata.functional.data.BiFunctorLaws
-import com.github.fsbarata.functional.data.FunctorLaws
 import com.github.fsbarata.functional.data.validation.Validation.Failure
 import com.github.fsbarata.functional.data.validation.Validation.Success
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test
+import java.io.IOException
 
 @Suppress("UNREACHABLE_CODE")
 class ValidationTest:
-	FunctorLaws<ValidationContext<Nothing>>,
+	FunctorLaws<ValidationContext<IOException>>,
 	BiFunctorLaws<ValidationBiContext> {
-	override fun <A> createFunctor(a: A): Validation<Nothing, A> = Success(a)
 	override fun <B, A> createBiFunctor(a: A, b: B) =
 		if (a == null) Failure(b) else Success(a)
 
-	override fun <A> Functor<ValidationContext<Nothing>, A>.equalTo(other: Functor<ValidationContext<Nothing>, A>) =
+	val error = IOException()
+	override val possibilities: Int = 5
+	override fun factory(possibility: Int) = when (possibility) {
+		0 -> Failure(error)
+		else -> Success(possibility - 1)
+	}
+
+	override fun <A> Functor<ValidationContext<IOException>, A>.equalTo(other: Functor<ValidationContext<IOException>, A>) =
 		asValidation == other.asValidation
 
 	@Test

@@ -19,7 +19,11 @@ class OptionalTest:
 	override fun <A> Functor<OptionalContext, A>.equalTo(other: Functor<OptionalContext, A>): Boolean =
 		asOptional == other.asOptional
 
-	override fun <A> createFunctor(a: A) = Optional.just(a)
+	override val possibilities: Int = 3
+	override fun factory(possibility: Int) = when (possibility) {
+		0 -> Optional.empty()
+		else -> Optional.just(possibility - 1)
+	}
 
 	@Test
 	fun isPresent() {

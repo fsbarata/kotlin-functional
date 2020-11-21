@@ -12,6 +12,16 @@ class StateTest:
 	MonadLaws<StateContext<MyState>> {
 	override val monadScope = State.StateScope<MyState>()
 
+
+	override val possibilities: Int = 10
+	override fun factory(possibility: Int) =
+		State<MyState, Int> { (str, num) ->
+			Tuple2(
+				MyState(String(str.map { it + possibility }.toCharArray()), num),
+				str.hashCode() - num
+			)
+		}
+
 	private val basicState = Pair("ab", -38)
 
 	override fun <A> Functor<StateContext<MyState>, A>.equalTo(other: Functor<StateContext<MyState>, A>) =

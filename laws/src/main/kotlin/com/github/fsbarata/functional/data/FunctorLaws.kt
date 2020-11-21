@@ -1,9 +1,11 @@
 package com.github.fsbarata.functional.data
 
+import com.github.fsbarata.functional.PossibilitiesTest
 import org.junit.Test
 
-interface FunctorLaws<F> {
-	fun <A> createFunctor(a: A): Functor<F, A>
+interface FunctorLaws<F>: PossibilitiesTest<Functor<F, Int>> {
+	override fun factory(possibility: Int): Functor<F, Int>
+
 	fun <A> Functor<F, A>.equalTo(other: Functor<F, A>): Boolean = this == other
 	fun <A> Functor<F, A>.describe() = toString()
 
@@ -13,19 +15,21 @@ interface FunctorLaws<F> {
 
 	@Test
 	fun `map identity`() {
-		val f1 = createFunctor(5)
-		assertEqualF(f1, f1.map(id()))
+		eachPossibility { f1 ->
+			assertEqualF(f1, f1.map(id()))
+		}
 	}
 
 	@Test
 	fun `map composition`() {
-		val fa = createFunctor("hello")
-		val f = { a: String -> a.length }
-		val g = { a: String -> a + "world" }
-		val r1 = fa.map(f.compose(g))
-		val r2 =
-			{ fx: Functor<F, String> -> fx.map(f) }.compose { fx: Functor<F, String> -> fx.map(g) }
-				.invoke(fa)
-		assertEqualF(r1, r2)
+		eachPossibility { fa ->
+			val f = { a: String -> a.length }
+			val g = { a: Int -> "world $a" }
+			val r1 = fa.map(f.compose(g))
+			val r2 =
+				{ fx: Functor<F, String> -> fx.map(f) }.compose { fx: Functor<F, Int> -> fx.map(g) }
+					.invoke(fa)
+			assertEqualF(r1, r2)
+		}
 	}
 }

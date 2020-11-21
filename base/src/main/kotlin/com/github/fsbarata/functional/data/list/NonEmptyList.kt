@@ -74,8 +74,11 @@ class NonEmptyList<out A> private constructor(
 
 	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
 
+	override fun <B> ap(ff: Applicative<NonEmptyContext, (A) -> B>): NonEmptyList<B> =
+		ff.asNel.flatMap(this::map)
+
 	override inline fun <B, R> lift2(fb: Applicative<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> =
-		flatMap { fb.asNel.map(f.partial(it)) }
+		flatMap { a -> fb.asNel.map(f.partial(a)) }
 
 	override inline infix fun <B> bind(f: (A) -> Context<NonEmptyContext, B>): NonEmptyList<B> =
 		flatMap { f(it).asNel }

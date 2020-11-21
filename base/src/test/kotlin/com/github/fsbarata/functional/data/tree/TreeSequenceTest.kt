@@ -1,5 +1,6 @@
 package com.github.fsbarata.functional.data.tree
 
+import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.control.ComonadLaws
 import com.github.fsbarata.functional.control.MonadZipLaws
 import com.github.fsbarata.functional.data.Functor
@@ -12,7 +13,10 @@ class TreeSequenceTest:
 	override val monadScope = TreeSequence
 	override val traversableScope = TreeSequence
 
-	override fun <A> createFunctor(a: A) = TreeSequence(a)
+	override val possibilities: Int = 10
+	override fun factory(possibility: Int) = createTreeSequence(possibility)
+
+	override fun <A> createComonad(a: A) = TreeSequence.just(a)
 
 	override fun <A> createTraversable(vararg items: A) =
 		TreeSequence(

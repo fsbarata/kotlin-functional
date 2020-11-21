@@ -40,6 +40,14 @@ data class Tree<out A>(val root: A, val sub: Forest<A> = emptyList()): NonEmptyI
 		)
 	}
 
+	override fun <B> ap(ff: Applicative<TreeContext, (A) -> B>): Tree<B> {
+		val (f, tfs) = ff.asTree
+		return Tree(
+			f(root),
+			sub.map { ta -> ta.map(f) } + tfs.map(this::ap)
+		)
+	}
+
 	override fun <B, R> lift2(fb: Applicative<TreeContext, B>, f: (A, B) -> R): Tree<R> {
 		val tb = fb.asTree
 		val fRoot = f.partial(root)

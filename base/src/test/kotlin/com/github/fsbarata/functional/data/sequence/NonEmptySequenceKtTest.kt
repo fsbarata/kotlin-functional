@@ -20,7 +20,8 @@ class NonEmptySequenceKtTest:
 
 	override fun <A> Functor<NonEmptySequenceContext, A>.describe() = asNes.toList().toString()
 
-	override fun <A> createFunctor(a: A) = nesOf(a)
+	override val possibilities: Int = 10
+	override fun factory(possibility: Int) = createNes(possibility)
 
 	override fun <A> createTraversable(vararg items: A) =
 		NonEmptySequence.of(items.first(), items.drop(1))
