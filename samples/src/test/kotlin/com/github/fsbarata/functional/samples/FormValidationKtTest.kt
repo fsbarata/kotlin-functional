@@ -2,6 +2,8 @@ package com.github.fsbarata.functional.samples
 
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
+import com.github.fsbarata.functional.samples.validation.ValidationError
+import com.github.fsbarata.functional.samples.validation.validateData
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 

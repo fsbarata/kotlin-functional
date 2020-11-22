@@ -1,4 +1,4 @@
-package com.github.fsbarata.functional.samples
+package com.github.fsbarata.functional.samples.state
 
 import com.github.fsbarata.functional.control.state.State
 

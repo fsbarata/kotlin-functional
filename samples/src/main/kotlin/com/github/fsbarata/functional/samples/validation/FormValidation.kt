@@ -1,4 +1,4 @@
-package com.github.fsbarata.functional.samples
+package com.github.fsbarata.functional.samples.validation
 
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.validation.Validation

@@ -1,5 +1,8 @@
 package com.github.fsbarata.functional.samples
 
+import com.github.fsbarata.functional.samples.state.Account
+import com.github.fsbarata.functional.samples.state.Bank
+import com.github.fsbarata.functional.samples.state.transferHalfOfTheMoney
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.junit.Test
