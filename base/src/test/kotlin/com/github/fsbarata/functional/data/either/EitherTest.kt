@@ -6,24 +6,23 @@ import com.github.fsbarata.functional.data.TraversableLaws
 import com.github.fsbarata.functional.data.maybe.Optional
 import org.junit.Assert.*
 import org.junit.Test
-import java.io.IOException
 
 class EitherTest:
-	MonadLaws<EitherContext>,
-	TraversableLaws<EitherContext>,
+	MonadLaws<EitherContext<String>>,
+	TraversableLaws<EitherContext<String>>,
 	BiFunctorLaws<EitherBiContext> {
-	override val monadScope = Either
-	override val traversableScope = Either
+	override val monadScope = Either.Scope<String>()
+	override val traversableScope = Either.Scope<String>()
 
-	val error = IOException()
+	val error = "some error"
 	override val possibilities: Int = 5
 	override fun factory(possibility: Int) = when (possibility) {
 		0 -> Either.Left(error)
 		else -> Either.Right(possibility - 1)
 	}
 
-	override fun <A> createTraversable(vararg items: A): Either<Nothing, A> =
-		Either.ofNullable(items.firstOrNull()) { throw IllegalStateException() }
+	override fun <A> createTraversable(vararg items: A): Either<String, A> =
+		Either.ofNullable(items.firstOrNull()) { error }
 
 	override fun <B, A> createBiFunctor(a: A, b: B) =
 		if (b == null) Either.Right(a) else Either.Left(b)

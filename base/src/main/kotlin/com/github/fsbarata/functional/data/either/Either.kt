@@ -15,20 +15,28 @@ import java.io.Serializable
  */
 @Suppress("OVERRIDE_BY_INLINE")
 sealed class Either<out E, out A>:
-	Monad<EitherContext, A>,
+	Monad<EitherContext<@UnsafeVariance E>, A>,
 	BiFunctor<EitherBiContext, E, A>,
-	Traversable<EitherContext, A>,
+	Traversable<EitherContext<@UnsafeVariance E>, A>,
 	Semigroup<Either<@UnsafeVariance E, @UnsafeVariance A>>,
 	Serializable {
 	data class Left<out E>(val value: E): Either<E, Nothing>()
 	data class Right<out A>(val value: A): Either<Nothing, A>()
 
-	override val scope get() = Companion
+	override val scope get() = Scope<@UnsafeVariance E>()
+
+	inline fun <R> fold(ifLeft: (E) -> R, ifRight: (A) -> R): R = when (this) {
+		is Left -> ifLeft(value)
+		is Right -> ifRight(value)
+	}
 
 	final override inline fun <B> map(f: (A) -> B): Either<E, B> =
 		flatMap { Right(f(it)) }
 
-	final override inline fun <B, R> lift2(fb: Applicative<EitherContext, B>, f: (A, B) -> R): Either<E, R> =
+	final override inline fun <B, R> lift2(
+		fb: Applicative<EitherContext<@UnsafeVariance E>, B>,
+		f: (A, B) -> R,
+	): Either<E, R> =
 		flatMap { fb.asEither.map(f.partial(it)) }
 
 	final override inline fun <B> mapLeft(f: (E) -> B): Either<B, A> {
@@ -39,12 +47,7 @@ sealed class Either<out E, out A>:
 		return fold(ifLeft = { Left(f(it)) }, { Right(g(it)) })
 	}
 
-	inline fun <R> fold(ifLeft: (E) -> R, ifRight: (A) -> R): R = when (this) {
-		is Left -> ifLeft(value)
-		is Right -> ifRight(value)
-	}
-
-	final override inline infix fun <B> bind(f: (A) -> Context<EitherContext, B>): Either<E, B> =
+	final override inline infix fun <B> bind(f: (A) -> Context<EitherContext<@UnsafeVariance E>, B>): Either<E, B> =
 		flatMap { f(it).asEither }
 
 	final override inline fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
@@ -75,18 +78,22 @@ sealed class Either<out E, out A>:
 			ifRight = { Right(it) },
 		)
 
-	companion object: Monad.Scope<EitherContext>, Traversable.Scope<EitherContext> {
-		override fun <A> just(a: A) = Right(a)
+	class Scope<E>: Monad.Scope<EitherContext<E>>, Traversable.Scope<EitherContext<E>> {
+		override fun <A> just(a: A) = just<E, A>(a)
+	}
+
+	companion object {
+		fun <E, A> just(a: A): Either<E, A> = Right(a)
 		fun <E, A> ofNullable(a: A?, e: () -> E): Either<E, A> =
 			a?.let(::Right) ?: Left(e())
 	}
 }
 
-internal typealias EitherContext = Either<Nothing, *>
+internal typealias EitherContext<E> = Either<E, *>
 internal typealias EitherBiContext = Either<*, *>
 
 @Suppress("UNCHECKED_CAST")
-val <A> Context<EitherContext, A>.asEither
+val <E, A> Context<EitherContext<E>, A>.asEither
 	get() = this as Either<Nothing, A>
 
 val <E, A> BiContext<EitherBiContext, E, A>.asEither
