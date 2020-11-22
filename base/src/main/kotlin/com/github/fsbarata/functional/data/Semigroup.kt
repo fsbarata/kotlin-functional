@@ -25,6 +25,8 @@ private tailrec fun <A: Semigroup<A>> A.add(a: A, n: Int): A =
 
 class Dual<A: Semigroup<A>>(val get: A): Semigroup<Dual<A>> {
 	override fun combineWith(other: Dual<A>) = Dual(other.get.combineWith(get))
+
+	fun dual() = get
 }
 
 fun <A: Semigroup<A>> A.dual() = Dual(this)
