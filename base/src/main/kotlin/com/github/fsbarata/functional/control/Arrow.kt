@@ -1,27 +1,29 @@
 package com.github.fsbarata.functional.control
 
-interface Arrow<A, B, C>: Category<A, B, C> {
-	override val scope: Scope<A>
+interface Arrow<ARR, A, R>: Category<ARR, A, R> {
+	override val scope: Scope<ARR>
 
-	override infix fun <D> compose(other: Category<A, C, D>): Arrow<A, B, D>
-	override infix fun <D> composeRight(other: Category<A, D, B>): Arrow<A, D, C> =
-		super.composeRight(other) as Arrow<A, D, C>
+	override infix fun <RR> composeForward(other: Category<ARR, R, RR>): Arrow<ARR, A, RR> =
+		super.composeForward(other) as Arrow<ARR, A, RR>
 
-	fun <D> first(): Arrow<A, Pair<B, D>, Pair<C, D>> =
+	override infix fun <B> compose(other: Category<ARR, B, A>): Arrow<ARR, B, R> =
+		super.compose(other) as Arrow<ARR, B, R>
+
+	fun <PASS> first(): Arrow<ARR, Pair<A, PASS>, Pair<R, PASS>> =
 		this split scope.id()
 
-	fun <D> second(): Arrow<A, Pair<D, B>, Pair<D, C>> =
-		scope.id<D>() split this
+	fun <PASS> second(): Arrow<ARR, Pair<PASS, A>, Pair<PASS, R>> =
+		scope.id<PASS>() split this
 
-	infix fun <D, E> split(other: Arrow<A, D, E>): Arrow<A, Pair<B, D>, Pair<C, E>> =
-		first<D>() compose scope.arr { Pair(it.second, it.first) } compose
-				(other.first<C>() compose scope.arr { Pair(it.second, it.first) })
+	infix fun <D, E> split(other: Arrow<ARR, D, E>): Arrow<ARR, Pair<A, D>, Pair<R, E>> =
+		first<D>() composeForward scope.arr { Pair(it.second, it.first) } composeForward
+				(other.first<R>() composeForward scope.arr { Pair(it.second, it.first) })
 
-	infix fun <D> fanout(other: Arrow<A, B, D>): Arrow<A, B, Pair<C, D>> =
-		scope.arr<B, Pair<B, B>> { Pair(it, it) } compose (this split other)
+	infix fun <D> fanout(other: Arrow<ARR, A, D>): Arrow<ARR, A, Pair<R, D>> =
+		scope.arr<A, Pair<A, A>> { Pair(it, it) } composeForward (this split other)
 
-	interface Scope<A>: Category.Scope<A> {
-		fun <B, C> arr(f: (B) -> C): Arrow<A, B, C>
-		override fun <B> id(): Arrow<A, B, B> = arr { it }
+	interface Scope<ARR>: Category.Scope<ARR> {
+		fun <A, R> arr(f: (A) -> R): Arrow<ARR, A, R>
+		override fun <B> id(): Arrow<ARR, B, B> = arr { it }
 	}
 }
