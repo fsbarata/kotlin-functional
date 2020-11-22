@@ -1,8 +1,9 @@
 package com.github.fsbarata.functional.control.reader
 
-import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.Context
+import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.data.Contravariant
 import com.github.fsbarata.functional.data.id
 
 /**
@@ -10,7 +11,9 @@ import com.github.fsbarata.functional.data.id
  *
  * This object models a set of dependencies D, required to generate the value A.
  */
-class Reader<D, out A>(val runReader: (D) -> A): Monad<ReaderContext<D>, A> {
+class Reader<D, out A>(val runReader: (D) -> A):
+	Monad<ReaderContext<D>, A>,
+	Contravariant<Reader<*, @UnsafeVariance A>, D> {
 	override val scope get() = ReaderScope<D>()
 
 	override fun <B> map(f: (A) -> B): Reader<D, B> =
@@ -25,8 +28,7 @@ class Reader<D, out A>(val runReader: (D) -> A): Monad<ReaderContext<D>, A> {
 	fun <B> flatMap(f: (A) -> Reader<in D, B>) =
 		Reader<D, B> { f(runReader(it)).runReader(it) }
 
-	fun <E> using(f: (E) -> D): Reader<E, A> =
-		Reader { e -> runReader(f(e)) }
+	override fun <B> contramap(f: (B) -> D) = Reader<B, A> { b -> runReader(f(b)) }
 
 	operator fun invoke(d: D) = runReader(d)
 

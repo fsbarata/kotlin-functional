@@ -43,7 +43,7 @@ class ReaderTest:
 		val reader = Reader { a: Int -> (a + 2).toString() + 2 }
 		assertEquals(
 			"52",
-			reader.using { b: Double -> (b * 0.3).roundToInt() }.runReader(8.5)
+			reader.contramap { b: Double -> (b * 0.3).roundToInt() }.runReader(8.5)
 		)
 	}
 
