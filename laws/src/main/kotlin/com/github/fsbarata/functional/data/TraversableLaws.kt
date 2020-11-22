@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.data
 
-import com.github.fsbarata.functional.data.compose.Compose
-import com.github.fsbarata.functional.data.compose.ComposeApplicative
+import com.github.fsbarata.functional.data.compose.Composite
+import com.github.fsbarata.functional.data.compose.CompositeApplicative
 import com.github.fsbarata.functional.data.compose.asCompose
 import com.github.fsbarata.functional.data.identity.Identity
 import com.github.fsbarata.functional.data.identity.runIdentity
@@ -34,8 +34,8 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 		val g = { a: Int -> Optional.just(a + 3) }
 
 		val r1 =
-			t.traverse(ComposeApplicative.Scope(ListF, Optional)) { a -> ComposeApplicative(f(a).map(g), Optional) }
-		val r2 = Compose(t.traverse(ListF, f).map { it.traverse(Optional, g) })
+			t.traverse(CompositeApplicative.Scope(ListF, Optional)) { a -> CompositeApplicative(f(a).map(g), Optional) }
+		val r2 = Composite(t.traverse(ListF, f).map { it.traverse(Optional, g) })
 		val r1Items = r1.asCompose.fg.asList
 		val r2Items = r2.fg.asList
 		assertEquals(r2Items.size, r1Items.size)

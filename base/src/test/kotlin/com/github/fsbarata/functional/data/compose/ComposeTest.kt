@@ -7,10 +7,10 @@ import com.github.fsbarata.functional.data.validation.Validation
 import com.github.fsbarata.functional.data.validation.ValidationContext
 import java.io.IOException
 
-class ComposeTest: FunctorLaws<ComposeContext<NonEmptyContext, ValidationContext<Nothing>>> {
+class CompositeTest: FunctorLaws<ComposeContext<NonEmptyContext, ValidationContext<Nothing>>> {
 	@Suppress("UNCHECKED_CAST")
 	override fun factory(possibility: Int) =
-		Compose(
+		Composite(
 			createNel(possibility)
 				.map {
 					if (it > 0) Validation.Success(it)

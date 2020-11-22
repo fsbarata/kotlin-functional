@@ -4,10 +4,10 @@ import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.list.*
 import com.github.fsbarata.functional.data.TraversableLaws
 
-class ComposeTraversableTest: TraversableLaws<ComposeContext<ListContext, NonEmptyContext>> {
-	override val traversableScope = ComposeTraversable.Scope<ListContext, NonEmptyContext>()
+class CompositeTraversableTest: TraversableLaws<ComposeContext<ListContext, NonEmptyContext>> {
+	override val traversableScope = CompositeTraversable.Scope<ListContext, NonEmptyContext>()
 	override fun <A> createTraversable(vararg items: A) =
-		ComposeTraversable(
+		CompositeTraversable(
 			if (items.isEmpty()) ListF.empty()
 			else listOfNotNull(
 				NonEmptyList.just(items[0]),
@@ -17,7 +17,7 @@ class ComposeTraversableTest: TraversableLaws<ComposeContext<ListContext, NonEmp
 
 	override val possibilities: Int = 10
 	override fun factory(possibility: Int): Functor<ComposeContext<ListContext, NonEmptyContext>, Int> =
-		ComposeApplicative(
+		CompositeApplicative(
 			createList(possibility)
 				.map { createNel(it) },
 			NonEmptyList
