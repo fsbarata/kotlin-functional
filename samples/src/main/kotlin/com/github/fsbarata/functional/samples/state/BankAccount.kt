@@ -33,9 +33,9 @@ private fun deposit(accountId: AccountId, amount: BigDecimal) = State.modify<Ban
 	})
 }.map { amount }
 
-internal fun transferHalfOfTheMoney(from: AccountId, to: AccountId): State<Bank, Balance> =
+internal fun transferAQuarterOfTheMoney(from: AccountId, to: AccountId): State<Bank, Balance> =
 	getAccountBalance(from).flatMap { accountBalance ->
-		withdraw(from, accountBalance.multiply(BigDecimal("0.5"))).flatMap { withdrawn ->
+		withdraw(from, accountBalance.multiply(BigDecimal("0.25"))).flatMap { withdrawn ->
 			deposit(to, withdrawn)
 		}
 	}
