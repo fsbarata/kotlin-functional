@@ -12,8 +12,7 @@ import com.github.fsbarata.functional.data.id
  * This object models a set of dependencies D, required to generate the value A.
  */
 class Reader<D, out A>(val runReader: (D) -> A):
-	Monad<ReaderContext<D>, A>,
-	Contravariant<Reader<*, @UnsafeVariance A>, D> {
+	Monad<ReaderContext<D>, A> {
 	override val scope get() = ReaderScope<D>()
 
 	override fun <B> map(f: (A) -> B): Reader<D, B> =
@@ -28,7 +27,7 @@ class Reader<D, out A>(val runReader: (D) -> A):
 	fun <B> flatMap(f: (A) -> Reader<in D, B>) =
 		Reader<D, B> { f(runReader(it)).runReader(it) }
 
-	override fun <B> contramap(f: (B) -> D) = Reader<B, A> { b -> runReader(f(b)) }
+	fun <B> using(f: (B) -> D) = Reader<B, A> { b -> runReader(f(b)) }
 
 	operator fun invoke(d: D) = runReader(d)
 
