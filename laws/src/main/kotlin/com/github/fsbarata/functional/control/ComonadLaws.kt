@@ -7,6 +7,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 interface ComonadLaws<W>: FunctorLaws<W> {
+	@Suppress("UNCHECKED_CAST")
 	private fun <T> eachPossibilityComonad(block: (Comonad<W, Int>) -> T): List<T> {
 		return eachPossibility { block(it as Comonad<W, Int>) }
 	}

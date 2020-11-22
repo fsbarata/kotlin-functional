@@ -7,6 +7,7 @@ interface MonadPlusLaws<M>: MonadLaws<M> {
 
 	private val empty get() = monadScope.empty<Any>() as MonadPlus<M, Any>
 
+	@Suppress("UNCHECKED_CAST")
 	private fun <T> eachPossibilityMonadPlus(block: (MonadPlus<M, Int>) -> T) =
 		eachPossibility { block(it as MonadPlus<M, Int>) }
 

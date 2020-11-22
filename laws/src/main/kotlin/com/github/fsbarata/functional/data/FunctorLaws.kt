@@ -3,11 +3,16 @@ package com.github.fsbarata.functional.data
 import com.github.fsbarata.functional.PossibilitiesTest
 import org.junit.Test
 
-interface FunctorLaws<F>: PossibilitiesTest<Functor<F, Int>> {
+interface FunctorLaws<F>: PossibilitiesTest {
 	override fun factory(possibility: Int): Functor<F, Int>
 
 	fun <A> Functor<F, A>.equalTo(other: Functor<F, A>): Boolean = this == other
 	fun <A> Functor<F, A>.describe() = toString()
+
+	@Suppress("UNCHECKED_CAST")
+	private fun eachPossibilityFunctor(block: (Functor<F, Int>) -> Unit) {
+		eachPossibility { block(it as Functor<F, Int>) }
+	}
 
 	fun <A> assertEqualF(r1: Functor<F, A>, r2: Functor<F, A>) {
 		assert(r1.equalTo(r2)) { "${r1.describe()} should be equal to ${r2.describe()}" }
@@ -15,14 +20,14 @@ interface FunctorLaws<F>: PossibilitiesTest<Functor<F, Int>> {
 
 	@Test
 	fun `map identity`() {
-		eachPossibility { f1 ->
+		eachPossibilityFunctor { f1 ->
 			assertEqualF(f1, f1.map(id()))
 		}
 	}
 
 	@Test
 	fun `map composition`() {
-		eachPossibility { fa ->
+		eachPossibilityFunctor { fa ->
 			val f = { a: String -> a.length }
 			val g = { a: Int -> "world $a" }
 			val r1 = fa.map(f.compose(g))

@@ -5,6 +5,7 @@ import org.junit.Test
 interface MonadLaws<M>: ApplicativeLaws<M> {
 	val monadScope: Monad.Scope<M>
 
+	@Suppress("UNCHECKED_CAST")
 	private fun <T> eachPossibilityMonad(block: (Monad<M, Int>) -> T) =
 		eachPossibility { block(it as Monad<M, Int>) }
 

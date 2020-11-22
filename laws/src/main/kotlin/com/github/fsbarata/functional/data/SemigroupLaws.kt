@@ -3,11 +3,16 @@ package com.github.fsbarata.functional.data
 import com.github.fsbarata.functional.PossibilitiesTest
 import org.junit.Test
 
-interface SemigroupLaws<A: Semigroup<A>>: PossibilitiesTest<A> {
+interface SemigroupLaws<A: Semigroup<A>>: PossibilitiesTest {
 	fun equals(a1: A, a2: A): Boolean = a1 == a2
 
 	fun assertEqual(a1: A, a2: A) {
 		assert(equals(a1, a2)) { "$a1 should be equal to $a2" }
+	}
+
+	@Suppress("UNCHECKED_CAST")
+	private fun eachPossibility(block: (A) -> Unit) {
+		super.eachPossibility { block(it as A) }
 	}
 
 	@Test

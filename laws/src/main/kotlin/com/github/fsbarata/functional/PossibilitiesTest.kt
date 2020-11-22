@@ -1,10 +1,11 @@
 package com.github.fsbarata.functional
 
-interface PossibilitiesTest<A> {
+interface PossibilitiesTest {
 	val possibilities: Int get() = 1
-	fun factory(possibility: Int): A
+	fun factory(possibility: Int): Any
 
-	fun <T> eachPossibility(block: (A) -> T) =
-		(0 until possibilities).map { block(factory(it)) }
+	fun <T> eachPossibility(block: (Any) -> T) =
+		(0 until possibilities)
+			.map { block(factory(it)) }
 
 }

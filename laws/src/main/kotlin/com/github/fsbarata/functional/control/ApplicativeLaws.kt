@@ -10,6 +10,7 @@ import kotlin.math.roundToInt
 interface ApplicativeLaws<F>: FunctorLaws<F> {
 	val applicativeScope: Applicative.Scope<F>
 
+	@Suppress("UNCHECKED_CAST")
 	private fun <T> eachPossibilityApp(block: (Applicative<F, Int>) -> T): List<T> {
 		return eachPossibility { block(it as Applicative<F, Int>) }
 	}

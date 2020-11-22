@@ -8,18 +8,18 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class Tuple2Test:
-	TraversableLaws<Tuple2Context<Double>>,
+	TraversableLaws<Tuple2Context<String>>,
 	BiFunctorLaws<Tuple2BiContext>,
-	ComonadLaws<Tuple2Context<Double>> {
+	ComonadLaws<Tuple2Context<String>> {
 
 	override fun <B, A> createBiFunctor(a: A, b: B) = Tuple2(b, a)
 
-	override val traversableScope = Tuple2.Scope<Double>()
+	override val traversableScope = Tuple2.Scope<String>()
 
-	override fun <A> createTraversable(vararg items: A) = Tuple2(2.0, items.first())
+	override fun <A> createTraversable(vararg items: A) = Tuple2("2.0", items.first())
 
 	override val possibilities: Int = 2
-	override fun factory(possibility: Int) = Tuple2(1.5, possibility)
+	override fun factory(possibility: Int) = Tuple2("1.5", possibility)
 
 	@Test
 	fun extract() {

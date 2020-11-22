@@ -4,6 +4,7 @@ import com.github.fsbarata.functional.data.split
 import org.junit.Test
 
 interface MonadZipLaws<M>: MonadLaws<M> {
+	@Suppress("UNCHECKED_CAST")
 	private fun <T> eachPossibilityMonadZip(block: (MonadZip<M, Int>) -> T) =
 		eachPossibility { block(it as MonadZip<M, Int>) }
 

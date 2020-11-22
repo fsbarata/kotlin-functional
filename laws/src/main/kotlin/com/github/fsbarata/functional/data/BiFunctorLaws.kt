@@ -1,15 +1,28 @@
 package com.github.fsbarata.functional.data
 
+import com.github.fsbarata.functional.PossibilitiesTest
 import org.junit.Test
 
-interface BiFunctorLaws<P> {
+interface BiFunctorLaws<P>: PossibilitiesTest {
 	fun <B, A> createBiFunctor(a: A, b: B): BiFunctor<P, B, A>
+
+	override fun factory(possibility: Int): BiFunctor<P, String?, Int?>
+
+	@Suppress("UNCHECKED_CAST")
+	private fun eachPossibility(block: (BiFunctor<P, String?, Int?>) -> Unit) {
+		super.eachPossibility { block(it as BiFunctor<P, String?, Int?>) }
+	}
 
 	fun <B, A> assertEqual(p1: BiFunctor<P, B, A>, p2: BiFunctor<P, B, A>) =
 		assert(p1 == p2) { "$p1 should be equal to $p2" }
 
 	@Test
 	fun `bimap identity`() {
+		eachPossibility { a ->
+			val r = a.bimap(id(), id())
+			assertEqual(a, r)
+		}
+
 		val a = createBiFunctor("a", 3)
 		val r1 = a.bimap(id(), id())
 		assertEqual(a, r1)
@@ -25,9 +38,10 @@ interface BiFunctorLaws<P> {
 
 	@Test
 	fun `bifunctor map identity`() {
-		val a = createBiFunctor("a", 3)
-		val r1 = a.map(id())
-		assertEqual(a, r1)
+		eachPossibility { a ->
+			val r = a.map(id())
+			assertEqual(a, r)
+		}
 
 		val b = createBiFunctor(null, 4)
 		val r2 = b.map(id())
@@ -36,9 +50,10 @@ interface BiFunctorLaws<P> {
 
 	@Test
 	fun `mapLeft identity`() {
-		val a = createBiFunctor("a", 3)
-		val r1 = a.mapLeft(id())
-		assertEqual(a, r1)
+		eachPossibility { a ->
+			val r = a.mapLeft(id())
+			assertEqual(a, r)
+		}
 
 		val b = createBiFunctor(4, null)
 		val r2 = b.mapLeft(id())
@@ -47,32 +62,22 @@ interface BiFunctorLaws<P> {
 
 	@Test
 	fun `bimap equivalence`() {
-		val f = { b: Int? -> b?.plus(2) }
-		val g = { a: String? -> a?.plus("gg") }
-		val a = createBiFunctor("a", 3)
-		assertEqual(a.bimap(f, g), a.map(g).mapLeft(f))
-
-		val b = createBiFunctor("b", null)
-		assertEqual(b.bimap(f, g), b.map(g).mapLeft(f))
-
-		val c = createBiFunctor(null, 3)
-		assertEqual(c.bimap(f, g), c.map(g).mapLeft(f))
+		eachPossibility { v ->
+			val f = { a: String? -> a?.plus("gg") }
+			val g = { b: Int? -> b?.plus(2) }
+			assertEqual(v.bimap(f, g), v.map(g).mapLeft(f))
+		}
 	}
 
 	@Test
 	fun `bimap composition`() {
-		val f = { b: Int? -> b?.plus(2) }
-		val h = { b: Int? -> b?.times(2) }
-		val g = { a: String? -> a?.plus("gg") }
-		val i = { a: String? -> a?.plus("we") }
+		eachPossibility { v ->
+			val f = { a: String? -> a?.plus("gg") }
+			val g = { b: Int? -> b?.plus(2) }
+			val h = { a: String? -> a?.plus("we") }
+			val i = { b: Int? -> b?.times(2) }
 
-		val a = createBiFunctor("a", 3)
-		assertEqual(a.bimap(h, i).bimap(f, g), a.bimap(f compose h, g compose i))
-
-		val b = createBiFunctor("b", null)
-		assertEqual(b.bimap(h, i).bimap(f, g), b.bimap(f compose h, g compose i))
-
-		val c = createBiFunctor(null, 3)
-		assertEqual(c.bimap(h, i).bimap(f, g), c.bimap(f compose h, g compose i))
+			assertEqual(v.bimap(h, i).bimap(f, g), v.bimap(f compose h, g compose i))
+		}
 	}
 }

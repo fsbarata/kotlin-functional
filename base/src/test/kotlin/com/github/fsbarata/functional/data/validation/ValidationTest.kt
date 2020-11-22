@@ -12,23 +12,22 @@ import com.github.fsbarata.functional.data.validation.Validation.Success
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test
-import java.io.IOException
 
 @Suppress("UNREACHABLE_CODE")
 class ValidationTest:
-	FunctorLaws<ValidationContext<IOException>>,
+	FunctorLaws<ValidationContext<String>>,
 	BiFunctorLaws<ValidationBiContext> {
 	override fun <B, A> createBiFunctor(a: A, b: B) =
 		if (a == null) Failure(b) else Success(a)
 
-	val error = IOException()
+	val error = "some error"
 	override val possibilities: Int = 5
 	override fun factory(possibility: Int) = when (possibility) {
 		0 -> Failure(error)
 		else -> Success(possibility - 1)
 	}
 
-	override fun <A> Functor<ValidationContext<IOException>, A>.equalTo(other: Functor<ValidationContext<IOException>, A>) =
+	override fun <A> Functor<ValidationContext<String>, A>.equalTo(other: Functor<ValidationContext<String>, A>) =
 		asValidation == other.asValidation
 
 	@Test

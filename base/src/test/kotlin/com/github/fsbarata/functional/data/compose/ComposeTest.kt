@@ -8,6 +8,7 @@ import com.github.fsbarata.functional.data.validation.ValidationContext
 import java.io.IOException
 
 class ComposeTest: FunctorLaws<ComposeContext<NonEmptyContext, ValidationContext<Nothing>>> {
+	@Suppress("UNCHECKED_CAST")
 	override fun factory(possibility: Int) =
 		Compose(
 			createNel(possibility)
