@@ -15,16 +15,16 @@ class BankAccountKtTest {
 		val bank = Bank(
 			name = "Central Bank",
 			swiftCode = "CBESMMX",
-			accounts = listOf(
-				Account(fromAccountId, BigDecimal("200")),
-				Account(toAccountId, BigDecimal("20"))
+			accounts = mapOf(
+				fromAccountId to Account(BigDecimal("200")),
+				toAccountId to Account(BigDecimal("20"))
 			)
 		)
-		val (bankResult, amount) = transferAQuarterOfTheMoney(from = fromAccountId, to = toAccountId).runState(bank)
+		val (bankResult, amount) = transferAQuarterOfTheMoney(from = fromAccountId, to = toAccountId)(bank)
 		assertThat(amount, Matchers.comparesEqualTo(BigDecimal("50")))
-		assertThat(bankResult.accounts.find { it.id == fromAccountId }?.balance,
+		assertThat(bankResult.accounts[fromAccountId]?.balance,
 			Matchers.comparesEqualTo(BigDecimal("150")))
-		assertThat(bankResult.accounts.find { it.id == toAccountId }?.balance,
+		assertThat(bankResult.accounts[toAccountId]?.balance,
 			Matchers.comparesEqualTo(BigDecimal("70")))
 	}
 
