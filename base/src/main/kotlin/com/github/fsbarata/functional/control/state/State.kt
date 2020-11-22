@@ -4,6 +4,22 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.data.tuple.Tuple2
 
+/**
+ * This type models State as a type rather than storing.
+ *
+ * The State S is transformed within the function and its result is paired with the output A
+ *
+ * Eg.:
+ *
+ * val seed = 200L
+ * val random = State {
+ *     val newSeed = 75L * (seed + 12)
+ *     return Tuple2(newSeed, (newSeed % 21).toInt())
+ * }
+ * val (newSeed, out) = random.runState(seed) // returns (15900, 3) no state stored
+ * random.runState(newSeed) // returns (1193400, 12)
+ */
+
 class State<S, A>(
 	val runState: (S) -> Tuple2<S, A>,
 ): Monad<StateContext<S>, A> {

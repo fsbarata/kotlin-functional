@@ -9,7 +9,7 @@ import com.github.fsbarata.functional.data.id
 /**
  * Reader Monad
  *
- * This object models a set of dependencies D, required to generate the value A.
+ * This type models a set of dependencies D, required to generate the value A.
  */
 class Reader<D, out A>(val runReader: (D) -> A):
 	Monad<ReaderContext<D>, A> {
