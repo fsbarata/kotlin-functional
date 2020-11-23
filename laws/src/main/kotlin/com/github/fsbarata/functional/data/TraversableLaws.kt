@@ -36,8 +36,8 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 		val r1 =
 			t.traverse(ComposedApplicative.Scope(ListF, Optional)) { a -> ComposedApplicative(f(a).map(g), Optional) }
 		val r2 = Composed(t.traverse(ListF, f).map { it.traverse(Optional, g) })
-		val r1Items = r1.asCompose.fg.asList
-		val r2Items = r2.fg.asList
+		val r1Items = r1.asCompose.underlying.asList
+		val r2Items = r2.underlying.asList
 		assertEquals(r2Items.size, r1Items.size)
 		r1Items.zipWith(r2Items) { optional1, optional2 ->
 			val item1 = optional1.asOptional.orNull() ?: run {
