@@ -10,7 +10,7 @@ import java.io.IOException
 class CompositeTest: FunctorLaws<ComposeContext<NonEmptyContext, ValidationContext<Nothing>>> {
 	@Suppress("UNCHECKED_CAST")
 	override fun factory(possibility: Int) =
-		Composite(
+		Composed(
 			createNel(possibility)
 				.map {
 					if (it > 0) Validation.Success(it)
