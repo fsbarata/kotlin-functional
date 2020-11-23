@@ -22,7 +22,7 @@ open class Composed<F, G, A>(
 
 	override fun hashCode() = underlying.hashCode()
 
-	override fun toString() = "Compose(${underlying.toString()})"
+	override fun toString() = "Compose($underlying)"
 }
 
 fun <F, G, A> Functor<F, Functor<G, A>>.compose() = Composed(this)
