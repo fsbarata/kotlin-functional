@@ -67,9 +67,6 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 		override fun <A> empty() = Observable.empty<A>().f()
 		override fun <A> just(a: A) = Observable.just(a).f()
 
-		fun <A> on(block: () -> Monad<ObservableContext, A>) =
-			block().asObservable
-
 		override fun <A> fromList(list: List<A>) = fromIterable(list).f()
 		override fun <A> fromOptional(optional: Optional<A>) = optional.maybe(empty(), ::just)
 	}
@@ -81,6 +78,8 @@ fun <A: Semigroup<A>> Observable<A>.scan() = scan { a1, a2 -> a1.combineWith(a2)
 fun <A: Semigroup<A>> Observable<A>.scan(initialValue: A) = scan(initialValue) { a1, a2 -> a1.combineWith(a2) }.f()
 
 fun <A> Observable<A>.f() = ObservableF(this)
+fun <A, R> Observable<A>.f(block: ObservableF<A>.() -> Context<ObservableContext, R>) =
+	f().block().asObservable
 
 internal typealias ObservableContext = ObservableF<*>
 

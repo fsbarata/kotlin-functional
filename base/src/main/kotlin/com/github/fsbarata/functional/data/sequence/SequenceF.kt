@@ -87,6 +87,8 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 }
 
 fun <A> Sequence<A>.f() = SequenceF(this)
+fun <A, R> Sequence<A>.f(block: SequenceF<A>.() -> Context<SequenceContext, R>) =
+	f().block().asSequence
 
 internal typealias SequenceContext = SequenceF<*>
 

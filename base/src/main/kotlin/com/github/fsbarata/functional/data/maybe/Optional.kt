@@ -116,7 +116,8 @@ inline infix fun <A> Optional<A>.orOptionalGet(a: () -> Optional<A>): Optional<A
 	fold(ifEmpty = a, ifSome = { Optional.just(it) })
 
 fun <A: Any> A?.toOptional() = Optional.ofNullable(this)
-fun <A: Any> A?.f() = toOptional()
+fun <A, R> A?.f(block: Optional<A>.() -> Context<Optional<*>, R>) =
+	toOptional().block().asOptional
 
 val <A> Context<OptionalContext, A>.asOptional
 	get() = this as Optional<A>

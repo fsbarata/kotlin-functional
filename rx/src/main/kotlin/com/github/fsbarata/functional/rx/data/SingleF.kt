@@ -6,7 +6,7 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleObserver
 
 class SingleF<A>(private val wrapped: Single<A>): Single<A>(),
-	MonadZip<SingleF<*>, A> {
+	MonadZip<SingleContext, A> {
 	override val scope get() = Companion
 
 	override fun subscribeActual(observer: SingleObserver<in A>) {
@@ -15,23 +15,27 @@ class SingleF<A>(private val wrapped: Single<A>): Single<A>(),
 
 	override fun <B> map(f: (A) -> B) = wrapped.map(f).f()
 
-	override infix fun <B> bind(f: (A) -> Context<SingleF<*>, B>): SingleF<B> =
+	override infix fun <B> bind(f: (A) -> Context<SingleContext, B>): SingleF<B> =
 		flatMap { f(it).asSingle }
 
 	fun <B> flatMap(f: (A) -> Single<B>): SingleF<B> =
 		wrapped.flatMap(f).f()
 
-	override fun <B, R> zipWith(other: MonadZip<SingleF<*>, B>, f: (A, B) -> R) =
+	override fun <B, R> zipWith(other: MonadZip<SingleContext, B>, f: (A, B) -> R) =
 		(this as Single<A>).zipWith(other.asSingle, f).f()
 
-	companion object: Monad.Scope<SingleF<*>> {
+	companion object: Monad.Scope<SingleContext> {
 		override fun <A> just(a: A) = Single.just(a).f()
 	}
 }
 
-fun <A> Single<A>.f() = SingleF(this)
+internal typealias SingleContext = Single<*>
 
-val <A> Context<SingleF<*>, A>.asSingle
+fun <A> Single<A>.f() = SingleF(this)
+fun <A, R> Single<A>.f(block: SingleF<A>.() -> Context<SingleContext, R>) =
+	SingleF(this).block().asSingle
+
+val <A> Context<SingleContext, A>.asSingle
 	get() = this as SingleF<A>
 
 operator fun <A, B, R> Lift2<A, B, R>.invoke(

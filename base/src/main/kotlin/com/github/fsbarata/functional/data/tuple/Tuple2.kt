@@ -67,4 +67,7 @@ val <X, Y> BiContext<Tuple2BiContext, X, Y>.asTuple
 	get() = this as Tuple2<X, Y>
 
 fun <A, B> Pair<A, B>.f() = Tuple2(first, second)
+fun <A, B, X, Y> Pair<A, B>.f(block: Tuple2<A, B>.() -> Context<Tuple2Context<X>, Y>) =
+	f().block().asTuple
+
 fun <X, Y> Tuple2<X, Y>.toPair() = Pair(x, y)

@@ -7,9 +7,9 @@ import io.reactivex.rxjava3.core.Single
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class SingleFTest: MonadZipLaws<SingleF<*>> {
+class SingleFTest: MonadZipLaws<SingleContext> {
 	override val monadScope = SingleF
-	override fun <A> Functor<SingleF<*>, A>.equalTo(other: Functor<SingleF<*>, A>): Boolean {
+	override fun <A> Functor<SingleContext, A>.equalTo(other: Functor<SingleContext, A>): Boolean {
 		val testObserver1 = asSingle.materialize().test()
 		val testObserver2 = other.asSingle.materialize().test()
 

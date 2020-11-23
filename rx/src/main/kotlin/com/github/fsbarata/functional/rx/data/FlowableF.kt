@@ -43,6 +43,8 @@ fun <A: Semigroup<A>> Flowable<A>.scan() = scan { a1, a2 -> a1.combineWith(a2) }
 fun <A: Semigroup<A>> Flowable<A>.scan(initialValue: A) = scan(initialValue) { a1, a2 -> a1.combineWith(a2) }.f()
 
 fun <A> Flowable<A>.f() = FlowableF(this)
+fun <A, R> Flowable<A>.f(block: FlowableF<A>.() -> Context<FlowableF<*>, R>) =
+	f().block().asFlowable
 
 val <A> Context<FlowableF<*>, A>.asFlowable
 	get() = this as FlowableF<A>

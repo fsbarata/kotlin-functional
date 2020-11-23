@@ -6,7 +6,7 @@ import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.MaybeObserver
 
 class MaybeF<A>(private val wrapped: Maybe<A>): Maybe<A>(),
-	MonadZip<MaybeF<*>, A> {
+	MonadZip<MaybeContext, A> {
 	override val scope get() = Companion
 
 	override fun subscribeActual(observer: MaybeObserver<in A>) {
@@ -16,24 +16,28 @@ class MaybeF<A>(private val wrapped: Maybe<A>): Maybe<A>(),
 	override fun <B> map(f: (A) -> B) =
 		wrapped.map(f).f()
 
-	override infix fun <B> bind(f: (A) -> Context<MaybeF<*>, B>): MaybeF<B> =
+	override infix fun <B> bind(f: (A) -> Context<MaybeContext, B>): MaybeF<B> =
 		flatMap { f(it).asMaybe }
 
 	fun <B> flatMap(f: (A) -> Maybe<B>): MaybeF<B> =
 		wrapped.flatMap(f).f()
 
-	override fun <B, R> zipWith(other: MonadZip<MaybeF<*>, B>, f: (A, B) -> R) =
+	override fun <B, R> zipWith(other: MonadZip<MaybeContext, B>, f: (A, B) -> R) =
 		(this as Maybe<A>).zipWith(other.asMaybe, f).f()
 
-	companion object: Monad.Scope<MaybeF<*>> {
+	companion object: Monad.Scope<MaybeContext> {
 		fun <A> empty() = Maybe.empty<A>().f()
 		override fun <A> just(a: A) = Maybe.just(a).f()
 	}
 }
 
-fun <A> Maybe<A>.f() = MaybeF(this)
+internal typealias MaybeContext = Maybe<*>
 
-val <A> Context<MaybeF<*>, A>.asMaybe
+fun <A> Maybe<A>.f() = MaybeF(this)
+fun <A, R> Maybe<A>.f(block: MaybeF<A>.() -> Context<MaybeContext, R>) =
+	f().block().asMaybe
+
+val <A> Context<MaybeContext, A>.asMaybe
 	get() = this as MaybeF<A>
 
 operator fun <A, B, R> Lift2<A, B, R>.invoke(

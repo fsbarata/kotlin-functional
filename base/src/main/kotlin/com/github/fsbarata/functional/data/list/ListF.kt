@@ -91,6 +91,8 @@ class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
 
 fun <A> List<A>.f() = ListF(this)
 fun <A> List<A>.asFoldable(): Foldable<A> = f()
+fun <A, R> List<A>.f(block: ListF<A>.() -> Context<ListContext, R>) =
+	f().block().asList
 
 internal typealias ListContext = ListF<*>
 
