@@ -62,8 +62,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.github.fsbarata.kotlin-functional:concepts:$kfVersion"
-    implementation "com.github.fsbarata.kotlin-functional:types:$kfVersion"
+    implementation "com.github.fsbarata.kotlin-functional:base:$kfVersion"
 }
 ```
 
