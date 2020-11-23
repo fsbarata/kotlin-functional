@@ -4,7 +4,7 @@ import com.github.fsbarata.functional.control.ApplicativeLaws
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.list.*
 
-class CompositeApplicativeTest: ApplicativeLaws<ComposeContext<ListContext, NonEmptyContext>> {
+class ComposedApplicativeTest: ApplicativeLaws<ComposeContext<ListContext, NonEmptyContext>> {
 	override val applicativeScope = ComposedApplicative.Scope(ListF, NonEmptyList)
 
 	override val possibilities: Int = 10

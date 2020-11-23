@@ -4,7 +4,7 @@ import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.list.*
 import com.github.fsbarata.functional.data.TraversableLaws
 
-class CompositeTraversableTest: TraversableLaws<ComposeContext<ListContext, NonEmptyContext>> {
+class ComposedTraversableTest: TraversableLaws<ComposeContext<ListContext, NonEmptyContext>> {
 	override val traversableScope = ComposedTraversable.Scope<ListContext, NonEmptyContext>()
 	override fun <A> createTraversable(vararg items: A) =
 		ComposedTraversable(
