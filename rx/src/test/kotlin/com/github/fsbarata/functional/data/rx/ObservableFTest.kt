@@ -1,11 +1,8 @@
-package com.github.fsbarata.functional.rx.data
+package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.control.MonadPlusLaws
 import com.github.fsbarata.functional.control.MonadZipLaws
 import com.github.fsbarata.functional.data.Functor
-import com.github.fsbarata.functional.rx.assertEqualObs
-import com.github.fsbarata.functional.rx.observableFactory
-import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Test
 

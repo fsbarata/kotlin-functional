@@ -1,8 +1,5 @@
-package com.github.fsbarata.functional.rx
+package com.github.fsbarata.functional.data.rx
 
-import com.github.fsbarata.functional.rx.data.MaybeF
-import com.github.fsbarata.functional.rx.data.ObservableF
-import com.github.fsbarata.functional.rx.data.f
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable

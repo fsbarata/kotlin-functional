@@ -1,8 +1,7 @@
-package com.github.fsbarata.functional.rx.data
+package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.control.MonadZipLaws
 import com.github.fsbarata.functional.data.Functor
-import com.github.fsbarata.functional.rx.maybeFactory
 
 class MaybeFTest: MonadZipLaws<MaybeContext> {
 	override val monadScope = MaybeF

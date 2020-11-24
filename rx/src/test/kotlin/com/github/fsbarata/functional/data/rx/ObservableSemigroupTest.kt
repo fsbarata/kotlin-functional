@@ -1,8 +1,6 @@
-package com.github.fsbarata.functional.rx.data
+package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.data.SemigroupLaws
-import com.github.fsbarata.functional.rx.assertEqualObs
-import com.github.fsbarata.functional.rx.observableFactory
 
 class ObservableSemigroupTest:
 	SemigroupLaws<ObservableF<Int>> {

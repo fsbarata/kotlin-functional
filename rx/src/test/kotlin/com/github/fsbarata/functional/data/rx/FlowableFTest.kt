@@ -1,8 +1,7 @@
-package com.github.fsbarata.functional.rx.data
+package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.control.MonadZipLaws
 import com.github.fsbarata.functional.data.Functor
-import com.github.fsbarata.functional.rx.observableFactory
 import io.reactivex.rxjava3.core.BackpressureStrategy
 
 class FlowableFTest: MonadZipLaws<FlowableF<*>> {

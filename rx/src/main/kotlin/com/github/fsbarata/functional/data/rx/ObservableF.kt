@@ -1,4 +1,4 @@
-package com.github.fsbarata.functional.rx.data
+package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
