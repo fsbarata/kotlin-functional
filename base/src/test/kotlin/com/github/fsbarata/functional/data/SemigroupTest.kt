@@ -1,9 +1,10 @@
 package com.github.fsbarata.functional.data
 
+import com.github.fsbarata.functional.data.list.nelOf
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class SemigroupKtTest {
+class SemigroupTest {
 	data class SgInt(val i: Int): Semigroup<SgInt> {
 		override fun combineWith(other: SgInt) = SgInt(i + other.i)
 	}
@@ -22,5 +23,13 @@ class SemigroupKtTest {
 	@Test
 	fun dual() {
 		assertEquals(SgString("5a3w"), SgString("3w").dual().combineWith(SgString("5a").dual()).get)
+	}
+
+	@Test
+	fun sconcat() {
+		assertEquals(
+			StringF("5ag2"),
+			nelOf(StringF("5a"), StringF("g"), StringF(""), StringF("2")).sconcat(),
+		)
 	}
 }
