@@ -1,9 +1,13 @@
 package com.github.fsbarata.functional.control.arrow
 
 import com.github.fsbarata.functional.control.Arrow
+import com.github.fsbarata.functional.control.ArrowChoice
 import com.github.fsbarata.functional.control.Category
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.data.F1
+import com.github.fsbarata.functional.data.either.Either
+import com.github.fsbarata.functional.data.either.Either.Right
+import com.github.fsbarata.functional.data.id
 
 /**
  * Kleisli Arrow
@@ -22,11 +26,14 @@ import com.github.fsbarata.functional.data.F1
 class Kleisli<M, A, R> internal constructor(
 	private val monadScope: Monad.Scope<M>,
 	private val f: (A) -> Monad<M, R>,
-): Arrow<Kleisli<M, *, *>, A, R>, F1<A, Monad<M, R>> by f {
+): ArrowChoice<Kleisli<M, *, *>, A, R>, F1<A, Monad<M, R>> by f {
 	override val scope = Scope(monadScope)
 
 	override infix fun <B> compose(other: Category<Kleisli<M, *, *>, B, A>): Kleisli<M, B, R> =
 		Kleisli(monadScope) { other.asKleisli.f(it).bind(f) }
+
+	override fun <RR> composeForward(other: Category<Kleisli<M, *, *>, R, RR>): Kleisli<M, A, RR> =
+		Kleisli(monadScope) { f(it).bind(other.asKleisli) }
 
 	override fun <PASS> first(): Kleisli<M, Pair<A, PASS>, Pair<R, PASS>> =
 		Kleisli(monadScope) { (a, d) -> f(a).map { r -> Pair(r, d) } }
@@ -48,8 +55,19 @@ class Kleisli<M, A, R> internal constructor(
 		}
 	}
 
+	override fun <PASS> left() = splitChoice(scope.arr(id<PASS>()))
+	override fun <PASS> right() = scope.arr(id<PASS>()).splitChoice(this)
+
+	override infix fun <B, RR> splitChoice(other: ArrowChoice<Kleisli<M, *, *>, B, RR>): Kleisli<M, Either<A, B>, Either<R, RR>> =
+		composeForward(scope.arr { Either.left<R, RR>(it) })
+			.fanin(other.asKleisli.composeForward(scope.arr(::Right)))
+
+	override infix fun <B> fanin(other: ArrowChoice<Kleisli<M, *, *>, B, R>): Kleisli<M, Either<A, B>, R> =
+		Kleisli(monadScope) { either -> either.fold(ifLeft = f, ifRight = other.asKleisli.f) }
+
 	class Scope<M>(private val monadScope: Monad.Scope<M>): Arrow.Scope<Kleisli<M, *, *>> {
 		override fun <A, R> arr(f: (A) -> R) = monadScope.kleisli<M, A, R> { monadScope.just(f(it)) }
+		override fun <B> id() = arr<B, B> { it }
 	}
 }
 

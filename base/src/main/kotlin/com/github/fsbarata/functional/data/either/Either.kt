@@ -88,6 +88,8 @@ sealed class Either<out E, out A>:
 		fun <E, A> ofNullable(a: A?, e: () -> E): Either<E, A> =
 			a?.let(::Right) ?: Left(e())
 
+		fun <E, A> left(e: E): Either<E, A> = Left(e)
+
 		fun <A, E, B> kleisli(f: (A) -> Either<E, B>) = Scope<E>().kleisli(f)
 	}
 }

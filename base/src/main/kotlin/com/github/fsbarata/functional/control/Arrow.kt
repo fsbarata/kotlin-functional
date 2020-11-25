@@ -15,11 +15,11 @@ interface Arrow<ARR, A, R>: Category<ARR, A, R> {
 	fun <PASS> second(): Arrow<ARR, Pair<PASS, A>, Pair<PASS, R>> =
 		scope.id<PASS>() split this
 
-	infix fun <D, E> split(other: Arrow<ARR, D, E>): Arrow<ARR, Pair<A, D>, Pair<R, E>> =
-		first<D>() composeForward scope.arr { Pair(it.second, it.first) } composeForward
+	infix fun <B, RR> split(other: Arrow<ARR, B, RR>): Arrow<ARR, Pair<A, B>, Pair<R, RR>> =
+		first<B>() composeForward scope.arr { Pair(it.second, it.first) } composeForward
 				(other.first<R>() composeForward scope.arr { Pair(it.second, it.first) })
 
-	infix fun <D> fanout(other: Arrow<ARR, A, D>): Arrow<ARR, A, Pair<R, D>> =
+	infix fun <RR> fanout(other: Arrow<ARR, A, RR>): Arrow<ARR, A, Pair<R, RR>> =
 		scope.arr<A, Pair<A, A>> { Pair(it, it) } composeForward (this split other)
 
 	interface Scope<ARR>: Category.Scope<ARR> {
