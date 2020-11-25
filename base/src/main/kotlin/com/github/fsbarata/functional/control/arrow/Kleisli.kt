@@ -28,6 +28,26 @@ class Kleisli<M, A, R> internal constructor(
 	override infix fun <B> compose(other: Category<Kleisli<M, *, *>, B, A>): Kleisli<M, B, R> =
 		Kleisli(monadScope) { other.asKleisli.f(it).bind(f) }
 
+	override fun <PASS> first(): Kleisli<M, Pair<A, PASS>, Pair<R, PASS>> =
+		Kleisli(monadScope) { (a, d) -> f(a).map { r -> Pair(r, d) } }
+
+	override fun <PASS> second(): Kleisli<M, Pair<PASS, A>, Pair<PASS, R>> =
+		Kleisli(monadScope) { (d, a) -> f(a).map { r -> Pair(d, r) } }
+
+	override fun <B, RR> split(other: Arrow<Kleisli<M, *, *>, B, RR>): Kleisli<M, Pair<A, B>, Pair<R, RR>> {
+		val otherKleisli = other.asKleisli
+		return Kleisli(monadScope) { (a, d) ->
+			f(a).bind { r -> otherKleisli(d).map { e -> Pair(r, e) } }
+		}
+	}
+
+	override fun <RR> fanout(other: Arrow<Kleisli<M, *, *>, A, RR>): Kleisli<M, A, Pair<R, RR>> {
+		val otherKleisli = other.asKleisli
+		return Kleisli(monadScope) { a ->
+			f(a).bind { r -> otherKleisli(a).map { d -> Pair(r, d) } }
+		}
+	}
+
 	class Scope<M>(private val monadScope: Monad.Scope<M>): Arrow.Scope<Kleisli<M, *, *>> {
 		override fun <A, R> arr(f: (A) -> R) = monadScope.kleisli<M, A, R> { monadScope.just(f(it)) }
 	}
