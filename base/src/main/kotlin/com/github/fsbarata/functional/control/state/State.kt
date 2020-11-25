@@ -2,6 +2,7 @@ package com.github.fsbarata.functional.control.state
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.arrow.kleisli
 import com.github.fsbarata.functional.data.tuple.Tuple2
 
 /**
@@ -14,7 +15,7 @@ import com.github.fsbarata.functional.data.tuple.Tuple2
 class State<S, A>(
 	val runState: (S) -> Tuple2<S, A>,
 ): Monad<StateContext<S>, A> {
-	override val scope get() = StateScope<S>()
+	override val scope get() = Scope<S>()
 
 	override fun <B> map(f: (A) -> B): State<S, B> =
 		State { s -> runState(s).map(f) }
@@ -33,7 +34,7 @@ class State<S, A>(
 	fun eval(s: S) = runState(s).y
 	fun exec(s: S) = runState(s).x
 
-	class StateScope<S>: Monad.Scope<StateContext<S>> {
+	class Scope<S>: Monad.Scope<StateContext<S>> {
 		override fun <A> just(a: A) = just<S, A>(a)
 	}
 
@@ -43,6 +44,8 @@ class State<S, A>(
 		fun <S> modify(f: (S) -> S) = State<S, Unit> { s -> Tuple2(f(s), Unit) }
 		fun <S> get() = State<S, S> { Tuple2(it, it) }
 		fun <S, A> gets(f: (S) -> A) = State<S, A> { s -> Tuple2(s, f(s)) }
+
+		fun <S, A, B> kleisli(f: (A) -> State<S, B>) = Scope<S>().kleisli(f)
 	}
 }
 

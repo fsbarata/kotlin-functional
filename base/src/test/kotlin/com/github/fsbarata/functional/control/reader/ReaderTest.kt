@@ -10,7 +10,7 @@ private typealias Dependencies = Pair<String, Int>
 
 class ReaderTest:
 	MonadLaws<ReaderContext<Dependencies>> {
-	override val monadScope = Reader.ReaderScope<Dependencies>()
+	override val monadScope = Reader.Scope<Dependencies>()
 
 	override val possibilities: Int = 10
 	override fun factory(possibility: Int) =

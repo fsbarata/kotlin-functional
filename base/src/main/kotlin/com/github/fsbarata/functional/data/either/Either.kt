@@ -3,6 +3,7 @@ package com.github.fsbarata.functional.data.either
 import com.github.fsbarata.functional.BiContext
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.control.arrow.kleisli
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.maybe.Optional
 import java.io.Serializable
@@ -86,6 +87,8 @@ sealed class Either<out E, out A>:
 		fun <E, A> just(a: A): Either<E, A> = Right(a)
 		fun <E, A> ofNullable(a: A?, e: () -> E): Either<E, A> =
 			a?.let(::Right) ?: Left(e())
+
+		fun <A, E, B> kleisli(f: (A) -> Either<E, B>) = Scope<E>().kleisli(f)
 	}
 }
 

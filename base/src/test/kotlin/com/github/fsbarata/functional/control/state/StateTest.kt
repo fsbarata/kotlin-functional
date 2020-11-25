@@ -10,7 +10,7 @@ private typealias MyState = Pair<String, Int>
 
 class StateTest:
 	MonadLaws<StateContext<MyState>> {
-	override val monadScope = State.StateScope<MyState>()
+	override val monadScope = State.Scope<MyState>()
 
 
 	override val possibilities: Int = 10

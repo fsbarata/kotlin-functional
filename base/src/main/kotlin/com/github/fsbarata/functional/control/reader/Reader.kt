@@ -3,7 +3,7 @@ package com.github.fsbarata.functional.control.reader
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.data.Contravariant
+import com.github.fsbarata.functional.control.arrow.kleisli
 import com.github.fsbarata.functional.data.id
 
 /**
@@ -13,7 +13,7 @@ import com.github.fsbarata.functional.data.id
  */
 class Reader<D, out A>(val runReader: (D) -> A):
 	Monad<ReaderContext<D>, A> {
-	override val scope get() = ReaderScope<D>()
+	override val scope get() = Scope<D>()
 
 	override fun <B> map(f: (A) -> B): Reader<D, B> =
 		Reader { f(runReader(it)) }
@@ -31,7 +31,7 @@ class Reader<D, out A>(val runReader: (D) -> A):
 
 	operator fun invoke(d: D) = runReader(d)
 
-	class ReaderScope<D>: Monad.Scope<ReaderContext<D>> {
+	class Scope<D>: Monad.Scope<ReaderContext<D>> {
 		override fun <A> just(a: A) = just<D, A>(a)
 	}
 
@@ -39,6 +39,8 @@ class Reader<D, out A>(val runReader: (D) -> A):
 		fun <D, A> just(a: A): Reader<D, A> = Reader { a }
 
 		fun <D> ask(): Reader<D, D> = Reader(::id)
+
+		fun <D, A, B> kleisli(f: (A) -> Reader<D, B>) = Scope<D>().kleisli(f)
 	}
 }
 
