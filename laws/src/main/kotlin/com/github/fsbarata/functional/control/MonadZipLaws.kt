@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.control
 
-import com.github.fsbarata.functional.data.split
+import com.github.fsbarata.functional.control.arrow.split
 import org.junit.Test
 
 interface MonadZipLaws<M>: MonadLaws<M> {
