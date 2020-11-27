@@ -1,9 +1,6 @@
 package com.github.fsbarata.functional.control.arrow
 
-import com.github.fsbarata.functional.control.Arrow
-import com.github.fsbarata.functional.control.ArrowChoice
-import com.github.fsbarata.functional.control.Category
-import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.F1
 import com.github.fsbarata.functional.data.either.Either
 import com.github.fsbarata.functional.data.either.Either.Right
@@ -26,8 +23,10 @@ import com.github.fsbarata.functional.data.id
 class Kleisli<M, A, R> internal constructor(
 	private val monadScope: Monad.Scope<M>,
 	private val f: (A) -> Monad<M, R>,
-): ArrowChoice<Kleisli<M, *, *>, A, R>, F1<A, Monad<M, R>> by f {
-	override val scope = Scope(monadScope)
+): F1<A, Monad<M, R>> by f,
+	ArrowChoice<Kleisli<M, *, *>, A, R>,
+	ArrowApply<Kleisli<M, *, *>, A, R> {
+	override val scope = KleisliScope(monadScope)
 
 	override infix fun <B> compose(other: Category<Kleisli<M, *, *>, B, A>): Kleisli<M, B, R> =
 		Kleisli(monadScope) { other.asKleisli.f(it).bind(f) }
@@ -64,11 +63,14 @@ class Kleisli<M, A, R> internal constructor(
 
 	override infix fun <B> fanin(other: ArrowChoice<Kleisli<M, *, *>, B, R>): Kleisli<M, Either<A, B>, R> =
 		Kleisli(monadScope, f fanin other.asKleisli.f)
+}
 
-	class Scope<M>(private val monadScope: Monad.Scope<M>): Arrow.Scope<Kleisli<M, *, *>> {
-		override fun <A, R> arr(f: (A) -> R) = monadScope.kleisli<M, A, R> { monadScope.just(f(it)) }
-		override fun <B> id() = arr<B, B> { it }
-	}
+class KleisliScope<M>(private val monadScope: Monad.Scope<M>): ArrowApply.Scope<Kleisli<M, *, *>> {
+	override fun <A, R> arr(f: (A) -> R) = monadScope.kleisli<M, A, R> { monadScope.just(f(it)) }
+	override fun <B> id() = arr<B, B> { it }
+
+	override fun <A, R> app(): Kleisli<M, Pair<Kleisli<M, A, R>, A>, R> =
+		Kleisli(monadScope) { (k, a) -> k.asKleisli(a) }
 }
 
 val <M, A, R> Category<Kleisli<M, *, *>, A, R>.asKleisli
@@ -76,3 +78,6 @@ val <M, A, R> Category<Kleisli<M, *, *>, A, R>.asKleisli
 
 fun <M, A, R> Monad.Scope<M>.kleisli(f: (A) -> Monad<M, R>) =
 	Kleisli(this, f)
+
+val <M> Monad.Scope<M>.Kleisli get() = KleisliScope(this)
+

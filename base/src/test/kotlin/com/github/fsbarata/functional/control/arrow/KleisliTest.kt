@@ -1,5 +1,6 @@
 package com.github.fsbarata.functional.control.arrow
 
+import com.github.fsbarata.functional.data.compose
 import com.github.fsbarata.functional.data.either.Either
 import com.github.fsbarata.functional.data.maybe.Optional
 import org.junit.Assert.assertEquals
@@ -81,5 +82,13 @@ class KleisliTest {
 		val k = Optional.kleisli(f) fanin Optional.kleisli(g)
 		assertEquals(Optional.just("3"), Optional.just(Either.Left(3)).bind(k))
 		assertEquals(Optional.just("2.5"), Optional.just(Either.Right(2.5)).bind(k))
+	}
+
+	@Test
+	fun app() {
+		val f = { b: Int -> Optional.just("$b") }
+		val g = { a: Double -> Optional.just(Pair(Optional.kleisli(f), a.toInt())) }
+		val k = Optional.kleisli(g).composeForward(Optional.Kleisli.app())
+		assertEquals(Optional.just("3"), Optional.just(3.6).bind(k))
 	}
 }

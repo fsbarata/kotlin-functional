@@ -23,3 +23,5 @@ inline infix fun <A, R, B, RR> F1<A, R>.splitChoice(crossinline other: F1<B, RR>
 	{ it.bimap(this, other) }
 inline infix fun <A, B, R> F1<A, R>.fanin(crossinline other: F1<B, R>): F1<Either<A, B>, R> =
 	{ it.fold(this, other) }
+
+inline fun <A, R> app(): F1<Pair<F1<A, R>, A>, R> = { (f, a) -> f(a) }
