@@ -40,11 +40,6 @@ fun <A> Monoid<A>.semigroupFactory() = MonoidSemigroupFactory(this)
 
 fun <A: Semigroup<A>> Monoid<A>.dual() = monoid(Dual(empty))
 
-class Endo<A>(private val f: (A) -> A): Semigroup<Endo<A>> {
-	operator fun invoke(a: A) = f(a)
-	override fun combineWith(other: Endo<A>) = Endo(f.compose(other.f))
-}
-
 fun <A> endoMonoid() = monoid(Endo(id<A>()))
 
 
