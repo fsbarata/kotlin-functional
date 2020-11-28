@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.data
 
-interface Invariant<F, out A> {
-	fun <B> invmap(f: (A) -> B, g: (B) -> @UnsafeVariance A): Invariant<F, B>
+interface Invariant<F, A> {
+	fun <B> invmap(f: (A) -> B, g: (B) -> A): Invariant<F, B>
 }
 
 class InvariantFunctor<F, A, T: Functor<F, A>>(val get: T): Invariant<F, A> {
