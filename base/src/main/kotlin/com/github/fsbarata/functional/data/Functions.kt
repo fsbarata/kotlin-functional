@@ -13,17 +13,13 @@ inline fun <A> id(a: A): A = a
 
 inline fun <A> id(): (A) -> A = ::id
 
-inline infix fun <B, C, D> F1<B, C>.composeForward(crossinline other: F1<C, D>): F1<B, D> =
-	other compose this
 
-inline infix fun <B, C, D> F1<C, D>.compose(crossinline other: F1<B, C>): F1<B, D> =
-	{ invoke(other(it)) }
-
-inline infix fun <A, B, C, R> F2<A, B, C>.composeForward(crossinline other: F1<C, R>): F2<A, B, R> =
-	{ a, b -> other(invoke(a, b)) }
-
-inline infix fun <B, C, D, R> F2<C, D, R>.compose(crossinline other: F1<B, C>): F2<B, D, R> =
-	{ b, d -> invoke(other(b), d) }
+inline infix fun <A, B, R> F1<B, R>.compose(crossinline other: F1<A, B>): F1<A, R> = { invoke(other(it)) }
+inline infix fun <A, B, C, R> F2<B, C, R>.compose(crossinline other: F1<A, B>): F2<A, C, R> = { a, c -> invoke(other(a), c) }
+inline infix fun <A, B, C, R> F1<C, R>.compose(crossinline other: F2<A, B, C>): F2<A, B, R> = { a, b -> invoke(other(a, b)) }
+inline infix fun <A, B, R> F1<A, B>.composeForward(crossinline other: F1<B, R>): F1<A, R> = other compose this
+inline infix fun <A, B, C, R> F1<A, B>.composeForward(crossinline other: F2<B, C, R>): F2<A, C, R> = other compose this
+inline infix fun <A, B, C, R> F2<A, B, C>.composeForward(crossinline other: F1<C, R>): F2<A, B, R> = other compose this
 
 inline fun <A, B, R> F2<A, B, R>.partial(a: A): F1<B, R> = { invoke(a, it) }
 inline fun <A, B, R> F2<A, B, R>.partialLast(b: B): F1<A, R> = { invoke(it, b) }
@@ -41,13 +37,11 @@ inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partialLast(c: C, d: D): F2<A, B, R
 inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partialLast(b: B, c: C, d: D): F1<A, R> = { a -> invoke(a, b, c, d) }
 
 inline fun <A, B, R> F2<A, B, R>.curry(): (A) -> (B) -> R = { a -> partial(a) }
-inline fun <A, B, R> ((A) -> (B) -> R).uncurry(): F2<A, B, R> = { a, b -> invoke(a).invoke(b) }
 inline fun <A, B, C, R> F3<A, B, C, R>.curry(): (A) -> (B) -> (C) -> R = { a -> partial(a).curry() }
-inline fun <A, B, C, R> ((A) -> (B) -> (C) -> R).uncurry(): F3<A, B, C, R> =
-	{ a, b, c -> invoke(a).invoke(b).invoke(c) }
+inline fun <A, B, R> ((A) -> (B) -> R).uncurry(): F2<A, B, R> = { a, b -> invoke(a).invoke(b) }
+inline fun <A, B, C, R> ((A) -> (B) -> (C) -> R).uncurry(): F3<A, B, C, R> = { a, b, c -> invoke(a).invoke(b).invoke(c) }
 
-inline fun <A, B, C, R> ((A, B) -> (C) -> R).uncurry(): F3<A, B, C, R> =
-	{ a, b, c -> invoke(a, b).invoke(c) }
+inline fun <A, B, C, R> ((A, B) -> (C) -> R).uncurry(): F3<A, B, C, R> = { a, b, c -> invoke(a, b).invoke(c) }
 
 inline fun <A, B, R> F2<A, B, R>.flip(): F2<B, A, R> = { b, a -> invoke(a, b) }
 inline fun <A, B, R> ((A) -> (B) -> R).flip(): (B) -> (A) -> R = { b -> { a -> invoke(a).invoke(b) } }
