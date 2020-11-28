@@ -80,17 +80,19 @@ sealed class Either<out E, out A>:
 		)
 
 	class Scope<E>: Monad.Scope<EitherContext<E>>, Traversable.Scope<EitherContext<E>> {
-		override fun <A> just(a: A) = just<E, A>(a)
+		override fun <A> just(a: A) = right<E, A>(a)
 	}
 
-	companion object {
-		fun <E, A> just(a: A): Either<E, A> = Right(a)
+	companion object: Monad.Scope<EitherContext<Nothing>> {
+		override fun <A> just(a: A) = Right(a)
+
 		fun <E, A> ofNullable(a: A?, e: () -> E): Either<E, A> =
 			a?.let(::Right) ?: Left(e())
 
 		fun <E, A> left(e: E): Either<E, A> = Left(e)
+		fun <E, A> right(a: A): Either<E, A> = Right(a)
 
-		fun <A, E, B> kleisli(f: (A) -> Either<E, B>) = Scope<E>().kleisli(f)
+		fun <A, E, R> kleisli(f: (A) -> Either<E, R>) = Scope<E>().kleisli(f)
 	}
 }
 
