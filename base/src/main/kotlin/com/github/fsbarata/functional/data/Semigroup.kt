@@ -32,7 +32,7 @@ fun <A: Semigroup<A>> A.dual() = Dual(this)
 fun <A: Semigroup<A>> NonEmptyList<A>.sconcat() =
 	reduce { a1, a2 -> a1.combineWith(a2) }
 
-class Endo<A>(private val f: (A) -> A): Semigroup<Endo<A>> {
-	operator fun invoke(a: A) = f(a)
+class Endo<A>(private val f: (A) -> A): F1<A, A> by f,
+	Semigroup<Endo<A>> {
 	override fun combineWith(other: Endo<A>) = Endo(f.compose(other.f))
 }
