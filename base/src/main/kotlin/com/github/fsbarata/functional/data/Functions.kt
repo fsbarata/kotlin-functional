@@ -2,6 +2,8 @@
 
 package com.github.fsbarata.functional.data
 
+import com.github.fsbarata.functional.data.tuple.Tuple2
+
 
 typealias F0<R> = () -> R
 typealias F1<A, R> = (A) -> R
@@ -15,8 +17,12 @@ inline fun <A> id(): (A) -> A = ::id
 
 
 inline infix fun <A, B, R> F1<B, R>.compose(crossinline other: F1<A, B>): F1<A, R> = { invoke(other(it)) }
-inline infix fun <A, B, C, R> F2<B, C, R>.compose(crossinline other: F1<A, B>): F2<A, C, R> = { a, c -> invoke(other(a), c) }
-inline infix fun <A, B, C, R> F1<C, R>.compose(crossinline other: F2<A, B, C>): F2<A, B, R> = { a, b -> invoke(other(a, b)) }
+inline infix fun <A, B, C, R> F2<B, C, R>.compose(crossinline other: F1<A, B>): F2<A, C, R> =
+	{ a, c -> invoke(other(a), c) }
+
+inline infix fun <A, B, C, R> F1<C, R>.compose(crossinline other: F2<A, B, C>): F2<A, B, R> =
+	{ a, b -> invoke(other(a, b)) }
+
 inline infix fun <A, B, R> F1<A, B>.composeForward(crossinline other: F1<B, R>): F1<A, R> = other compose this
 inline infix fun <A, B, C, R> F1<A, B>.composeForward(crossinline other: F2<B, C, R>): F2<A, C, R> = other compose this
 inline infix fun <A, B, C, R> F2<A, B, C>.composeForward(crossinline other: F1<C, R>): F2<A, B, R> = other compose this
@@ -39,13 +45,19 @@ inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partialLast(b: B, c: C, d: D): F1<A
 inline fun <A, B, R> F2<A, B, R>.curry(): (A) -> (B) -> R = { a -> partial(a) }
 inline fun <A, B, C, R> F3<A, B, C, R>.curry(): (A) -> (B) -> (C) -> R = { a -> partial(a).curry() }
 inline fun <A, B, R> ((A) -> (B) -> R).uncurry(): F2<A, B, R> = { a, b -> invoke(a).invoke(b) }
-inline fun <A, B, C, R> ((A) -> (B) -> (C) -> R).uncurry(): F3<A, B, C, R> = { a, b, c -> invoke(a).invoke(b).invoke(c) }
+inline fun <A, B, C, R> ((A) -> (B) -> (C) -> R).uncurry(): F3<A, B, C, R> =
+	{ a, b, c -> invoke(a).invoke(b).invoke(c) }
 
 inline fun <A, B, C, R> ((A, B) -> (C) -> R).uncurry(): F3<A, B, C, R> = { a, b, c -> invoke(a, b).invoke(c) }
 
 inline fun <A, B, R> F2<A, B, R>.flip(): F2<B, A, R> = { b, a -> invoke(a, b) }
 inline fun <A, B, R> ((A) -> (B) -> R).flip(): (B) -> (A) -> R = { b -> { a -> invoke(a).invoke(b) } }
 
-infix fun <A, B, R> F2<B, B, R>.on(f: F1<A, B>): (A, A) -> R = { a1, a2 -> invoke(f(a1), f(a2)) }
-infix fun <A, B, R> ((B) -> (B) -> R).on(f: F1<A, B>) = { a1: A -> { a2: A -> invoke(f(a1))(f(a2)) } }
+inline infix fun <A, B, R> F2<B, B, R>.on(f: F1<A, B>): (A, A) -> R = { a1, a2 -> invoke(f(a1), f(a2)) }
+inline infix fun <A, B, R> ((B) -> (B) -> R).on(f: F1<A, B>) = { a1: A -> { a2: A -> invoke(f(a1))(f(a2)) } }
 
+inline fun <A, B, R> F1<Pair<A, B>, R>.destructure() = { a: A, b: B -> invoke(a to b) }
+inline fun <A, B, C, R> F1<Triple<A, B, C>, R>.destructure() = { a: A, b: B, c: C -> invoke(Triple(a, b, c)) }
+
+inline fun <A, B, R> F1<Tuple2<A, B>, R>.unpack() = { a: A, b: B -> invoke(Tuple2(a, b)) }
+inline fun <A, B, R> F2<A, B, R>.pack() = { t: Tuple2<A, B> -> invoke(t.x, t.y) }
