@@ -53,8 +53,13 @@ inline fun <A, B, C, R> ((A, B) -> (C) -> R).uncurry(): F3<A, B, C, R> = { a, b,
 inline fun <A, B, R> F2<A, B, R>.flip(): F2<B, A, R> = { b, a -> invoke(a, b) }
 inline fun <A, B, R> ((A) -> (B) -> R).flip(): (B) -> (A) -> R = { b -> { a -> invoke(a).invoke(b) } }
 
-inline infix fun <A, B, R> F2<B, B, R>.on(f: F1<A, B>): (A, A) -> R = { a1, a2 -> invoke(f(a1), f(a2)) }
-inline infix fun <A, B, R> ((B) -> (B) -> R).on(f: F1<A, B>) = { a1: A -> { a2: A -> invoke(f(a1))(f(a2)) } }
+inline infix fun <A, B, R> F2<B, B, R>.on(crossinline f: F1<A, B>): (A, A) -> R =
+	{ a1, a2 -> invoke(f(a1), f(a2)) }
+
+inline infix fun <A, B, R> ((B) -> (B) -> R).on(crossinline f: F1<A, B>) = { a1: A ->
+	val fa1: B = f(a1);
+	{ a2: A -> invoke(fa1)(f(a2)) }
+}
 
 inline fun <A, B, R> F1<Pair<A, B>, R>.destructure() = { a: A, b: B -> invoke(a to b) }
 inline fun <A, B, C, R> F1<Triple<A, B, C>, R>.destructure() = { a: A, b: B, c: C -> invoke(Triple(a, b, c)) }
