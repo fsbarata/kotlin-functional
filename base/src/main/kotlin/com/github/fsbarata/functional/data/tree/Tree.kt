@@ -7,26 +7,31 @@ import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
-import com.github.fsbarata.functional.data.list.NonEmptyIterable
-import com.github.fsbarata.functional.data.list.f
-import com.github.fsbarata.functional.data.list.traverse
 import com.github.fsbarata.functional.data.partial
-import java.io.Serializable
+import com.github.fsbarata.functional.data.sequence.NonEmptySequenceBase
+import com.github.fsbarata.functional.data.sequence.foldMap
+import com.github.fsbarata.functional.data.sequence.traverse
+import com.github.fsbarata.functional.utils.NonEmptyIterator
 
-typealias Forest<A> = List<Tree<A>>
+typealias Forest<A> = Sequence<Tree<A>>
 
 internal typealias TreeContext = Tree<*>
 
 @Suppress("OVERRIDE_BY_INLINE")
-data class Tree<out A>(val root: A, val sub: Forest<A> = emptyList()): NonEmptyIterable<A>,
+class Tree<out A>(
+	val root: A,
+	val sub: Forest<A> = emptySequence(),
+):
 	MonadZip<TreeContext, A>,
-	Traversable<TreeContext, A>,
 	Comonad<TreeContext, A>,
-	Serializable {
+	Traversable<TreeContext, A>,
+	NonEmptySequenceBase<A> {
 	override val scope = Tree
 
-	override val head: A = root
-	override val tail: Iterable<A> = Iterable { sub.asSequence().flatten().iterator() }
+	override fun iterator() = NonEmptyIterator(
+		root,
+		sub.flatten().iterator()
+	)
 
 	override fun extract() = root
 
@@ -41,7 +46,9 @@ data class Tree<out A>(val root: A, val sub: Forest<A> = emptyList()): NonEmptyI
 	}
 
 	override fun <B> ap(ff: Applicative<TreeContext, (A) -> B>): Tree<B> {
-		val (f, tfs) = ff.asTree
+		val s = ff.asTree
+		val f = s.root
+		val tfs = s.sub
 		return Tree(
 			f(root),
 			sub.map { ta -> ta.map(f) } + tfs.map(this::ap)
@@ -50,18 +57,11 @@ data class Tree<out A>(val root: A, val sub: Forest<A> = emptyList()): NonEmptyI
 
 	override fun <B, R> lift2(fb: Applicative<TreeContext, B>, f: (A, B) -> R): Tree<R> {
 		val tb = fb.asTree
-		val fRoot = f.partial(root)
+		val x: Forest<R> = tb.sub.map { it.map(f.partial(root)) }
+		val y: Forest<R> = sub.map { it.lift2(tb, f) }
 		return Tree(
 			f(root, tb.root),
-			tb.sub.map { it.map(fRoot) } + sub.map { it.lift2(tb, f) }
-		)
-	}
-
-	override fun <B, R> zipWith(other: MonadZip<TreeContext, B>, f: (A, B) -> R): Tree<R> {
-		val otherTree = other.asTree
-		return Tree(
-			f(root, otherTree.root),
-			sub.zip(otherTree.sub) { ta, tb -> ta.zipWith(tb, f) }
+			x + y
 		)
 	}
 
@@ -69,21 +69,27 @@ data class Tree<out A>(val root: A, val sub: Forest<A> = emptyList()): NonEmptyI
 		Tree(f(root), sub.map { it.map(f) })
 
 	override fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
-		monoid.combine(f(root), sub.f().foldMap(monoid) { ta -> ta.foldMap(monoid, f) })
+		monoid.combine(f(root), sub.foldMap(monoid) { ta -> ta.foldMap(monoid, f) })
+
+	override fun <B, R> zipWith(
+		other: MonadZip<TreeContext, B>,
+		f: (A, B) -> R,
+	): Tree<R> {
+		val otherTree = other.asTree
+		return Tree(
+			f(root, otherTree.root),
+			sub.zip(otherTree.sub) { ta, tb -> ta.zipWith(tb, f) }
+		)
+	}
+
+	override fun duplicate(): Tree<Tree<A>> =
+		Tree(this, sub.map { it.duplicate() })
 
 	override fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Applicative<F, B>,
 	): Applicative<F, Tree<B>> =
 		f(root).lift2(sub.traverse(appScope) { it.traverse(appScope, f) }, ::Tree)
-
-	override fun duplicate(): Tree<Tree<A>> =
-		Tree(this, sub.map { it.duplicate() })
-
-	fun toTreeSequence(): TreeSequence<A> = TreeSequence(
-		root,
-		sub.asSequence().map { it.toTreeSequence() }
-	)
 
 	companion object:
 		Monad.Scope<TreeContext>,
