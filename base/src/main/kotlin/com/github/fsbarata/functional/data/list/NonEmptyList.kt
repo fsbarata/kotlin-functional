@@ -143,7 +143,7 @@ class NonEmptyList<out A> private constructor(
 		(this as List<A>).sortedBy(selector).toNelUnsafe()
 
 	fun sortedWith(comparator: Comparator<@UnsafeVariance A>): NonEmptyList<A> =
-		tail.sortedWith(comparator).toNelUnsafe()
+		(this as List<A>).sortedWith(comparator).toNelUnsafe()
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
