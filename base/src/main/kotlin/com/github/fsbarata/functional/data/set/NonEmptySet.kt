@@ -12,7 +12,6 @@ import com.github.fsbarata.functional.data.partial
 import com.github.fsbarata.functional.kotlin.plusElementNes
 import com.github.fsbarata.functional.utils.NonEmptyIterator
 import com.github.fsbarata.functional.utils.nonEmpty
-import com.github.fsbarata.functional.utils.toNel
 import com.github.fsbarata.functional.utils.toNes
 import java.io.Serializable
 
