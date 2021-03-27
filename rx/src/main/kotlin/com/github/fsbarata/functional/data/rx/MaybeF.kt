@@ -2,6 +2,8 @@ package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.maybe.toOptional
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.MaybeObserver
 
@@ -30,6 +32,13 @@ class MaybeF<A>(private val wrapped: Maybe<A>): Maybe<A>(),
 		override fun <A> just(a: A) = Maybe.just(a).f()
 	}
 }
+
+fun <A: Any, R: Any> Maybe<A>.mapNotNull(f: (A) -> R?): Maybe<R> =
+	mapNotNone { f(it).toOptional() }
+
+fun <A: Any, R: Any> Maybe<A>.mapNotNone(f: (A) -> Optional<R>): Maybe<R> =
+	map(f).filter { it.isPresent() }
+		.map { it.orNull()!! }
 
 internal typealias MaybeContext = Maybe<*>
 

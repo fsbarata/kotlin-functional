@@ -5,6 +5,7 @@ import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.maybe.toOptional
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableSource
@@ -53,8 +54,8 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	override fun <B: Any> mapNotNone(f: (A) -> Optional<B>) =
 		flatMapMaybe { Maybe.just(f(it).orNull() ?: return@flatMapMaybe Maybe.empty()) }.f()
 
-	fun fold(monoid: Monoid<A>) = super.reduce(monoid.empty, monoid::combine).f()
-	fun scan(monoid: Monoid<A>) = super.scan(monoid.empty, monoid::combine).f()
+	fun fold(monoid: Monoid<A>): SingleF<A> = super.reduce(monoid.empty, monoid::combine).f()
+	fun scan(monoid: Monoid<A>): ObservableF<A> = super.scan(monoid.empty, monoid::combine).f()
 
 	override fun combineWith(other: ObservableF<A>) = mergeWith(other).f()
 	override fun associateWith(other: Context<ObservableContext, A>) =
@@ -76,6 +77,16 @@ fun <A: Semigroup<A>> Observable<A>.reduce() = reduce { a1, a2 -> a1.combineWith
 fun <A: Semigroup<A>> Observable<A>.fold(initialValue: A) = reduce(initialValue) { a1, a2 -> a1.combineWith(a2) }.f()
 fun <A: Semigroup<A>> Observable<A>.scan() = scan { a1, a2 -> a1.combineWith(a2) }.f()
 fun <A: Semigroup<A>> Observable<A>.scan(initialValue: A) = scan(initialValue) { a1, a2 -> a1.combineWith(a2) }.f()
+
+fun <A: Any, R: Any> Observable<A>.mapNotNull(f: (A) -> R?): Observable<R> =
+	mapNotNone { f(it).toOptional() }
+
+fun <A: Any, R: Any> Observable<A>.mapNotNone(f: (A) -> Optional<R>): Observable<R> =
+	map(f).filter { it.isPresent() }
+		.map { it.orNull()!! }
+
+fun <A: Any> Observable<A>.partition(predicate: (A) -> Boolean): Pair<Observable<A>, Observable<A>> =
+	Pair(filter(predicate), filter { !predicate(it) })
 
 fun <A> Observable<A>.f() = ObservableF(this)
 fun <A, R> Observable<A>.f(block: ObservableF<A>.() -> Context<ObservableContext, R>) =

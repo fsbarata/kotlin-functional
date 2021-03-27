@@ -2,6 +2,9 @@ package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.maybe.toOptional
+import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleObserver
 
@@ -28,6 +31,12 @@ class SingleF<A>(private val wrapped: Single<A>): Single<A>(),
 		override fun <A> just(a: A) = Single.just(a).f()
 	}
 }
+
+fun <A: Any, R: Any> Single<A>.mapNotNull(f: (A) -> R?): Maybe<R> =
+	mapNotNone { f(it).toOptional() }
+
+fun <A: Any, R: Any> Single<A>.mapNotNone(f: (A) -> Optional<R>): Maybe<R> =
+	toMaybe().mapNotNone(f)
 
 internal typealias SingleContext = Single<*>
 
