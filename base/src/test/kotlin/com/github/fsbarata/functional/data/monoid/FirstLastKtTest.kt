@@ -2,7 +2,7 @@ package com.github.fsbarata.functional.data.monoid
 
 import com.github.fsbarata.functional.data.MonoidLaws
 import com.github.fsbarata.functional.data.SemigroupLaws
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class FirstTest: SemigroupLaws<First<String>> {
