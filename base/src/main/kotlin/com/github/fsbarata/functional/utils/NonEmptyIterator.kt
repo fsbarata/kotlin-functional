@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.utils
 
 import com.github.fsbarata.functional.data.list.NonEmptyList
+import com.github.fsbarata.functional.data.set.NonEmptySet
 
 
 class NonEmptyIterator<out A>(
@@ -22,6 +23,9 @@ class NonEmptyIterator<out A>(
 
 internal fun <A> NonEmptyIterator<A>.toNel(): NonEmptyList<A> =
 	NonEmptyList.of(head, tail.asSequence().toList())
+
+internal fun <A> NonEmptyIterator<A>.toNes(): NonEmptySet<A> =
+	NonEmptySet.of(head, tail.asSequence().toSet())
 
 fun <A> Iterator<A>.nonEmpty(): NonEmptyIterator<A>? = when {
 	this is NonEmptyIterator -> this

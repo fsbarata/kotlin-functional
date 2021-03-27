@@ -1,9 +1,9 @@
 package com.github.fsbarata.functional.kotlin
 
-import com.github.fsbarata.functional.data.list.NonEmptyIterable
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.list.toNel
+import com.github.fsbarata.functional.utils.NonEmptyIterable
 
 fun <A> Iterable<A>.plusElementNel(item: A): NonEmptyList<A> =
 	toNel()?.plus(item) ?: NonEmptyList.just(item)

@@ -4,6 +4,8 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
+import com.github.fsbarata.functional.data.collection.NonEmptyCollection
+import com.github.fsbarata.functional.data.collection.flattenToList
 import com.github.fsbarata.functional.data.partial
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
 import com.github.fsbarata.functional.data.set.NonEmptySet
@@ -21,7 +23,7 @@ class NonEmptyList<out A> private constructor(
 	override val head: A,
 	override val tail: List<A>,
 ): List<A>,
-	NonEmptyIterable<A>,
+	NonEmptyCollection<A>,
 	Serializable,
 	MonadZip<NonEmptyContext, A>,
 	Traversable<NonEmptyContext, A>,
@@ -29,32 +31,17 @@ class NonEmptyList<out A> private constructor(
 	Semigroup<NonEmptyList<@UnsafeVariance A>> {
 	override val scope get() = Companion
 
-	override val size: Int get() = 1 + tail.size
-
-	override fun get(index: Int): A =
-		if (index == 0) head
-		else tail[index - 1]
+	override val size: Int = 1 + tail.size
 
 	@Deprecated("Non empty list cannot be empty", replaceWith = ReplaceWith("false"))
 	override fun isEmpty() = false
 
-	fun first() = head
+	override fun contains(element: @UnsafeVariance A): Boolean = super.contains(element)
+	override fun containsAll(elements: Collection<@UnsafeVariance A>) = super.containsAll(elements)
 
-	@Deprecated("Non empty list always has a first", replaceWith = ReplaceWith("first()"))
-	fun firstOrNull(): Nothing = throw UnsupportedOperationException()
-	fun last() = if (tail.isEmpty()) head else tail.last()
-
-	@Deprecated("Non empty list always has a last", replaceWith = ReplaceWith("last()"))
-	fun lastOrNull(): Nothing = throw UnsupportedOperationException()
-
-	@Deprecated("Non empty list always has a random", replaceWith = ReplaceWith("random()"))
-	fun randomOrNull(): Nothing = throw UnsupportedOperationException()
-
-	@Deprecated("Non empty list always has a random", replaceWith = ReplaceWith("random()"))
-	fun randomOrNull(random: Random): Nothing = throw UnsupportedOperationException()
-
-	override fun contains(element: @UnsafeVariance A) = head == element || tail.contains(element)
-	override fun containsAll(elements: Collection<@UnsafeVariance A>) = elements.all(this::contains)
+	override fun get(index: Int): A =
+		if (index == 0) head
+		else tail[index - 1]
 
 	override fun indexOf(element: @UnsafeVariance A) =
 		if (head == element) 0
@@ -64,8 +51,7 @@ class NonEmptyList<out A> private constructor(
 		(tail.lastIndexOf(element) + 1).takeIf { it != 0 }
 			?: if (head == element) 0 else -1
 
-	override fun iterator(): NonEmptyIterator<A> =
-		NonEmptyIterator(head, tail.iterator())
+	override fun iterator(): NonEmptyIterator<A> = super.iterator()
 
 	override fun subList(fromIndex: Int, toIndex: Int): List<A> = when {
 		fromIndex == 0 && toIndex == 0 -> emptyList()
@@ -84,7 +70,10 @@ class NonEmptyList<out A> private constructor(
 	override inline infix fun <B> bind(f: (A) -> Context<NonEmptyContext, B>): NonEmptyList<B> =
 		flatMap { f(it).asNel }
 
-	inline fun <B> flatMap(f: (A) -> NonEmptyList<B>): NonEmptyList<B> = map(f).flatten()
+	inline fun <B> flatMap(f: (A) -> NonEmptyList<B>): NonEmptyList<B> {
+		val mappedHead = f(head)
+		return of(mappedHead.head, mappedHead.tail + tail.flatMap(f))
+	}
 
 	override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
 		foldRight(initialValue, accumulator)
@@ -114,9 +103,6 @@ class NonEmptyList<out A> private constructor(
 			tail.filter { set.add(selector(it)) }
 		)
 	}
-
-	fun asSequence(): NonEmptySequence<@UnsafeVariance A> = NonEmptySequence { iterator() }
-	fun toSet(): NonEmptySet<A> = NonEmptySet.of(head, tail.toSet())
 
 	override fun listIterator(): ListIterator<A> = LambdaListIterator(size) { get(it) }
 	override fun listIterator(index: Int): ListIterator<A> = LambdaListIterator(size, index) { get(it) }

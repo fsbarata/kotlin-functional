@@ -3,6 +3,9 @@ package com.github.fsbarata.functional.data.list
 import com.github.fsbarata.functional.control.ComonadLaws
 import com.github.fsbarata.functional.control.MonadZipLaws
 import com.github.fsbarata.functional.data.TraversableLaws
+import com.github.fsbarata.functional.data.collection.max
+import com.github.fsbarata.functional.data.collection.min
+import com.github.fsbarata.functional.data.collection.runningReduceNel
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger
