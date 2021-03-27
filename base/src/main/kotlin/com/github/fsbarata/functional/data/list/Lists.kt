@@ -3,6 +3,7 @@ package com.github.fsbarata.functional.data.list
 import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
+import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.partial
 
 /**
@@ -33,3 +34,6 @@ inline fun <F, A, B> List<A>.traverse(
 		f(a).lift2(app) { b, lb -> lb + b }
 	}
 }
+
+inline fun <A, R: Any> List<A>.mapNotNone(f: (A) -> Optional<R>) =
+	mapNotNull { f(it).orNull() }
