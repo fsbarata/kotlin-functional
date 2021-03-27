@@ -1,5 +1,6 @@
 package com.github.fsbarata.functional.data.monoid
 
+import com.github.fsbarata.functional.data.MonoidLaws
 import com.github.fsbarata.functional.data.SemigroupLaws
 import junit.framework.Assert.assertEquals
 import org.junit.Test
@@ -16,7 +17,9 @@ class FirstTest: SemigroupLaws<First<String>> {
 	}
 }
 
-class FirstNotNullTest: SemigroupLaws<FirstNotNull<String>> {
+class FirstNotNullTest: MonoidLaws<FirstNotNull<String?>>(
+	FirstNotNull.monoid()
+) {
 	override val possibilities: Int = 10
 
 	override fun factory(possibility: Int) = FirstNotNull(possibility.takeIf { it > 0 })
@@ -48,7 +51,9 @@ class LastTest: SemigroupLaws<Last<String>> {
 	}
 }
 
-class LastNotNullTest: SemigroupLaws<LastNotNull<String>> {
+class LastNotNullTest: MonoidLaws<LastNotNull<String?>>(
+	LastNotNull.monoid()
+) {
 	override val possibilities: Int = 10
 
 	override fun factory(possibility: Int) = LastNotNull(possibility.takeIf { it > 0 })

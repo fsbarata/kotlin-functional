@@ -12,7 +12,7 @@ data class FirstNotNull<A>(val get: A): Semigroup<FirstNotNull<A>> {
 	override fun combineWith(other: FirstNotNull<A>) = FirstNotNull(get ?: other.get)
 
 	companion object {
-		fun <A: Any> monoid() = monoid(FirstNotNull<A?>(null))
+		fun <A: Any> monoid(): Monoid<FirstNotNull<A?>> = monoid(FirstNotNull(null))
 	}
 }
 
@@ -30,7 +30,7 @@ data class LastNotNull<A>(val get: A): Semigroup<LastNotNull<A>> {
 	override fun combineWith(other: LastNotNull<A>) = LastNotNull(other.get ?: get)
 
 	companion object {
-		fun <A: Any> monoid() = monoid(LastNotNull<A?>(null))
+		fun <A: Any> monoid(): Monoid<LastNotNull<A?>> = monoid(LastNotNull(null))
 	}
 }
 
