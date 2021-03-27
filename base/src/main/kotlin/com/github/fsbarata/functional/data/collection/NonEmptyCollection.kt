@@ -44,6 +44,12 @@ interface NonEmptyCollection<out A>:
 	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		tail.fold(accumulator(initialValue, head), accumulator)
 
+	fun <R: Comparable<R>> maxOf(selector: (A) -> R): R =
+		tail.maxOfOrNull(selector)?.coerceAtLeast(selector(head)) ?: selector(head)
+
+	fun <R: Comparable<R>> minOf(selector: (A) -> R): R =
+		tail.minOfOrNull(selector)?.coerceAtMost(selector(head)) ?: selector(head)
+
 	override fun toList() = NonEmptyList.of(head, tail.toList())
 	override fun toSet() = NonEmptySet.of(head, tail.toSet())
 }

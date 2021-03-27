@@ -88,12 +88,6 @@ class NonEmptyList<out A> private constructor(
 
 	fun reversed() = tail.asReversed().nonEmpty()?.plus(head) ?: this
 
-	fun <R: Comparable<R>> maxOf(selector: (A) -> R): R =
-		tail.maxOfOrNull(selector)?.coerceAtLeast(selector(head)) ?: selector(head)
-
-	fun <R: Comparable<R>> minOf(selector: (A) -> R): R =
-		tail.minOfOrNull(selector)?.coerceAtMost(selector(head)) ?: selector(head)
-
 	fun distinct() = NonEmptyList(head, (tail.toSet() - head).toList())
 	inline fun <K> distinctBy(selector: (A) -> K): NonEmptyList<A> {
 		val set = HashSet<K>()

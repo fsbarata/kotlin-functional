@@ -3,6 +3,8 @@ package com.github.fsbarata.functional.kotlin
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.list.toNel
+import com.github.fsbarata.functional.data.set.NonEmptySet
+import com.github.fsbarata.functional.data.set.toNes
 import com.github.fsbarata.functional.utils.NonEmptyIterable
 
 fun <A> Iterable<A>.plusElementNel(item: A): NonEmptyList<A> =
@@ -11,10 +13,19 @@ fun <A> Iterable<A>.plusElementNel(item: A): NonEmptyList<A> =
 fun <A> Iterable<A>.plusNel(other: NonEmptyIterable<A>): NonEmptyList<A> =
 	toNel()?.plus(other) ?: other.toList()
 
+fun <A> Set<A>.plusElementNes(item: A): NonEmptySet<A> =
+	toNes()?.plus(item) ?: NonEmptySet.just(item)
+
+fun <A> Set<A>.plusNes(other: NonEmptyIterable<A>): NonEmptySet<A> =
+	toNes()?.plus(other) ?: other.toSet()
+
 inline fun <T, K> Iterable<T>.groupByNel(crossinline keySelector: (T) -> K): Map<K, NonEmptyList<T>> =
 	groupByNel(keySelector) { it }
 
-inline fun <T, K, V> Iterable<T>.groupByNel(crossinline keySelector: (T) -> K, valueSelector: (T) -> V): Map<K, NonEmptyList<V>> =
+inline fun <T, K, V> Iterable<T>.groupByNel(
+	crossinline keySelector: (T) -> K,
+	valueSelector: (T) -> V,
+): Map<K, NonEmptyList<V>> =
 	groupingBy(keySelector)
 		.aggregate { _, accumulator, element, _ ->
 			val value = valueSelector(element)
