@@ -42,10 +42,10 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 		return Pair(p.first.asSequence().f(), p.second.asSequence().f())
 	}
 
-	override fun <B> mapNotNull(f: (A) -> B?) =
+	override fun <B: Any> mapNotNull(f: (A) -> B?) =
 		(this as Sequence<A>).mapNotNull(f).f()
 
-	override fun <B> mapNotNone(f: (A) -> Optional<B>) =
+	override fun <B: Any> mapNotNone(f: (A) -> Optional<B>) =
 		(this as Sequence<A>).mapNotNull { f(it).orNull() }.f()
 
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =

@@ -47,10 +47,10 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	override fun partition(predicate: (A) -> Boolean) =
 		Pair(filter(predicate), filter { !predicate(it) })
 
-	override fun <B> mapNotNull(f: (A) -> B?) =
+	override fun <B: Any> mapNotNull(f: (A) -> B?) =
 		flatMapMaybe { Maybe.just(f(it) ?: return@flatMapMaybe Maybe.empty()) }.f()
 
-	override fun <B> mapNotNone(f: (A) -> Optional<B>) =
+	override fun <B: Any> mapNotNone(f: (A) -> Optional<B>) =
 		flatMapMaybe { Maybe.just(f(it).orNull() ?: return@flatMapMaybe Maybe.empty()) }.f()
 
 	fun fold(monoid: Monoid<A>) = super.reduce(monoid.empty, monoid::combine).f()

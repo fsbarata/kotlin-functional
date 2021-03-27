@@ -22,10 +22,10 @@ interface MonadPlus<M, out A>: Monad<M, A>, Alternative<M, A> {
 			filter(Boolean::not compose predicate)
 		)
 
-	fun <B> mapNotNull(f: (A) -> B?) =
+	fun <B: Any> mapNotNull(f: (A) -> B?) =
 		bind { a -> scope.just(f(a) ?: return@bind scope.empty()) }
 
-	fun <B> mapNotNone(f: (A) -> Optional<B>) =
+	fun <B: Any> mapNotNone(f: (A) -> Optional<B>) =
 		mapNotNull { f(it).orNull() }
 
 	interface Scope<M>: Monad.Scope<M>, Alternative.Scope<M> {
@@ -37,4 +37,4 @@ fun <M, A> MonadPlus<M, A>.filterFromBind(predicate: (A) -> Boolean) =
 	bind { if (predicate(it)) scope.just(it) else scope.empty() }
 
 fun <M, A: Any> MonadPlus<M, A?>.filterNotNull() = mapNotNull(id())
-fun <M, A> MonadPlus<M, Optional<A>>.filterPresent() = mapNotNone(id())
+fun <M, A: Any> MonadPlus<M, Optional<A>>.filterPresent() = mapNotNone(id())

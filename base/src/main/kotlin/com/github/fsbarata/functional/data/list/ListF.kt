@@ -38,10 +38,10 @@ class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
 		return Pair(p.first.f(), p.second.f())
 	}
 
-	override inline fun <B> mapNotNull(f: (A) -> B?) =
+	override inline fun <B: Any> mapNotNull(f: (A) -> B?) =
 		(this as List<A>).mapNotNull(f).f()
 
-	override inline fun <B> mapNotNone(f: (A) -> Optional<B>) =
+	override inline fun <B: Any> mapNotNone(f: (A) -> Optional<B>) =
 		(this as List<A>).mapNotNull { f(it).orNull() }.f()
 
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =

@@ -1,5 +1,6 @@
 package com.github.fsbarata.functional.data.list
 
+import com.github.fsbarata.functional.control.MonadPlusLaws
 import com.github.fsbarata.functional.control.MonadZipLaws
 import com.github.fsbarata.functional.data.TraversableLaws
 import com.github.fsbarata.functional.data.maybe.Optional
@@ -7,8 +8,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ListFTest:
-	MonadZipLaws<ListF<*>>,
-	TraversableLaws<ListF<*>> {
+	MonadPlusLaws<ListContext>,
+	MonadZipLaws<ListContext>,
+	TraversableLaws<ListContext> {
 	override val traversableScope = ListF
 	override val monadScope = ListF
 
