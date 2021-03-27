@@ -6,6 +6,7 @@ import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.partial
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
+import com.github.fsbarata.functional.data.set.NonEmptySet
 import com.github.fsbarata.functional.utils.*
 import java.io.Serializable
 import kotlin.random.Random
@@ -115,6 +116,7 @@ class NonEmptyList<out A> private constructor(
 	}
 
 	fun asSequence(): NonEmptySequence<@UnsafeVariance A> = NonEmptySequence { iterator() }
+	fun toSet(): NonEmptySet<A> = NonEmptySet.of(head, tail.toSet())
 
 	override fun listIterator(): ListIterator<A> = LambdaListIterator(size) { get(it) }
 	override fun listIterator(index: Int): ListIterator<A> = LambdaListIterator(size, index) { get(it) }

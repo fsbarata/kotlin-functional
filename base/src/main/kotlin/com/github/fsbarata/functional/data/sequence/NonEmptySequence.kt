@@ -130,7 +130,7 @@ fun <A: Any> nonEmptySequence(head: A, nextFunction: (A) -> A?) = NonEmptySequen
 fun <A> Sequence<A>.startWithItem(item: A) =
 	NonEmptySequence { NonEmptyIterator(item, iterator()) }
 
-fun <A> nesOf(head: A, vararg tail: A) =
+fun <A> nonEmptySequenceOf(head: A, vararg tail: A) =
 	NonEmptySequence { NonEmptyIterator(head, tail.iterator()) }
 
 fun <A> Sequence<A>.nonEmpty(ifEmpty: NonEmptySequenceBase<A>) = nonEmpty(ifEmpty::iterator)

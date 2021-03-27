@@ -9,6 +9,6 @@ fun createSequence(possibility: Int): SequenceF<Int> = when (possibility) {
 
 fun createNes(possibility: Int): NonEmptySequence<Int> = when (possibility) {
 	0 -> NonEmptySequence.just(1)
-	1 -> nesOf(3, 2)
+	1 -> nonEmptySequenceOf(3, 2)
 	else -> NonEmptySequence.of(1, createNes(possibility - 2))
 }

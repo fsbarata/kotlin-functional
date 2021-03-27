@@ -1,7 +1,7 @@
 buildscript {
     ext {
-        kotlin_version = '1.4.20'
-        rxjava_version = '3.0.7'
+        kotlin_version = '1.4.31'
+        rxjava_version = '3.0.10'
     }
 
     repositories {
