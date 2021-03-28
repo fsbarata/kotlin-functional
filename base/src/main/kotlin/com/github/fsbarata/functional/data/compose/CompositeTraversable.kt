@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.data.compose
 
 import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Traversable
 
 class ComposedTraversable<F, G, A>(
@@ -20,8 +21,8 @@ class ComposedTraversable<F, G, A>(
 
 	override fun <H, B> traverse(
 		appScope: Applicative.Scope<H>,
-		f: (A) -> Applicative<H, B>,
-	): Applicative<H, ComposedTraversable<F, G, B>> =
+		f: (A) -> Functor<H, B>,
+	): Functor<H, ComposedTraversable<F, G, B>> =
 		underlying.traverse(appScope) { it.traverse(appScope, f) }
 			.map { ComposedTraversable(it) }
 

@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.control
 
 import com.github.fsbarata.functional.Context
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.compose
 import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.maybe.Optional
@@ -8,7 +9,7 @@ import com.github.fsbarata.functional.data.maybe.Optional
 interface MonadPlus<M, out A>: Monad<M, A>, Alternative<M, A> {
 	override val scope: Scope<M>
 
-	override fun <B, R> lift2(fb: Applicative<M, B>, f: (A, B) -> R) =
+	override fun <B, R> lift2(fb: Functor<M, B>, f: (A, B) -> R) =
 		super<Monad>.lift2(fb, f) as MonadPlus<M, R>
 
 	override infix fun <B> bind(f: (A) -> Context<M, B>): MonadPlus<M, B>

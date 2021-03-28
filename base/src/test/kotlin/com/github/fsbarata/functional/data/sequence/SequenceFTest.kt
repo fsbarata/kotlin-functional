@@ -1,8 +1,8 @@
 package com.github.fsbarata.functional.data.sequence
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.MonadPlusLaws
 import com.github.fsbarata.functional.control.MonadZipLaws
-import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.TraversableLaws
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.maybe.asOptional
@@ -23,7 +23,7 @@ class SequenceFTest:
 	override fun <A> createTraversable(vararg items: A) =
 		items.asSequence().f()
 
-	override fun <A> Functor<SequenceContext, A>.equalTo(other: Functor<SequenceContext, A>) =
+	override fun <A> Context<SequenceContext, A>.equalTo(other: Context<SequenceContext, A>) =
 		asSequence.toList() == other.asSequence.toList()
 
 	@Test

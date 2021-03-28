@@ -2,10 +2,7 @@ package com.github.fsbarata.functional.data.maybe
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
-import com.github.fsbarata.functional.data.Monoid
-import com.github.fsbarata.functional.data.Semigroup
-import com.github.fsbarata.functional.data.Traversable
-import com.github.fsbarata.functional.data.partial
+import com.github.fsbarata.functional.data.*
 import java.io.Serializable
 
 /**
@@ -41,7 +38,7 @@ sealed class Optional<out A>:
 	final override inline fun <B> map(f: (A) -> B) =
 		flatMap { just(f(it)) }
 
-	final override inline fun <B, R> lift2(fb: Applicative<OptionalContext, B>, f: (A, B) -> R) =
+	final override inline fun <B, R> lift2(fb: Functor<OptionalContext, B>, f: (A, B) -> R) =
 		flatMap { fb.asOptional.map(f.partial(it)) }
 
 	final override inline infix fun <B> bind(f: (A) -> Context<OptionalContext, B>) =
@@ -71,8 +68,8 @@ sealed class Optional<out A>:
 
 	final override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Applicative<F, B>,
-	): Applicative<F, Optional<B>> =
+		f: (A) -> Functor<F, B>,
+	): Functor<F, Optional<B>> =
 		fold(
 			ifEmpty = { appScope.just(None) },
 			ifSome = { f(it).map(::Some) },

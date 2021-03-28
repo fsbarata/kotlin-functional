@@ -1,5 +1,6 @@
 package com.github.fsbarata.functional.control.state
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.MonadLaws
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.tuple.Tuple2
@@ -24,7 +25,7 @@ class StateTest:
 
 	private val basicState = Pair("ab", -38)
 
-	override fun <A> Functor<StateContext<MyState>, A>.equalTo(other: Functor<StateContext<MyState>, A>) =
+	override fun <A> Context<StateContext<MyState>, A>.equalTo(other: Context<StateContext<MyState>, A>) =
 		asState.runState(basicState) == other.asState.runState(basicState)
 
 	@Test

@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.data.set
 
 import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.partial
@@ -27,10 +28,10 @@ inline fun <A, B> Set<A>.flatMap(f: (A) -> Iterable<B>): Set<B> =
 
 inline fun <F, A, B> Set<A>.traverse(
 	appScope: Applicative.Scope<F>,
-	f: (A) -> Applicative<F, B>,
-): Applicative<F, Set<B>> {
+	f: (A) -> Functor<F, B>,
+): Functor<F, Set<B>> {
 	return fold(appScope.just(emptySet())) { app, a ->
-		f(a).lift2(app) { b, lb -> lb + b }
+		appScope.lift2(f(a), app) { b, lb -> lb + b }
 	}
 }
 

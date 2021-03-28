@@ -1,10 +1,10 @@
 package com.github.fsbarata.functional.data.sequence
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.MonadZipLaws
-import com.github.fsbarata.functional.data.Functor
-import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.FoldableLaws
 import com.github.fsbarata.functional.data.TraversableLaws
+import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.utils.NonEmptyIterator
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -15,10 +15,10 @@ class NonEmptySequenceKtTest:
 	FoldableLaws {
 	override val monadScope = NonEmptySequence
 	override val traversableScope = NonEmptySequence
-	override fun <A> Functor<NonEmptySequenceContext, A>.equalTo(other: Functor<NonEmptySequenceContext, A>): Boolean =
+	override fun <A> Context<NonEmptySequenceContext, A>.equalTo(other: Context<NonEmptySequenceContext, A>): Boolean =
 		asNes.toList() == other.asNes.toList()
 
-	override fun <A> Functor<NonEmptySequenceContext, A>.describe() = asNes.toList().toString()
+	override fun <A> Context<NonEmptySequenceContext, A>.describe() = asNes.toList().toString()
 
 	override val possibilities: Int = 10
 	override fun factory(possibility: Int) = createNes(possibility)

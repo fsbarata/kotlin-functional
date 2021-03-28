@@ -1,12 +1,12 @@
 package com.github.fsbarata.functional.data.rx
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.MonadZipLaws
-import com.github.fsbarata.functional.data.Functor
 import io.reactivex.rxjava3.core.BackpressureStrategy
 
 class FlowableFTest: MonadZipLaws<FlowableF<*>> {
 	override val monadScope = FlowableF
-	override fun <A> Functor<FlowableF<*>, A>.equalTo(other: Functor<FlowableF<*>, A>): Boolean {
+	override fun <A> Context<FlowableF<*>, A>.equalTo(other: Context<FlowableF<*>, A>): Boolean {
 		val testObserver1 = asFlowable.materialize().test()
 		val testObserver2 = other.asFlowable.materialize().test()
 

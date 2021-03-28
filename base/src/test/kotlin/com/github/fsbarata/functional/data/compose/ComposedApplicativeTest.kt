@@ -12,6 +12,7 @@ class ComposedApplicativeTest: ApplicativeLaws<ComposeContext<ListContext, NonEm
 		ComposedApplicative(
 			createList(possibility)
 				.map { createNel(it) },
+			ListF,
 			NonEmptyList
 		)
 }

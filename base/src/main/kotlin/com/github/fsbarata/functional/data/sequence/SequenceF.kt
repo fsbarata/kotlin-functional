@@ -2,11 +2,8 @@ package com.github.fsbarata.functional.data.sequence
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
-import com.github.fsbarata.functional.data.Monoid
-import com.github.fsbarata.functional.data.Semigroup
-import com.github.fsbarata.functional.data.Traversable
+import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.maybe.Optional
-import com.github.fsbarata.functional.data.monoid
 import java.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
@@ -22,10 +19,10 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 	override fun <B> map(f: (A) -> B) =
 		wrapped.map(f).f()
 
-	override infix fun <B> ap(ff: Applicative<SequenceContext, (A) -> B>): SequenceF<B> =
+	override infix fun <B> ap(ff: Functor<SequenceContext, (A) -> B>): SequenceF<B> =
 		wrapped.ap(ff.asSequence).f()
 
-	override fun <B, R> lift2(fb: Applicative<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
+	override fun <B, R> lift2(fb: Functor<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
 		wrapped.lift2(fb.asSequence, f).f()
 
 	override infix fun <B> bind(f: (A) -> Context<SequenceContext, B>) =
@@ -59,8 +56,8 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Applicative<F, B>,
-	): Applicative<F, SequenceF<B>> =
+		f: (A) -> Functor<F, B>,
+	): Functor<F, SequenceF<B>> =
 		(this as Sequence<A>).traverse(appScope, f).map(Sequence<B>::f)
 
 	override fun associateWith(other: Context<SequenceContext, A>) =

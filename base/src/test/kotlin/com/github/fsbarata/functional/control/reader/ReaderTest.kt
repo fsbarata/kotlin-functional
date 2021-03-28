@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.control.reader
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.MonadLaws
-import com.github.fsbarata.functional.data.Functor
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.math.roundToInt
@@ -18,7 +18,7 @@ class ReaderTest:
 
 	private val basicDependencies = Pair("ab", -38)
 
-	override fun <A> Functor<ReaderContext<Dependencies>, A>.equalTo(other: Functor<ReaderContext<Dependencies>, A>) =
+	override fun <A> Context<ReaderContext<Dependencies>, A>.equalTo(other: Context<ReaderContext<Dependencies>, A>) =
 		asReader.runReader(basicDependencies) == other.asReader.runReader(basicDependencies)
 
 	@Test

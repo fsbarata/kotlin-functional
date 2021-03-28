@@ -2,16 +2,13 @@ package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
-import com.github.fsbarata.functional.data.collection.flattenToList
 import com.github.fsbarata.functional.data.partial
-import com.github.fsbarata.functional.data.sequence.NonEmptySequence
-import com.github.fsbarata.functional.data.set.NonEmptySet
 import com.github.fsbarata.functional.utils.*
 import java.io.Serializable
-import kotlin.random.Random
 
 /**
  * A NonEmpty list.
@@ -61,10 +58,10 @@ class NonEmptyList<out A> private constructor(
 
 	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
 
-	override fun <B> ap(ff: Applicative<NonEmptyContext, (A) -> B>): NonEmptyList<B> =
+	override fun <B> ap(ff: Functor<NonEmptyContext, (A) -> B>): NonEmptyList<B> =
 		ff.asNel.flatMap(this::map)
 
-	override inline fun <B, R> lift2(fb: Applicative<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> =
+	override inline fun <B, R> lift2(fb: Functor<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> =
 		flatMap { a -> fb.asNel.map(f.partial(a)) }
 
 	override inline infix fun <B> bind(f: (A) -> Context<NonEmptyContext, B>): NonEmptyList<B> =
@@ -114,10 +111,9 @@ class NonEmptyList<out A> private constructor(
 
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Applicative<F, B>,
-	): Applicative<F, NonEmptyList<B>> =
-		tail.traverse(appScope, f)
-			.lift2(f(head), List<B>::startWithItem)
+		f: (A) -> Functor<F, B>,
+	): Functor<F, NonEmptyList<B>> =
+		appScope.lift2(tail.traverse(appScope, f), f(head), List<B>::startWithItem)
 
 	override fun combineWith(other: NonEmptyList<@UnsafeVariance A>) = this + other
 

@@ -5,6 +5,7 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.data.BiFunctor
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
 import java.io.Serializable
@@ -30,7 +31,7 @@ data class Tuple2<X, Y>(val x: X, val y: Y):
 
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (Y) -> Applicative<F, B>,
+		f: (Y) -> Functor<F, B>,
 	) = f(y).map { Tuple2(x, it) }
 
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, Y) -> R): R =

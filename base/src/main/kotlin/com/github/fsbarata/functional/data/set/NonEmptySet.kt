@@ -4,6 +4,7 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
@@ -42,10 +43,10 @@ class NonEmptySet<out A> private constructor(
 	override inline fun <B> map(f: (A) -> B): NonEmptySet<B> =
 		of(f(head), tail.mapTo(mutableSetOf(), f))
 
-	override fun <B> ap(ff: Applicative<NonEmptySetContext, (A) -> B>): NonEmptySet<B> =
+	override fun <B> ap(ff: Functor<NonEmptySetContext, (A) -> B>): NonEmptySet<B> =
 		ff.asNes.flatMap(this::map)
 
-	override inline fun <B, R> lift2(fb: Applicative<NonEmptySetContext, B>, f: (A, B) -> R): NonEmptySet<R> =
+	override inline fun <B, R> lift2(fb: Functor<NonEmptySetContext, B>, f: (A, B) -> R): NonEmptySet<R> =
 		flatMap { a -> fb.asNes.map(f.partial(a)) }
 
 	override inline infix fun <B> bind(f: (A) -> Context<NonEmptySetContext, B>): NonEmptySet<B> =
@@ -72,10 +73,9 @@ class NonEmptySet<out A> private constructor(
 
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Applicative<F, B>,
-	): Applicative<F, NonEmptySet<B>> =
-		tail.traverse(appScope, f)
-			.lift2(f(head), Set<B>::plusElementNes)
+		f: (A) -> Functor<F, B>,
+	): Functor<F, NonEmptySet<B>> =
+		appScope.lift2(tail.traverse(appScope, f), f(head), Set<B>::plusElementNes)
 
 	override fun combineWith(other: NonEmptySet<@UnsafeVariance A>): NonEmptySet<A> = this + other
 

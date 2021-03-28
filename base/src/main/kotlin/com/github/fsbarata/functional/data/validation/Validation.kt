@@ -46,6 +46,9 @@ sealed class Validation<out E, out A>:
 	fun swap() = fold(ifFailure = { Success(it) }, ifSuccess = { Failure(it) })
 
 	companion object {
+		fun <E, A> success(a: A): Validation<E, A> = Success(a)
+		fun <E, A> failure(e: E): Validation<E, A> = Failure(e)
+
 		inline fun <E, A> fromOptional(optional: Optional<A>, e: () -> E): Validation<E, A> =
 			optional.toValidation(e)
 
@@ -54,7 +57,6 @@ sealed class Validation<out E, out A>:
 
 		fun <E, B, A> liftError(either: Either<B, A>, f: (B) -> E): Validation<E, A> =
 			either.fold({ Failure(f(it)) }, { Success(it) })
-
 	}
 }
 

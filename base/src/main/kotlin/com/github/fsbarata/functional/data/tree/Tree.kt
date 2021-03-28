@@ -5,6 +5,7 @@ import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.partial
@@ -45,7 +46,7 @@ class Tree<out A>(
 		)
 	}
 
-	override fun <B> ap(ff: Applicative<TreeContext, (A) -> B>): Tree<B> {
+	override fun <B> ap(ff: Functor<TreeContext, (A) -> B>): Tree<B> {
 		val s = ff.asTree
 		val f = s.root
 		val tfs = s.sub
@@ -55,7 +56,7 @@ class Tree<out A>(
 		)
 	}
 
-	override fun <B, R> lift2(fb: Applicative<TreeContext, B>, f: (A, B) -> R): Tree<R> {
+	override fun <B, R> lift2(fb: Functor<TreeContext, B>, f: (A, B) -> R): Tree<R> {
 		val tb = fb.asTree
 		val x: Forest<R> = tb.sub.map { it.map(f.partial(root)) }
 		val y: Forest<R> = sub.map { it.lift2(tb, f) }
@@ -87,9 +88,9 @@ class Tree<out A>(
 
 	override fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Applicative<F, B>,
-	): Applicative<F, Tree<B>> =
-		f(root).lift2(sub.traverse(appScope) { it.traverse(appScope, f) }, ::Tree)
+		f: (A) -> Functor<F, B>,
+	): Functor<F, Tree<B>> =
+		appScope.lift2(f(root), sub.traverse(appScope) { it.traverse(appScope, f) }, ::Tree)
 
 	companion object:
 		Monad.Scope<TreeContext>,

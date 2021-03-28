@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.data.rx
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.MonadZipLaws
-import com.github.fsbarata.functional.data.Functor
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import java.io.IOException
@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 
 class SingleFTest: MonadZipLaws<SingleContext> {
 	override val monadScope = SingleF
-	override fun <A> Functor<SingleContext, A>.equalTo(other: Functor<SingleContext, A>): Boolean {
+	override fun <A> Context<SingleContext, A>.equalTo(other: Context<SingleContext, A>): Boolean {
 		val testObserver1 = asSingle.materialize().test()
 		val testObserver2 = other.asSingle.materialize().test()
 

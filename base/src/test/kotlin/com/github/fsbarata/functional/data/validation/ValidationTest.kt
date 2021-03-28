@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.data.validation
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.data.BiFunctorLaws
-import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.FunctorLaws
 import com.github.fsbarata.functional.data.either.Either
 import com.github.fsbarata.functional.data.either.flatMap
@@ -27,7 +27,7 @@ class ValidationTest:
 		else -> Success(possibility - 1)
 	}
 
-	override fun <A> Functor<ValidationContext<String>, A>.equalTo(other: Functor<ValidationContext<String>, A>) =
+	override fun <A> Context<ValidationContext<String>, A>.equalTo(other: Context<ValidationContext<String>, A>) =
 		asValidation == other.asValidation
 
 	@Test

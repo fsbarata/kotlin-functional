@@ -1,5 +1,6 @@
 package com.github.fsbarata.functional.data.validation
 
+import com.github.fsbarata.functional.control.ApplicativeScopeLaws
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.validation.Validation.Failure
 import com.github.fsbarata.functional.data.validation.Validation.Success
@@ -7,29 +8,36 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test
 
-class ValidationApplicativeTest {
+class ValidationApplicativeTest: ApplicativeScopeLaws<ValidationContext<ValidationApplicativeTest.IntSemigroup>> {
 	data class IntSemigroup(val i: Int): Semigroup<IntSemigroup> {
 		override fun combineWith(other: IntSemigroup) = IntSemigroup(i + other.i)
 	}
+
+	override val applicativeScope = ValidationApplicativeScope<IntSemigroup>()
+
+	override val possibilities: Int = 10
+
+	override fun factory(possibility: Int) =
+		if (possibility < 3) Validation.success(possibility)
+		else Failure(IntSemigroup(possibility))
 
 	@Test
 	fun ap() {
 		assertEquals(
 			Success("31"),
-			Success("3").toApplicative().ap(Success { a: String -> a + 1 }.toApplicative()).unwrap()
+			applicativeScope.ap(Validation.success("3"), Validation.success { a: String -> a + 1 })
 		)
 		assertEquals(
 			Failure(IntSemigroup(3)),
-			Failure(IntSemigroup(3)).toApplicative().ap(Success { a: String -> a + 1 }.toApplicative()).unwrap()
+			applicativeScope.ap<String, String>(Failure(IntSemigroup(3)), Validation.success { a: String -> a + 1 })
 		)
 		assertEquals(
 			Failure(IntSemigroup(5)),
-			Failure(IntSemigroup(3)).toApplicative().ap<Long>(Failure(IntSemigroup(2)).toApplicative()).unwrap()
+			applicativeScope.ap<Nothing, Nothing>(Failure(IntSemigroup(3)), Failure(IntSemigroup(2)))
 		)
 		assertEquals(
 			Failure(IntSemigroup(2)),
-			Success("3").toApplicative<IntSemigroup, String>()
-				.ap<Long>(Failure(IntSemigroup(2)).toApplicative()).unwrap()
+			applicativeScope.ap<String, String>(Validation.success("3"), Failure(IntSemigroup(2)))
 		)
 	}
 
@@ -38,27 +46,31 @@ class ValidationApplicativeTest {
 	fun lift2() {
 		assertEquals(
 			Success("35"),
-			Success("3").toApplicative()
-				.lift2(Success(5).toApplicative()) { a, b -> a + b }
-				.unwrap()
+			applicativeScope.lift2(
+				Validation.success("3"),
+				Validation.success(5)
+			) { a, b -> a + b }
 		)
 		assertEquals(
 			Failure(IntSemigroup(3)),
-			Success("3").toApplicative<IntSemigroup, String>()
-				.lift2(Failure(IntSemigroup(3)).toApplicative()) { _, _ -> fail() }
-				.unwrap()
+			applicativeScope.lift2(
+				Validation.success("3"),
+				Failure(IntSemigroup(3))
+			) { _, _ -> fail() }
 		)
 		assertEquals(
 			Failure(IntSemigroup(5)),
-			Failure(IntSemigroup(2)).toApplicative()
-				.lift2(Failure(IntSemigroup(3)).toApplicative()) { _, _ -> fail() }
-				.unwrap()
+			applicativeScope.lift2(
+				Failure(IntSemigroup(2)),
+				Failure(IntSemigroup(3)),
+			) { _, _ -> fail() }
 		)
 		assertEquals(
 			Failure(IntSemigroup(2)),
-			Failure(IntSemigroup(2)).toApplicative()
-				.lift2(Success(1).toApplicative()) { _, _ -> fail() }
-				.unwrap()
+			applicativeScope.lift2(
+				Failure(IntSemigroup(2)),
+				Validation.success(1),
+			) { _, _ -> fail() }
 		)
 	}
 }

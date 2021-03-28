@@ -18,10 +18,10 @@ class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
 	override inline fun <B> map(f: (A) -> B) =
 		(this as List<A>).map(f).f()
 
-	override infix fun <B> ap(ff: Applicative<ListContext, (A) -> B>): ListF<B> =
+	override infix fun <B> ap(ff: Functor<ListContext, (A) -> B>): ListF<B> =
 		wrapped.ap(ff.asList).f()
 
-	override inline fun <B, R> lift2(fb: Applicative<ListContext, B>, f: (A, B) -> R): ListF<R> =
+	override inline fun <B, R> lift2(fb: Functor<ListContext, B>, f: (A, B) -> R): ListF<R> =
 		(this as List<A>).lift2(fb.asList, f).f()
 
 	override inline infix fun <B> bind(f: (A) -> Context<ListContext, B>) =
@@ -58,8 +58,8 @@ class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
 
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Applicative<F, B>,
-	): Applicative<F, ListF<B>> =
+		f: (A) -> Functor<F, B>,
+	): Functor<F, ListF<B>> =
 		(this as List<A>).traverse(appScope, f).map(List<B>::f)
 
 	override fun associateWith(other: Context<ListContext, A>) =

@@ -35,7 +35,7 @@ sealed class Either<out E, out A>:
 		flatMap { Right(f(it)) }
 
 	final override inline fun <B, R> lift2(
-		fb: Applicative<EitherContext<@UnsafeVariance E>, B>,
+		fb: Functor<EitherContext<@UnsafeVariance E>, B>,
 		f: (A, B) -> R,
 	): Either<E, R> =
 		flatMap { fb.asEither.map(f.partial(it)) }
@@ -62,8 +62,8 @@ sealed class Either<out E, out A>:
 
 	final override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Applicative<F, B>,
-	): Applicative<F, Either<E, B>> = fold(
+		f: (A) -> Functor<F, B>,
+	): Functor<F, Either<E, B>> = fold(
 		ifLeft = { appScope.just(Left(it)) },
 		ifRight = { f(it).map(::Right) }
 	)

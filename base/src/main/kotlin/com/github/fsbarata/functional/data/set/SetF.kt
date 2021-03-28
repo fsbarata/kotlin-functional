@@ -17,10 +17,10 @@ class SetF<A>(private val wrapped: Set<A>): Set<A> by wrapped,
 	override inline fun <B> map(f: (A) -> B): SetF<B> =
 		mapTo(mutableSetOf(), f).f()
 
-	override infix fun <B> ap(ff: Applicative<SetContext, (A) -> B>): SetF<B> =
+	override infix fun <B> ap(ff: Functor<SetContext, (A) -> B>): SetF<B> =
 		wrapped.ap(ff.asSet).f()
 
-	override inline fun <B, R> lift2(fb: Applicative<SetContext, B>, f: (A, B) -> R): SetF<R> =
+	override inline fun <B, R> lift2(fb: Functor<SetContext, B>, f: (A, B) -> R): SetF<R> =
 		(this as Set<A>).lift2(fb.asSet, f).f()
 
 	override inline infix fun <B> bind(f: (A) -> Context<SetContext, B>): SetF<B> =
@@ -51,8 +51,8 @@ class SetF<A>(private val wrapped: Set<A>): Set<A> by wrapped,
 
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Applicative<F, B>,
-	): Applicative<F, SetF<B>> =
+		f: (A) -> Functor<F, B>,
+	): Functor<F, SetF<B>> =
 		(this as Set<A>).traverse(appScope, f).map(Set<B>::f)
 
 	override fun associateWith(other: Context<SetContext, A>): SetF<A> =

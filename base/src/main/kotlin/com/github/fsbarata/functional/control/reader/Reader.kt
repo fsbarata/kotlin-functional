@@ -1,9 +1,9 @@
 package com.github.fsbarata.functional.control.reader
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.arrow.kleisli
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.id
 
 /**
@@ -18,7 +18,7 @@ class Reader<D, out A>(val runReader: (D) -> A):
 	override fun <B> map(f: (A) -> B): Reader<D, B> =
 		Reader { f(runReader(it)) }
 
-	override infix fun <B> ap(ff: Applicative<ReaderContext<D>, (A) -> B>): Reader<D, B> =
+	override infix fun <B> ap(ff: Functor<ReaderContext<D>, (A) -> B>): Reader<D, B> =
 		Reader { d -> ff.map { it(runReader(d)) }.asReader.runReader(d) }
 
 	override infix fun <B> bind(f: (A) -> Context<ReaderContext<D>, B>): Reader<D, B> =

@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.control
 
 import com.github.fsbarata.functional.Context
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.flip
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
@@ -9,7 +10,7 @@ import com.github.fsbarata.functional.kotlin.plusElementNes
 interface Alternative<F, out A>: Applicative<F, A> {
 	override val scope: Scope<F>
 
-	override fun <B, R> lift2(fb: Applicative<F, B>, f: (A, B) -> R) =
+	override fun <B, R> lift2(fb: Functor<F, B>, f: (A, B) -> R) =
 		super.lift2(fb, f) as Alternative<F, R>
 
 	fun associateWith(other: Context<F, @UnsafeVariance A>): Alternative<F, A>

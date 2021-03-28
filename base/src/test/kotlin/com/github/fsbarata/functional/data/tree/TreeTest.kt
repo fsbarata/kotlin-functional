@@ -1,8 +1,8 @@
 package com.github.fsbarata.functional.data.tree
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.ComonadLaws
 import com.github.fsbarata.functional.control.MonadZipLaws
-import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.TraversableLaws
 
 class TreeTest:
@@ -28,7 +28,7 @@ class TreeTest:
 			}
 		)
 
-	override fun <A> Functor<TreeContext, A>.equalTo(other: Functor<TreeContext, A>): Boolean =
+	override fun <A> Context<TreeContext, A>.equalTo(other: Context<TreeContext, A>): Boolean =
 		asTree.root == other.asTree.root &&
 				asTree.sub.toList().equalTo(other.asTree.sub.toList())
 

@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.maybe.Optional
@@ -28,10 +29,10 @@ inline fun <A, M> List<A>.foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 
 inline fun <F, A, B> List<A>.traverse(
 	appScope: Applicative.Scope<F>,
-	f: (A) -> Applicative<F, B>,
-): Applicative<F, List<B>> {
+	f: (A) -> Functor<F, B>,
+): Functor<F, List<B>> {
 	return fold(appScope.just(emptyList())) { app, a ->
-		f(a).lift2(app) { b, lb -> lb + b }
+		appScope.lift2(f(a), app) { b, lb -> lb + b }
 	}
 }
 
