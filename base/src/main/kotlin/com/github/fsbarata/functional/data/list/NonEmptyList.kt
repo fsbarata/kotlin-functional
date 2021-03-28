@@ -2,11 +2,8 @@ package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
-import com.github.fsbarata.functional.data.Functor
-import com.github.fsbarata.functional.data.Semigroup
-import com.github.fsbarata.functional.data.Traversable
+import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
-import com.github.fsbarata.functional.data.partial
 import com.github.fsbarata.functional.utils.*
 import java.io.Serializable
 
@@ -115,6 +112,17 @@ class NonEmptyList<out A> private constructor(
 	): Functor<F, NonEmptyList<B>> =
 		appScope.lift2(tail.traverse(appScope, f), f(head), List<B>::startWithItem)
 
+	inline fun <F, B> traverse(
+		f: (A) -> Applicative<F, B>,
+	): Functor<F, NonEmptyList<B>> {
+		val mappedHead = f(head)
+		return mappedHead.scope.lift2(
+			tail.traverse(mappedHead.scope, f),
+			mappedHead,
+			List<B>::startWithItem
+		)
+	}
+
 	override fun combineWith(other: NonEmptyList<@UnsafeVariance A>) = this + other
 
 	fun <K: Comparable<K>> sortedBy(selector: (A) -> K): NonEmptyList<A> =
@@ -176,3 +184,9 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 	list3: NonEmptyList<C>,
 	list4: NonEmptyList<D>,
 ): NonEmptyList<R> = app(list1, list2, list3, list4).asNel
+
+inline fun <F, A> NonEmptyList<Functor<F, A>>.sequenceA(appScope: Applicative.Scope<F>): Functor<F, NonEmptyList<A>> =
+	traverse(appScope, ::id)
+
+inline fun <F, A> NonEmptyList<Applicative<F, A>>.sequenceA(): Functor<F, NonEmptyList<A>> =
+	traverse(head.scope, ::id)

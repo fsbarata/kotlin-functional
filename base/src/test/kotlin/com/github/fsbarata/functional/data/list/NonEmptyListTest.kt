@@ -6,6 +6,10 @@ import com.github.fsbarata.functional.data.TraversableLaws
 import com.github.fsbarata.functional.data.collection.max
 import com.github.fsbarata.functional.data.collection.min
 import com.github.fsbarata.functional.data.collection.runningReduceNel
+import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.validation.Validation
+import com.github.fsbarata.functional.data.validation.ValidationApplicativeScope
+import com.github.fsbarata.functional.data.validation.asValidation
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger
@@ -252,5 +256,70 @@ class NonEmptyListTest:
 		assertEquals(NonEmptyList.just(9), nel1.runningReduceNel { acc, i -> acc + i - 2 })
 		assertEquals(nelOf(5, 4, 5), nel2.runningReduceNel { acc, i -> acc + i - 2 })
 		assertEquals(nelOf(2, 4, 4, 7), nel3.runningReduceNel { acc, i -> acc + i - 2 })
+	}
+
+	@Test
+	fun traverse() {
+		assertEquals(
+			Optional.just(listOf("5", "7", "3")),
+			nelOf(3, 5, 1)
+				.traverse { a -> Optional.just("${a + 2}") }
+		)
+
+		assertEquals(
+			Optional.empty<String>(),
+			nelOf(3, 5, 1)
+				.traverse { a ->
+					if (a >= 5) Optional.empty()
+					else Optional.just("${a + 2}")
+				}
+		)
+
+		assertEquals(
+			Validation.success<NonEmptyList<String>, Int>(2),
+			nelOf(5, 2, 1)
+				.traverse(ValidationApplicativeScope()) { a ->
+					when {
+						a < 1 -> Validation.Failure(NonEmptyList.just("a"))
+						a < 3 -> Validation.success(1)
+						else -> Validation.success(0)
+					}
+				}
+				.asValidation
+				.map { it.sum() }
+		)
+	}
+
+	@Test
+	fun sequenceA() {
+		assertEquals(
+			Optional.just(nelOf(3, 5, 1)),
+			nelOf(
+				Optional.just(3),
+				Optional.just(5),
+				Optional.just(1)
+			).sequenceA()
+		)
+
+		assertEquals(
+			Optional.empty<Int>(),
+			nelOf(
+				Optional.just(3),
+				Optional.empty(),
+				Optional.just(1)
+			).sequenceA()
+		)
+
+		assertEquals(
+			Validation.success<NonEmptyList<String>, Int>(2),
+			nelOf(
+				Validation.success<NonEmptyList<String>, Int>(1),
+				Validation.success(0),
+				Validation.success(1),
+			)
+				.sequenceA(ValidationApplicativeScope())
+				.asValidation
+				.map { it.sum() }
+		)
 	}
 }
