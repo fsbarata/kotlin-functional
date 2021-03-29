@@ -47,11 +47,11 @@ operator fun <E: Semigroup<E>, A, B, C, R> Lift3<A, B, C, R>.invoke(
 	v1: Validation<E, A>,
 	v2: Validation<E, B>,
 	v3: Validation<E, C>,
-) = app(ValidationApplicativeScope(), v1, v2, v3)
+) = app(ValidationApplicativeScope(), v1, v2, v3).asValidation
 
 operator fun <E: Semigroup<E>, A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 	v1: Validation<E, A>,
 	v2: Validation<E, B>,
 	v3: Validation<E, C>,
 	v4: Validation<E, D>,
-) = app(ValidationApplicativeScope(), v1, v2, v3, v4)
+) = app(ValidationApplicativeScope(), v1, v2, v3, v4).asValidation
