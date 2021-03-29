@@ -82,7 +82,7 @@ class NonEmptyList<out A> private constructor(
 
 	fun reversed() = tail.asReversed().nonEmpty()?.plus(head) ?: this
 
-	fun distinct() = NonEmptyList(head, (tail.toSet() - head).toList())
+	fun distinct() = toSet().toList()
 	inline fun <K> distinctBy(selector: (A) -> K): NonEmptyList<A> {
 		val set = HashSet<K>()
 		set.add(selector(head))
@@ -110,23 +110,22 @@ class NonEmptyList<out A> private constructor(
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Functor<F, B>,
 	): Functor<F, NonEmptyList<B>> =
-		appScope.lift2(tail.traverse(appScope, f), f(head), List<B>::startWithItem)
+		appScope.lift2(f(head), tail.traverse(appScope, f), ::of)
 
 	inline fun <F, B> traverse(
 		f: (A) -> Applicative<F, B>,
 	): Functor<F, NonEmptyList<B>> {
 		val mappedHead = f(head)
-		return mappedHead.scope.lift2(
+		return mappedHead.lift2(
 			tail.traverse(mappedHead.scope, f),
-			mappedHead,
-			List<B>::startWithItem
+			::of
 		)
 	}
 
 	override fun combineWith(other: NonEmptyList<@UnsafeVariance A>) = this + other
 
 	fun <K: Comparable<K>> sortedBy(selector: (A) -> K): NonEmptyList<A> =
-		(this as List<A>).sortedBy(selector).toNelUnsafe()
+		sortedWith(compareBy(selector))
 
 	fun sortedWith(comparator: Comparator<@UnsafeVariance A>): NonEmptyList<A> =
 		(this as List<A>).sortedWith(comparator).toNelUnsafe()

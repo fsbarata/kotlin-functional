@@ -4,12 +4,9 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.data.Functor
-import com.github.fsbarata.functional.data.Semigroup
-import com.github.fsbarata.functional.data.Traversable
+import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
 import com.github.fsbarata.functional.data.list.*
-import com.github.fsbarata.functional.data.partial
 import com.github.fsbarata.functional.kotlin.plusElementNes
 import com.github.fsbarata.functional.utils.NonEmptyIterator
 import com.github.fsbarata.functional.utils.nonEmpty
@@ -75,7 +72,17 @@ class NonEmptySet<out A> private constructor(
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Functor<F, B>,
 	): Functor<F, NonEmptySet<B>> =
-		appScope.lift2(tail.traverse(appScope, f), f(head), Set<B>::plusElementNes)
+		appScope.lift2(f(head), tail.traverse(appScope, f), ::of)
+
+	inline fun <F, B> traverse(
+		f: (A) -> Applicative<F, B>,
+	): Functor<F, NonEmptySet<B>> {
+		val mappedHead = f(head)
+		return mappedHead.lift2(
+			tail.traverse(mappedHead.scope, f),
+			::of
+		)
+	}
 
 	override fun combineWith(other: NonEmptySet<@UnsafeVariance A>): NonEmptySet<A> = this + other
 
@@ -101,3 +108,9 @@ fun <A> Iterable<A>.toNes(): NonEmptySet<A>? {
 		else -> iterator().nonEmpty()?.toNes()
 	}
 }
+
+inline fun <F, A> NonEmptySet<Functor<F, A>>.sequenceA(appScope: Applicative.Scope<F>): Functor<F, NonEmptySet<A>> =
+	traverse(appScope, ::id)
+
+inline fun <F, A> NonEmptySet<Applicative<F, A>>.sequenceA(): Functor<F, NonEmptySet<A>> =
+	traverse(head.scope, ::id)

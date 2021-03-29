@@ -92,6 +92,13 @@ class Tree<out A>(
 	): Functor<F, Tree<B>> =
 		appScope.lift2(f(root), sub.traverse(appScope) { it.traverse(appScope, f) }, ::Tree)
 
+	fun <F, B> traverse(
+		f: (A) -> Applicative<F, B>,
+	): Functor<F, Tree<B>> {
+		val mappedRoot = f(root)
+		return mappedRoot.lift2(sub.traverse(mappedRoot.scope) { it.traverse(f) }, ::Tree)
+	}
+
 	companion object:
 		Monad.Scope<TreeContext>,
 		Traversable.Scope<TreeContext> {
