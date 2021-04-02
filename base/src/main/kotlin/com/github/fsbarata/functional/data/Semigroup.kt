@@ -6,7 +6,8 @@ import com.github.fsbarata.functional.data.list.NonEmptyList
  * A semigroup is a scope where a function that can combine values of a single type exists and
  * respects the associativity property.
  *
- * For eg., for any type that defines a plus method, there exists a Semigroup where combine is plus
+ * For any type that defines an associative plus method, there exists a Semigroup where combine is plus
+ * For eg., Numbers, String
  */
 interface Semigroup<A> {
 	fun combineWith(other: A): A
