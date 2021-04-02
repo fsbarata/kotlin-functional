@@ -1,12 +1,9 @@
 package com.github.fsbarata.functional.data
 
-import com.github.fsbarata.functional.ContextTest
 import com.github.fsbarata.functional.PossibilitiesTest
 import org.junit.Test
 
-interface FunctorLaws<F>: ContextTest<F>, PossibilitiesTest {
-	override fun factory(possibility: Int): Functor<F, Int>
-
+interface FunctorLaws<F>: InvariantLaws<F>, PossibilitiesTest {
 	@Suppress("UNCHECKED_CAST")
 	private fun eachPossibilityFunctor(block: (Functor<F, Int>) -> Unit) {
 		eachPossibility { block(it as Functor<F, Int>) }

@@ -1,13 +1,7 @@
 package com.github.fsbarata.functional.data
 
-interface Invariant<F, A> {
-	fun <B> invmap(f: (A) -> B, g: (B) -> A): Invariant<F, B>
-}
+import com.github.fsbarata.functional.Context
 
-class InvariantFunctor<F, A, T: Functor<F, A>>(val get: T): Invariant<F, A> {
-	override fun <B> invmap(f: (A) -> B, g: (B) -> A) = InvariantFunctor(get.map(f))
-}
-
-class InvariantContravariant<F, A, T: Contravariant<F, A>>(val get: T): Invariant<F, A> {
-	override fun <B> invmap(f: (A) -> B, g: (B) -> A) = InvariantContravariant(get.contramap(g))
+interface Invariant<F, out A>: Context<F, A> {
+	fun <B> invmap(f: (A) -> B, g: (B) -> @UnsafeVariance A): Invariant<F, B>
 }
