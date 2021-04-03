@@ -38,4 +38,4 @@ fun <M, A> MonadPlus<M, A>.filterFromBind(predicate: (A) -> Boolean) =
 	bind { if (predicate(it)) scope.just(it) else scope.empty() }
 
 fun <M, A: Any> MonadPlus<M, A?>.filterNotNull() = mapNotNull(id())
-fun <M, A: Any> MonadPlus<M, Optional<A>>.filterPresent() = mapNotNone(id())
+fun <M, A: Any> MonadPlus<M, Optional<A>>.filterNotNone() = mapNotNone(id())
