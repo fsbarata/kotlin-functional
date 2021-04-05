@@ -60,9 +60,8 @@ sealed class Optional<out A>:
 	final override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R) =
 		maybe(initialValue) { accumulator(it, initialValue) }
 
-	final override inline fun <B, R> zipWith(other: MonadZip<OptionalContext, B>, f: (A, B) -> R): Optional<R> {
-		return flatMap { a -> other.asOptional.map { b -> f(a, b) } }
-	}
+	final override inline fun <B, R> zipWith(other: MonadZip<OptionalContext, B>, f: (A, B) -> R) =
+		lift2(other, f)
 
 	inline fun <B> maybe(b: B, f: (A) -> B): B = map(f) orElse b
 
