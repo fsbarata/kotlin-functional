@@ -27,24 +27,22 @@ class SetF<A>(private val wrapped: Set<A>): Set<A> by wrapped,
 		flatMap { f(it).asSet }
 
 	inline fun <B> flatMap(f: (A) -> Set<B>): SetF<B> =
-		(this as Set<A>).flatMapTo(mutableSetOf(), f).f()
+		flatMapTo(mutableSetOf(), f).f()
 
 	override inline fun filter(predicate: (A) -> Boolean): SetF<A> =
-		(this as Set<A>).filterTo(mutableSetOf(), predicate).f()
+		filterTo(mutableSetOf(), predicate).f()
 
-	override inline fun partition(predicate: (A) -> Boolean): Pair<SetF<A>, SetF<A>> {
-		val p = (this as Set<A>).partition(predicate)
-		return Pair(p.first.toSet().f(), p.second.toSet().f())
-	}
+	override inline fun partition(predicate: (A) -> Boolean): Pair<SetF<A>, SetF<A>> =
+		Pair(filter(predicate), filter { !predicate(it) })
 
 	override inline fun <B: Any> mapNotNull(f: (A) -> B?): SetF<B> =
-		(this as Set<A>).mapNotNullTo(mutableSetOf(), f).f()
+		mapNotNullTo(mutableSetOf(), f).f()
 
 	override inline fun <B: Any> mapNotNone(f: (A) -> Optional<B>): SetF<B> =
 		mapNotNull { f(it).orNull() }
 
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
-		(this as Set<A>).fold(initialValue, accumulator)
+		fold(initialValue, accumulator)
 
 	override inline fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 		(this as Set<A>).foldMap(monoid, f)
@@ -68,9 +66,9 @@ class SetF<A>(private val wrapped: Set<A>): Set<A> by wrapped,
 	companion object:
 		MonadPlus.Scope<SetContext>,
 		Traversable.Scope<SetContext> {
-		override fun <A> empty() = emptySet<A>().f()
-		override fun <A> just(a: A) = setOf(a).f()
-		fun <A> of(vararg items: A) = setOf(*items).f()
+		override fun <A> empty() = SetF(emptySet<A>())
+		override fun <A> just(a: A) = SetF(setOf(a))
+		fun <A> of(vararg items: A) = SetF(setOf(*items))
 
 		fun <A> monoid() = monoid(empty<A>())
 
