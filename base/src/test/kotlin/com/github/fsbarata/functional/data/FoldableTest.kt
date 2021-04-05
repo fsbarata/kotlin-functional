@@ -50,10 +50,10 @@ class FoldableTest {
 	}
 
 	@Test
-	fun scan() {
+	fun scanL_semigroup() {
 		assertEquals(
 			nelOf(StringF("0"), StringF("03"), StringF("035"), StringF("0351")),
-			nelOf(StringF("3"), StringF("5"), StringF("1")).scan(StringF("0")),
+			nelOf(StringF("3"), StringF("5"), StringF("1")).scanL(StringF("0")),
 		)
 	}
 }

@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.data
 
 import com.github.fsbarata.functional.data.list.nelOf
+import com.github.fsbarata.functional.data.monoid.dual
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
