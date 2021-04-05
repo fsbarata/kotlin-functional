@@ -24,16 +24,5 @@ private tailrec fun <A: Semigroup<A>> A.add(a: A, n: Int): A =
 	if (n == 0) this
 	else combineWith(a).add(a, n - 1)
 
-class Dual<A: Semigroup<A>>(val get: A): Semigroup<Dual<A>> {
-	override fun combineWith(other: Dual<A>) = Dual(other.get.combineWith(get))
-}
-
-fun <A: Semigroup<A>> A.dual() = Dual(this)
-
 fun <A: Semigroup<A>> NonEmptyList<A>.sconcat() =
 	reduce { a1, a2 -> a1.combineWith(a2) }
-
-class Endo<A>(private val f: (A) -> A): F1<A, A> by f,
-	Semigroup<Endo<A>> {
-	override fun combineWith(other: Endo<A>) = Endo(f.compose(other.f))
-}

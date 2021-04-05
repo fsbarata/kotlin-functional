@@ -3,6 +3,10 @@ package com.github.fsbarata.functional.data
 import com.github.fsbarata.functional.control.Alternative
 import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.list.NonEmptyList
+import com.github.fsbarata.functional.data.monoid.Dual
+import com.github.fsbarata.functional.data.monoid.Endo
+import com.github.fsbarata.functional.data.monoid.dual
+import com.github.fsbarata.functional.data.monoid.endoMonoid
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
 
 /**

@@ -38,8 +38,4 @@ class MonoidSemigroupFactory<A>(val monoid: Monoid<A>) {
 
 fun <A> Monoid<A>.semigroupFactory() = MonoidSemigroupFactory(this)
 
-fun <A: Semigroup<A>> Monoid<A>.dual() = monoid(Dual(empty))
-
-fun <A> endoMonoid() = monoid(Endo(id<A>()))
-
 
