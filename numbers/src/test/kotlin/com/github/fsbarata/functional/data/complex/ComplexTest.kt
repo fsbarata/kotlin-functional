@@ -22,6 +22,10 @@ class ComplexTest: MonadLaws<ComplexContext>, TraversableLaws<ComplexContext> {
 			Complex(1, 3),
 			Complex(1, -3).conjugate()
 		)
+		assertEquals(
+			Complex(-4L, 3L),
+			Complex(-4L, -3L).conjugate()
+		)
 
 		assertEquals(
 			Complex(1.2f, -3f),
@@ -44,13 +48,13 @@ class ComplexTest: MonadLaws<ComplexContext>, TraversableLaws<ComplexContext> {
 
 		assertEquals(
 			5.0,
-			Complex(3f, 4f).magnitude(),
+			Complex(3f, -4f).magnitude(),
 			1e-10
 		)
 
 		assertEquals(
 			5.0,
-			Complex(3.0, 4.0).magnitude(),
+			Complex(-3.0, 4.0).magnitude(),
 			1e-10
 		)
 	}
@@ -58,21 +62,47 @@ class ComplexTest: MonadLaws<ComplexContext>, TraversableLaws<ComplexContext> {
 	@Test
 	fun phase() {
 		assertEquals(
-			5.0,
-			Complex(3, 4).magnitude(),
-			1e-10
+			53.1301,
+			Math.toDegrees(Complex(3, 4).phase()),
+			1e-4
 		)
 
 		assertEquals(
-			5.0,
-			Complex(3f, 4f).magnitude(),
-			1e-10
+			-53.1301,
+			Math.toDegrees(Complex(3f, -4f).phase()),
+			1e-4
 		)
 
 		assertEquals(
-			5.0,
-			Complex(3.0, 4.0).magnitude(),
-			1e-10
+			-126.8699,
+			Math.toDegrees(Complex(-3.0, -4.0).phase()),
+			1e-4
 		)
+	}
+
+	@Test
+	fun fromPolar() {
+		assertEquals(
+			Complex(0.0, 1.0),
+			Complex.fromPolar(theta = Math.toRadians(90.0)),
+			1e-10,
+		)
+
+		assertEquals(
+			Complex(1.0, 0.0),
+			Complex.fromPolar(theta = 0.0),
+			1e-10,
+		)
+
+		assertEquals(
+			Complex(1.30, -0.75),
+			Complex.fromPolar(radius = 1.5, theta = Math.toRadians(-30.0)),
+			1e-3,
+		)
+	}
+
+	private fun assertEquals(expected: Complex<Double>, actual: Complex<Double>, epsilon: Double) {
+		assertEquals(expected.real, actual.real, epsilon)
+		assertEquals(expected.imag, actual.imag, epsilon)
 	}
 }

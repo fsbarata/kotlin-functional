@@ -66,22 +66,18 @@ val <A> Context<ComplexContext, A>.asComplex get() = this as Complex<A>
 
 @JvmName("conjugatei")
 fun Complex<Int>.conjugate() = Complex(real, -imag)
+@JvmName("conjugatel")
+fun Complex<Long>.conjugate() = Complex(real, -imag)
 @JvmName("conjugatef")
 fun Complex<Float>.conjugate() = Complex(real, -imag)
 fun Complex<Double>.conjugate() = Complex(real, -imag)
 
-@JvmName("manitudei")
-fun Complex<Int>.magnitude(): Double = map { it.toDouble() }.magnitude()
-@JvmName("manitudef")
-fun Complex<Float>.magnitude(): Double = map { it.toDouble() }.magnitude()
+@JvmName("manituden")
+fun Complex<out Number>.magnitude(): Double = map { it.toDouble() }.magnitude()
 fun Complex<Double>.magnitude(): Double = hypot(real, imag)
 
-@JvmName("phasef")
-fun Complex<Float>.phase(): Float =
-	if (real == 0.0f && imag == 0.0f) 0.0f
-	else atan2(imag, real)
-
+@JvmName("phasen")
+fun Complex<out Number>.phase(): Double = map { it.toDouble() }.phase()
 fun Complex<Double>.phase(): Double =
 	if (real == 0.0 && imag == 0.0) 0.0
 	else atan2(imag, real)
-
