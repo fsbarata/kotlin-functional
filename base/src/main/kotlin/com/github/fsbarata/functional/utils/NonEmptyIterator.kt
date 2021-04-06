@@ -3,11 +3,7 @@ package com.github.fsbarata.functional.utils
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.set.NonEmptySet
 
-
-class NonEmptyIterator<out A>(
-	val head: A,
-	val tail: Iterator<A> = EmptyIterator,
-): Iterator<A> {
+internal fun <A> nonEmptyIterator(head: A, tail: Iterator<A>) = object: Iterator<A> {
 	private var begin: Boolean = true
 
 	override fun hasNext() = begin || tail.hasNext()
@@ -21,14 +17,23 @@ class NonEmptyIterator<out A>(
 	}
 }
 
-internal fun <A> NonEmptyIterator<A>.toNel(): NonEmptyList<A> =
-	NonEmptyList.of(head, tail.asSequence().toList())
+internal fun <A> nonEmptyIterator(head: Iterator<A>, tail: A) = object: Iterator<A> {
+	private var hasNext: Boolean = true
 
-internal fun <A> NonEmptyIterator<A>.toNes(): NonEmptySet<A> =
-	NonEmptySet.of(head, tail.asSequence().toSet())
+	override fun hasNext() = hasNext
 
-fun <A> Iterator<A>.nonEmpty(): NonEmptyIterator<A>? = when {
-	this is NonEmptyIterator -> this
-	!hasNext() -> null
-	else -> NonEmptyIterator(next(), this)
+	override fun next(): A =
+		if (head.hasNext()) head.next()
+		else {
+			hasNext = false
+			tail
+		}
 }
+
+internal fun <A> Iterator<A>.toNelUnsafe() = NonEmptyList.of(next(), asSequence().toList())
+fun <A> Iterator<A>.toNel(): NonEmptyList<A>? =
+	if (!hasNext()) null else toNelUnsafe()
+
+internal fun <A> Iterator<A>.toNesUnsafe() = NonEmptySet.of(next(), asSequence().toSet())
+fun <A> Iterator<A>.toNes(): NonEmptySet<A>? =
+	if (!hasNext()) null else toNesUnsafe()

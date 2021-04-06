@@ -6,10 +6,6 @@ import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
-import com.github.fsbarata.functional.data.list.*
-import com.github.fsbarata.functional.kotlin.plusElementNes
-import com.github.fsbarata.functional.utils.NonEmptyIterator
-import com.github.fsbarata.functional.utils.nonEmpty
 import com.github.fsbarata.functional.utils.toNes
 import java.io.Serializable
 
@@ -35,7 +31,7 @@ class NonEmptySet<out A> private constructor(
 	override fun contains(element: @UnsafeVariance A) = super<NonEmptyCollection>.contains(element)
 	override fun containsAll(elements: Collection<@UnsafeVariance A>) = super<NonEmptyCollection>.containsAll(elements)
 
-	override fun iterator(): NonEmptyIterator<A> = super.iterator()
+	override fun iterator(): Iterator<A> = super.iterator()
 
 	override inline fun <B> map(f: (A) -> B): NonEmptySet<B> =
 		of(f(head), tail.mapTo(mutableSetOf(), f))
@@ -98,14 +94,12 @@ internal typealias NonEmptySetContext = NonEmptySet<*>
 val <A> Context<NonEmptySetContext, A>.asNes
 	get() = this as NonEmptySet<A>
 
-fun <A> Set<A>.toNes(): NonEmptySet<A>? = iterator().nonEmpty()?.toNes()
-
 fun <A> nesOf(head: A, vararg tail: A) = NonEmptySet.of(head, tail.toSet())
 
 fun <A> Iterable<A>.toNes(): NonEmptySet<A>? {
 	return when (this) {
 		is NonEmptySet<A> -> this
-		else -> iterator().nonEmpty()?.toNes()
+		else -> iterator().toNes()
 	}
 }
 

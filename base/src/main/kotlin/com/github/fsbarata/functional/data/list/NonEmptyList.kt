@@ -4,7 +4,9 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
-import com.github.fsbarata.functional.utils.*
+import com.github.fsbarata.functional.utils.LambdaListIterator
+import com.github.fsbarata.functional.utils.listEquals
+import com.github.fsbarata.functional.utils.toNel
 import java.io.Serializable
 
 /**
@@ -45,7 +47,7 @@ class NonEmptyList<out A> private constructor(
 		(tail.lastIndexOf(element) + 1).takeIf { it != 0 }
 			?: if (head == element) 0 else -1
 
-	override fun iterator(): NonEmptyIterator<A> = super.iterator()
+	override fun iterator(): Iterator<A> = super.iterator()
 
 	override fun subList(fromIndex: Int, toIndex: Int): List<A> = when {
 		fromIndex == 0 && toIndex == 0 -> emptyList()
@@ -159,7 +161,7 @@ fun <A> List<A>.nonEmpty(): NonEmptyList<A>? = toNel()
 fun <A> Iterable<A>.toNel(): NonEmptyList<A>? {
 	return when (this) {
 		is NonEmptyList<A> -> this
-		else -> iterator().nonEmpty()?.toNel()
+		else -> iterator().toNel()
 	}
 }
 

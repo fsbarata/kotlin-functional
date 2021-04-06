@@ -5,13 +5,11 @@ import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
 import com.github.fsbarata.functional.data.set.NonEmptySet
 import com.github.fsbarata.functional.kotlin.scanNel
-import com.github.fsbarata.functional.utils.NonEmptyIterable
-import com.github.fsbarata.functional.utils.NonEmptyIterator
+import com.github.fsbarata.functional.utils.nonEmptyIterator
 import kotlin.random.Random
 
 interface NonEmptyCollection<out A>:
 	Collection<A>,
-	NonEmptyIterable<A>,
 	Foldable<A> {
 	val head: A
 	val tail: Collection<A>
@@ -39,7 +37,7 @@ interface NonEmptyCollection<out A>:
 	override fun contains(element: @UnsafeVariance A) = head == element || tail.contains(element)
 	override fun containsAll(elements: Collection<@UnsafeVariance A>) = elements.all(this::contains)
 
-	override fun iterator() = NonEmptyIterator(head, tail.iterator())
+	override fun iterator() = nonEmptyIterator(head, tail.iterator())
 
 	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		tail.fold(accumulator(initialValue, head), accumulator)
@@ -50,8 +48,10 @@ interface NonEmptyCollection<out A>:
 	fun <R: Comparable<R>> minOf(selector: (A) -> R): R =
 		tail.minOfOrNull(selector)?.coerceAtMost(selector(head)) ?: selector(head)
 
-	override fun toList() = NonEmptyList.of(head, tail.toList())
-	override fun toSet() = NonEmptySet.of(head, tail.toSet())
+	fun toList() = NonEmptyList.of(head, tail.toList())
+	fun toSet() = NonEmptySet.of(head, tail.toSet())
+
+	fun asSequence(): NonEmptySequence<@UnsafeVariance A> = NonEmptySequence.of(head, tail)
 }
 
 fun <T> NonEmptyCollection<NonEmptyCollection<T>>.flattenToList() =

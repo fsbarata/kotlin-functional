@@ -12,7 +12,7 @@ import com.github.fsbarata.functional.data.partial
 import com.github.fsbarata.functional.data.sequence.NonEmptySequenceBase
 import com.github.fsbarata.functional.data.sequence.foldMap
 import com.github.fsbarata.functional.data.sequence.traverse
-import com.github.fsbarata.functional.utils.NonEmptyIterator
+import com.github.fsbarata.functional.utils.nonEmptyIterator
 
 typealias Forest<A> = Sequence<Tree<A>>
 
@@ -29,7 +29,7 @@ class Tree<out A>(
 	NonEmptySequenceBase<A> {
 	override val scope = Tree
 
-	override fun iterator() = NonEmptyIterator(
+	override fun iterator() = nonEmptyIterator(
 		root,
 		sub.flatten().iterator()
 	)

@@ -5,7 +5,6 @@ import com.github.fsbarata.functional.control.MonadZipLaws
 import com.github.fsbarata.functional.data.FoldableLaws
 import com.github.fsbarata.functional.data.TraversableLaws
 import com.github.fsbarata.functional.data.list.nelOf
-import com.github.fsbarata.functional.utils.NonEmptyIterator
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -27,18 +26,10 @@ class NonEmptySequenceKtTest:
 		NonEmptySequence.of(items.first(), items.drop(1))
 
 	@Test
-	fun `non empty sequence from iterator`() {
-		assertEquals(
-			nelOf(3, 5, 7),
-			NonEmptySequence { nelOf(3, 5, 7).iterator() }.toList()
-		)
-	}
-
-	@Test
 	fun map() {
 		assertEquals(
 			nelOf(8, 10, 12),
-			NonEmptySequence { nelOf(3, 5, 7).iterator() }
+			nelOf(3, 5, 7).asSequence()
 				.map { it + 5 }
 				.toList()
 		)
@@ -67,8 +58,7 @@ class NonEmptySequenceKtTest:
 		assertEquals(
 			nelOf(11),
 			generateSequence(null as Int?) { null }.nonEmpty {
-				NonEmptyIterator(11,
-					emptySequence<Int>().iterator())
+				NonEmptySequence.of(11, emptySequence<Int>())
 			}.toList()
 		)
 	}
