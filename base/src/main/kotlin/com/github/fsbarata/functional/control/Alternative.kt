@@ -5,7 +5,7 @@ import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.flip
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
-import com.github.fsbarata.functional.kotlin.plusElementNes
+import com.github.fsbarata.functional.kotlin.plusElementNe
 
 interface Alternative<F, out A>: Applicative<F, A> {
 	override val scope: Scope<F>
@@ -16,7 +16,7 @@ interface Alternative<F, out A>: Applicative<F, A> {
 	fun associateWith(other: Context<F, @UnsafeVariance A>): Alternative<F, A>
 
 	fun some(): Alternative<F, NonEmptySequence<@UnsafeVariance A>> =
-		lift2(many(), Sequence<A>::plusElementNes.flip())
+		lift2(many(), Sequence<A>::plusElementNe.flip())
 
 	fun many(): Alternative<F, Sequence<@UnsafeVariance A>> =
 		associate(some(), scope.just(emptySequence()))
