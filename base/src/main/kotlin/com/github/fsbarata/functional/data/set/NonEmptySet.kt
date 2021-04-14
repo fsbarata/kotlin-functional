@@ -83,7 +83,7 @@ class NonEmptySet<out A> private constructor(
 	override fun combineWith(other: NonEmptySet<@UnsafeVariance A>): NonEmptySet<A> = this + other
 
 	companion object: Monad.Scope<NonEmptySetContext>, Traversable.Scope<NonEmptySetContext> {
-		override fun <A> just(a: A) = of(a, emptySet())
+		override fun <A> just(a: A) = NonEmptySet(a, emptySet())
 		fun <T> of(head: T, others: Set<T>) = NonEmptySet(head, others - head)
 	}
 }
