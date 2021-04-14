@@ -73,6 +73,11 @@ class NonEmptyList<out A> private constructor(
 		return of(mappedHead.head, mappedHead.tail + tail.flatMap(f))
 	}
 
+	inline fun <B> flatMapIndexed(f: (index: Int, A) -> NonEmptyList<B>): NonEmptyList<B> {
+		val mappedHead = f(0, head)
+		return of(mappedHead.head, mappedHead.tail + tail.flatMapIndexed { index, item -> f(index + 1, item) })
+	}
+
 	override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
 		foldRight(initialValue, accumulator)
 

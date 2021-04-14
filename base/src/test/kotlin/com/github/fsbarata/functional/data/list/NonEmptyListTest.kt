@@ -153,6 +153,13 @@ class NonEmptyListTest:
 	}
 
 	@Test
+	fun flatMapIndexed() {
+		assertEquals(nelOf(90, 9), nel1.flatMapIndexed { index, item -> nelOf(10 * item, item + index) })
+		assertEquals(nelOf(50, 5, 10, 2, 30, 5), nel2.flatMapIndexed { index, item -> nelOf(10 * item, item + index) })
+		assertEquals(nelOf(20, 2, 40, 5, 20, 4, 50, 8), nel3.flatMapIndexed { index, item -> nelOf(10 * item, item + index) })
+	}
+
+	@Test
 	fun fold() {
 		assertEquals(45L, nel1.foldL(5L, Long::times))
 		assertEquals(30L, nel2.foldL(2L, Long::times))
