@@ -7,6 +7,7 @@ import com.github.fsbarata.functional.data.TraversableLaws
 import com.github.fsbarata.functional.data.collection.max
 import com.github.fsbarata.functional.data.collection.min
 import com.github.fsbarata.functional.data.list.createNel
+import com.github.fsbarata.functional.data.list.nelOf
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger
@@ -128,6 +129,13 @@ class NonEmptySetTest:
 	}
 
 	@Test
+	fun union() {
+		assertEquals(nesOf(9, 5, 1, 3), nes1.union(nes2))
+		assertEquals(nesOf(2, 4, 5, 1, 3), nes3.union(nes2))
+		assertEquals(nesOf(3, 5, 2, 4), nesOf(3, 5, 2).union(nelOf(4, 3, 2)))
+	}
+
+	@Test
 	fun flatten() {
 		assertEquals(
 			nesOf(3, 5, 1, 9),
@@ -158,5 +166,13 @@ class NonEmptySetTest:
 		assertEquals(NonEmptySet.just(9), nes1.coflatMap(f))
 		assertEquals(nesOf(9, 4, 3), nes2.coflatMap(f))
 		assertEquals(nesOf(11, 9, 5), nes3.coflatMap(f))
+	}
+
+	@Test
+	fun equals_ignores_order() {
+		assertEquals(nes1, nes1)
+		assertEquals(nes3, nes3)
+		assertEquals(nesOf(1, 5, 3), nesOf(3, 5, 1))
+		assertEquals(nesOf(1, 5, 2), nesOf(1, 5, 2))
 	}
 }

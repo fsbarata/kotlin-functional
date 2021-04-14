@@ -48,6 +48,9 @@ interface NonEmptyCollection<out A>:
 	fun <R: Comparable<R>> minOf(selector: (A) -> R): R =
 		tail.minOfOrNull(selector)?.coerceAtMost(selector(head)) ?: selector(head)
 
+	infix fun union(other: NonEmptyCollection<@UnsafeVariance A>): NonEmptySet<A> =
+		NonEmptySet.of(head, tail.union(other))
+
 	fun toList() = NonEmptyList.of(head, tail.toList())
 	fun toSet() = NonEmptySet.of(head, tail.toSet())
 

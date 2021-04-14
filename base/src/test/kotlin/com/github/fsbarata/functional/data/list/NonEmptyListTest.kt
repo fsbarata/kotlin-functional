@@ -7,6 +7,7 @@ import com.github.fsbarata.functional.data.collection.max
 import com.github.fsbarata.functional.data.collection.min
 import com.github.fsbarata.functional.data.collection.runningReduceNel
 import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.set.nesOf
 import com.github.fsbarata.functional.data.validation.Validation
 import com.github.fsbarata.functional.data.validation.ValidationApplicativeScope
 import com.github.fsbarata.functional.data.validation.asValidation
@@ -156,7 +157,10 @@ class NonEmptyListTest:
 	fun flatMapIndexed() {
 		assertEquals(nelOf(90, 9), nel1.flatMapIndexed { index, item -> nelOf(10 * item, item + index) })
 		assertEquals(nelOf(50, 5, 10, 2, 30, 5), nel2.flatMapIndexed { index, item -> nelOf(10 * item, item + index) })
-		assertEquals(nelOf(20, 2, 40, 5, 20, 4, 50, 8), nel3.flatMapIndexed { index, item -> nelOf(10 * item, item + index) })
+		assertEquals(
+			nelOf(20, 2, 40, 5, 20, 4, 50, 8),
+			nel3.flatMapIndexed { index, item -> nelOf(10 * item, item + index) }
+		)
 	}
 
 	@Test
@@ -230,6 +234,13 @@ class NonEmptyListTest:
 		assertEquals(nel1, nel1.distinctBy { it })
 		assertEquals(nelOf(5, 3), nel2.distinctBy { it % 4 })
 		assertEquals(nelOf(2, 5), nel3.distinctBy { it % 2 })
+	}
+
+	@Test
+	fun union() {
+		assertEquals(nesOf(9, 5, 1, 3), nel1.union(nel2))
+		assertEquals(nesOf(2, 4, 5, 1, 3), nel3.union(nel2))
+		assertEquals(nesOf(3, 5, 2, 4), nelOf(3, 5, 2).union(nesOf(4, 3, 2)))
 	}
 
 	@Test
