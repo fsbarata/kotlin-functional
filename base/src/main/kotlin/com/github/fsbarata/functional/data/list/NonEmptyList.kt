@@ -56,6 +56,8 @@ class NonEmptyList<out A> private constructor(
 	}
 
 	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
+	inline fun <B> mapIndexed(f: (index: Int, A) -> B): NonEmptyList<B> =
+		of(f(0, head), tail.withIndex().map { (index, item) -> f(index + 1, item) })
 
 	override fun <B> ap(ff: Functor<NonEmptyContext, (A) -> B>): NonEmptyList<B> =
 		ff.asNel.flatMap(this::map)

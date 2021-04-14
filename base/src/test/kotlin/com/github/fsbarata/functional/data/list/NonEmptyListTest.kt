@@ -139,6 +139,13 @@ class NonEmptyListTest:
 	}
 
 	@Test
+	fun mapIndexed() {
+		assertEquals(NonEmptyList.just(18), nel1.mapIndexed { index, item -> item * (2 + index) })
+		assertEquals(nelOf(10, 3, 12), nel2.mapIndexed { index, item -> item * (2 + index) })
+		assertEquals(nelOf(4, 4, 0, -5), nel3.mapIndexed { index, item -> item * (2 - index) })
+	}
+
+	@Test
 	fun flatMap() {
 		assertEquals(nelOf(90, 9), nel1.flatMap { nelOf(10 * it, it) })
 		assertEquals(nelOf(50, 5, 10, 1, 30, 3), nel2.flatMap { nelOf(10 * it, it) })
