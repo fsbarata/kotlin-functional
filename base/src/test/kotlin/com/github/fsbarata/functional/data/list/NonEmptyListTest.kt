@@ -207,10 +207,24 @@ class NonEmptyListTest:
 	}
 
 	@Test
+	fun maxBy() {
+		assertEquals(9, nel1.maxBy { BigInteger.valueOf(it.toLong()) })
+		assertEquals(5, nel2.maxBy { BigInteger.valueOf(it % 3L) })
+		assertEquals(4, nel3.maxBy { BigInteger.valueOf(it % 5L) })
+	}
+
+	@Test
 	fun maxOf() {
 		assertEquals(BigInteger.valueOf(9), nel1.maxOf { BigInteger.valueOf(it.toLong()) })
 		assertEquals(BigInteger.valueOf(2), nel2.maxOf { BigInteger.valueOf(it % 3L) })
 		assertEquals(BigInteger.valueOf(4), nel3.maxOf { BigInteger.valueOf(it % 5L) })
+	}
+
+	@Test
+	fun minBy() {
+		assertEquals(9, nel1.minBy { BigInteger.valueOf(it.toLong()) })
+		assertEquals(3, nel2.minBy { BigInteger.valueOf(it % 3L) })
+		assertEquals(5, nel3.minBy { BigInteger.valueOf(it % 5L) })
 	}
 
 	@Test
