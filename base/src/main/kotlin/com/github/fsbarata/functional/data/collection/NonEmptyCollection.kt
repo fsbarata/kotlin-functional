@@ -42,20 +42,21 @@ interface NonEmptyCollection<out A>:
 	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		tail.fold(accumulator(initialValue, head), accumulator)
 
-	fun <R: Comparable<R>> maxBy(selector: (A) -> R): A = (this as Iterable<A>).maxByOrNull(selector)!!
 	@Deprecated("Non empty collection always has a max", replaceWith = ReplaceWith("maxBy()"))
-	fun <R> maxByOrNull(selector: (A) -> Comparable<R>): Nothing = throw UnsupportedOperationException()
+	fun <R: Comparable<R>> maxByOrNull(selector: (A) -> R): Nothing = throw UnsupportedOperationException()
+	fun <R: Comparable<R>> maxBy(selector: (A) -> R): A = (this as Iterable<A>).maxByOrNull(selector)!!
 
 	@Deprecated("Non empty collection always has a max", replaceWith = ReplaceWith("maxOf()"))
+	fun <R: Comparable<R>> maxOfOrNull(selector: (A) -> R): Nothing = throw UnsupportedOperationException()
 	fun <R: Comparable<R>> maxOf(selector: (A) -> R): R =
 		tail.maxOfOrNull(selector)?.coerceAtLeast(selector(head)) ?: selector(head)
 
-	fun <R: Comparable<R>> minBy(selector: (A) -> R): A = (this as Iterable<A>).minByOrNull(selector)!!
 	@Deprecated("Non empty collection always has a min", replaceWith = ReplaceWith("minBy()"))
-	fun <R> minByOrNull(selector: (A) -> Comparable<R>): Nothing = throw UnsupportedOperationException()
+	fun <R: Comparable<R>> minByOrNull(selector: (A) -> R): Nothing = throw UnsupportedOperationException()
+	fun <R: Comparable<R>> minBy(selector: (A) -> R): A = (this as Iterable<A>).minByOrNull(selector)!!
 
 	@Deprecated("Non empty collection always has a min", replaceWith = ReplaceWith("minOf()"))
-	fun <R> minOfOrNull(selector: (A) -> Comparable<R>): Nothing = throw UnsupportedOperationException()
+	fun <R: Comparable<R>> minOfOrNull(selector: (A) -> R): Nothing = throw UnsupportedOperationException()
 	fun <R: Comparable<R>> minOf(selector: (A) -> R): R =
 		tail.minOfOrNull(selector)?.coerceAtMost(selector(head)) ?: selector(head)
 
