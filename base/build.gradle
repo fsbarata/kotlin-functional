@@ -1,6 +1,4 @@
-apply plugin: 'java-library'
 apply from: '../kotlin.gradle'
-apply from: '../publish.gradle'
 
 dependencies {
     testImplementation project(':laws')
