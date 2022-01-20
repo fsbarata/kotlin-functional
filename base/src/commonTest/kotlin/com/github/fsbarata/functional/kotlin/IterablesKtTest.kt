@@ -76,7 +76,7 @@ class IterablesKtTest {
 
 	@Test
 	fun scanNel() {
-		assertEquals(nelOf(-2), emptyList<Nothing>().scanNel(-2) { acc, i -> acc })
+		assertEquals(nelOf(-2), emptyList<Nothing>().scanNel(-2) { acc, _ -> acc })
 		assertEquals(nelOf(-4, 3), listOf(9).scanNel(-4) { acc, i -> acc + i - 2 })
 		assertEquals(nelOf(-4, -4, -2, -2, 1), listOf(2, 4, 2, 5).scanNel(-4) { acc, i -> acc + i - 2 })
 	}

@@ -14,7 +14,7 @@ class ReaderTest:
 
 	override val possibilities: Int = 10
 	override fun factory(possibility: Int) =
-		Reader<Dependencies, Int> { it.first.sumBy { it.toInt() } * possibility + it.second }
+		Reader<Dependencies, Int> { it.first.sumOf { it.code } * possibility + it.second }
 
 	private val basicDependencies = Pair("ab", -38)
 
