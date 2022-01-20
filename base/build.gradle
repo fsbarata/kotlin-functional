@@ -1,8 +1,0 @@
-apply from: '../kotlin.gradle'
-
-dependencies {
-    testImplementation project(':laws')
-}
-
-
-
