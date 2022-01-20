@@ -7,7 +7,7 @@ import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
 import com.github.fsbarata.functional.utils.toNes
-import java.io.Serializable
+import io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
 class NonEmptySet<out A> private constructor(

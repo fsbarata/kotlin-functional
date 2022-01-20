@@ -11,7 +11,7 @@ import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.validation.Validation.Failure
 import com.github.fsbarata.functional.data.validation.Validation.Success
-import java.io.Serializable
+import io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
 sealed class Validation<out E, out A>:

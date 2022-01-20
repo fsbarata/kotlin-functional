@@ -7,7 +7,7 @@ import com.github.fsbarata.functional.data.collection.NonEmptyCollection
 import com.github.fsbarata.functional.utils.LambdaListIterator
 import com.github.fsbarata.functional.utils.listEquals
 import com.github.fsbarata.functional.utils.toNel
-import java.io.Serializable
+import io.Serializable
 
 /**
  * A NonEmpty list.

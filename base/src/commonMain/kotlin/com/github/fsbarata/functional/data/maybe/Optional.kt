@@ -3,7 +3,7 @@ package com.github.fsbarata.functional.data.maybe
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
-import java.io.Serializable
+import io.Serializable
 
 /**
  * Optional (Maybe) Monad
