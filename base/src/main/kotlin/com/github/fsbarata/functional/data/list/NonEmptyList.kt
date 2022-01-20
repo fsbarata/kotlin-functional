@@ -193,8 +193,10 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 	list4: NonEmptyList<D>,
 ): NonEmptyList<R> = app(list1, list2, list3, list4).asNel
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun <F, A> NonEmptyList<Functor<F, A>>.sequenceA(appScope: Applicative.Scope<F>): Functor<F, NonEmptyList<A>> =
 	traverse(appScope, ::id)
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun <F, A> NonEmptyList<Applicative<F, A>>.sequenceA(): Functor<F, NonEmptyList<A>> =
 	traverse(head.scope, ::id)

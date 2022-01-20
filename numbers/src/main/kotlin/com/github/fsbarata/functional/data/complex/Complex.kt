@@ -20,6 +20,7 @@ data class Complex<A>(
 	override val scope = Complex
 
 	override inline fun <B> map(f: (A) -> B) = Complex(f(real), f(imag))
+	@Suppress("NOTHING_TO_INLINE")
 	override inline fun <B> ap(ff: Functor<ComplexContext, (A) -> B>): Complex<B> =
 		ff.asComplex.let { Complex(it.real(real), it.imag(imag)) }
 

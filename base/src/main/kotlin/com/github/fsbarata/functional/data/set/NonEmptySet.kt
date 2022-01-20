@@ -103,8 +103,10 @@ fun <A> Iterable<A>.toNes(): NonEmptySet<A>? {
 	}
 }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun <F, A> NonEmptySet<Functor<F, A>>.sequenceA(appScope: Applicative.Scope<F>): Functor<F, NonEmptySet<A>> =
 	traverse(appScope, ::id)
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun <F, A> NonEmptySet<Applicative<F, A>>.sequenceA(): Functor<F, NonEmptySet<A>> =
 	traverse(head.scope, ::id)
