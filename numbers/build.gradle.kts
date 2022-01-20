@@ -1,6 +1,6 @@
 plugins {
     kotlin("multiplatform")
-    id("maven")
+    id("maven-publish")
 }
 
 kotlin {
