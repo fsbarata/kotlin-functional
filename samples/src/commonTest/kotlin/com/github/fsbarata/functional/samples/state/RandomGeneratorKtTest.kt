@@ -1,9 +1,9 @@
 package com.github.fsbarata.functional.samples.state
 
 import com.github.fsbarata.functional.data.tuple.Tuple2
-import com.github.fsbarata.functional.samples.state.randomGenerator
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class RandomGeneratorKtTest {
 	@Test
@@ -14,6 +14,6 @@ class RandomGeneratorKtTest {
 		val (_, out2) = random.runState(seed2)
 
 		assertEquals(Tuple2(seed2, out), random.runState(seed))
-		assert(out != out2)
+		assertTrue(out != out2)
 	}
 }

@@ -1,10 +1,7 @@
 package com.github.fsbarata.functional.samples.state
 
-import com.github.fsbarata.functional.samples.state.Cell
-import com.github.fsbarata.functional.samples.state.Universe
-import com.github.fsbarata.functional.samples.state.gameOfLife
-import junit.framework.TestCase.assertFalse
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertFalse
 
 class GameOfLifeKtTest {
 

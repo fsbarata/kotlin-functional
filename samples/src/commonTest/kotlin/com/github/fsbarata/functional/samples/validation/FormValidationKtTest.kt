@@ -1,8 +1,8 @@
 package com.github.fsbarata.functional.samples.validation
 
 import com.github.fsbarata.functional.data.list.nelOf
-import junit.framework.TestCase.assertEquals
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class FormValidationKtTest {
 

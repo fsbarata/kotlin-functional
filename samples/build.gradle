@@ -1,8 +1,0 @@
-apply plugin: 'kotlin'
-
-dependencies {
-    implementation project(':base')
-    testImplementation "org.hamcrest:java-hamcrest:2.0.0.0"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    testImplementation "junit:junit:4.13.2"
-}
