@@ -1,7 +1,6 @@
 buildscript {
     ext {
         kotlin_version = '1.6.10'
-        rxjava_version = '3.0.10'
     }
 
     repositories {
