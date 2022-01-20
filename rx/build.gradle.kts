@@ -8,6 +8,7 @@ dependencies {
 	api("io.reactivex.rxjava3:rxjava:3.0.10")
 
 	testImplementation(project(":laws"))
+	testImplementation("junit:junit:4.13.2")
 }
 
 java {
