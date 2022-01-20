@@ -9,7 +9,7 @@ import io.reactivex.rxjava3.core.Observable
 
 fun concatCompletableMonoid() = monoid(Completable.complete(), Completable::concatWith)
 fun mergeCompletableMonoid() = monoid(Completable.never(), Completable::mergeWith)
-fun <A> concatObservableMonoid() = monoid(Observable.empty(), Observable<A>::concatWith)
+fun <A: Any> concatObservableMonoid() = monoid(Observable.empty(), Observable<A>::concatWith)
 
 fun <A: Semigroup<A>> maybeMonoid(): Monoid<Maybe<A>> =
 	monoid(Maybe.empty()) { maybe1, maybe2 ->
