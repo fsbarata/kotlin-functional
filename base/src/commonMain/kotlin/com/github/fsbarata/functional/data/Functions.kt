@@ -16,6 +16,7 @@ inline fun <A> id(a: A): A = a
 inline fun <A> id(): (A) -> A = ::id
 
 
+inline infix fun <A, R> F1<A, R>.compose(crossinline other: F0<A>): F0<R> = { invoke(other()) }
 inline infix fun <A, B, R> F1<B, R>.compose(crossinline other: F1<A, B>): F1<A, R> = { invoke(other(it)) }
 inline infix fun <A, B, C, R> F2<B, C, R>.compose(crossinline other: F1<A, B>): F2<A, C, R> =
 	{ a, c -> invoke(other(a), c) }
