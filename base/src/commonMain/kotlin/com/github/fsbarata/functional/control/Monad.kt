@@ -26,3 +26,9 @@ interface Monad<M, out A>: Applicative<M, A> {
 @Suppress("UNCHECKED_CAST")
 fun <M, A, MA: Monad<M, A>> Monad<M, MA>.flatten() =
 	bind(::id) as MA
+
+
+interface MonadMapper<M, MM> {
+	operator fun <A> invoke(monad: Monad<M, A>): Monad<MM, A>
+}
+
