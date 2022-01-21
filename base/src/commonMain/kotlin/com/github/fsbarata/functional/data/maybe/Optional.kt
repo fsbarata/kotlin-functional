@@ -1,6 +1,9 @@
 package com.github.fsbarata.functional.data.maybe
 
 import com.github.fsbarata.functional.Context
+import com.github.fsbarata.functional.comprehensions.MonadComprehensionScope
+import com.github.fsbarata.functional.comprehensions.invokeImpl
+import com.github.fsbarata.functional.comprehensions.switch
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import io.Serializable
@@ -90,6 +93,17 @@ sealed class Optional<out A>:
 
 		@Deprecated("Does not need conversion", replaceWith = ReplaceWith("optional"))
 		override fun <A> fromOptional(optional: Optional<A>) = optional
+
+		inline operator fun <A> invoke(f: MonadComprehensionScope<OptionalContext>.() -> A): Optional<A> =
+			OptionalComprehensionScope.invokeImpl(::just, f).asOptional
+	}
+
+	object OptionalComprehensionScope: MonadComprehensionScope<OptionalContext> {
+		override fun <A> Monad<OptionalContext, A>.bind(): A =
+			asOptional.fold(
+				ifEmpty = { switch(None) },
+				ifSome = { it },
+			)
 	}
 }
 

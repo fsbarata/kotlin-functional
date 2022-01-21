@@ -2,6 +2,9 @@ package com.github.fsbarata.functional.data.either
 
 import com.github.fsbarata.functional.BiContext
 import com.github.fsbarata.functional.Context
+import com.github.fsbarata.functional.comprehensions.MonadComprehensionScope
+import com.github.fsbarata.functional.comprehensions.invokeImpl
+import com.github.fsbarata.functional.comprehensions.switch
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.control.arrow.kleisli
 import com.github.fsbarata.functional.data.*
@@ -93,6 +96,16 @@ sealed class Either<out E, out A>:
 		fun <E, A> right(a: A): Either<E, A> = Right(a)
 
 		fun <A, E, R> kleisli(f: (A) -> Either<E, R>) = Scope<E>().kleisli(f)
+
+		inline operator fun <E, A> invoke(f: MonadComprehensionScope<EitherContext<E>>.() -> A): Either<E, A> =
+			EitherComprehensionScope<E>().invokeImpl(::right, f).asEither
+	}
+
+	class EitherComprehensionScope<E>: MonadComprehensionScope<EitherContext<E>> {
+		override fun <A> Monad<EitherContext<E>, A>.bind(): A = asEither.fold(
+			ifLeft = { switch(Left(it)) },
+			ifRight = { it },
+		)
 	}
 }
 
@@ -101,7 +114,7 @@ internal typealias EitherBiContext = Either<*, *>
 
 @Suppress("UNCHECKED_CAST")
 val <E, A> Context<EitherContext<E>, A>.asEither
-	get() = this as Either<Nothing, A>
+	get() = this as Either<E, A>
 
 val <E, A> BiContext<EitherBiContext, E, A>.asEither
 	get() = this as Either<E, A>
