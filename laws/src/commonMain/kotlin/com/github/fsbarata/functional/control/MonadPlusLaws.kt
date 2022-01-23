@@ -5,7 +5,8 @@ import kotlin.test.Test
 interface MonadPlusLaws<M>: MonadLaws<M> {
 	override val monadScope: MonadPlus.Scope<M>
 
-	private val empty get() = monadScope.empty<Any>() as MonadPlus<M, Any>
+	private fun <A> zero() = monadScope.empty<A>() as MonadPlus<M, A>
+	private val zero get() = zero<Any>()
 
 	@Suppress("UNCHECKED_CAST")
 	private fun <T> eachPossibilityMonadPlus(block: (MonadPlus<M, Int>) -> T) =
@@ -13,15 +14,19 @@ interface MonadPlusLaws<M>: MonadLaws<M> {
 
 	@Test
 	fun `left zero`() {
+		assertEqualF(zero(), zero<Int>().bind {
+			if (it < 0) monadScope.empty()
+			else monadScope.just(it)
+		})
 		eachPossibilityMonadPlus { mp ->
-			assertEqualF(empty, empty.bind { mp })
+			assertEqualF(zero(), zero<Int>().bind { mp })
 		}
 	}
 
 	@Test
 	fun `right zero`() {
 		eachPossibilityMonadPlus { mp ->
-			assertEqualF(empty, mp.bind { empty })
+			assertEqualF(zero, mp.andThen(zero))
 		}
 	}
 
