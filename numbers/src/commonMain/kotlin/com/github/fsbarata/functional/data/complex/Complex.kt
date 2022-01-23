@@ -1,6 +1,8 @@
 package com.github.fsbarata.functional.data.complex
 
 import com.github.fsbarata.functional.Context
+import com.github.fsbarata.functional.Fractional
+import com.github.fsbarata.functional.Num
 import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.data.Functor
@@ -12,7 +14,7 @@ import kotlin.math.hypot
 import kotlin.math.sin
 
 @Suppress("OVERRIDE_BY_INLINE")
-data class Complex<A>(
+data class Complex<out A>(
 	val real: A,
 	val imag: A,
 ):
@@ -21,6 +23,7 @@ data class Complex<A>(
 	override val scope = Complex
 
 	override inline fun <B> map(f: (A) -> B) = Complex(f(real), f(imag))
+
 	@Suppress("NOTHING_TO_INLINE")
 	override inline fun <B> ap(ff: Functor<ComplexContext, (A) -> B>): Complex<B> =
 		ff.asComplex.let { Complex(it.real(real), it.imag(imag)) }
@@ -66,20 +69,44 @@ typealias ComplexContext = Complex<*>
 
 val <A> Context<ComplexContext, A>.asComplex get() = this as Complex<A>
 
+fun Complex<Num>.conjugate() = Complex(real, -imag)
+
 @JvmName("conjugatei")
 fun Complex<Int>.conjugate() = Complex(real, -imag)
+
 @JvmName("conjugatel")
 fun Complex<Long>.conjugate() = Complex(real, -imag)
+
 @JvmName("conjugatef")
 fun Complex<Float>.conjugate() = Complex(real, -imag)
+
+@JvmName("conjugated")
 fun Complex<Double>.conjugate() = Complex(real, -imag)
 
+fun Complex<Num>.magnitude(): Double = map { it.toDouble() }.magnitude()
+
 @JvmName("manituden")
-fun Complex<out Number>.magnitude(): Double = map { it.toDouble() }.magnitude()
+fun Complex<Number>.magnitude(): Double = map { it.toDouble() }.magnitude()
 fun Complex<Double>.magnitude(): Double = hypot(real, imag)
 
+fun Complex<Num>.phase(): Double = map { it.toDouble() }.phase()
+
 @JvmName("phasen")
-fun Complex<out Number>.phase(): Double = map { it.toDouble() }.phase()
+fun Complex<Number>.phase(): Double = map { it.toDouble() }.phase()
 fun Complex<Double>.phase(): Double =
 	if (real == 0.0 && imag == 0.0) 0.0
 	else atan2(imag, real)
+
+operator fun Complex<Num>.plus(other: Complex<Num>) = Complex(real + other.real, imag + other.imag)
+operator fun Complex<Num>.minus(other: Complex<Num>) = Complex(real - other.real, imag - other.imag)
+operator fun Complex<Num>.times(other: Complex<Num>): Complex<Num> {
+	return Complex(real * other.real - imag * other.imag, imag * other.real + real * other.imag)
+}
+
+operator fun Complex<Fractional>.div(other: Complex<Fractional>): Complex<Fractional> {
+	val otherSqrHypot = other.real * other.real + other.imag * other.imag
+	return Complex(
+		(real * other.real + imag * other.imag) / otherSqrHypot,
+		(imag * other.real - real * other.imag) / otherSqrHypot,
+	)
+}
