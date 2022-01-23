@@ -7,7 +7,7 @@ import com.github.fsbarata.functional.data.composeForward
 import com.github.fsbarata.functional.data.list.ListF
 import kotlin.test.Test
 
-interface MonadTransLaws<T>: MonadLaws<Monad<T, ListF<*>>> {
+interface MonadTransLaws<T>: MonadLaws<Monad<ListF<*>, T>> {
 	override val monadScope: MonadTrans.Scope<T, ListF<*>>
 
 	@Test
