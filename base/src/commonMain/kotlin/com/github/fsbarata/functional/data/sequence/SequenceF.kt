@@ -51,7 +51,7 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 	override fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M) =
 		(this as Sequence<A>).foldMap(monoid, f)
 
-	override fun <B, R> zipWith(other: MonadZip<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
+	override fun <B, R> zipWith(other: Functor<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
 		zip(other.asSequence, f).f()
 
 	override inline fun <F, B> traverse(

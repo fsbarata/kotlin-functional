@@ -46,7 +46,7 @@ interface NonEmptySequence<A>:
 				(headIterator.asSequence() + iterator.asSequence().flatMap(f)).iterator()
 	}
 
-	override fun <B, R> zipWith(other: MonadZip<NonEmptySequenceContext, B>, f: (A, B) -> R): NonEmptySequence<R> {
+	override fun <B, R> zipWith(other: Functor<NonEmptySequenceContext, B>, f: (A, B) -> R): NonEmptySequence<R> {
 		val otherNes = other.asNes
 		return headSequence {
 			val iterator1 = iterator()
@@ -118,6 +118,7 @@ val <A> Context<NonEmptySequenceContext, A>.asNes get() = this as NonEmptySequen
 internal class NonEmptySequenceBuilder {
 	infix fun <A, B> A.then(b: B) = this to b
 }
+
 internal fun <A> headSequence(f: NonEmptySequenceBuilder.() -> Pair<A, Iterator<A>>): NonEmptySequence<A> {
 	val builder = NonEmptySequenceBuilder()
 	return object: NonEmptySequence<A> {

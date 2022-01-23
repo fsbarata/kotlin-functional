@@ -2,6 +2,7 @@ package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.maybe.toOptional
 import io.reactivex.rxjava3.core.Maybe
@@ -24,7 +25,7 @@ class SingleF<A>(private val wrapped: Single<A>): Single<A>(),
 	fun <B> flatMap(f: (A) -> Single<B>): SingleF<B> =
 		wrapped.flatMap(f).f()
 
-	override fun <B, R> zipWith(other: MonadZip<SingleContext, B>, f: (A, B) -> R) =
+	override fun <B, R> zipWith(other: Functor<SingleContext, B>, f: (A, B) -> R) =
 		(this as Single<A>).zipWith(other.asSingle, f).f()
 
 	companion object: Monad.Scope<SingleContext> {

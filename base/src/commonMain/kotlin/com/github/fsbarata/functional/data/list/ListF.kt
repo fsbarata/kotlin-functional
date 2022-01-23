@@ -53,7 +53,7 @@ class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
 	override inline fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 		(this as List<A>).foldMap(monoid, f)
 
-	override inline fun <B, R> zipWith(other: MonadZip<ListContext, B>, f: (A, B) -> R): ListF<R> =
+	override inline fun <B, R> zipWith(other: Functor<ListContext, B>, f: (A, B) -> R): ListF<R> =
 		zip(other.asList, f).f()
 
 	override inline fun <F, B> traverse(

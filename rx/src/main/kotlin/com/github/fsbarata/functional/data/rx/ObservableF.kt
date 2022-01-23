@@ -62,7 +62,7 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	override fun associateWith(other: Context<ObservableContext, A>) =
 		combineWith(other.asObservable)
 
-	override fun <B, R> zipWith(other: MonadZip<ObservableContext, B>, f: (A, B) -> R) =
+	override fun <B, R> zipWith(other: Functor<ObservableContext, B>, f: (A, B) -> R) =
 		(this as Observable<A>).zipWith(other.asObservable, f).f()
 
 	companion object: MonadPlus.Scope<ObservableContext> {

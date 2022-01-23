@@ -73,7 +73,7 @@ class Tree<out A>(
 		monoid.combine(f(root), sub.foldMap(monoid) { ta -> ta.foldMap(monoid, f) })
 
 	override fun <B, R> zipWith(
-		other: MonadZip<TreeContext, B>,
+		other: Functor<TreeContext, B>,
 		f: (A, B) -> R,
 	): Tree<R> {
 		val otherTree = other.asTree

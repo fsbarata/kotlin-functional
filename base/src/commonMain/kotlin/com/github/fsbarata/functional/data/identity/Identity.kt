@@ -46,7 +46,7 @@ data class Identity<A>(val a: A):
 
 	inline fun <B> flatMap(f: (A) -> Identity<B>) = f(a)
 
-	override inline fun <B, R> zipWith(other: MonadZip<IdentityContext, B>, f: (A, B) -> R): Identity<R> =
+	override inline fun <B, R> zipWith(other: Functor<IdentityContext, B>, f: (A, B) -> R): Identity<R> =
 		other.asIdentity.map(f.partial(a))
 
 	companion object: Monad.Scope<IdentityContext> {

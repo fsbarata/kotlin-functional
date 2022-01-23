@@ -2,6 +2,7 @@ package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.maybe.toOptional
 import io.reactivex.rxjava3.core.Maybe
@@ -24,7 +25,7 @@ class MaybeF<A>(private val wrapped: Maybe<A>): Maybe<A>(),
 	fun <B> flatMap(f: (A) -> Maybe<B>): MaybeF<B> =
 		wrapped.flatMap(f).f()
 
-	override fun <B, R> zipWith(other: MonadZip<MaybeContext, B>, f: (A, B) -> R) =
+	override fun <B, R> zipWith(other: Functor<MaybeContext, B>, f: (A, B) -> R) =
 		(this as Maybe<A>).zipWith(other.asMaybe, f).f()
 
 	companion object: Monad.Scope<MaybeContext> {

@@ -84,7 +84,7 @@ class NonEmptyList<out A> private constructor(
 	operator fun plus(other: @UnsafeVariance A) = NonEmptyList(head, tail + other)
 	operator fun plus(other: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + other)
 
-	override inline fun <B, R> zipWith(other: MonadZip<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> {
+	override inline fun <B, R> zipWith(other: Functor<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> {
 		val otherNel = other.asNel
 		return of(f(head, otherNel.head), tail.zip(otherNel.tail, f))
 	}
