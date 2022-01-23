@@ -1,13 +1,11 @@
 package com.github.fsbarata.functional.control.monad
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.Alternative
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadPlus
-import com.github.fsbarata.functional.data.maybe.None
-import com.github.fsbarata.functional.data.maybe.Optional
-import com.github.fsbarata.functional.data.maybe.OptionalContext
-import com.github.fsbarata.functional.data.maybe.Some
+import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.control.lift2
+import com.github.fsbarata.functional.data.maybe.*
 
 
 @Suppress("OVERRIDE_BY_INLINE", "NOTHING_TO_INLINE")
@@ -64,4 +62,8 @@ data class OptionalT<M, out A>(
 
 val <M, A> Context<Monad<M, OptionalContext>, A>.asOptionalT get() = this as OptionalT<M, A>
 
-fun <M, A> Monad.Scope<M>.hoistOptional(optional: Optional<A>) = OptionalT(just(optional))
+fun <M: MonadZip<M, *>, A, B, R> zip(opt1: OptionalT<M, A>, opt2: OptionalT<M, B>, f: (A, B) -> R) =
+	opt1.zipWith(opt2, f)
+
+fun <M: MonadZip<M, *>, A, B, R> OptionalT<M, A>.zipWith(other: OptionalT<M, B>, f: (A, B) -> R) =
+	OptionalT((wrapped as MonadZip<M, Optional<A>>).zipWith(other.wrapped, lift2(f)::invoke))
