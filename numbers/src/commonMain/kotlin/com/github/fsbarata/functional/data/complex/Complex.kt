@@ -69,7 +69,7 @@ typealias ComplexContext = Complex<*>
 
 val <A> Context<ComplexContext, A>.asComplex get() = this as Complex<A>
 
-fun Complex<Num>.conjugate() = Complex(real, -imag)
+fun <T: Num<T>> Complex<T>.conjugate() = Complex(real, -imag)
 
 @JvmName("conjugatei")
 fun Complex<Int>.conjugate() = Complex(real, -imag)
@@ -83,27 +83,22 @@ fun Complex<Float>.conjugate() = Complex(real, -imag)
 @JvmName("conjugated")
 fun Complex<Double>.conjugate() = Complex(real, -imag)
 
-fun Complex<Num>.magnitude(): Double = map { it.toDouble() }.magnitude()
-
 @JvmName("manituden")
-fun Complex<Number>.magnitude(): Double = map { it.toDouble() }.magnitude()
-fun Complex<Double>.magnitude(): Double = hypot(real, imag)
-
-fun Complex<Num>.phase(): Double = map { it.toDouble() }.phase()
+fun Complex<Num<*>>.magnitude(): Double = map { it.toDouble() }.magnitude()
+fun Complex<Number>.magnitude(): Double = hypot(real.toDouble(), imag.toDouble())
 
 @JvmName("phasen")
-fun Complex<Number>.phase(): Double = map { it.toDouble() }.phase()
-fun Complex<Double>.phase(): Double =
-	if (real == 0.0 && imag == 0.0) 0.0
-	else atan2(imag, real)
+fun Complex<Num<*>>.phase(): Double = map { it.toDouble() }.phase()
+fun Complex<Number>.phase(): Double = atan2(imag.toDouble(), real.toDouble())
 
-operator fun Complex<Num>.plus(other: Complex<Num>) = Complex(real + other.real, imag + other.imag)
-operator fun Complex<Num>.minus(other: Complex<Num>) = Complex(real - other.real, imag - other.imag)
-operator fun Complex<Num>.times(other: Complex<Num>): Complex<Num> {
+operator fun <T: Num<T>> Complex<T>.plus(other: Complex<T>) = Complex(real + other.real, imag + other.imag)
+operator fun <T: Num<T>> Complex<T>.minus(other: Complex<T>) = Complex(real - other.real, imag - other.imag)
+operator fun <T: Num<T>> Complex<T>.unaryMinus() = Complex(-real, -imag)
+operator fun <T: Num<T>> Complex<T>.times(other: Complex<T>): Complex<T> {
 	return Complex(real * other.real - imag * other.imag, imag * other.real + real * other.imag)
 }
 
-operator fun Complex<Fractional>.div(other: Complex<Fractional>): Complex<Fractional> {
+operator fun <T: Fractional<T>> Complex<T>.div(other: Complex<T>): Complex<T> {
 	val otherSqrHypot = other.real * other.real + other.imag * other.imag
 	return Complex(
 		(real * other.real + imag * other.imag) / otherSqrHypot,
