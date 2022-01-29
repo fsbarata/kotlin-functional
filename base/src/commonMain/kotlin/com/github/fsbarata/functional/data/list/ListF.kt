@@ -7,12 +7,12 @@ import com.github.fsbarata.functional.data.maybe.Optional
 import io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
-class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
+class ListF<out A>(private val wrapped: List<A>): List<A> by wrapped,
 	Serializable,
 	MonadZip<ListContext, A>,
 	MonadPlus<ListContext, A>,
 	Traversable<ListContext, A>,
-	Semigroup<ListF<A>> {
+	Semigroup<ListF<@UnsafeVariance A>> {
 	override val scope get() = ListF
 
 	constructor(size: Int, init: (index: Int) -> A): this(List(size, init))
@@ -64,10 +64,10 @@ class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
 	): Functor<F, ListF<B>> =
 		(this as List<A>).traverse(appScope, f).map(List<B>::f)
 
-	override fun associateWith(other: Context<ListContext, A>) =
+	override fun associateWith(other: Context<ListContext, @UnsafeVariance A>) =
 		combineWith(other.asList)
 
-	override fun combineWith(other: ListF<A>) =
+	override fun combineWith(other: ListF<@UnsafeVariance A>) =
 		ListF(wrapped + other.wrapped)
 
 	override fun toString() = wrapped.toString()
