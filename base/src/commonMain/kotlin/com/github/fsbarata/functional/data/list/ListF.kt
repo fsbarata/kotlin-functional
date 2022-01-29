@@ -15,6 +15,8 @@ class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
 	Semigroup<ListF<A>> {
 	override val scope get() = ListF
 
+	constructor(size: Int, init: (index: Int) -> A): this(List(size, init))
+
 	override inline fun <B> map(f: (A) -> B) =
 		(this as List<A>).map(f).f()
 
@@ -85,7 +87,7 @@ class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
 		override fun <A> fromList(list: List<A>) = list.f()
 
 		override fun <A> fromOptional(optional: Optional<A>) =
-			optional.maybe(empty(), ::just)
+			optional.fold(ifEmpty = ::empty, ifSome = ::just)
 	}
 }
 
