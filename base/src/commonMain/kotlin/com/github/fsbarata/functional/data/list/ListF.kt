@@ -64,11 +64,11 @@ class ListF<out A>(private val wrapped: List<A>): List<A> by wrapped,
 	): Functor<F, ListF<B>> =
 		(this as List<A>).traverse(appScope, f).map(List<B>::f)
 
-	override fun associateWith(other: Context<ListContext, @UnsafeVariance A>) =
-		combineWith(other.asList)
+	operator fun plus(other: @UnsafeVariance A) = ListF(wrapped + other)
+	operator fun plus(other: Iterable<@UnsafeVariance A>) = ListF(wrapped + other)
 
-	override fun combineWith(other: ListF<@UnsafeVariance A>) =
-		ListF(wrapped + other.wrapped)
+	override fun associateWith(other: Context<ListContext, @UnsafeVariance A>) = plus(other.asList)
+	override fun combineWith(other: ListF<@UnsafeVariance A>) = plus(other)
 
 	override fun toString() = wrapped.toString()
 	override fun equals(other: Any?) = wrapped == other
