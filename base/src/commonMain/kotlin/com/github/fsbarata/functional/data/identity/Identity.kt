@@ -8,7 +8,7 @@ import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.partial
-import io.Serializable
+import com.github.fsbarata.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
 data class Identity<A>(val a: A):

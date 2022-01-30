@@ -8,7 +8,7 @@ import com.github.fsbarata.functional.data.BiFunctor
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
-import io.Serializable
+import com.github.fsbarata.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
 data class Tuple2<X, Y>(val x: X, val y: Y):
