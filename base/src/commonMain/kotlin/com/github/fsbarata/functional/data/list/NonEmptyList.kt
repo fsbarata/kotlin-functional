@@ -7,7 +7,7 @@ import com.github.fsbarata.functional.data.collection.NonEmptyCollection
 import com.github.fsbarata.functional.utils.LambdaListIterator
 import com.github.fsbarata.functional.utils.listEquals
 import com.github.fsbarata.functional.utils.toNel
-import io.Serializable
+import com.github.fsbarata.io.Serializable
 
 /**
  * A NonEmpty list.
@@ -17,7 +17,7 @@ import io.Serializable
 @Suppress("OVERRIDE_BY_INLINE")
 class NonEmptyList<out A> private constructor(
 	override val head: A,
-	override val tail: List<A>,
+	override val tail: ListF<A>,
 ): List<A>,
 	NonEmptyCollection<A>,
 	Serializable,
@@ -51,7 +51,7 @@ class NonEmptyList<out A> private constructor(
 
 	override fun subList(fromIndex: Int, toIndex: Int): List<A> = when {
 		fromIndex == 0 && toIndex == 0 -> emptyList()
-		fromIndex == 0 -> NonEmptyList(head, tail.subList(0, toIndex - 1))
+		fromIndex == 0 -> NonEmptyList(head, tail.subList(0, toIndex - 1).f())
 		else -> tail.subList(fromIndex - 1, toIndex - 1)
 	}
 
@@ -152,7 +152,7 @@ class NonEmptyList<out A> private constructor(
 
 	companion object: Monad.Scope<NonEmptyContext>, Traversable.Scope<NonEmptyContext> {
 		override fun <A> just(a: A) = of(a, emptyList())
-		fun <T> of(head: T, others: List<T>) = NonEmptyList(head, others)
+		fun <T> of(head: T, others: List<T>) = NonEmptyList(head, ListF(others))
 	}
 }
 
@@ -163,6 +163,7 @@ val <A> Context<NonEmptyContext, A>.asNel get() = this as NonEmptyList<A>
 fun <A> nelOf(head: A, vararg tail: A): NonEmptyList<A> = NonEmptyList.of(head, tail.toList())
 
 fun <A> List<A>.startWithItem(item: A): NonEmptyList<A> = NonEmptyList.of(item, this)
+fun <A> List<A>.startWithNel(nel: NonEmptyList<A>): NonEmptyList<A> = nel + this
 
 fun <A> List<A>.nonEmpty(): NonEmptyList<A>? = toNel()
 fun <A> Iterable<A>.toNel(): NonEmptyList<A>? {

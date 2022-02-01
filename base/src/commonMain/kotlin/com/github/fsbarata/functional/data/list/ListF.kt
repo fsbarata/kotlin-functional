@@ -4,16 +4,18 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.maybe.Optional
-import io.Serializable
+import com.github.fsbarata.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
-class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
+class ListF<out A>(private val wrapped: List<A>): List<A> by wrapped,
 	Serializable,
 	MonadZip<ListContext, A>,
 	MonadPlus<ListContext, A>,
 	Traversable<ListContext, A>,
-	Semigroup<ListF<A>> {
+	Semigroup<ListF<@UnsafeVariance A>> {
 	override val scope get() = ListF
+
+	constructor(size: Int, init: (index: Int) -> A): this(List(size, init))
 
 	override inline fun <B> map(f: (A) -> B) =
 		(this as List<A>).map(f).f()
@@ -62,11 +64,11 @@ class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
 	): Functor<F, ListF<B>> =
 		(this as List<A>).traverse(appScope, f).map(List<B>::f)
 
-	override fun associateWith(other: Context<ListContext, A>) =
-		combineWith(other.asList)
+	operator fun plus(other: @UnsafeVariance A) = ListF(wrapped + other)
+	operator fun plus(other: Iterable<@UnsafeVariance A>) = ListF(wrapped + other)
 
-	override fun combineWith(other: ListF<A>) =
-		ListF(wrapped + other.wrapped)
+	override fun associateWith(other: Context<ListContext, @UnsafeVariance A>) = plus(other.asList)
+	override fun combineWith(other: ListF<@UnsafeVariance A>) = plus(other)
 
 	override fun toString() = wrapped.toString()
 	override fun equals(other: Any?) = wrapped == other
@@ -85,7 +87,7 @@ class ListF<A>(private val wrapped: List<A>): List<A> by wrapped,
 		override fun <A> fromList(list: List<A>) = list.f()
 
 		override fun <A> fromOptional(optional: Optional<A>) =
-			optional.maybe(empty(), ::just)
+			optional.fold(ifEmpty = ::empty, ifSome = ::just)
 	}
 }
 

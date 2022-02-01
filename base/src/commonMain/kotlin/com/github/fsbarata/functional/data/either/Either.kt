@@ -6,7 +6,7 @@ import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.control.arrow.kleisli
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.maybe.Optional
-import io.Serializable
+import com.github.fsbarata.io.Serializable
 
 /**
  * Either Monad

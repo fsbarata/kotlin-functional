@@ -4,7 +4,7 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.maybe.Optional
-import io.Serializable
+import com.github.fsbarata.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
 class SetF<A>(private val wrapped: Set<A>): Set<A> by wrapped,
