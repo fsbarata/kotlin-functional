@@ -22,7 +22,7 @@ subprojects {
         mavenLocal()
     }
 
-    group = "com.github.fsbarata.functional"
+    group = "com.github.fsbarata.kotlin-functional"
 }
 
 
