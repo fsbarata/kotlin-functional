@@ -44,9 +44,9 @@ class Fraction internal constructor(
 	override fun signum() = numerator.sign
 
 	override operator fun plus(other: Fraction) = when (other.denominator) {
-		1L -> Fraction(other.numerator * denominator + numerator, denominator)
-		denominator -> Fraction(other.numerator + numerator, denominator)
-		else -> Fraction(
+		1L -> from(other.numerator * denominator + numerator, denominator)
+		denominator -> from(other.numerator + numerator, denominator)
+		else -> from(
 			other.numerator * denominator + numerator * other.denominator,
 			other.denominator * denominator
 		)
@@ -62,7 +62,7 @@ class Fraction internal constructor(
 	)
 
 	override operator fun div(other: Fraction) = times(other.recip())
-	override fun recip(): Fraction = fixSign(denominator, numerator)
+	override fun recip(): Fraction = from(denominator, numerator)
 
 	operator fun plus(value: Int) = plus(value.toLong())
 	operator fun plus(value: Long) = plus(value.toFraction())
@@ -71,7 +71,7 @@ class Fraction internal constructor(
 	operator fun times(value: Int) = times(value.toLong())
 	operator fun times(value: Long) = Fraction(numerator * value, denominator)
 	operator fun div(value: Int) = div(value.toLong())
-	operator fun div(value: Long) = fixSign(numerator, denominator * value)
+	operator fun div(value: Long) = from(numerator, denominator * value)
 
 	companion object {
 		val NAN = Fraction(0, 0)
@@ -91,7 +91,7 @@ class Fraction internal constructor(
 			)
 		}
 
-		internal fun fixSign(numerator: Long, denominator: Long) = when {
+		fun from(numerator: Long, denominator: Long) = when {
 			denominator == 0L -> NAN
 			denominator < 0L -> Fraction(-numerator, -denominator)
 			else -> Fraction(numerator, denominator)
@@ -105,7 +105,7 @@ operator fun Int.times(fraction: Fraction) = fraction * this
 operator fun Int.div(fraction: Fraction) = fraction.recip() * this
 
 infix fun Int.over(other: Int) = toLong() over other.toLong()
-infix fun Long.over(other: Long) = Fraction.fixSign(this, other)
+infix fun Long.over(other: Long) = Fraction.from(this, other)
 fun Int.toFraction() = toLong().toFraction()
 fun Long.toFraction() = Fraction(this, 1L)
 
