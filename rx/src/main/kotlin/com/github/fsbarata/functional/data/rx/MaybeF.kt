@@ -3,10 +3,12 @@ package com.github.fsbarata.functional.data.rx
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Functor
+import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.maybe.toOptional
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.MaybeObserver
+import io.reactivex.rxjava3.core.Observable
 
 class MaybeF<A>(private val wrapped: Maybe<A>): Maybe<A>(),
 	MonadZip<MaybeContext, A> {
@@ -41,16 +43,19 @@ fun <A: Any, R: Any> Maybe<A>.mapNotNone(f: (A) -> Optional<R>): Maybe<R> =
 	map(f).filter { it.isPresent() }
 		.map { it.orNull()!! }
 
+fun <A: Any> Maybe<Optional<A>>.filterNotNone(): Maybe<A> =
+	mapNotNone(id())
+
 internal typealias MaybeContext = Maybe<*>
 
 fun <A> Maybe<A>.f() = MaybeF(this)
-fun <A, R> Maybe<A>.f(block: MaybeF<A>.() -> Context<MaybeContext, R>) =
+fun <A: Any, R: Any> Maybe<A>.f(block: MaybeF<A>.() -> Context<MaybeContext, R>) =
 	f().block().asMaybe
 
 val <A> Context<MaybeContext, A>.asMaybe
 	get() = this as MaybeF<A>
 
-operator fun <A, B, R> Lift2<A, B, R>.invoke(
+operator fun <A: Any, B: Any, R: Any> Lift2<A, B, R>.invoke(
 	maybe1: MaybeF<A>,
 	maybe2: MaybeF<B>,
 ): MaybeF<R> = app(maybe1, maybe2).asMaybe

@@ -5,6 +5,7 @@ import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
+import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.maybe.toOptional
 import io.reactivex.rxjava3.core.Flowable
@@ -52,28 +53,31 @@ fun <A: Any, R: Any> Flowable<A>.mapNotNone(f: (A) -> Optional<R>): Flowable<R> 
 	map(f).filter { it.isPresent() }
 		.map { it.orNull()!! }
 
+fun <A: Any> Flowable<Optional<A>>.filterNotNone(): Flowable<A> =
+	mapNotNone(id())
+
 fun <A: Any> Flowable<A>.partition(predicate: (A) -> Boolean): Pair<Flowable<A>, Flowable<A>> =
 	Pair(filter(predicate), filter { !predicate(it) })
 
 fun <A> Flowable<A>.f() = FlowableF(this)
-fun <A, R> Flowable<A>.f(block: FlowableF<A>.() -> Context<FlowableF<*>, R>) =
+fun <A: Any, R: Any> Flowable<A>.f(block: FlowableF<A>.() -> Context<FlowableF<*>, R>) =
 	f().block().asFlowable
 
 val <A> Context<FlowableF<*>, A>.asFlowable
 	get() = this as FlowableF<A>
 
-operator fun <A, B, R> Lift2<A, B, R>.invoke(
+operator fun <A: Any, B: Any, R: Any> Lift2<A, B, R>.invoke(
 	flow1: Flowable<A>,
 	flow2: Flowable<B>,
 ): FlowableF<R> = Flowable.combineLatest(flow1, flow2, f).f()
 
-operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
+operator fun <A: Any, B: Any, C: Any, R: Any> Lift3<A, B, C, R>.invoke(
 	flow1: Flowable<A>,
 	flow2: Flowable<B>,
 	flow3: Flowable<C>,
 ): FlowableF<R> = Flowable.combineLatest(flow1, flow2, flow3, f).f()
 
-operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
+operator fun <A: Any, B: Any, C: Any, D: Any, R: Any> Lift4<A, B, C, D, R>.invoke(
 	flow1: Flowable<A>,
 	flow2: Flowable<B>,
 	flow3: Flowable<C>,

@@ -5,6 +5,7 @@ import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
+import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.maybe.toOptional
 import io.reactivex.rxjava3.core.Maybe
@@ -35,7 +36,7 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	override fun <B, R> lift2(
 		fb: Functor<ObservableContext, B>,
 		f: (A, B) -> R,
-	) = lift2(f).invoke(this, fb.asObservable)
+	) = combineLatest(this, fb.asObservable, f).f()
 
 	override infix fun <B> bind(f: (A) -> Context<ObservableContext, B>): ObservableF<B> =
 		wrapped.switchMap { f(it).asObservable }.f()
@@ -86,11 +87,14 @@ fun <A: Any, R: Any> Observable<A>.mapNotNone(f: (A) -> Optional<R>): Observable
 	map(f).filter { it.isPresent() }
 		.map { it.orNull()!! }
 
+fun <A: Any> Observable<Optional<A>>.filterNotNone(): Observable<A> =
+	mapNotNone(id())
+
 fun <A: Any> Observable<A>.partition(predicate: (A) -> Boolean): Pair<Observable<A>, Observable<A>> =
 	Pair(filter(predicate), filter { !predicate(it) })
 
 fun <A> Observable<A>.f() = ObservableF(this)
-fun <A, R> Observable<A>.f(block: ObservableF<A>.() -> Context<ObservableContext, R>) =
+fun <A: Any, R: Any> Observable<A>.f(block: ObservableF<A>.() -> Context<ObservableContext, R>): ObservableF<R> =
 	f().block().asObservable
 
 internal typealias ObservableContext = ObservableF<*>
@@ -98,18 +102,18 @@ internal typealias ObservableContext = ObservableF<*>
 val <A> Context<ObservableContext, A>.asObservable
 	get() = this as ObservableF<A>
 
-operator fun <A, B, R> Lift2<A, B, R>.invoke(
+operator fun <A: Any, B: Any, R: Any> Lift2<A, B, R>.invoke(
 	obs1: Observable<A>,
 	obs2: Observable<B>,
 ): ObservableF<R> = Observable.combineLatest(obs1, obs2, f).f()
 
-operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
+operator fun <A: Any, B: Any, C: Any, R: Any> Lift3<A, B, C, R>.invoke(
 	obs1: Observable<A>,
 	obs2: Observable<B>,
 	obs3: Observable<C>,
 ): ObservableF<R> = Observable.combineLatest(obs1, obs2, obs3, f).f()
 
-operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
+operator fun <A: Any, B: Any, C: Any, D: Any, R: Any> Lift4<A, B, C, D, R>.invoke(
 	obs1: Observable<A>,
 	obs2: Observable<B>,
 	obs3: Observable<C>,
