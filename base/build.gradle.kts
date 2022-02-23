@@ -7,8 +7,6 @@ kotlin {
     jvm()
     mingwX64()
     linuxX64()
-    macosX64()
-    macosArm64()
 
     sourceSets {
         val commonMain by getting {}
@@ -32,12 +30,6 @@ kotlin {
             dependsOn(nativeMain)
         }
         val linuxX64Main by getting {
-            dependsOn(nativeMain)
-        }
-        val macosX64Main by getting {
-            dependsOn(nativeMain)
-        }
-        val macosArm64Main by getting {
             dependsOn(nativeMain)
         }
     }
