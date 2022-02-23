@@ -68,8 +68,13 @@ inline infix fun <A, B, R> ((B) -> (B) -> R).on(crossinline f: F1<A, B>) = { a1:
 	{ a2: A -> invoke(fa1)(f(a2)) }
 }
 
-inline fun <A, B, R> F1<Pair<A, B>, R>.destructure() = { a: A, b: B -> invoke(a to b) }
-inline fun <A, B, C, R> F1<Triple<A, B, C>, R>.destructure() = { a: A, b: B, c: C -> invoke(Triple(a, b, c)) }
+inline fun <A, B, R> F1<Pair<A, B>, R>.destructure(): F2<A, B, R> = { a: A, b: B -> invoke(a to b) }
+inline fun <A, B, R> F1<Tuple2<A, B>, R>.unpack(): F2<A, B, R> = { a: A, b: B -> invoke(Tuple2(a, b)) }
+inline fun <A, B, R> F2<A, B, R>.pack(): (Tuple2<A, B>) -> R = { t: Tuple2<A, B> -> invoke(t.x, t.y) }
 
-inline fun <A, B, R> F1<Tuple2<A, B>, R>.unpack() = { a: A, b: B -> invoke(Tuple2(a, b)) }
-inline fun <A, B, R> F2<A, B, R>.pack() = { t: Tuple2<A, B> -> invoke(t.x, t.y) }
+inline fun <A, B, C, R> F1<Triple<A, B, C>, R>.destructure(): F3<A, B, C, R> =
+	{ a: A, b: B, c: C -> invoke(Triple(a, b, c)) }
+
+inline fun <A, B, C, R> F3<A, B, C, R>.pack(): (Triple<A, B, C>) -> R =
+	{ t: Triple<A, B, C> -> invoke(t.first, t.second, t.third) }
+
