@@ -3,6 +3,12 @@ package com.github.fsbarata.functional.control
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.partial
 
+fun <A, R> lift(f: (A) -> R) = Lift1(f)
+
+class Lift1<A, R>(val f: (A) -> R) {
+	fun <F> fmap(fa: Functor<F, A>): Functor<F, R> = fa.map(f)
+}
+
 fun <A, B, R> lift2(f: (A, B) -> R) = Lift2(f)
 
 class Lift2<A, B, R>(val f: (A, B) -> R) {

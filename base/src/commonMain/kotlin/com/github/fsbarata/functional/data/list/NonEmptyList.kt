@@ -4,6 +4,8 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
+import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.maybe.invoke
 import com.github.fsbarata.functional.utils.LambdaListIterator
 import com.github.fsbarata.functional.utils.listEquals
 import com.github.fsbarata.functional.utils.toNel
@@ -159,6 +161,8 @@ class NonEmptyList<out A> private constructor(
 internal typealias NonEmptyContext = NonEmptyList<*>
 
 val <A> Context<NonEmptyContext, A>.asNel get() = this as NonEmptyList<A>
+fun <A, R> F1<Context<NonEmptyContext, A>, Context<NonEmptyContext, R>>.asNel(): F1<Context<NonEmptyContext, A>, NonEmptyList<R>> =
+	Context<NonEmptyContext, R>::asNel compose this
 
 fun <A> nelOf(head: A, vararg tail: A): NonEmptyList<A> = NonEmptyList.of(head, tail.toList())
 
@@ -175,6 +179,10 @@ fun <A> Iterable<A>.toNel(): NonEmptyList<A>? {
 
 private fun <A> Iterable<A>.toNelUnsafe() = toNel() ?: throw NoSuchElementException()
 
+
+operator fun <A, R> Lift1<A, R>.invoke(
+	list: NonEmptyList<A>,
+): NonEmptyList<R> = fmap(list).asNel
 
 operator fun <A, B, R> Lift2<A, B, R>.invoke(
 	list1: NonEmptyList<A>,
@@ -193,6 +201,10 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 	list3: NonEmptyList<C>,
 	list4: NonEmptyList<D>,
 ): NonEmptyList<R> = app(list1, list2, list3, list4).asNel
+
+fun <A, R> liftNel(f: (A) -> R): (NonEmptyList<A>) -> NonEmptyList<R> = lift(f)::invoke
+fun <A, B, R> lift2Nel(f: (A, B) -> R): (NonEmptyList<A>, NonEmptyList<B>) -> NonEmptyList<R> = lift2(f)::invoke
+fun <A, B, C, R> lift3Nel(f: (A, B, C) -> R): (NonEmptyList<A>, NonEmptyList<B>, NonEmptyList<C>) -> NonEmptyList<R> = lift3(f)::invoke
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun <F, A> NonEmptyList<Functor<F, A>>.sequenceA(appScope: Applicative.Scope<F>): Functor<F, NonEmptyList<A>> =

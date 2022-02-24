@@ -3,6 +3,7 @@ package com.github.fsbarata.functional.data.set
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
+import com.github.fsbarata.functional.data.list.invoke
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.io.Serializable
 
@@ -79,7 +80,7 @@ class SetF<A>(private val wrapped: Set<A>): Set<A> by wrapped,
 	}
 }
 
-fun <A> Set<A>.f() = SetF(this)
+fun <A> Set<A>.f() = if (this is SetF) this else SetF(this)
 fun <A> Set<A>.asFoldable(): Foldable<A> = f()
 fun <A, R> Set<A>.f(block: SetF<A>.() -> Context<SetContext, R>) =
 	f().block().asSet
@@ -90,20 +91,28 @@ val <A> Context<SetContext, A>.asSet: SetF<A>
 	get() = this as SetF<A>
 
 
+operator fun <A, R> Lift1<A, R>.invoke(
+	set: Set<A>,
+): SetF<R> = fmap(set.f()).asSet
+
 operator fun <A, B, R> Lift2<A, B, R>.invoke(
-	list1: SetF<A>,
-	list2: SetF<B>,
-): SetF<R> = app(list1, list2).asSet
+	set1: Set<A>,
+	set2: Set<B>,
+): SetF<R> = app(set1.f(), set2.f()).asSet
 
 operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
-	list1: SetF<A>,
-	list2: SetF<B>,
-	list3: SetF<C>,
-): SetF<R> = app(list1, list2, list3).asSet
+	set1: Set<A>,
+	set2: Set<B>,
+	set3: Set<C>,
+): SetF<R> = app(set1.f(), set2.f(), set3.f()).asSet
 
 operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
-	list1: SetF<A>,
-	list2: SetF<B>,
-	list3: SetF<C>,
-	list4: SetF<D>,
-): SetF<R> = app(list1, list2, list3, list4).asSet
+	set1: Set<A>,
+	set2: Set<B>,
+	set3: Set<C>,
+	set4: Set<D>,
+): SetF<R> = app(set1.f(), set2.f(), set3.f(), set4.f()).asSet
+
+fun <A, R> liftSet(f: (A) -> R): (Set<A>) -> Set<R> = lift(f)::invoke
+fun <A, B, R> lift2Set(f: (A, B) -> R): (Set<A>, Set<B>) -> Set<R> = lift2(f)::invoke
+fun <A, B, C, R> lift3Set(f: (A, B, C) -> R): (Set<A>, Set<B>, Set<C>) -> Set<R> = lift3(f)::invoke

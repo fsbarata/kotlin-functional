@@ -83,7 +83,10 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 	}
 }
 
-fun <A> Sequence<A>.f() = SequenceF(this)
+fun <A> Sequence<A>.f() = when (this) {
+	is SequenceF -> this
+	else -> SequenceF(this)
+}
 fun <A, R> Sequence<A>.f(block: SequenceF<A>.() -> Context<SequenceContext, R>) =
 	f().block().asSequence
 
@@ -94,19 +97,19 @@ val <A> Context<SequenceContext, A>.asSequence: SequenceF<A>
 
 
 operator fun <A, B, R> Lift2<A, B, R>.invoke(
-	sequence1: SequenceF<A>,
-	sequence2: SequenceF<B>,
-): SequenceF<R> = app(sequence1, sequence2).asSequence
+	sequence1: Sequence<A>,
+	sequence2: Sequence<B>,
+): SequenceF<R> = app(sequence1.f(), sequence2.f()).asSequence
 
 operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
-	sequence1: SequenceF<A>,
-	sequence2: SequenceF<B>,
-	sequence3: SequenceF<C>,
-): SequenceF<R> = app(sequence1, sequence2, sequence3).asSequence
+	sequence1: Sequence<A>,
+	sequence2: Sequence<B>,
+	sequence3: Sequence<C>,
+): SequenceF<R> = app(sequence1.f(), sequence2.f(), sequence3.f()).asSequence
 
 operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
-	sequence1: SequenceF<A>,
-	sequence2: SequenceF<B>,
-	sequence3: SequenceF<C>,
-	sequence4: SequenceF<D>,
-): SequenceF<R> = app(sequence1, sequence2, sequence3, sequence4).asSequence
+	sequence1: Sequence<A>,
+	sequence2: Sequence<B>,
+	sequence3: Sequence<C>,
+	sequence4: Sequence<D>,
+): SequenceF<R> = app(sequence1.f(), sequence2.f(), sequence3.f(), sequence4.f()).asSequence

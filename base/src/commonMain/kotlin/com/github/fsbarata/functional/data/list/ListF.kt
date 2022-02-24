@@ -91,7 +91,11 @@ class ListF<out A>(private val wrapped: List<A>): List<A> by wrapped,
 	}
 }
 
-fun <A> List<A>.f() = ListF(this)
+fun <A> List<A>.f() = when (this) {
+	is ListF -> this
+	else -> ListF(this)
+}
+
 fun <A> List<A>.asFoldable(): Foldable<A> = f()
 fun <A, R> List<A>.f(block: ListF<A>.() -> Context<ListContext, R>) =
 	f().block().asList
@@ -102,20 +106,28 @@ val <A> Context<ListContext, A>.asList: ListF<A>
 	get() = this as ListF<A>
 
 
+operator fun <A, R> Lift1<A, R>.invoke(
+	list: List<A>,
+): List<R> = list.map(f).f()
+
 operator fun <A, B, R> Lift2<A, B, R>.invoke(
-	list1: ListF<A>,
-	list2: ListF<B>,
-): ListF<R> = app(list1, list2).asList
+	list1: List<A>,
+	list2: List<B>,
+): ListF<R> = app(list1.f(), list2.f()).asList
 
 operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
-	list1: ListF<A>,
-	list2: ListF<B>,
-	list3: ListF<C>,
-): ListF<R> = app(list1, list2, list3).asList
+	list1: List<A>,
+	list2: List<B>,
+	list3: List<C>,
+): ListF<R> = app(list1.f(), list2.f(), list3.f()).asList
 
 operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
-	list1: ListF<A>,
-	list2: ListF<B>,
-	list3: ListF<C>,
-	list4: ListF<D>,
-): ListF<R> = app(list1, list2, list3, list4).asList
+	list1: List<A>,
+	list2: List<B>,
+	list3: List<C>,
+	list4: List<D>,
+): ListF<R> = app(list1.f(), list2.f(), list3.f(), list4.f()).asList
+
+fun <A, R> liftList(f: (A) -> R): (List<A>) -> List<R> = lift(f)::invoke
+fun <A, B, R> lift2List(f: (A, B) -> R): (List<A>, List<B>) -> List<R> = lift2(f)::invoke
+fun <A, B, C, R> lift3List(f: (A, B, C) -> R): (List<A>, List<B>, List<C>) -> List<R> = lift3(f)::invoke
