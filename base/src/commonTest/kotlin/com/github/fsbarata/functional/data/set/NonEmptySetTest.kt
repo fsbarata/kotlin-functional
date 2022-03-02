@@ -52,8 +52,8 @@ class NonEmptySetTest:
 	@Test
 	fun equals() {
 		assertEquals(nesOf(9), nes1)
-		assertEquals(nesOf(5, 1, 3), nes2)
-		assertEquals(nesOf(2, 4, 2, 5), nes3)
+		assertEquals(nesOf(1, 3, 5), nes2)
+		assertEquals(nesOf(2, 4, 5), nes3)
 	}
 
 	@Test
