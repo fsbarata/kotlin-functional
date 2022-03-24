@@ -116,6 +116,10 @@ fun <A: Any> A?.toOptional() = Optional.ofNullable(this)
 val <A> Context<OptionalContext, A>.asOptional
 	get() = this as Optional<A>
 
+operator fun <A, R> Lift1<A, R>.invoke(
+	opt: Optional<A>,
+): Optional<R> = fmap(opt).asOptional
+
 operator fun <A, B, R> Lift2<A, B, R>.invoke(
 	opt1: Optional<A>,
 	opt2: Optional<B>,
@@ -133,3 +137,7 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 	opt3: Optional<C>,
 	opt4: Optional<D>,
 ): Optional<R> = app(opt1, opt2, opt3, opt4).asOptional
+
+fun <A, R> liftOpt(f: (A) -> R): (Optional<A>) -> Optional<R> = lift(f)::invoke
+fun <A, B, R> lift2Opt(f: (A, B) -> R): (Optional<A>, Optional<B>) -> Optional<R> = lift2(f)::invoke
+fun <A, B, C, R> lift3Opt(f: (A, B, C) -> R): (Optional<A>, Optional<B>, Optional<C>) -> Optional<R> = lift3(f)::invoke

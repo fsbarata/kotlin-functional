@@ -1,11 +1,11 @@
 package com.github.fsbarata.functional.data.set
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Comonad
-import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
+import com.github.fsbarata.functional.data.list.NonEmptyList
+import com.github.fsbarata.functional.data.list.asNel
 import com.github.fsbarata.functional.utils.toNes
 import com.github.fsbarata.io.Serializable
 
@@ -110,3 +110,29 @@ inline fun <F, A> NonEmptySet<Functor<F, A>>.sequenceA(appScope: Applicative.Sco
 @Suppress("NOTHING_TO_INLINE")
 inline fun <F, A> NonEmptySet<Applicative<F, A>>.sequenceA(): Functor<F, NonEmptySet<A>> =
 	traverse(head.scope, ::id)
+
+operator fun <A, R> Lift1<A, R>.invoke(
+	set: NonEmptySet<A>,
+): NonEmptySet<R> = fmap(set).asNes
+
+operator fun <A, B, R> Lift2<A, B, R>.invoke(
+	set1: NonEmptySet<A>,
+	set2: NonEmptySet<B>,
+): NonEmptySet<R> = app(set1, set2).asNes
+
+operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
+	set1: NonEmptySet<A>,
+	set2: NonEmptySet<B>,
+	set3: NonEmptySet<C>,
+): NonEmptySet<R> = app(set1, set2, set3).asNes
+
+operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
+	set1: NonEmptySet<A>,
+	set2: NonEmptySet<B>,
+	set3: NonEmptySet<C>,
+	set4: NonEmptySet<D>,
+): NonEmptySet<R> = app(set1, set2, set3, set4).asNes
+
+fun <A, R> liftNes(f: (A) -> R): (NonEmptySet<A>) -> NonEmptySet<R> = lift(f)::invoke
+fun <A, B, R> lift2Nes(f: (A, B) -> R): (NonEmptySet<A>, NonEmptySet<B>) -> NonEmptySet<R> = lift2(f)::invoke
+fun <A, B, C, R> lift3Nes(f: (A, B, C) -> R): (NonEmptySet<A>, NonEmptySet<B>, NonEmptySet<C>) -> NonEmptySet<R> = lift3(f)::invoke

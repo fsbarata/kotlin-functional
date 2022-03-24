@@ -43,7 +43,7 @@ data class Tuple2<X, Y>(val x: X, val y: Y):
 	override inline fun <M> foldMap(monoid: Monoid<M>, f: (Y) -> M): M = f(y)
 
 	@Suppress("OVERRIDE_BY_INLINE")
-	override inline fun <B> extend(f: (Comonad<Tuple2Context<X>, Y>) -> B) =
+	override inline fun <B> extend(f: (Comonad<Tuple2Context<X>, Y>) -> B): Tuple2<X, B> =
 		coflatMap(f)
 
 	inline fun <B> coflatMap(f: (Tuple2<X, Y>) -> B): Tuple2<X, B> =
@@ -68,7 +68,7 @@ val <X, Y> BiContext<Tuple2BiContext, X, Y>.asTuple
 	get() = this as Tuple2<X, Y>
 
 fun <A, B> Pair<A, B>.f() = Tuple2(first, second)
-fun <A, B, X, Y> Pair<A, B>.f(block: Tuple2<A, B>.() -> Context<Tuple2Context<X>, Y>) =
+fun <A, B, X, Y> Pair<A, B>.f(block: Tuple2<A, B>.() -> Context<Tuple2Context<X>, Y>): Tuple2<X, Y> =
 	f().block().asTuple
 
 fun <X, Y> Tuple2<X, Y>.toPair() = Pair(x, y)
