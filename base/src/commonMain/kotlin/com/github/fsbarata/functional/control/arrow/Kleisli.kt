@@ -62,7 +62,7 @@ class Kleisli<M, A, R> internal constructor(
 			.fanin(other.asKleisli.composeForward(scope.arr(::Right)))
 
 	override infix fun <B> fanin(other: ArrowChoice<Kleisli<M, *, *>, B, R>): Kleisli<M, Either<A, B>, R> =
-		Kleisli(monadScope, f fanin other.asKleisli.f)
+		Kleisli(monadScope, f faninWith other.asKleisli.f)
 }
 
 class KleisliScope<M>(private val monadScope: Monad.Scope<M>): ArrowApply.Scope<Kleisli<M, *, *>> {

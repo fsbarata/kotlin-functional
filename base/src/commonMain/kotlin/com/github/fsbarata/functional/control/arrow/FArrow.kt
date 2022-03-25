@@ -39,23 +39,20 @@ inline fun <A, B, C, R> F1<C, R>.third3(): F1<Triple<A, B, C>, Triple<A, B, R>> 
 inline fun <A, B, C, R> third3(crossinline f: F1<C, R>): F1<Triple<A, B, C>, Triple<A, B, R>> =
 	{ Triple(it.first, it.second, f(it.third)) }
 
-@JvmName("splitExt")
-inline infix fun <A, R, B, RR> F1<A, R>.split(crossinline other: F1<B, RR>) = split(this, other)
+inline infix fun <A, R, B, RR> F1<A, R>.splitWith(crossinline other: F1<B, RR>) = split(this, other)
 inline fun <A, R, B, RR> split(crossinline f1: F1<A, R>, crossinline f2: F1<B, RR>): F1<Pair<A, B>, Pair<R, RR>> =
 	{ Pair(f1(it.first), f2(it.second)) }
 
 @JvmName("splitTExt")
-inline infix fun <A, R, B, RR> F1<A, R>.splitT(crossinline other: F1<B, RR>) = splitT(this, other)
+inline infix fun <A, R, B, RR> F1<A, R>.splitTWith(crossinline other: F1<B, RR>) = splitT(this, other)
 inline fun <A, R, B, RR> splitT(crossinline f1: F1<A, R>, crossinline f2: F1<B, RR>): F1<Tuple2<A, B>, Tuple2<R, RR>> =
 	{ Tuple2(f1(it.x), f2(it.y)) }
 
-@JvmName("fanoutExt")
-inline infix fun <A, R, RR> F1<A, R>.fanout(crossinline other: F1<A, RR>) = fanout(this, other)
+inline infix fun <A, R, RR> F1<A, R>.fanoutWith(crossinline other: F1<A, RR>) = fanout(this, other)
 inline fun <A, R, RR> fanout(crossinline f1: F1<A, R>, crossinline f2: F1<A, RR>): F1<A, Pair<R, RR>> =
 	{ Pair(f1(it), f2(it)) }
 
-@JvmName("fanoutTExt")
-inline infix fun <A, R, RR> F1<A, R>.fanoutT(crossinline other: F1<A, RR>) = fanoutT(this, other)
+inline infix fun <A, R, RR> F1<A, R>.fanoutTWith(crossinline other: F1<A, RR>) = fanoutT(this, other)
 inline fun <A, R, RR> fanoutT(crossinline f1: F1<A, R>, crossinline f2: F1<A, RR>): F1<A, Tuple2<R, RR>> =
 	{ Tuple2(f1(it), f2(it)) }
 
@@ -69,15 +66,13 @@ inline fun <A, R, PASS> F1<A, R>.right(): F1<Either<PASS, A>, Either<PASS, R>> =
 inline fun <A, R, PASS> right(crossinline f: F1<A, R>): F1<Either<PASS, A>, Either<PASS, R>> =
 	{ it.map(f) }
 
-@JvmName("splitChoiceExt")
-inline infix fun <A, L, B, R> F1<A, L>.splitChoice(crossinline other: F1<B, R>) = splitChoice(this, other)
+inline infix fun <A, L, B, R> F1<A, L>.splitChoiceWith(crossinline other: F1<B, R>) = splitChoice(this, other)
 inline fun <A, L, B, R> splitChoice(
 	crossinline f1: F1<A, L>,
 	crossinline f2: F1<B, R>,
 ): F1<Either<A, B>, Either<L, R>> = { it.bimap(f1, f2) }
 
-@JvmName("faninExt")
-inline infix fun <A, B, R> F1<A, R>.fanin(crossinline other: F1<B, R>) = fanin(this, other)
+inline infix fun <A, B, R> F1<A, R>.faninWith(crossinline other: F1<B, R>) = fanin(this, other)
 inline fun <A, B, R> fanin(crossinline f1: F1<A, R>, crossinline f2: F1<B, R>): F1<Either<A, B>, R> =
 	{ it.fold(f1, f2) }
 
