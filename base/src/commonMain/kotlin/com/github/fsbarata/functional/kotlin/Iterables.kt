@@ -32,6 +32,9 @@ inline fun <T, K, V> Iterable<T>.groupByNel(
 			accumulator?.plus(value) ?: nelOf(value)
 		}
 
+fun <T> Iterable<T>.chunkedNel(size: Int): List<NonEmptyList<T>> =
+	windowedNel(size, size, partialWindows = true)
+
 fun <T> Iterable<T>.windowedNel(size: Int, step: Int = 1, partialWindows: Boolean = false): List<NonEmptyList<T>> =
 	windowed(size, step, partialWindows) { it.toNel() ?: throw NoSuchElementException() }
 

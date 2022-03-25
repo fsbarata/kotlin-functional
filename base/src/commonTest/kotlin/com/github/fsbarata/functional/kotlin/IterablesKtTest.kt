@@ -66,7 +66,7 @@ class IterablesKtTest {
 		)
 		assertEquals(
 			listOf(nelOf(6, 3), nelOf(1, 2), nelOf(5)),
-			listOf(6, 3, 1, 2, 5).windowedNel(2, step = 2, partialWindows = true)
+			listOf(6, 3, 1, 2, 5).chunkedNel(2)
 		)
 		assertEquals(
 			listOf(nelOf(6), nelOf(2)),

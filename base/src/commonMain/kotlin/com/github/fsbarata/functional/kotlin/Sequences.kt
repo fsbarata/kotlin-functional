@@ -13,6 +13,9 @@ fun <A> Sequence<A>.plusElementNe(item: A): NonEmptySequence<A> =
 fun <A> Sequence<A>.plusNe(other: NonEmptySequence<A>): NonEmptySequence<A> =
 	plus(other).nonEmpty(other)
 
+fun <T> Sequence<T>.chunkedNel(size: Int): Sequence<NonEmptyList<T>> =
+	windowedNel(size, size, partialWindows = true)
+
 fun <T> Sequence<T>.windowedNel(size: Int, step: Int = 1, partialWindows: Boolean = false): Sequence<NonEmptyList<T>> =
 	windowed(size, step, partialWindows) { it.toNel() ?: throw NoSuchElementException() }
 
