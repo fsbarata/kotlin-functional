@@ -20,7 +20,7 @@ interface NonEmptyCollection<out A>:
 	@Deprecated("Non empty collection cannot be empty", replaceWith = ReplaceWith("false"))
 	override fun isEmpty() = false
 
-	@Deprecated("Non empty collection cannot be empty", replaceWith = ReplaceWith("true"))
+	@Deprecated("Non empty collection cannot be empty", replaceWith = ReplaceWith("false"))
 	fun none() = false
 
 	fun first() = head
