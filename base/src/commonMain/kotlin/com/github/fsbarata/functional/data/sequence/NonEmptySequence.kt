@@ -28,7 +28,7 @@ interface NonEmptySequence<A>:
 
 	override fun <B> map(f: (A) -> B): NonEmptySequence<B> = headSequence {
 		val iterator = iterator()
-		f(iterator.next()) then iterator.asSequence().map(f).iterator()
+		f(iterator.next()) to iterator.asSequence().map(f).iterator()
 	}
 
 	override fun <B, R> lift2(
@@ -42,7 +42,7 @@ interface NonEmptySequence<A>:
 	fun <B> flatMap(f: (A) -> NonEmptySequence<B>): NonEmptySequence<B> = headSequence {
 		val iterator = iterator()
 		val headIterator = f(iterator.next()).iterator()
-		headIterator.next() then
+		headIterator.next() to
 				(headIterator.asSequence() + iterator.asSequence().flatMap(f)).iterator()
 	}
 
@@ -51,7 +51,7 @@ interface NonEmptySequence<A>:
 		return headSequence {
 			val iterator1 = iterator()
 			val iterator2 = otherNes.iterator()
-			f(iterator1.next(), iterator2.next()) then
+			f(iterator1.next(), iterator2.next()) to
 					iterator1.asSequence().zip(iterator2.asSequence(), f).iterator()
 		}
 	}
@@ -77,13 +77,13 @@ interface NonEmptySequence<A>:
 		Traversable.Scope<NonEmptySequenceContext> {
 
 		override fun <A> just(a: A) =
-			headSequence { a then EmptyIterator }
+			headSequence { a to EmptyIterator }
 
 		fun <A> of(head: A, tail: Iterable<A>) =
-			headSequence { head then tail.iterator() }
+			headSequence { head to tail.iterator() }
 
 		fun <A> of(head: A, tail: Sequence<A>) =
-			headSequence { head then tail.iterator() }
+			headSequence { head to tail.iterator() }
 	}
 }
 
@@ -105,59 +105,56 @@ interface NonEmptySequenceBase<out A>:
 	fun toSet(): NonEmptySet<A> = iterator().toNesUnsafe()
 
 	operator fun plus(element: @UnsafeVariance A): NonEmptySequence<@UnsafeVariance A> =
-		tailSequence { iterator() then element }
+		tailSequence { iterator() to element }
 
 	operator fun plus(elements: Sequence<@UnsafeVariance A>): NonEmptySequence<@UnsafeVariance A> = headSequence {
 		val iterator = iterator()
-		iterator.next() then (iterator.asSequence() + elements).iterator()
+		iterator.next() to (iterator.asSequence() + elements).iterator()
 	}
 }
 
 val <A> Context<NonEmptySequenceContext, A>.asNes get() = this as NonEmptySequence<A>
 
-internal class NonEmptySequenceBuilder {
-	infix fun <A, B> A.then(b: B) = this to b
-}
-
-internal fun <A> headSequence(f: NonEmptySequenceBuilder.() -> Pair<A, Iterator<A>>): NonEmptySequence<A> {
-	val builder = NonEmptySequenceBuilder()
+internal fun <A> headSequence(f: () -> Pair<A, Iterator<A>>): NonEmptySequence<A> {
 	return object: NonEmptySequence<A> {
 		override fun iterator(): Iterator<A> {
-			val (head, tail) = builder.f()
+			val (head, tail) = f()
 			return nonEmptyIterator(head, tail)
 		}
 	}
 }
 
-internal fun <A> tailSequence(f: NonEmptySequenceBuilder.() -> Pair<Iterator<A>, A>): NonEmptySequence<A> {
-	val builder = NonEmptySequenceBuilder()
+internal fun <A> tailSequence(f: () -> Pair<Iterator<A>, A>): NonEmptySequence<A> {
 	return object: NonEmptySequence<A> {
 		override fun iterator(): Iterator<A> {
-			val (head, tail) = builder.f()
+			val (head, tail) = f()
 			return nonEmptyIterator(head, tail)
 		}
 	}
 }
 
-fun <A: Any> nonEmptySequence(head: A, nextFunction: (A) -> A?) = headSequence {
-	Pair(
-		head,
-		generateSequence(nextFunction(head), nextFunction).iterator()
-	)
-}
+fun <A: Any> nonEmptySequence(initialFunction: () -> A, nextFunction: (A) -> A?) =
+	headSequence {
+		val head = initialFunction()
+		head to generateSequence(nextFunction(head), nextFunction).iterator()
+	}
+
+fun <A: Any> nonEmptySequence(head: A, nextFunction: (A) -> A?) =
+	headSequence { head to generateSequence(nextFunction(head), nextFunction).iterator() }
 
 fun <A> Sequence<A>.startWithItem(item: A) =
-	headSequence { item then iterator() }
+	headSequence { item to iterator() }
 
 fun <A> nonEmptySequenceOf(head: A, vararg tail: A) =
-	headSequence { head then tail.iterator() }
+	tail.asSequence().startWithItem(head)
 
-fun <A> Sequence<A>.nonEmpty(ifEmpty: NonEmptySequenceBase<A>) = nonEmpty { ifEmpty }
+fun <A> Sequence<A>.nonEmpty(ifEmpty: NonEmptySequenceBase<A>) =
+	nonEmpty { ifEmpty }
 
 fun <A> Sequence<A>.nonEmpty(ifEmpty: () -> NonEmptySequenceBase<A>) =
 	headSequence {
 		val iterator = iterator().takeIf { it.hasNext() } ?: ifEmpty().iterator()
-		iterator.next() then iterator
+		iterator.next() to iterator
 	}
 
 
