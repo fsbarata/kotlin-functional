@@ -20,6 +20,9 @@ interface NonEmptyCollection<out A>:
 	@Deprecated("Non empty collection cannot be empty", replaceWith = ReplaceWith("false"))
 	override fun isEmpty() = false
 
+	@Deprecated("Non empty collection cannot be empty", replaceWith = ReplaceWith("true"))
+	fun none() = true
+
 	fun first() = head
 
 	@Deprecated("Non empty collection always has a first", replaceWith = ReplaceWith("first()"))
@@ -52,7 +55,7 @@ interface NonEmptyCollection<out A>:
 	fun <R: Comparable<R>> maxOf(selector: (A) -> R): R =
 		tail.maxOfOrNull(selector)?.coerceAtLeast(selector(head)) ?: selector(head)
 
-	@Deprecated("Non empty collection always has a max", replaceWith = ReplaceWith("maxOf()"))
+	@Deprecated("Non empty collection always has a max", replaceWith = ReplaceWith("maxWith()"))
 	fun maxWithOrNull(comparator: Comparator<@UnsafeVariance A>): Nothing =
 		throw UnsupportedOperationException()
 
@@ -69,7 +72,7 @@ interface NonEmptyCollection<out A>:
 	fun <R: Comparable<R>> minOf(selector: (A) -> R): R =
 		tail.minOfOrNull(selector)?.coerceAtMost(selector(head)) ?: selector(head)
 
-	@Deprecated("Non empty collection always has a min", replaceWith = ReplaceWith("maxOf()"))
+	@Deprecated("Non empty collection always has a min", replaceWith = ReplaceWith("minWith()"))
 	fun minWithOrNull(comparator: Comparator<@UnsafeVariance A>): Nothing =
 		throw UnsupportedOperationException()
 
