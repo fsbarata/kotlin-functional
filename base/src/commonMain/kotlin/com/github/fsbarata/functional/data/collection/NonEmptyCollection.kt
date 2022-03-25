@@ -21,7 +21,7 @@ interface NonEmptyCollection<out A>:
 	override fun isEmpty() = false
 
 	@Deprecated("Non empty collection cannot be empty", replaceWith = ReplaceWith("true"))
-	fun none() = true
+	fun none() = false
 
 	fun first() = head
 
