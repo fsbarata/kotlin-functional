@@ -4,7 +4,6 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
-import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.maybe.invoke
 import com.github.fsbarata.functional.utils.LambdaListIterator
 import com.github.fsbarata.functional.utils.listEquals
@@ -91,7 +90,7 @@ class NonEmptyList<out A> private constructor(
 		return of(f(head, otherNel.head), tail.zip(otherNel.tail, f))
 	}
 
-	fun reversed() = tail.asReversed().nonEmpty()?.plus(head) ?: this
+	fun reversed() = tail.asReversed().toNel()?.plus(head) ?: this
 
 	fun distinct() = toSet().toList()
 	inline fun <K> distinctBy(selector: (A) -> K): NonEmptyList<A> {
@@ -135,12 +134,6 @@ class NonEmptyList<out A> private constructor(
 
 	override fun combineWith(other: NonEmptyList<@UnsafeVariance A>) = this + other
 
-	fun <K: Comparable<K>> sortedBy(selector: (A) -> K): NonEmptyList<A> =
-		sortedWith(compareBy(selector))
-
-	fun sortedWith(comparator: Comparator<@UnsafeVariance A>): NonEmptyList<A> =
-		(this as List<A>).sortedWith(comparator).toNelUnsafe()
-
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (other !is List<*>) return false
@@ -177,7 +170,7 @@ fun <A> Iterable<A>.toNel(): NonEmptyList<A>? {
 	}
 }
 
-private fun <A> Iterable<A>.toNelUnsafe() = toNel() ?: throw NoSuchElementException()
+fun <A> Sequence<A>.toNel(): NonEmptyList<A>? = iterator().toNel()
 
 
 operator fun <A, R> Lift1<A, R>.invoke(
@@ -204,7 +197,8 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 
 fun <A, R> liftNel(f: (A) -> R): (NonEmptyList<A>) -> NonEmptyList<R> = lift(f)::invoke
 fun <A, B, R> lift2Nel(f: (A, B) -> R): (NonEmptyList<A>, NonEmptyList<B>) -> NonEmptyList<R> = lift2(f)::invoke
-fun <A, B, C, R> lift3Nel(f: (A, B, C) -> R): (NonEmptyList<A>, NonEmptyList<B>, NonEmptyList<C>) -> NonEmptyList<R> = lift3(f)::invoke
+fun <A, B, C, R> lift3Nel(f: (A, B, C) -> R): (NonEmptyList<A>, NonEmptyList<B>, NonEmptyList<C>) -> NonEmptyList<R> =
+	lift3(f)::invoke
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun <F, A> NonEmptyList<Functor<F, A>>.sequenceA(appScope: Applicative.Scope<F>): Functor<F, NonEmptyList<A>> =

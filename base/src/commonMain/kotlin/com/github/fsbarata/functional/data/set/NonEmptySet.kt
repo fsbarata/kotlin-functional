@@ -4,8 +4,6 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
-import com.github.fsbarata.functional.data.list.NonEmptyList
-import com.github.fsbarata.functional.data.list.asNel
 import com.github.fsbarata.functional.utils.toNes
 import com.github.fsbarata.io.Serializable
 
@@ -135,4 +133,5 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 
 fun <A, R> liftNes(f: (A) -> R): (NonEmptySet<A>) -> NonEmptySet<R> = lift(f)::invoke
 fun <A, B, R> lift2Nes(f: (A, B) -> R): (NonEmptySet<A>, NonEmptySet<B>) -> NonEmptySet<R> = lift2(f)::invoke
-fun <A, B, C, R> lift3Nes(f: (A, B, C) -> R): (NonEmptySet<A>, NonEmptySet<B>, NonEmptySet<C>) -> NonEmptySet<R> = lift3(f)::invoke
+fun <A, B, C, R> lift3Nes(f: (A, B, C) -> R): (NonEmptySet<A>, NonEmptySet<B>, NonEmptySet<C>) -> NonEmptySet<R> =
+	lift3(f)::invoke
