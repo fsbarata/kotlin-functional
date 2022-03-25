@@ -87,16 +87,22 @@ class NonEmptySetTest:
 	@Test
 	fun plus() {
 		assertEquals(nesOf(9, 3), nes1 + 3)
-		assertEquals(nesOf(5, 1, 3, 3), nes2 + 3)
+		assertEquals(2, (nes1 + 3).size)
+		assertEquals(nesOf(5, 1, 3), nes2 + 3)
+		assertEquals(3, (nes2 + 3).size)
 		assertEquals(nesOf(2, 4, 5, 3), nes3 + 3)
+		assertEquals(4, (nes3 + 3).size)
 
 		assertEquals(nes1, nes1 + emptySet())
 		assertEquals(nes2, nes2 + emptySet())
 		assertEquals(nes3, nes3 + emptySet())
 
-		assertEquals(nesOf(9, 5, 5), nes1 + setOf(5, 5))
+		assertEquals(nesOf(9, 5), nes1 + setOf(5, 5))
+		assertEquals(2, (nes1 + setOf(5, 5)).size)
 		assertEquals(nesOf(5, 1, 3, 2, 6), nes2 + setOf(1, 2, 6))
+		assertEquals(5, (nes2 + setOf(1, 2, 6)).size)
 		assertEquals(nesOf(2, 4, 5, 3), nes3 + setOf(3))
+		assertEquals(4, (nes3 + setOf(3)).size)
 	}
 
 	@Test
