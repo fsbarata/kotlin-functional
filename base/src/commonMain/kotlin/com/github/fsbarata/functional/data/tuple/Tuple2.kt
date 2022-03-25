@@ -82,5 +82,5 @@ inline fun <A, B, R> F1<Pair<A, B>, R>.tuple(): F1<Tuple2<A, B>, R> = compose(Tu
 inline fun <A, B, R> tuple(crossinline f: F1<Pair<A, B>, R>): F1<Tuple2<A, B>, R> = f.tuple()
 
 @JvmName("pairExt")
-inline fun <A, B, R> F1<Tuple2<A, B>, R>.pair(): F1<Pair<A, B>, R> = this.compose(Pair<A, B>::toTuple)
+inline fun <A, B, R> F1<Tuple2<A, B>, R>.pair(): F1<Pair<A, B>, R> = compose(Pair<A, B>::toTuple)
 inline fun <A, B, R> pair(crossinline f: F1<Tuple2<A, B>, R>): F1<Pair<A, B>, R> = { f(Tuple2(it.first, it.second)) }
