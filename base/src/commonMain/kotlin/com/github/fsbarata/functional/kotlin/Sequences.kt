@@ -8,7 +8,7 @@ import com.github.fsbarata.functional.data.sequence.nonEmpty
 import com.github.fsbarata.functional.data.sequence.tailSequence
 
 fun <A> Sequence<A>.plusElementNe(item: A): NonEmptySequence<A> =
-	tailSequence { iterator() then item }
+	tailSequence { iterator() to item }
 
 fun <A> Sequence<A>.plusNe(other: NonEmptySequence<A>): NonEmptySequence<A> =
 	plus(other).nonEmpty(other)
@@ -20,6 +20,6 @@ fun <A, R> Sequence<A>.scanNe(initialValue: R, operation: (R, A) -> R): NonEmpty
 	val scan = scan(initialValue, operation)
 	return headSequence {
 		val iterator = scan.iterator()
-		iterator.next() then iterator
+		Pair(iterator.next(), iterator)
 	}
 }
