@@ -53,10 +53,10 @@ interface NonEmptyCollection<out A>:
 		tail.maxOfOrNull(selector)?.coerceAtLeast(selector(head)) ?: selector(head)
 
 	@Deprecated("Non empty collection always has a max", replaceWith = ReplaceWith("maxOf()"))
-	fun <R: Comparable<R>> maxWithOrNull(comparator: Comparator<@UnsafeVariance A>): Nothing =
+	fun maxWithOrNull(comparator: Comparator<@UnsafeVariance A>): Nothing =
 		throw UnsupportedOperationException()
 
-	fun <R: Comparable<R>> maxWith(comparator: Comparator<@UnsafeVariance A>): A {
+	fun maxWith(comparator: Comparator<@UnsafeVariance A>): A {
 		return maxOf(tail.maxWithOrNull(comparator) ?: return head, head, comparator)
 	}
 
@@ -70,10 +70,10 @@ interface NonEmptyCollection<out A>:
 		tail.minOfOrNull(selector)?.coerceAtMost(selector(head)) ?: selector(head)
 
 	@Deprecated("Non empty collection always has a min", replaceWith = ReplaceWith("maxOf()"))
-	fun <R: Comparable<R>> minWithOrNull(comparator: Comparator<@UnsafeVariance A>): Nothing =
+	fun minWithOrNull(comparator: Comparator<@UnsafeVariance A>): Nothing =
 		throw UnsupportedOperationException()
 
-	fun <R: Comparable<R>> minWith(comparator: Comparator<@UnsafeVariance A>): A {
+	fun minWith(comparator: Comparator<@UnsafeVariance A>): A {
 		return minOf(tail.minWithOrNull(comparator) ?: return head, head, comparator)
 	}
 

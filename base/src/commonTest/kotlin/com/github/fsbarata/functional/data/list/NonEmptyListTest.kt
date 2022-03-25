@@ -220,6 +220,13 @@ class NonEmptyListTest:
 	}
 
 	@Test
+	fun maxWith() {
+		assertEquals(9, nel1.maxWith(compareBy { it % 3 }))
+		assertEquals(5, nel2.maxWith(compareBy { it % 3 }))
+		assertEquals(2, nel3.maxWith(compareBy { -it }))
+	}
+
+	@Test
 	fun minBy() {
 		assertEquals(9, nel1.minBy { it })
 		assertEquals(3, nel2.minBy { it % 3L })
@@ -231,6 +238,13 @@ class NonEmptyListTest:
 		assertEquals(9L, nel1.minOf { it.toLong() })
 		assertEquals(0.5, nel2.minOf { (it % 3L) + 0.5 })
 		assertEquals(0, nel3.minOf { it % 5 })
+	}
+
+	@Test
+	fun minWith() {
+		assertEquals(9, nel1.minWith(compareBy { it % 3 }))
+		assertEquals(3, nel2.minWith(compareBy { it % 3 }))
+		assertEquals(2, nel3.minWith(compareBy { it }))
 	}
 
 	@Test
