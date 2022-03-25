@@ -24,11 +24,11 @@ inline fun <T, K> Iterable<T>.groupByNel(crossinline keySelector: (T) -> K): Map
 
 inline fun <T, K, V> Iterable<T>.groupByNel(
 	crossinline keySelector: (T) -> K,
-	valueSelector: (T) -> V,
+	valueTransform: (T) -> V,
 ): Map<K, NonEmptyList<V>> =
 	groupingBy(keySelector)
 		.aggregate { _, accumulator, element, _ ->
-			val value = valueSelector(element)
+			val value = valueTransform(element)
 			accumulator?.plus(value) ?: nelOf(value)
 		}
 

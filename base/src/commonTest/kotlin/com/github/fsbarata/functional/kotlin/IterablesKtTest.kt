@@ -42,7 +42,7 @@ class IterablesKtTest {
 		assertEquals(emptyMap<String, Int>(), emptySet<Int>().groupByNel { "$it" })
 		assertEquals(
 			emptyMap<String, Long>(),
-			emptySet<Int>().groupByNel(keySelector = { "$it" }, valueSelector = { 1L + it })
+			emptySet<Int>().groupByNel(keySelector = { "$it" }, valueTransform = { 1L + it })
 		)
 
 		assertEquals(
@@ -51,7 +51,7 @@ class IterablesKtTest {
 		)
 		assertEquals(
 			mapOf(true to nelOf("6"), false to nelOf("3", "2")),
-			listOf(5, 2, 1).groupByNel(keySelector = { it > 4 }, valueSelector = { "${it + 1}" })
+			listOf(5, 2, 1).groupByNel(keySelector = { it > 4 }, valueTransform = { "${it + 1}" })
 		)
 	}
 
