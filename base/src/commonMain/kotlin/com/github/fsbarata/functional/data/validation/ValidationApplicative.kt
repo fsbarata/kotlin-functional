@@ -19,7 +19,7 @@ class ValidationApplicativeScope<E: Semigroup<E>>: Applicative.Scope<ValidationC
 		fa: Functor<ValidationContext<E>, A>,
 		fb: Functor<ValidationContext<E>, B>,
 		f: (A, B) -> R,
-	): Validation<E, R> = ap(fb, fa.map { f.partial(it) })
+	): Validation<E, R> = ap(fb, fa.map { partial(f, it) })
 }
 
 fun <E: Semigroup<E>, A, R> Validation<E, A>.ap(ff: Validation<E, (A) -> R>): Validation<E, R> =

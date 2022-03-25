@@ -58,7 +58,7 @@ class Tree<out A>(
 
 	override fun <B, R> lift2(fb: Functor<TreeContext, B>, f: (A, B) -> R): Tree<R> {
 		val tb = fb.asTree
-		val x: Forest<R> = tb.sub.map { it.map(f.partial(root)) }
+		val x: Forest<R> = tb.sub.map { it.map(partial(f, root)) }
 		val y: Forest<R> = sub.map { it.lift2(tb, f) }
 		return Tree(
 			f(root, tb.root),
