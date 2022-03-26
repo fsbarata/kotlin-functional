@@ -1,4 +1,5 @@
 include ':base', ':laws'
 include ':numbers'
+include ':coroutines'
 include ':rx'
 include ':samples'
