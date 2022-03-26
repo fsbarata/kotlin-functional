@@ -16,48 +16,57 @@ inline fun <A> id(a: A): A = a
 inline fun <A> id(): (A) -> A = ::id
 
 
-inline fun <A, R> compose(crossinline f1: F1<A, R>, crossinline f2: F0<A>): F0<R> = { f1(f2()) }
+inline fun <A, R> compose0(crossinline f1: F1<A, R>, crossinline f2: F0<A>): F0<R> = { f1(f2()) }
 inline fun <A, B, R> compose(crossinline f1: F1<B, R>, crossinline f2: F1<A, B>): F1<A, R> = { f1(f2(it)) }
+inline fun <A, B, C, R> compose2(crossinline f1: F1<C, R>, crossinline f2: F2<A, B, C>): F2<A, B, R> =
+	{ a, b -> f1(f2(a, b)) }
+
+inline fun <A, B, R> compose0(crossinline f1: F2<A, B, R>, crossinline f2: F0<A>): F1<B, R> = { b -> f1(f2(), b) }
 inline fun <A, B, C, R> compose(crossinline f1: F2<B, C, R>, crossinline f2: F1<A, B>): F2<A, C, R> =
 	{ a, c -> f1(f2(a), c) }
 
-inline fun <A, B, C, R> compose(crossinline f1: F1<C, R>, crossinline f2: F2<A, B, C>): F2<A, B, R> =
-	{ a, b -> f1(f2(a, b)) }
-
-inline fun <A, R> composeForward(crossinline f1: F0<A>, crossinline f2: F1<A, R>): F0<R> = compose(f2, f1)
+inline fun <A, R> composeForward(crossinline f1: F0<A>, crossinline f2: F1<A, R>): F0<R> = compose0(f2, f1)
 inline fun <A, B, R> composeForward(crossinline f1: F1<A, B>, crossinline f2: F1<B, R>): F1<A, R> = compose(f2, f1)
-inline fun <A, B, C, R> composeForward(crossinline f1: F1<A, B>, crossinline f2: F2<B, C, R>): F2<A, C, R> =
-	compose(f2, f1)
-
 inline fun <A, B, C, R> composeForward(crossinline f1: F2<A, B, C>, crossinline f2: F1<C, R>): F2<A, B, R> =
+	compose2(f2, f1)
+
+inline fun <A, B, R> composeForward2(crossinline f1: F0<A>, crossinline f2: F2<A, B, R>): F1<B, R> = compose0(f2, f1)
+inline fun <A, B, C, R> composeForward2(crossinline f1: F1<A, B>, crossinline f2: F2<B, C, R>): F2<A, C, R> =
 	compose(f2, f1)
 
-@JvmName("composeExt")
-inline infix fun <A, R> F1<A, R>.compose(crossinline other: F0<A>): F0<R> = compose(this, other)
+
+@JvmName("compose0Ext")
+inline infix fun <A, R> F1<A, R>.compose0(crossinline other: F0<A>): F0<R> = compose0(this, other)
 
 @JvmName("composeExt")
 inline infix fun <A, B, R> F1<B, R>.compose(crossinline other: F1<A, B>): F1<A, R> = compose(this, other)
 
+@JvmName("compose2Ext")
+inline infix fun <A, B, C, R> F1<C, R>.compose2(crossinline other: F2<A, B, C>): F2<A, B, R> = compose2(this, other)
+
+@JvmName("compose0Ext")
+inline fun <A, B, R> F2<A, B, R>.compose0(crossinline other: F0<A>): F1<B, R> = compose0(this, other)
+
 @JvmName("composeExt")
 inline infix fun <A, B, C, R> F2<B, C, R>.compose(crossinline other: F1<A, B>): F2<A, C, R> = compose(this, other)
 
-@JvmName("composeExt")
-inline infix fun <A, B, C, R> F1<C, R>.compose(crossinline other: F2<A, B, C>): F2<A, B, R> = compose(this, other)
-
 
 @JvmName("composeForwardExt")
-inline infix fun <A, R> F0<A>.composeForward(crossinline other: F1<A, R>): F0<R> = compose(other, this)
+inline infix fun <A, R> F0<A>.composeForward(crossinline other: F1<A, R>): F0<R> = composeForward(this, other)
 
 @JvmName("composeForwardExt")
-inline infix fun <A, B, R> F1<A, B>.composeForward(crossinline other: F1<B, R>): F1<A, R> = compose(other, this)
-
-@JvmName("composeForwardExt")
-inline infix fun <A, B, C, R> F1<A, B>.composeForward(crossinline other: F2<B, C, R>): F2<A, C, R> =
-	compose(other, this)
+inline infix fun <A, B, R> F1<A, B>.composeForward(crossinline other: F1<B, R>): F1<A, R> = composeForward(this, other)
 
 @JvmName("composeForwardExt")
 inline infix fun <A, B, C, R> F2<A, B, C>.composeForward(crossinline other: F1<C, R>): F2<A, B, R> =
-	compose(other, this)
+	composeForward(this, other)
+
+@JvmName("composeForward2Ext")
+inline fun <A, B, R> F0<A>.composeForward2(crossinline other: F2<A, B, R>): F1<B, R> = composeForward2(this, other)
+
+@JvmName("composeForward2Ext")
+inline infix fun <A, B, C, R> F1<A, B>.composeForward2(crossinline other: F2<B, C, R>): F2<A, C, R> =
+	composeForward2(this, other)
 
 
 @JvmName("partialExt")
