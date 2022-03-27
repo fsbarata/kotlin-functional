@@ -2,6 +2,8 @@ package com.github.fsbarata.functional.data.maybe
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.control.arrow.Kleisli
+import com.github.fsbarata.functional.control.arrow.kleisli
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.io.Serializable
 
@@ -141,3 +143,6 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 fun <A, R> liftOpt(f: (A) -> R): (Optional<A>) -> Optional<R> = lift(f)::invoke
 fun <A, B, R> lift2Opt(f: (A, B) -> R): (Optional<A>, Optional<B>) -> Optional<R> = lift2(f)::invoke
 fun <A, B, C, R> lift3Opt(f: (A, B, C) -> R): (Optional<A>, Optional<B>, Optional<C>) -> Optional<R> = lift3(f)::invoke
+
+inline fun <A, R: Any> optionalKleisli(f: (A) -> R?): Kleisli<OptionalContext, A, R> =
+	Optional.kleisli(f composeForward { it.toOptional() })
