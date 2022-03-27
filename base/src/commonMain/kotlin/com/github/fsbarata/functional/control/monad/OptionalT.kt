@@ -16,6 +16,8 @@ data class OptionalT<M, out A>(
 	private val innerScope get() = wrapped.scope
 	override val scope = Scope(wrapped.scope)
 
+	fun unwrap() = wrapped
+
 	inline fun <MM> mapOptionalT(f: (Monad<M, Optional<A>>) -> Monad<MM, Optional<@UnsafeVariance A>>) =
 		OptionalT(f(wrapped))
 
@@ -25,11 +27,14 @@ data class OptionalT<M, out A>(
 	override fun <B> bind(f: (A) -> Context<Monad<M, OptionalContext>, B>) =
 		flatMap { f(it).asOptionalT }
 
-	fun <B> flatMap(f: (A) -> OptionalT<M, B>) = OptionalT(
+	fun <B> flatMap(f: (A) -> OptionalT<M, B>): OptionalT<M, B> =
+		flatMapT { a: A -> f(a).wrapped }
+
+	fun <B> flatMapT(f: (A) -> Monad<M, Optional<B>>): OptionalT<M, B> = OptionalT(
 		wrapped.bind { v ->
 			v.fold(
 				ifEmpty = { innerScope.just(None) },
-				ifSome = { f(it).wrapped },
+				ifSome = f,
 			)
 		}
 	)
@@ -61,6 +66,8 @@ data class OptionalT<M, out A>(
 }
 
 val <M, A> Context<Monad<M, OptionalContext>, A>.asOptionalT get() = this as OptionalT<M, A>
+
+fun <M, A> Monad<M, Optional<A>>.transformer() = OptionalT(this)
 
 fun <M: MonadZip<M, *>, A, B, R> zip(opt1: OptionalT<M, A>, opt2: OptionalT<M, B>, f: (A, B) -> R) =
 	opt1.zipWith(opt2, f)

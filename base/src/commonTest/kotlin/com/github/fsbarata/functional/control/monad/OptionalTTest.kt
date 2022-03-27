@@ -52,6 +52,22 @@ class OptionalTTest:
 	}
 
 	@Test
+	fun flatMapT() {
+		assertEquals(
+			OptionalT(ListF.of(
+				Optional.just("1"),
+				Optional.just("6"), Optional.empty(),
+				Optional.just("3"),
+				Optional.empty(),
+			)),
+			OptionalT(ListF.of(Optional.just(1), Optional.just(5), Optional.just(3), Optional.empty())).flatMapT {
+				if (it < 4) ListF.just(Optional.just(it.toString()))
+				else ListF.of(Optional.just((it + 1).toString()), None)
+			}
+		)
+	}
+
+	@Test
 	fun flatMap() {
 		assertEquals(
 			OptionalT(ListF.of(
