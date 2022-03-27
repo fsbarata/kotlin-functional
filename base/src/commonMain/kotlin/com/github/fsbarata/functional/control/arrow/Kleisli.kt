@@ -16,9 +16,9 @@ import com.github.fsbarata.functional.data.id
  * Eg.:
  * val f = { b: Double -> Optional.just("$b") }
  * val g = { a: Int -> Optional.just(a + 0.5) }
+ * f compose g // fails to compile
  * val k = Optional.kleisli(f) compose Optional.kleisli(g) // compiles
  * Optional.just(3).bind(k) // = Some("3.5")
- * f compose g // fails to compile
  */
 class Kleisli<M, A, R> internal constructor(
 	private val monadScope: Monad.Scope<M>,
@@ -54,8 +54,8 @@ class Kleisli<M, A, R> internal constructor(
 		}
 	}
 
-	override fun <PASS> left() = splitChoice(scope.arr(id<PASS>()))
-	override fun <PASS> right() = scope.arr(id<PASS>()).splitChoice(this)
+	override fun <PASS> left(): Kleisli<M, Either<A, PASS>, Either<R, PASS>> = splitChoice(scope.arr(id()))
+	override fun <PASS> right(): Kleisli<M, Either<PASS, A>, Either<PASS, R>> = scope.arr(id<PASS>()).splitChoice(this)
 
 	override infix fun <B, RR> splitChoice(other: ArrowChoice<Kleisli<M, *, *>, B, RR>): Kleisli<M, Either<A, B>, Either<R, RR>> =
 		composeForward(scope.arr { Either.left<R, RR>(it) })
@@ -66,8 +66,10 @@ class Kleisli<M, A, R> internal constructor(
 }
 
 class KleisliScope<M>(private val monadScope: Monad.Scope<M>): ArrowApply.Scope<Kleisli<M, *, *>> {
-	override fun <A, R> arr(f: (A) -> R) = monadScope.kleisli<M, A, R> { monadScope.just(f(it)) }
-	override fun <B> id() = arr<B, B> { it }
+	override fun <A, R> arr(f: (A) -> R): Kleisli<M, A, R> =
+		monadScope.kleisli { monadScope.just(f(it)) }
+
+	override fun <B> id(): Kleisli<M, B, B> = arr { it }
 
 	override fun <A, R> app(): Kleisli<M, Pair<Kleisli<M, A, R>, A>, R> =
 		Kleisli(monadScope) { (k, a) -> k.asKleisli(a) }
