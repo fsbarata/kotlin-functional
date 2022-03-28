@@ -129,5 +129,5 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 ): ListF<R> = app(list1.f(), list2.f(), list3.f(), list4.f()).asList
 
 fun <A, R> liftList(f: (A) -> R): (List<A>) -> List<R> = lift(f)::invoke
-fun <A, B, R> lift2List(f: (A, B) -> R): (List<A>, List<B>) -> List<R> = lift2(f)::invoke
-fun <A, B, C, R> lift3List(f: (A, B, C) -> R): (List<A>, List<B>, List<C>) -> List<R> = lift3(f)::invoke
+fun <A, B, R> liftList2(f: (A, B) -> R): (List<A>, List<B>) -> List<R> = lift2(f)::invoke
+fun <A, B, C, R> liftList3(f: (A, B, C) -> R): (List<A>, List<B>, List<C>) -> List<R> = lift3(f)::invoke

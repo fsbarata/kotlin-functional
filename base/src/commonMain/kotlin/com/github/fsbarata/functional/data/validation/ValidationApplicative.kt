@@ -3,7 +3,6 @@ package com.github.fsbarata.functional.data.validation
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Semigroup
-import com.github.fsbarata.functional.data.list.invoke
 import com.github.fsbarata.functional.data.partial
 
 
@@ -55,5 +54,8 @@ operator fun <E: Semigroup<E>, A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 ) = app(ValidationApplicativeScope(), v1, v2, v3, v4).asValidation
 
 
-fun <E: Semigroup<E>, A, B, R> lift2Valid(f: (A, B) -> R): (Validation<E, A>, Validation<E, B>) -> Validation<E, R> = lift2(f)::invoke
-fun <E: Semigroup<E>, A, B, C, R> lift3Valid(f: (A, B, C) -> R): (Validation<E, A>, Validation<E, B>, Validation<E, C>) -> Validation<E, R> = lift3(f)::invoke
+fun <E: Semigroup<E>, A, B, R> liftValid2(f: (A, B) -> R): (Validation<E, A>, Validation<E, B>) -> Validation<E, R> =
+	lift2(f)::invoke
+
+fun <E: Semigroup<E>, A, B, C, R> liftValid3(f: (A, B, C) -> R): (Validation<E, A>, Validation<E, B>, Validation<E, C>) -> Validation<E, R> =
+	lift3(f)::invoke

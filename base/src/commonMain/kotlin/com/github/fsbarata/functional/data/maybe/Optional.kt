@@ -141,8 +141,9 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 ): Optional<R> = app(opt1, opt2, opt3, opt4).asOptional
 
 fun <A, R> liftOpt(f: (A) -> R): (Optional<A>) -> Optional<R> = lift(f)::invoke
-fun <A, B, R> lift2Opt(f: (A, B) -> R): (Optional<A>, Optional<B>) -> Optional<R> = lift2(f)::invoke
-fun <A, B, C, R> lift3Opt(f: (A, B, C) -> R): (Optional<A>, Optional<B>, Optional<C>) -> Optional<R> = lift3(f)::invoke
+fun <A, B, R> liftOpt2(f: (A, B) -> R): (Optional<A>, Optional<B>) -> Optional<R> = lift2(f)::invoke
+fun <A, B, C, R> liftOpt3(f: (A, B, C) -> R): (Optional<A>, Optional<B>, Optional<C>) -> Optional<R> = lift3(f)::invoke
+
 
 inline fun <A, R: Any> optionalKleisli(f: (A) -> R?): Kleisli<OptionalContext, A, R> =
 	Optional.kleisli(f composeForward { it.toOptional() })

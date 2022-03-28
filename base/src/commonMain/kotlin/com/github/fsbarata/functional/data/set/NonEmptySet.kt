@@ -132,6 +132,6 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 ): NonEmptySet<R> = app(set1, set2, set3, set4).asNes
 
 fun <A, R> liftNes(f: (A) -> R): (NonEmptySet<A>) -> NonEmptySet<R> = lift(f)::invoke
-fun <A, B, R> lift2Nes(f: (A, B) -> R): (NonEmptySet<A>, NonEmptySet<B>) -> NonEmptySet<R> = lift2(f)::invoke
-fun <A, B, C, R> lift3Nes(f: (A, B, C) -> R): (NonEmptySet<A>, NonEmptySet<B>, NonEmptySet<C>) -> NonEmptySet<R> =
+fun <A, B, R> liftNes2(f: (A, B) -> R): (NonEmptySet<A>, NonEmptySet<B>) -> NonEmptySet<R> = lift2(f)::invoke
+fun <A, B, C, R> liftNes3(f: (A, B, C) -> R): (NonEmptySet<A>, NonEmptySet<B>, NonEmptySet<C>) -> NonEmptySet<R> =
 	lift3(f)::invoke

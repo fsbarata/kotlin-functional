@@ -196,8 +196,8 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 ): NonEmptyList<R> = app(list1, list2, list3, list4).asNel
 
 fun <A, R> liftNel(f: (A) -> R): (NonEmptyList<A>) -> NonEmptyList<R> = lift(f)::invoke
-fun <A, B, R> lift2Nel(f: (A, B) -> R): (NonEmptyList<A>, NonEmptyList<B>) -> NonEmptyList<R> = lift2(f)::invoke
-fun <A, B, C, R> lift3Nel(f: (A, B, C) -> R): (NonEmptyList<A>, NonEmptyList<B>, NonEmptyList<C>) -> NonEmptyList<R> =
+fun <A, B, R> liftNel2(f: (A, B) -> R): (NonEmptyList<A>, NonEmptyList<B>) -> NonEmptyList<R> = lift2(f)::invoke
+fun <A, B, C, R> liftNel3(f: (A, B, C) -> R): (NonEmptyList<A>, NonEmptyList<B>, NonEmptyList<C>) -> NonEmptyList<R> =
 	lift3(f)::invoke
 
 @Suppress("NOTHING_TO_INLINE")

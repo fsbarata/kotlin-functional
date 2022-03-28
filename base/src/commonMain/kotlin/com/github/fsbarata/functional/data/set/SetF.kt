@@ -114,5 +114,5 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 ): SetF<R> = app(set1.f(), set2.f(), set3.f(), set4.f()).asSet
 
 fun <A, R> liftSet(f: (A) -> R): (Set<A>) -> Set<R> = lift(f)::invoke
-fun <A, B, R> lift2Set(f: (A, B) -> R): (Set<A>, Set<B>) -> Set<R> = lift2(f)::invoke
-fun <A, B, C, R> lift3Set(f: (A, B, C) -> R): (Set<A>, Set<B>, Set<C>) -> Set<R> = lift3(f)::invoke
+fun <A, B, R> liftSet2(f: (A, B) -> R): (Set<A>, Set<B>) -> Set<R> = lift2(f)::invoke
+fun <A, B, C, R> liftSet3(f: (A, B, C) -> R): (Set<A>, Set<B>, Set<C>) -> Set<R> = lift3(f)::invoke
