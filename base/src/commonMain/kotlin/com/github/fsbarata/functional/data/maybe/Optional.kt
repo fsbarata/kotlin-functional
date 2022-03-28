@@ -144,6 +144,12 @@ fun <A, R> liftOpt(f: (A) -> R): (Optional<A>) -> Optional<R> = lift(f)::invoke
 fun <A, B, R> liftOpt2(f: (A, B) -> R): (Optional<A>, Optional<B>) -> Optional<R> = lift2(f)::invoke
 fun <A, B, C, R> liftOpt3(f: (A, B, C) -> R): (Optional<A>, Optional<B>, Optional<C>) -> Optional<R> = lift3(f)::invoke
 
+fun <A: Any, R: Any> liftNull(f: (A) -> R): (A?) -> R? = { it?.let(f) }
+fun <A: Any, B: Any, R: Any> liftNull2(f: (A, B) -> R): (A?, B?) -> R? =
+	t@{ a, b -> f(a ?: return@t null, b ?: return@t null) }
+
+fun <A: Any, B: Any, C: Any, R: Any> liftNull3(f: (A, B, C) -> R): (A?, B?, C?) -> R? =
+	t@{ a, b, c -> f(a ?: return@t null, b ?: return@t null, c ?: return@t null) }
 
 inline fun <A, R: Any> optionalKleisli(f: (A) -> R?): Kleisli<OptionalContext, A, R> =
 	Optional.kleisli(f composeForward { it.toOptional() })
