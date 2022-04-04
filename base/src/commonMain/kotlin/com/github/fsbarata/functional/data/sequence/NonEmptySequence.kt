@@ -153,8 +153,9 @@ fun <A> Sequence<A>.nonEmpty(ifEmpty: NonEmptySequenceBase<A>) =
 
 fun <A> Sequence<A>.nonEmpty(ifEmpty: () -> NonEmptySequenceBase<A>) =
 	headSequence {
-		val iterator = iterator().takeIf { it.hasNext() } ?: ifEmpty().iterator()
-		iterator.next() to iterator
+		val iterator = iterator()
+		val nonEmptyIterator = if (iterator.hasNext()) iterator else ifEmpty().iterator()
+		nonEmptyIterator.next() to nonEmptyIterator
 	}
 
 

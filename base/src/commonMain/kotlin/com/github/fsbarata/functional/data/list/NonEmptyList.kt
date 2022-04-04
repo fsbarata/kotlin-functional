@@ -40,13 +40,20 @@ class NonEmptyList<out A>(
 		if (index == 0) head
 		else tail[index - 1]
 
-	override fun indexOf(element: @UnsafeVariance A) =
+	override fun indexOf(element: @UnsafeVariance A): Int =
 		if (head == element) 0
-		else (tail.indexOf(element) + 1).takeIf { it != 0 } ?: -1
+		else {
+			val tailIndex = tail.indexOf(element)
+			if (tailIndex == -1) -1
+			else tailIndex + 1
+		}
 
-	override fun lastIndexOf(element: @UnsafeVariance A) =
-		(tail.lastIndexOf(element) + 1).takeIf { it != 0 }
-			?: if (head == element) 0 else -1
+	override fun lastIndexOf(element: @UnsafeVariance A): Int {
+		return when (val tailIndex = tail.lastIndexOf(element)) {
+			-1 -> if (head == element) 0 else -1
+			else -> tailIndex + 1
+		}
+	}
 
 	override fun iterator(): Iterator<A> = super.iterator()
 
