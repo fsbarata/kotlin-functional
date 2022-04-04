@@ -78,6 +78,8 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 
 		fun <A> monoid() = monoid(empty<A>())
 
+		override fun <A> fromIterable(iterable: Iterable<A>) = iterable.asSequence().f()
+		override fun <A> fromSequence(sequence: Sequence<A>) = sequence.f()
 		override fun <A> fromList(list: List<A>) = list.asSequence().f()
 		override fun <A> fromOptional(optional: Optional<A>) = optional.maybe(empty(), ::just)
 	}
@@ -87,6 +89,7 @@ fun <A> Sequence<A>.f() = when (this) {
 	is SequenceF -> this
 	else -> SequenceF(this)
 }
+
 fun <A, R> Sequence<A>.f(block: SequenceF<A>.() -> Context<SequenceContext, R>) =
 	f().block().asSequence
 

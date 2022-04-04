@@ -73,6 +73,8 @@ class SetF<A>(private val wrapped: Set<A>): Set<A> by wrapped,
 
 		fun <A> monoid() = monoid(empty<A>())
 
+		override fun <A> fromIterable(iterable: Iterable<A>) = iterable.toSet().f()
+		override fun <A> fromSequence(sequence: Sequence<A>) = sequence.toSet().f()
 		override fun <A> fromList(list: List<A>) = list.toSet().f()
 
 		override fun <A> fromOptional(optional: Optional<A>) =

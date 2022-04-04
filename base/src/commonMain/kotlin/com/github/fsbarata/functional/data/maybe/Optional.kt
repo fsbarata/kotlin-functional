@@ -88,6 +88,8 @@ sealed class Optional<out A>:
 
 		fun <A: Semigroup<A>> monoid() = OptionalMonoid<A>()
 
+		override fun <A> fromIterable(iterable: Iterable<A>) = iterable.firstOrNull().toOptional()
+		override fun <A> fromSequence(sequence: Sequence<A>) = sequence.firstOrNull().toOptional()
 		override fun <A> fromList(list: List<A>) = list.firstOrNull().toOptional()
 
 		@Deprecated("Does not need conversion", replaceWith = ReplaceWith("optional"))

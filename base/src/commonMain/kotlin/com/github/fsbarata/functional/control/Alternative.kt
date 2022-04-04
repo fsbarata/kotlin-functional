@@ -25,8 +25,11 @@ interface Alternative<F, out A>: Applicative<F, A> {
 		fun <A> empty(): Alternative<F, A>
 		override fun <A> just(a: A): Alternative<F, A>
 
-		fun <A> fromList(list: List<A>): Alternative<F, A> =
-			list.fold(empty()) { r, a -> r.associateWith(just(a)) }
+		fun <A> fromIterable(iterable: Iterable<A>): Alternative<F, A> =
+			iterable.fold(empty()) { r, a -> r.associateWith(just(a)) }
+
+		fun <A> fromSequence(sequence: Sequence<A>): Alternative<F, A> = fromIterable(sequence.asIterable())
+		fun <A> fromList(list: List<A>): Alternative<F, A> = fromIterable(list)
 
 		fun <A> fromOptional(optional: Optional<A>): Alternative<F, A> =
 			optional.maybe(empty(), ::just)

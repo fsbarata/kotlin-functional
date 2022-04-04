@@ -83,8 +83,9 @@ class ListF<out A>(private val wrapped: List<A>): List<A> by wrapped,
 
 		fun <A> monoid() = monoid(empty<A>())
 
-		@Deprecated("Can be simplified", replaceWith = ReplaceWith("f()"))
-		override fun <A> fromList(list: List<A>) = list.f()
+		override fun <A> fromIterable(iterable: Iterable<A>) = ListF(iterable.toList())
+		override fun <A> fromSequence(sequence: Sequence<A>) = ListF(sequence.toList())
+		override fun <A> fromList(list: List<A>) = ListF(list.toList())
 
 		override fun <A> fromOptional(optional: Optional<A>) =
 			optional.fold(ifEmpty = ::empty, ifSome = ::just)
@@ -93,7 +94,7 @@ class ListF<out A>(private val wrapped: List<A>): List<A> by wrapped,
 
 fun <A> List<A>.f() = when (this) {
 	is ListF -> this
-	else -> ListF(this)
+	else -> ListF.fromList(this)
 }
 
 fun <A> List<A>.asFoldable(): Foldable<A> = f()

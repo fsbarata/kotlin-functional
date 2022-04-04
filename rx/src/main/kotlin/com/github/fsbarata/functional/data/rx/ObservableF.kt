@@ -70,7 +70,9 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 		override fun <A> empty() = Observable.empty<A>().f()
 		override fun <A> just(a: A) = Observable.just(a).f()
 
-		override fun <A> fromList(list: List<A>) = fromIterable(list).f()
+		override fun <A> fromIterable(iterable: Iterable<A>) = Observable.fromIterable(iterable).f()
+		override fun <A> fromSequence(sequence: Sequence<A>) = fromIterable(sequence.asIterable())
+		override fun <A> fromList(list: List<A>) = fromIterable(list)
 		override fun <A> fromOptional(optional: Optional<A>) = optional.maybe(empty(), ::just)
 	}
 }
