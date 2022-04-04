@@ -92,7 +92,7 @@ class NonEmptyList<out A>(
 
 	fun reversed(): NonEmptyList<A> = tail.asReversed().toNel()?.plus(head) ?: this
 
-	fun distinct() = toSet().toList()
+	fun distinct(): NonEmptyList<A> = toSet().toList()
 	inline fun <K> distinctBy(selector: (A) -> K): NonEmptyList<A> {
 		val set = HashSet<K>()
 		set.add(selector(head))
