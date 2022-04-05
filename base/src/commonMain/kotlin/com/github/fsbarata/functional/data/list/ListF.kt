@@ -59,13 +59,13 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		(this as List<A>).mapNotNull { f(it).orNull() }.f()
 
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
-		(this as List<A>).fold(initialValue, accumulator)
+		(this as Iterable<A>).fold(initialValue, accumulator)
 
 	override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
 		(this as List<A>).foldRight(initialValue, accumulator)
 
 	override inline fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
-		(this as List<A>).foldMap(monoid, f)
+		(this as Iterable<A>).foldMap(monoid, f)
 
 	override inline fun <B, R> zipWith(other: Functor<ListContext, B>, f: (A, B) -> R): ListF<R> =
 		zip(other.asList, f).f()
