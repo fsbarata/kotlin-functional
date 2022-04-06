@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.control.Applicative
+import com.github.fsbarata.functional.control.MonadPlus
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.maybe.Optional
 
@@ -10,21 +11,7 @@ import com.github.fsbarata.functional.data.maybe.Optional
  * Tested by ListFTest
  */
 
-fun <A> Iterable<A>.fold(monoid: Monoid<A>) = foldMap(monoid, id())
-inline fun <A, M> Iterable<A>.foldMap(monoid: Monoid<M>, f: (A) -> M): M =
-	fold(monoid.empty) { r, a -> monoid.combine(r, f(a)) }
-
-inline fun <A> Iterable<A>.asFoldable() = object: Foldable<A> {
-	override fun <R> foldL(initialValue: R, accumulator: (R, A) -> R) =
-		this@asFoldable.fold(initialValue, accumulator)
-
-	override fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M) =
-		this@asFoldable.foldMap(monoid, f)
-}
-
-fun <A: Semigroup<A>> Iterable<A>.foldL(initialValue: A): A = fold(initialValue, ::combine)
 fun <A: Semigroup<A>> List<A>.foldR(initialValue: A): A = foldRight(initialValue, ::combine)
-fun <A: Semigroup<A>> Iterable<A>.foldR(initialValue: A): A = asFoldable().foldR(initialValue, ::combine)
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun <A, B> List<A>.ap(fs: List<(A) -> B>): List<B> =
@@ -42,5 +29,7 @@ inline fun <F, A, B> List<A>.traverse(
 	}
 }
 
-inline fun <A, R: Any> Iterable<A>.mapNotNone(f: (A) -> Optional<R>) =
+inline fun <A, R: Any> Iterable<A>.mapNotNone(f: (A) -> Optional<R>): List<R> =
 	mapNotNull { f(it).orNull() }
+
+fun <A: Any> Iterable<Optional<A>>.filterNotNone(): List<A> = mapNotNone(id())

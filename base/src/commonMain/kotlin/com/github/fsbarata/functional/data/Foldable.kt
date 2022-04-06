@@ -67,3 +67,23 @@ fun <A> Foldable<A>.toList(): ListF<A> = foldMap(ListF.monoid()) { ListF.just(it
 
 fun <F, A> Foldable<Alternative<F, A>>.asum(scope: Alternative.Scope<F>) =
 	foldL(scope.empty(), Alternative<F, A>::associateWith)
+
+
+fun <A> Iterable<A>.fold(monoid: Monoid<A>) = foldMap(monoid, id())
+
+@Suppress("OVERRIDE_BY_INLINE")
+class FoldableIterable<A>(val iterable: Iterable<A>): Foldable<A>, Iterable<A> by iterable {
+	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R) =
+		iterable.fold(initialValue, accumulator)
+
+	override inline fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M) =
+		iterable.foldMap(monoid, f)
+}
+
+fun <A> Iterable<A>.asFoldable() = FoldableIterable(this)
+
+fun <A, R> Iterable<A>.foldL(initialValue: R, accumulator: (R, A) -> R): R = fold(initialValue, accumulator)
+inline fun <A, M> Iterable<A>.foldMap(monoid: Monoid<M>, f: (A) -> M): M =
+	fold(monoid.empty) { r, a -> monoid.combine(r, f(a)) }
+
+fun <A: Semigroup<A>> Iterable<A>.foldL(initialValue: A): A = fold(initialValue, ::combine)
