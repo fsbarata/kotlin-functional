@@ -3,6 +3,7 @@ package com.github.fsbarata.functional.data.list
 import com.github.fsbarata.functional.assertEquals
 import com.github.fsbarata.functional.control.MonadPlusLaws
 import com.github.fsbarata.functional.control.MonadZipLaws
+import com.github.fsbarata.functional.data.IntMinusSg
 import com.github.fsbarata.functional.data.TraversableLaws
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.validation.Validation
@@ -68,6 +69,17 @@ class ListFTest:
 				}
 				.asValidation
 				.map { it.sum() }
+		)
+	}
+
+	@Test
+	fun foldR() {
+		assertEquals(
+			53,
+			ListF.of(10, 11)
+				.map(::IntMinusSg)
+				.foldR(IntMinusSg(54))
+				.i
 		)
 	}
 }
