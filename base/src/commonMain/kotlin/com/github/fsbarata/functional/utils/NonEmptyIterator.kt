@@ -1,7 +1,9 @@
 package com.github.fsbarata.functional.utils
 
+import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.set.NonEmptySet
+import com.github.fsbarata.functional.data.set.SetF
 
 internal fun <A> nonEmptyIterator(head: A, tail: Iterator<A>) = object: Iterator<A> {
 	private var begin: Boolean = true
@@ -30,10 +32,10 @@ internal fun <A> nonEmptyIterator(head: Iterator<A>, tail: A) = object: Iterator
 		}
 }
 
-internal fun <A> Iterator<A>.toNelUnsafe() = NonEmptyList.of(next(), asSequence().toList())
+internal fun <A> Iterator<A>.toNelUnsafe() = NonEmptyList.of(next(), ListF.fromSequence(asSequence()))
 fun <A> Iterator<A>.toNel(): NonEmptyList<A>? =
 	if (!hasNext()) null else toNelUnsafe()
 
-internal fun <A> Iterator<A>.toNesUnsafe() = NonEmptySet.of(next(), asSequence().toSet())
+internal fun <A> Iterator<A>.toNesUnsafe() = NonEmptySet.of(next(), SetF.fromSequence(asSequence()))
 fun <A> Iterator<A>.toNes(): NonEmptySet<A>? =
 	if (!hasNext()) null else toNesUnsafe()

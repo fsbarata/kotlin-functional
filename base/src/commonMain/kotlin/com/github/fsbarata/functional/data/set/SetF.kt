@@ -68,16 +68,16 @@ class SetF<A>(private val wrapped: Set<A>): Set<A> by wrapped,
 		MonadPlus.Scope<SetContext>,
 		Traversable.Scope<SetContext> {
 		override fun <A> empty() = SetF(emptySet<A>())
-		override fun <A> just(a: A) = SetF(setOf(a))
+		override fun <A> just(a: A) = SetF(NonEmptySet.just(a))
 		fun <A> of(vararg items: A) = SetF(setOf(*items))
 
 		fun <A> monoid() = monoid(empty<A>())
 
-		override fun <A> fromIterable(iterable: Iterable<A>) = iterable.toSet().f()
-		override fun <A> fromSequence(sequence: Sequence<A>) = sequence.toSet().f()
-		override fun <A> fromList(list: List<A>) = list.toSet().f()
+		override fun <A> fromIterable(iterable: Iterable<A>) = SetF(iterable.toSet())
+		override fun <A> fromSequence(sequence: Sequence<A>) = SetF(sequence.toSet())
+		override fun <A> fromList(list: List<A>): SetF<A> = fromIterable(list)
 
-		override fun <A> fromOptional(optional: Optional<A>) =
+		override fun <A> fromOptional(optional: Optional<A>): SetF<A> =
 			optional.maybe(empty(), ::just)
 	}
 }
