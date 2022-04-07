@@ -18,16 +18,15 @@ typealias Forest<A> = Sequence<Tree<A>>
 
 internal typealias TreeContext = Tree<*>
 
-@Suppress("OVERRIDE_BY_INLINE")
-class Tree<out A>(
-	val root: A,
-	val sub: Forest<A> = emptySequence(),
-):
+interface Tree<out A>:
 	MonadZip<TreeContext, A>,
 	Comonad<TreeContext, A>,
 	Traversable<TreeContext, A>,
 	NonEmptySequenceBase<A> {
-	override val scope = Tree
+	override val scope get() = Tree
+
+	val root: A
+	val sub: Forest<A>
 
 	override fun iterator() = nonEmptyIterator(
 		root,
@@ -108,3 +107,11 @@ class Tree<out A>(
 
 val <A> Context<TreeContext, A>.asTree
 	get() = this as Tree<A>
+
+fun <A> Tree(
+	root: A,
+	sub: Sequence<Tree<A>> = emptySequence(),
+): Tree<A> = object: Tree<A> {
+	override val root: A = root
+	override val sub: Sequence<Tree<A>> = sub
+}
