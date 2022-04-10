@@ -105,6 +105,8 @@ fun <A> Iterable<A>.toNes(): NonEmptySet<A>? {
 	}
 }
 
+fun <A> Sequence<A>.toNes(): NonEmptySet<A>? = iterator().toNes()
+
 @Suppress("NOTHING_TO_INLINE")
 inline fun <F, A> NonEmptySet<Functor<F, A>>.sequenceA(appScope: Applicative.Scope<F>): Functor<F, NonEmptySet<A>> =
 	traverse(appScope, ::id)
