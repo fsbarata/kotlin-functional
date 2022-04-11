@@ -74,7 +74,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Functor<F, B>,
 	): Functor<F, ListF<B>> =
-		(this as List<A>).traverse(appScope, f).map(List<B>::f)
+		(this as List<A>).traverse(appScope, f)
 
 	operator fun plus(other: @UnsafeVariance A) = ListF(wrapped + other)
 	operator fun plus(other: Iterable<@UnsafeVariance A>) = ListF(wrapped + other)

@@ -1,7 +1,6 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.MonadPlus
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.maybe.Optional
 
@@ -15,7 +14,7 @@ fun <A: Semigroup<A>> List<A>.foldR(initialValue: A): A = foldRight(initialValue
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun <A, B> List<A>.ap(fs: List<(A) -> B>): List<B> =
-	fs.flatMap(this::map)
+	fs.flatMap(::map)
 
 inline fun <A, B, C> List<A>.lift2(lb: List<B>, f: (A, B) -> C): List<C> =
 	flatMap { a -> lb.map(f.partial(a)) }
@@ -23,8 +22,8 @@ inline fun <A, B, C> List<A>.lift2(lb: List<B>, f: (A, B) -> C): List<C> =
 inline fun <F, A, B> List<A>.traverse(
 	appScope: Applicative.Scope<F>,
 	f: (A) -> Functor<F, B>,
-): Functor<F, List<B>> {
-	return fold(appScope.just(emptyList())) { app, a ->
+): Functor<F, ListF<B>> {
+	return fold(appScope.just(ListF.empty())) { app, a ->
 		appScope.lift2(f(a), app) { b, lb -> lb + b }
 	}
 }
