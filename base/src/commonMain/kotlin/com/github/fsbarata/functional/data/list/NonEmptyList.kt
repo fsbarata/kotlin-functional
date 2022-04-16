@@ -21,6 +21,7 @@ class NonEmptyList<out A>(
 	override val tail: ListF<A>,
 ): List<A>,
 	NonEmptyCollection<A>,
+	ImmutableList<A>,
 	Serializable,
 	MonadZip<NonEmptyContext, A>,
 	Traversable<NonEmptyContext, A>,
@@ -57,9 +58,9 @@ class NonEmptyList<out A>(
 
 	override fun iterator(): Iterator<A> = super.iterator()
 
-	override fun subList(fromIndex: Int, toIndex: Int): List<A> = when {
+	override fun subList(fromIndex: Int, toIndex: Int): ListF<A> = when {
 		fromIndex == 0 && toIndex == 0 -> ListF.empty()
-		fromIndex == 0 -> NonEmptyList(head, tail.subList(0, toIndex - 1))
+		fromIndex == 0 -> ListF.fromList(NonEmptyList(head, tail.subList(0, toIndex - 1)))
 		else -> tail.subList(fromIndex - 1, toIndex - 1)
 	}
 

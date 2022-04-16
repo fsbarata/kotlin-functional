@@ -6,6 +6,8 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.sequence.SequenceF
+import com.github.fsbarata.functional.data.set.SetF
 import com.github.fsbarata.io.Serializable
 
 /**
@@ -15,6 +17,7 @@ import com.github.fsbarata.io.Serializable
  */
 @Suppress("OVERRIDE_BY_INLINE")
 class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> by wrapped,
+	ImmutableList<A>,
 	Serializable,
 	MonadZip<ListContext, A>,
 	MonadPlus<ListContext, A>,
@@ -26,22 +29,6 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 
 	override fun subList(fromIndex: Int, toIndex: Int) = ListF(wrapped.subList(fromIndex, toIndex))
 
-	fun drop(count: Int): ListF<A> =
-		if (count >= size) EMPTY
-		else subList(count, size)
-
-	fun dropLast(count: Int): ListF<A> =
-		if (count >= size) EMPTY
-		else subList(0, (size - count))
-
-	fun take(count: Int): ListF<A> =
-		if (count >= size) this
-		else subList(0, count)
-
-	fun takeLast(count: Int): ListF<A> =
-		if (count >= size) this
-		else subList(size - count, size)
-
 	operator fun plus(other: @UnsafeVariance A) =
 		if (wrapped.isEmpty()) just(other)
 		else ListF(wrapped + other)
@@ -49,16 +36,16 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	operator fun plus(other: Iterable<@UnsafeVariance A>): ListF<A> = ListF(wrapped + other)
 
 	override inline fun <B> map(f: (A) -> B): ListF<B> =
-		(this as List<A>).map(f).f()
+		asIterable().mapTo(ArrayList(size), f).f()
 
 	inline fun <B> mapIndexed(f: (index: Int, A) -> B): ListF<B> =
-		(this as List<A>).mapIndexed(f).f()
+		asIterable().mapIndexed(f).f()
 
 	override infix fun <B> ap(ff: Functor<ListContext, (A) -> B>): ListF<B> =
-		wrapped.ap(ff.asList).f()
+		ff.asList.flatMap(::map)
 
 	override inline fun <B, R> lift2(fb: Functor<ListContext, B>, f: (A, B) -> R): ListF<R> =
-		(this as List<A>).lift2(fb.asList, f).f()
+		bind { a -> fb.map(f.partial(a)) }
 
 	override inline infix fun <B> bind(f: (A) -> Context<ListContext, B>): ListF<B> =
 		flatMap { f(it).asList }
@@ -67,27 +54,27 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		(this as List<A>).flatMap(f).f()
 
 	override inline fun filter(predicate: (A) -> Boolean): ListF<A> =
-		(this as List<A>).filter(predicate).f()
+		asIterable().filter(predicate).f()
 
 	override inline fun partition(predicate: (A) -> Boolean): Pair<ListF<A>, ListF<A>> {
-		val p = (this as List<A>).partition(predicate)
+		val p = asIterable().partition(predicate)
 		return Pair(p.first.f(), p.second.f())
 	}
 
 	override inline fun <B: Any> mapNotNull(f: (A) -> B?) =
-		(this as List<A>).mapNotNull(f).f()
+		asIterable().mapNotNull(f).f()
 
 	override inline fun <B: Any> mapNotNone(f: (A) -> Optional<B>) =
-		(this as List<A>).mapNotNull { f(it).orNull() }.f()
+		asIterable().mapNotNull { f(it).orNull() }.f()
 
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
-		(this as Iterable<A>).fold(initialValue, accumulator)
+		asIterable().fold(initialValue, accumulator)
 
 	override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
 		(this as List<A>).foldRight(initialValue, accumulator)
 
 	override inline fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
-		(this as Iterable<A>).foldMap(monoid, f)
+		asIterable().foldMap(monoid, f)
 
 	override inline fun <B, R> zipWith(other: Functor<ListContext, B>, f: (A, B) -> R): ListF<R> =
 		zip(other.asList, f).f()
