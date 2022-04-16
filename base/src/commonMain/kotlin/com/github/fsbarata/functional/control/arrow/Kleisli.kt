@@ -2,6 +2,8 @@ package com.github.fsbarata.functional.control.arrow
 
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.F1
+import com.github.fsbarata.functional.data.compose
+import com.github.fsbarata.functional.data.composeForward2
 import com.github.fsbarata.functional.data.either.Either
 import com.github.fsbarata.functional.data.either.Either.Right
 import com.github.fsbarata.functional.data.id
@@ -31,7 +33,7 @@ class Kleisli<M, A, R> internal constructor(
 	override infix fun <B> compose(other: Category<Kleisli<M, *, *>, B, A>): Kleisli<M, B, R> =
 		Kleisli(monadScope) { other.asKleisli.f(it).bind(f) }
 
-	override fun <RR> composeForward(other: Category<Kleisli<M, *, *>, R, RR>): Kleisli<M, A, RR> =
+	override infix fun <RR> composeForward(other: Category<Kleisli<M, *, *>, R, RR>): Kleisli<M, A, RR> =
 		Kleisli(monadScope) { f(it).bind(other.asKleisli) }
 
 	override fun <PASS> first(): Kleisli<M, Pair<A, PASS>, Pair<R, PASS>> =
@@ -78,8 +80,27 @@ class KleisliScope<M>(private val monadScope: Monad.Scope<M>): ArrowApply.Scope<
 val <M, A, R> Category<Kleisli<M, *, *>, A, R>.asKleisli
 	get() = this as Kleisli<M, A, R>
 
-fun <M, A, R> Monad.Scope<M>.kleisli(f: (A) -> Monad<M, R>) =
+fun <M, A, R> Monad.Scope<M>.kleisli(f: (A) -> Monad<M, R>): Kleisli<M, A, R> =
 	Kleisli(this, f)
 
+fun <M, A, R> Monad.Scope<M>.mapKleisli(f: (A) -> R): Kleisli<M, A, R> =
+	Kleisli(this, compose(::just, f))
+
 val <M> Monad.Scope<M>.Kleisli get() = KleisliScope(this)
+
+fun <M, A, B, R> composeKleisli(kleisli1: Kleisli<M, A, R>, kleisli2: Kleisli<M, B, A>) =
+	kleisli1.compose(kleisli2)
+
+fun <M, A, B, C, R> composeKleisli(kleisli1: Kleisli<M, A, R>, kleisli2: Kleisli<M, B, A>, kleisli3: Kleisli<M, C, B>) =
+	kleisli1.compose(kleisli2).compose(kleisli3)
+
+fun <M, A, B, C, D, R> composeKleisli(
+	kleisli1: Kleisli<M, A, R>,
+	kleisli2: Kleisli<M, B, A>,
+	kleisli3: Kleisli<M, C, B>,
+	kleisli4: Kleisli<M, D, C>,
+) = kleisli1.compose(kleisli2).compose(kleisli3).compose(kleisli4)
+
+fun <M, A, B, R> composeForwardKleisli(kleisli1: Kleisli<M, A, B>, kleisli2: Kleisli<M, B, R>) =
+	kleisli1.composeForward(kleisli2)
 
