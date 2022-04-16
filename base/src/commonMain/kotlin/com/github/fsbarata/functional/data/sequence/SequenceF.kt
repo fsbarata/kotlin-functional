@@ -3,15 +3,17 @@ package com.github.fsbarata.functional.data.sequence
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
+import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.set.SetF
 import com.github.fsbarata.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
-class SequenceF<A>(private val wrapped: Sequence<A>):
+class SequenceF<out A>(private val wrapped: Sequence<A>):
 	MonadZip<SequenceContext, A>,
 	MonadPlus<SequenceContext, A>,
 	Traversable<SequenceContext, A>,
-	Semigroup<SequenceF<A>>,
+	Semigroup<SequenceF<@UnsafeVariance A>>,
 	Sequence<A> by wrapped,
 	Serializable {
 	override val scope get() = SequenceF
@@ -60,14 +62,17 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 	): Functor<F, SequenceF<B>> =
 		(this as Sequence<A>).traverse(appScope, f).map(Sequence<B>::f)
 
-	override fun associateWith(other: Context<SequenceContext, A>) =
+	override fun associateWith(other: Context<SequenceContext, @UnsafeVariance A>) =
 		SequenceF(wrapped + (other.asSequence).wrapped)
 
-	override fun combineWith(other: SequenceF<A>): SequenceF<A> = associateWith(other)
+	override fun combineWith(other: SequenceF<@UnsafeVariance A>): SequenceF<A> = associateWith(other)
 
 	override fun toString() = wrapped.toString()
 	override fun equals(other: Any?) = wrapped == other
 	override fun hashCode() = wrapped.hashCode()
+
+	fun toList(): ListF<A> = ListF.fromSequence(wrapped)
+	fun toSet(): SetF<A> = SetF.fromSequence(wrapped)
 
 	companion object:
 		MonadPlus.Scope<SequenceContext>,

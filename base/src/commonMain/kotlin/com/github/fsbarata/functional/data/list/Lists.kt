@@ -19,7 +19,7 @@ inline fun <A, B> List<A>.ap(fs: List<(A) -> B>): List<B> =
 inline fun <A, B, C> List<A>.lift2(lb: List<B>, f: (A, B) -> C): List<C> =
 	flatMap { a -> lb.map(f.partial(a)) }
 
-inline fun <F, A, B> List<A>.traverse(
+inline fun <F, A, B> Iterable<A>.traverse(
 	appScope: Applicative.Scope<F>,
 	f: (A) -> Functor<F, B>,
 ): Functor<F, ListF<B>> {

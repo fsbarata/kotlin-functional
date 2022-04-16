@@ -86,6 +86,9 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	override fun equals(other: Any?) = wrapped == other
 	override fun hashCode() = wrapped.hashCode()
 
+	fun toSet(): SetF<A> = SetF.fromIterable(wrapped)
+	fun asSequence(): SequenceF<A> = SequenceF.fromIterable(wrapped)
+
 	companion object:
 		MonadPlus.Scope<ListContext>,
 		Traversable.Scope<ListContext> {
