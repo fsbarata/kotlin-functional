@@ -26,6 +26,28 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 
 	override fun subList(fromIndex: Int, toIndex: Int) = ListF(wrapped.subList(fromIndex, toIndex))
 
+	fun drop(count: Int): ListF<A> =
+		if (count >= size) EMPTY
+		else subList(count, size)
+
+	fun dropLast(count: Int): ListF<A> =
+		if (count >= size) EMPTY
+		else subList(0, (size - count))
+
+	fun take(count: Int): ListF<A> =
+		if (count >= size) this
+		else subList(0, count)
+
+	fun takeLast(count: Int): ListF<A> =
+		if (count >= size) this
+		else subList(size - count, size)
+
+	operator fun plus(other: @UnsafeVariance A) =
+		if (wrapped.isEmpty()) just(other)
+		else ListF(wrapped + other)
+
+	operator fun plus(other: Iterable<@UnsafeVariance A>): ListF<A> = ListF(wrapped + other)
+
 	override inline fun <B> map(f: (A) -> B): ListF<B> =
 		(this as List<A>).map(f).f()
 
@@ -74,10 +96,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Functor<F, B>,
 	): Functor<F, ListF<B>> =
-		(this as List<A>).traverse(appScope, f)
-
-	operator fun plus(other: @UnsafeVariance A) = ListF(wrapped + other)
-	operator fun plus(other: Iterable<@UnsafeVariance A>) = ListF(wrapped + other)
+		asIterable().traverse(appScope, f)
 
 	override fun associateWith(other: Context<ListContext, @UnsafeVariance A>) = plus(other.asList)
 	override fun combineWith(other: ListF<@UnsafeVariance A>) = plus(other)

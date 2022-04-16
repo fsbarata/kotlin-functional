@@ -82,5 +82,36 @@ class ListFTest:
 				.i
 		)
 	}
+
+	@Test
+	fun drop() {
+		assertEquals(ListF.of(1, 2, 3, 5), ListF.of(1, 2, 3, 5).drop(0))
+		assertEquals(ListF.of(3, 5), ListF.of(1, 2, 3, 5).drop(2))
+		assertEquals(ListF.empty<Int>(), ListF.of(1, 2, 3, 5).drop(4))
+		assertEquals(ListF.empty<Int>(), ListF.of(1, 2, 3, 5).drop(6))
+	}
+
+	@Test
+	fun takeLast() {
+		assertEquals(ListF.of(1, 2, 3, 5), ListF.of(1, 2, 3, 5).takeLast(6))
+		assertEquals(ListF.of(1, 2, 3, 5), ListF.of(1, 2, 3, 5).takeLast(4))
+		assertEquals(ListF.of(3, 5), ListF.of(1, 2, 3, 5).takeLast(2))
+		assertEquals(ListF.empty<Int>(), ListF.of(1, 2, 3, 5).takeLast(0))
+	}
+
+	@Test
+	fun take() {
+		assertEquals(ListF.empty<Int>(), ListF.of(1, 2, 3, 5).take(0))
+		assertEquals(ListF.of(1, 2), ListF.of(1, 2, 3, 5).take(2))
+		assertEquals(ListF.of(1, 2, 3, 5), ListF.of(1, 2, 3, 5).take(6))
+	}
+
+	@Test
+	fun dropLast() {
+		assertEquals(ListF.empty<Int>(), ListF.of(1, 2, 3, 5).dropLast(6))
+		assertEquals(ListF.empty<Int>(), ListF.of(1, 2, 3, 5).dropLast(4))
+		assertEquals(ListF.of(1, 2), ListF.of(1, 2, 3, 5).dropLast(2))
+		assertEquals(ListF.of(1, 2, 3, 5), ListF.of(1, 2, 3, 5).dropLast(0))
+	}
 }
 
