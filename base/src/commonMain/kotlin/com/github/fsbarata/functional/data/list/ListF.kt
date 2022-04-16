@@ -89,13 +89,14 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	companion object:
 		MonadPlus.Scope<ListContext>,
 		Traversable.Scope<ListContext> {
-		override fun <A> empty() = ListF(emptyList<A>())
-		override fun <A> just(a: A) = ListF(NonEmptyList.just(a))
-		fun <A> of(vararg items: A) = ListF(listOf(*items))
+		private val EMPTY = ListF<Nothing>(emptyList())
+		override fun <A> empty(): ListF<A> = EMPTY
+		override fun <A> just(a: A): ListF<A> = ListF(NonEmptyList.just(a))
+		fun <A> of(vararg items: A): ListF<A> = ListF(listOf(*items))
 
-		fun <A> monoid() = monoid(empty<A>())
+		fun <A> monoid(): Monoid<ListF<A>> = monoid(empty())
 
-		override fun <A> fromIterable(iterable: Iterable<A>) = when (iterable) {
+		override fun <A> fromIterable(iterable: Iterable<A>): ListF<A> = when (iterable) {
 			is ListF -> iterable
 			is NonEmptyList<A> -> ListF(iterable)
 			else -> ListF(iterable.toList())
@@ -104,7 +105,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		override fun <A> fromSequence(sequence: Sequence<A>) = ListF(sequence.toList())
 		override inline fun <A> fromList(list: List<A>) = fromIterable(list)
 
-		override fun <A> fromOptional(optional: Optional<A>) =
+		override fun <A> fromOptional(optional: Optional<A>): ListF<A> =
 			optional.fold(ifEmpty = ::empty, ifSome = ::just)
 	}
 }
