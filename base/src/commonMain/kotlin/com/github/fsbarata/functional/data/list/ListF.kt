@@ -50,8 +50,18 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	override inline infix fun <B> bind(f: (A) -> Context<ListContext, B>): ListF<B> =
 		flatMap { f(it).asList }
 
-	inline fun <B> flatMap(f: (A) -> List<B>): ListF<B> =
-		(this as List<A>).flatMap(f).f()
+	inline fun <B> flatMap(f: (A) -> List<B>): ListF<B> {
+		val result = ArrayList<B>()
+		for (element in this) {
+			val list = f(element)
+			when (list.size) {
+				0 -> {}
+				1 -> result.add(list[0])
+				else -> result.addAll(list)
+			}
+		}
+		return fromList(result)
+	}
 
 	override inline fun filter(predicate: (A) -> Boolean): ListF<A> =
 		asIterable().filter(predicate).f()
