@@ -95,19 +95,21 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 
 		fun <A> monoid() = monoid(empty<A>())
 
-		override fun <A> fromIterable(iterable: Iterable<A>) = ListF(iterable.toList())
+		override fun <A> fromIterable(iterable: Iterable<A>) = when (iterable) {
+			is ListF -> iterable
+			is NonEmptyList<A> -> ListF(iterable)
+			else -> ListF(iterable.toList())
+		}
+
 		override fun <A> fromSequence(sequence: Sequence<A>) = ListF(sequence.toList())
-		override fun <A> fromList(list: List<A>) = ListF(list.toList())
+		override inline fun <A> fromList(list: List<A>) = fromIterable(list)
 
 		override fun <A> fromOptional(optional: Optional<A>) =
 			optional.fold(ifEmpty = ::empty, ifSome = ::just)
 	}
 }
 
-fun <A> List<A>.f() = when (this) {
-	is ListF -> this
-	else -> ListF.fromList(this)
-}
+inline fun <A> List<A>.f() = ListF.fromList(this)
 
 fun <A> List<A>.asFoldable(): Foldable<A> = f()
 fun <A, R> List<A>.f(block: ListF<A>.() -> Context<ListContext, R>) =
