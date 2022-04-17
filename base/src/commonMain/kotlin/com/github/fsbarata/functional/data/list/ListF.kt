@@ -50,18 +50,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	override inline infix fun <B> bind(f: (A) -> Context<ListContext, B>): ListF<B> =
 		flatMap { f(it).asList }
 
-	inline fun <B> flatMap(f: (A) -> List<B>): ListF<B> {
-		val result = ArrayList<B>()
-		for (element in this) {
-			val list = f(element)
-			when (list.size) {
-				0 -> {}
-				1 -> result.add(list[0])
-				else -> result.addAll(list)
-			}
-		}
-		return fromList(result)
-	}
+	inline fun <B> flatMap(f: (A) -> List<B>): ListF<B> = fastFlatmap(f)
 
 	override inline fun filter(predicate: (A) -> Boolean): ListF<A> =
 		asIterable().filter(predicate).f()
@@ -166,3 +155,20 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 fun <A, R> liftList(f: (A) -> R): (List<A>) -> List<R> = lift(f)::invoke
 fun <A, B, R> liftList2(f: (A, B) -> R): (List<A>, List<B>) -> List<R> = lift2(f)::invoke
 fun <A, B, C, R> liftList3(f: (A, B, C) -> R): (List<A>, List<B>, List<C>) -> List<R> = lift3(f)::invoke
+
+inline fun <A, B> List<A>.fastFlatmap(f: (A) -> List<B>): ListF<B> = when (size) {
+	0 -> ListF.empty()
+	1 -> ListF.fromList(f(get(0)))
+	else -> {
+		val result = ArrayList<B>()
+		for (element in this) {
+			val list = f(element)
+			when (list.size) {
+				0 -> {}
+				1 -> result.add(list[0])
+				else -> result.addAll(list)
+			}
+		}
+		ListF.fromList(result)
+	}
+}
