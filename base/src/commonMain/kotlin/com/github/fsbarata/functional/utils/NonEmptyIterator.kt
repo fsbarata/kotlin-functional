@@ -5,6 +5,19 @@ import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.set.NonEmptySet
 import com.github.fsbarata.functional.data.set.SetF
 
+
+internal fun <A> singleItemIterator(item: A) = object: Iterator<A> {
+	private var consumed: Boolean = false
+
+	override fun hasNext() = !consumed
+
+	override fun next(): A {
+		check(!consumed)
+		consumed = true
+		return item
+	}
+}
+
 internal fun <A> nonEmptyIterator(head: A, tail: Iterator<A>) = object: Iterator<A> {
 	private var begin: Boolean = true
 
