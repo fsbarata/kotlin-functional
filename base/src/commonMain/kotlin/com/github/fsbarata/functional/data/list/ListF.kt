@@ -39,7 +39,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		asIterable().mapTo(ArrayList(size), f).f()
 
 	inline fun <B> mapIndexed(f: (index: Int, A) -> B): ListF<B> =
-		asIterable().mapIndexed(f).f()
+		asIterable().mapIndexedTo(ArrayList(size), f).f()
 
 	override infix fun <B> ap(ff: Functor<ListContext, (A) -> B>): ListF<B> =
 		ff.asList.flatMap(::map)
@@ -71,11 +71,11 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		return Pair(p.first.f(), p.second.f())
 	}
 
-	override inline fun <B: Any> mapNotNull(f: (A) -> B?) =
+	override inline fun <B: Any> mapNotNull(f: (A) -> B?): ListF<B> =
 		asIterable().mapNotNull(f).f()
 
-	override inline fun <B: Any> mapNotNone(f: (A) -> Optional<B>) =
-		asIterable().mapNotNull { f(it).orNull() }.f()
+	override inline fun <B: Any> mapNotNone(f: (A) -> Optional<B>): ListF<B> =
+		mapNotNull { f(it).orNull() }
 
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		asIterable().fold(initialValue, accumulator)
