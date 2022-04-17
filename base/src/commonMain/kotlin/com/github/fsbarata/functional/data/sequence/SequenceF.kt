@@ -6,6 +6,7 @@ import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.set.SetF
+import com.github.fsbarata.functional.utils.singleItemIterator
 import com.github.fsbarata.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
@@ -78,7 +79,7 @@ class SequenceF<out A>(private val wrapped: Sequence<A>):
 		MonadPlus.Scope<SequenceContext>,
 		Traversable.Scope<SequenceContext> {
 		override fun <A> empty(): SequenceF<A> = emptySequence<A>().f()
-		override fun <A> just(a: A) = sequenceOf(a).f()
+		override fun <A> just(a: A) = Sequence { singleItemIterator(a) }.f()
 		fun <A> of(vararg items: A) = sequenceOf(*items).f()
 
 		fun <A> monoid() = monoid(empty<A>())

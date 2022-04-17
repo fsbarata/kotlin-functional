@@ -21,14 +21,12 @@ internal typealias NonEmptySequenceContext = NonEmptySequence<*>
  *
  * By definition, this object is guaranteed to have at least one item. The head item is still lazily acquired.
  */
-class NonEmptySequence<A> internal constructor(private val iter: () -> Iterator<A>):
+abstract class NonEmptySequence<A> internal constructor():
 	NonEmptySequenceBase<A>,
 	MonadZip<NonEmptySequenceContext, A>,
 	Traversable<NonEmptySequenceContext, A>,
 	Semigroup<NonEmptySequence<A>> {
 	override val scope get() = NonEmptySequence
-
-	override fun iterator(): Iterator<A> = iter()
 
 	override fun <B> map(f: (A) -> B): NonEmptySequence<B> = NonEmptySequence {
 		val iterator = iterator()
@@ -119,6 +117,10 @@ interface NonEmptySequenceBase<out A>:
 		val iterator = iterator()
 		nonEmptyIterator(iterator.next(), (iterator.asSequence() + elements).iterator())
 	}
+}
+
+internal inline fun <A> NonEmptySequence(crossinline iterator: () -> Iterator<A>) = object : NonEmptySequence<A>() {
+	override fun iterator() = iterator()
 }
 
 val <A> Context<NonEmptySequenceContext, A>.asNes get() = this as NonEmptySequence<A>
