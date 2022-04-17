@@ -94,6 +94,8 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	fun toSet(): SetF<A> = SetF.fromIterable(wrapped)
 	fun asSequence(): SequenceF<A> = SequenceF.fromIterable(wrapped)
 
+	fun asReversed(): ListF<A> = ListF(wrapped.asReversed())
+
 	companion object:
 		MonadPlus.Scope<ListContext>,
 		Traversable.Scope<ListContext> {

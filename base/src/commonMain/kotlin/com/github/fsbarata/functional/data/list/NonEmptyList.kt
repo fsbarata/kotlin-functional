@@ -5,6 +5,7 @@ import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
 import com.github.fsbarata.functional.data.maybe.invoke
+import com.github.fsbarata.functional.data.set.NonEmptySet
 import com.github.fsbarata.functional.utils.LambdaListIterator
 import com.github.fsbarata.functional.utils.listEquals
 import com.github.fsbarata.functional.utils.toNel
@@ -147,6 +148,8 @@ class NonEmptyList<out A>(
 	}
 
 	override fun hashCode() = head.hashCode() + tail.hashCode()
+
+	fun asList() = ListF(this)
 
 	override fun toString() =
 		joinToString(prefix = "[", postfix = "]")
