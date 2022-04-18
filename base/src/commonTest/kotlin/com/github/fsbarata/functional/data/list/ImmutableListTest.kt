@@ -3,9 +3,9 @@ package com.github.fsbarata.functional.data.list
 import com.github.fsbarata.functional.assertEquals
 import kotlin.test.Test
 
-internal interface ImmutableListTest {
-	fun empty(): ImmutableList<Int>?
-	fun of(item1: Int, vararg items: Int): ImmutableList<Int>
+internal abstract class ImmutableListTest {
+	abstract fun empty(): ImmutableList<Int>?
+	abstract fun of(item1: Int, vararg items: Int): ImmutableList<Int>
 
 
 	@Test
@@ -69,5 +69,33 @@ internal interface ImmutableListTest {
 		assertEquals(ListF.of(2, 5), of(1, 2, 3, 5).slice(ListF.of(0, 1, 3)).slice(1..2))
 
 		assertEquals(ListF.empty<Int>(), empty()?.slice(ListF.empty()) ?: ListF.empty<Int>())
+	}
+
+	@Test
+	fun chunked() {
+		assertEquals(ListF.of(listOf(1), listOf(2), listOf(3), listOf(5)), of(1, 2, 3, 5).chunked(1))
+		assertEquals(ListF.of(listOf(1, 2), listOf(3, 5)), of(1, 2, 3, 5).chunked(2))
+		assertEquals(ListF.of(listOf(1, 2), listOf(3, 5), listOf(6)), of(1, 2, 3, 5, 6).chunked(2))
+
+		assertEquals(ListF.empty<Int>(), empty()?.chunked(1) ?: ListF.empty<Int>())
+		assertEquals(ListF.empty<Int>(), empty()?.chunked(2) ?: ListF.empty<Int>())
+	}
+
+	@Test
+	fun windowed() {
+		assertEquals(ListF.of(listOf(1), listOf(2), listOf(3), listOf(5)), of(1, 2, 3, 5).windowed(1, 1))
+		assertEquals(ListF.empty<Int>(), of(1, 2, 3, 5).windowed(5, 5))
+		assertEquals(ListF.of(listOf(1, 2, 3, 5)), of(1, 2, 3, 5).windowed(5, 5, true))
+		assertEquals(ListF.of(listOf(1, 2), listOf(2, 3), listOf(3, 5)), of(1, 2, 3, 5).windowed(2, 1))
+		assertEquals(ListF.of(listOf(1, 2), listOf(2, 3), listOf(3, 5), listOf(5)), of(1, 2, 3, 5).windowed(2, 1, true))
+		assertEquals(ListF.of(listOf(1), listOf(3)), of(1, 2, 3, 5).windowed(1, 2))
+		assertEquals(ListF.of(listOf(1), listOf(3)), of(1, 2, 3, 5).windowed(1, 2, true))
+		assertEquals(ListF.of(listOf(1), listOf(3), listOf(6)), of(1, 2, 3, 5, 6).windowed(1, 2))
+		assertEquals(ListF.of(listOf(1, 2), listOf(3, 5)), of(1, 2, 3, 5, 6).windowed(2, 2))
+		assertEquals(ListF.of(listOf(1, 2), listOf(3, 5), listOf(6)), of(1, 2, 3, 5, 6).windowed(2, 2, true))
+
+		assertEquals(ListF.empty<Int>(), empty()?.windowed(1, 1) ?: ListF.empty<Int>())
+		assertEquals(ListF.empty<Int>(), empty()?.windowed(1, 2) ?: ListF.empty<Int>())
+		assertEquals(ListF.empty<Int>(), empty()?.windowed(2, 1) ?: ListF.empty<Int>())
 	}
 }

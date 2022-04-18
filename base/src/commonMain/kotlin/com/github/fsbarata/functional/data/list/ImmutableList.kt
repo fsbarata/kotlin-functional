@@ -24,6 +24,25 @@ internal interface ImmutableList<out A>: List<A> {
 		else subList(indices.start, indices.endInclusive + 1)
 
 	fun slice(indices: ImmutableList<Int>): ListF<A> = ListF.fromList(SlicedList(this, indices))
+
+	fun chunked(size: Int) = windowed(size, size, true)
+
+	fun windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): ListF<ListF<A>> {
+		require(size > 0) { "Size must be greater than 0" }
+		require(step > 0) { "Step must be greater than 0" }
+		val listSize = this.size
+		val windowCount = when {
+			partialWindows -> listSize / step + if (listSize % step == 0) 0 else 1
+			size > listSize -> return ListF.empty()
+			size == listSize -> return ListF.just(ListF.fromList(this))
+			else -> ((listSize - size) / step) + 1
+		}
+		return ListF(windowCount) { windowIndex ->
+			val windowStart = windowIndex * step
+			val windowEnd = (windowStart + size).coerceAtMost(listSize)
+			subList(windowStart, windowEnd)
+		}
+	}
 }
 
 internal class SlicedList<out A>(

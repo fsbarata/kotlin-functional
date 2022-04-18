@@ -11,8 +11,8 @@ import com.github.fsbarata.functional.data.validation.ValidationApplicativeScope
 import com.github.fsbarata.functional.data.validation.asValidation
 import kotlin.test.Test
 
-class ListFTest:
-	ImmutableListTest,
+internal class ListFTest:
+	ImmutableListTest(),
 	MonadPlusLaws<ListContext>,
 	MonadZipLaws<ListContext>,
 	TraversableLaws<ListContext> {

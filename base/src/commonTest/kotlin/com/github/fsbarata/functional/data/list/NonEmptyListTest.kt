@@ -14,8 +14,8 @@ import com.github.fsbarata.functional.data.validation.ValidationApplicativeScope
 import com.github.fsbarata.functional.data.validation.asValidation
 import kotlin.test.Test
 
-class NonEmptyListTest:
-	ImmutableListTest,
+internal class NonEmptyListTest:
+	ImmutableListTest(),
 	MonadZipLaws<NonEmptyContext>,
 	TraversableLaws<NonEmptyContext>,
 	ComonadLaws<NonEmptyContext> {
