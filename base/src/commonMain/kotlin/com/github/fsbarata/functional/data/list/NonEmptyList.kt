@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.Context
@@ -5,7 +7,6 @@ import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
 import com.github.fsbarata.functional.data.maybe.invoke
-import com.github.fsbarata.functional.data.set.NonEmptySet
 import com.github.fsbarata.functional.utils.LambdaListIterator
 import com.github.fsbarata.functional.utils.listEquals
 import com.github.fsbarata.functional.utils.toNel
@@ -17,7 +18,7 @@ import com.github.fsbarata.io.Serializable
  * By definition, this object is guaranteed to have at least one item.
  */
 @Suppress("OVERRIDE_BY_INLINE")
-class NonEmptyList<out A>(
+class NonEmptyList<out A> internal constructor(
 	override val head: A,
 	override val tail: ListF<A>,
 ): List<A>,
@@ -65,9 +66,9 @@ class NonEmptyList<out A>(
 		else -> tail.subList(fromIndex - 1, toIndex - 1)
 	}
 
-	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = NonEmptyList(f(head), tail.map(f))
+	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
 	inline fun <B> mapIndexed(f: (index: Int, A) -> B): NonEmptyList<B> =
-		NonEmptyList(f(0, head), tail.mapIndexed { index, item -> f(index + 1, item) })
+		of(f(0, head), tail.mapIndexed { index, item -> f(index + 1, item) })
 
 	override fun <B> ap(ff: Functor<NonEmptyContext, (A) -> B>): NonEmptyList<B> =
 		ff.asNel.flatMap(this::map)
@@ -80,12 +81,15 @@ class NonEmptyList<out A>(
 
 	inline fun <B> flatMap(f: (A) -> NonEmptyList<B>): NonEmptyList<B> {
 		val mappedHead = f(head)
-		return NonEmptyList(mappedHead.head, mappedHead.tail + tail.flatMap(f))
+		return of(mappedHead.head, mappedHead.tail + tail.flatMap(f))
 	}
 
 	inline fun <B> flatMapIndexed(f: (index: Int, A) -> NonEmptyList<B>): NonEmptyList<B> {
 		val mappedHead = f(0, head)
-		return NonEmptyList(mappedHead.head, mappedHead.tail + tail.flatMapIndexed { index, item -> f(index + 1, item) })
+		return of(
+			mappedHead.head,
+			mappedHead.tail + tail.flatMapIndexed { index, item -> f(index + 1, item) },
+		)
 	}
 
 	override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
@@ -96,7 +100,7 @@ class NonEmptyList<out A>(
 
 	override inline fun <B, R> zipWith(other: Functor<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> {
 		val otherNel = other.asNel
-		return NonEmptyList(f(head, otherNel.head), tail.zipWith(otherNel.tail, f))
+		return of(f(head, otherNel.head), tail.zipWith(otherNel.tail, f))
 	}
 
 	fun reversed(): NonEmptyList<A> = tail.asReversed().toNel()?.plus(head) ?: this
@@ -105,7 +109,7 @@ class NonEmptyList<out A>(
 	inline fun <K> distinctBy(selector: (A) -> K): NonEmptyList<A> {
 		val set = HashSet<K>()
 		set.add(selector(head))
-		return NonEmptyList(
+		return of(
 			head,
 			tail.filter { set.add(selector(it)) },
 		)
@@ -127,7 +131,7 @@ class NonEmptyList<out A>(
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Functor<F, B>,
 	): Functor<F, NonEmptyList<B>> =
-		appScope.lift2(f(head), tail.traverse(appScope, f), ::NonEmptyList)
+		appScope.lift2(f(head), tail.traverse(appScope, f), ::of)
 
 	inline fun <F, B> traverse(
 		f: (A) -> Applicative<F, B>,
@@ -135,7 +139,7 @@ class NonEmptyList<out A>(
 		val mappedHead = f(head)
 		return mappedHead.lift2(
 			tail.traverse(mappedHead.scope, f),
-			::NonEmptyList
+			::of
 		)
 	}
 
@@ -171,10 +175,11 @@ fun <A> nelOf(head: A, vararg tail: A): NonEmptyList<A> = NonEmptyList.of(head, 
 fun <A> List<A>.startWithItem(item: A): NonEmptyList<A> = NonEmptyList.of(item, this)
 fun <A> List<A>.startWithNel(nel: NonEmptyList<A>): NonEmptyList<A> = nel + this
 
-fun <A> List<A>.nonEmpty(): NonEmptyList<A>? = toNel()
+inline fun <A> List<A>.nonEmpty(): NonEmptyList<A>? = toNel()
 fun <A> Iterable<A>.toNel(): NonEmptyList<A>? {
 	return when (this) {
 		is NonEmptyList<A> -> this
+		is ListF<A> -> toNel()
 		else -> iterator().toNel()
 	}
 }

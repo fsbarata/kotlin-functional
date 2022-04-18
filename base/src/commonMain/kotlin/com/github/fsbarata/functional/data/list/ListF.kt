@@ -96,6 +96,8 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 
 	fun asReversed(): ListF<A> = ListF(wrapped.asReversed())
 
+	fun toNel(): NonEmptyList<A>? = if (isEmpty()) null else NonEmptyList(this[0], drop(1))
+
 	companion object:
 		MonadPlus.Scope<ListContext>,
 		Traversable.Scope<ListContext> {
@@ -113,7 +115,9 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		}
 
 		override fun <A> fromSequence(sequence: Sequence<A>) = ListF(sequence.toList())
-		override inline fun <A> fromList(list: List<A>) = fromIterable(list)
+		override inline fun <A> fromList(list: List<A>) =
+			if (list.isEmpty()) empty()
+			else fromIterable(list)
 
 		override fun <A> fromOptional(optional: Optional<A>): ListF<A> =
 			optional.fold(ifEmpty = ::empty, ifSome = ::just)
