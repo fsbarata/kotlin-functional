@@ -63,10 +63,10 @@ class SequenceF<out A>(private val wrapped: Sequence<A>):
 	): Functor<F, SequenceF<B>> =
 		(this as Sequence<A>).traverse(appScope, f).map(Sequence<B>::f)
 
-	override fun associateWith(other: Context<SequenceContext, @UnsafeVariance A>) =
+	override fun combineWith(other: Context<SequenceContext, @UnsafeVariance A>) =
 		SequenceF(wrapped + (other.asSequence).wrapped)
 
-	override fun concatWith(other: SequenceF<@UnsafeVariance A>): SequenceF<A> = associateWith(other)
+	override fun concatWith(other: SequenceF<@UnsafeVariance A>): SequenceF<A> = combineWith(other)
 
 	override fun toString() = wrapped.toString()
 	override fun equals(other: Any?) = wrapped == other

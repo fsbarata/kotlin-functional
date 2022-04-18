@@ -39,7 +39,7 @@ data class OptionalT<M, out A>(
 		}
 	)
 
-	override fun associateWith(other: Context<Monad<M, OptionalContext>, @UnsafeVariance A>): OptionalT<M, A> =
+	override fun combineWith(other: Context<Monad<M, OptionalContext>, @UnsafeVariance A>): OptionalT<M, A> =
 		OptionalT(wrapped.bind { v ->
 			v.fold(
 				ifEmpty = { other.asOptionalT.wrapped },

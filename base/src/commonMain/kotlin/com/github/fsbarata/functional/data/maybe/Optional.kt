@@ -76,7 +76,7 @@ sealed class Optional<out A>:
 			ifSome = { f(it).map(::Some) },
 		)
 
-	override fun associateWith(other: Context<OptionalContext, @UnsafeVariance A>) =
+	override fun combineWith(other: Context<OptionalContext, @UnsafeVariance A>) =
 		orOptional(other.asOptional)
 
 	companion object:

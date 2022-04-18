@@ -66,7 +66,7 @@ fun <A: Semigroup<A>> Foldable<A>.scanR(initialValue: A): NonEmptyList<A> = scan
 fun <A> Foldable<A>.toList(): ListF<A> = foldMap(ListF.monoid()) { ListF.just(it) }
 
 fun <F, A> Foldable<Alternative<F, A>>.asum(scope: Alternative.Scope<F>) =
-	foldL(scope.empty(), Alternative<F, A>::associateWith)
+	foldL(scope.empty(), Alternative<F, A>::combineWith)
 
 
 fun <A> Iterable<A>.fold(monoid: Monoid<A>) = foldMap(monoid, id())

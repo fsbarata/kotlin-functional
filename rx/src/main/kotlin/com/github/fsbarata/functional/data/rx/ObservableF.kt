@@ -60,7 +60,7 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	fun scan(monoid: Monoid<A>): ObservableF<A> = super.scan(monoid.empty, monoid::combine).f()
 
 	override fun concatWith(other: ObservableF<A>): ObservableF<A> = super.concatWith(other).f()
-	override fun associateWith(other: Context<ObservableContext, A>) =
+	override fun combineWith(other: Context<ObservableContext, A>) =
 		concatWith(other.asObservable)
 
 	override fun <B, R> zipWith(other: Functor<ObservableContext, B>, f: (A, B) -> R) =
