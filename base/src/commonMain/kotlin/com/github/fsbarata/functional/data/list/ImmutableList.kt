@@ -48,7 +48,7 @@ internal interface ImmutableList<out A>: List<A> {
 internal class SlicedList<out A>(
 	private val list: ImmutableList<A>,
 	private val indices: ImmutableList<Int>,
-): ImmutableList<A> {
+): AbstractList<A>(), ImmutableList<A> {
 	override val size: Int = indices.size
 	override fun isEmpty() = indices.isEmpty()
 
