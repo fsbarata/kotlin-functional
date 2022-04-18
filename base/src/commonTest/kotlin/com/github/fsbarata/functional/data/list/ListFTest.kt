@@ -12,11 +12,15 @@ import com.github.fsbarata.functional.data.validation.asValidation
 import kotlin.test.Test
 
 class ListFTest:
+	ImmutableListTest,
 	MonadPlusLaws<ListContext>,
 	MonadZipLaws<ListContext>,
 	TraversableLaws<ListContext> {
 	override val traversableScope = ListF
 	override val monadScope = ListF
+
+	override fun empty() = ListF.empty<Int>()
+	override fun of(item1: Int, vararg items: Int): ListF<Int> = ListF.just(item1) + items.asIterable()
 
 	override val possibilities = 10
 	override fun factory(possibility: Int) = createList(possibility)
@@ -81,37 +85,6 @@ class ListFTest:
 				.foldR(IntMinusSg(54))
 				.i
 		)
-	}
-
-	@Test
-	fun drop() {
-		assertEquals(ListF.of(1, 2, 3, 5), ListF.of(1, 2, 3, 5).drop(0))
-		assertEquals(ListF.of(3, 5), ListF.of(1, 2, 3, 5).drop(2))
-		assertEquals(ListF.empty<Int>(), ListF.of(1, 2, 3, 5).drop(4))
-		assertEquals(ListF.empty<Int>(), ListF.of(1, 2, 3, 5).drop(6))
-	}
-
-	@Test
-	fun takeLast() {
-		assertEquals(ListF.of(1, 2, 3, 5), ListF.of(1, 2, 3, 5).takeLast(6))
-		assertEquals(ListF.of(1, 2, 3, 5), ListF.of(1, 2, 3, 5).takeLast(4))
-		assertEquals(ListF.of(3, 5), ListF.of(1, 2, 3, 5).takeLast(2))
-		assertEquals(ListF.empty<Int>(), ListF.of(1, 2, 3, 5).takeLast(0))
-	}
-
-	@Test
-	fun take() {
-		assertEquals(ListF.empty<Int>(), ListF.of(1, 2, 3, 5).take(0))
-		assertEquals(ListF.of(1, 2), ListF.of(1, 2, 3, 5).take(2))
-		assertEquals(ListF.of(1, 2, 3, 5), ListF.of(1, 2, 3, 5).take(6))
-	}
-
-	@Test
-	fun dropLast() {
-		assertEquals(ListF.empty<Int>(), ListF.of(1, 2, 3, 5).dropLast(6))
-		assertEquals(ListF.empty<Int>(), ListF.of(1, 2, 3, 5).dropLast(4))
-		assertEquals(ListF.of(1, 2), ListF.of(1, 2, 3, 5).dropLast(2))
-		assertEquals(ListF.of(1, 2, 3, 5), ListF.of(1, 2, 3, 5).dropLast(0))
 	}
 }
 

@@ -15,6 +15,7 @@ import com.github.fsbarata.functional.data.validation.asValidation
 import kotlin.test.Test
 
 class NonEmptyListTest:
+	ImmutableListTest,
 	MonadZipLaws<NonEmptyContext>,
 	TraversableLaws<NonEmptyContext>,
 	ComonadLaws<NonEmptyContext> {
@@ -30,6 +31,9 @@ class NonEmptyListTest:
 	private val nel1 = NonEmptyList.just(9)
 	private val nel2 = nelOf(5, 1, 3)
 	private val nel3 = NonEmptyList.of(2, nelOf(4, 2, 5))
+
+	override fun empty() = null
+	override fun of(item1: Int, vararg items: Int) = nelOf(item1, *items.toTypedArray())
 
 	@Test
 	fun size() {
