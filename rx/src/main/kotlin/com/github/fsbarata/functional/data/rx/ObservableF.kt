@@ -59,9 +59,9 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	fun fold(monoid: Monoid<A>): SingleF<A> = super.reduce(monoid.empty, monoid::combine).f()
 	fun scan(monoid: Monoid<A>): ObservableF<A> = super.scan(monoid.empty, monoid::combine).f()
 
-	override fun combineWith(other: ObservableF<A>) = mergeWith(other).f()
+	override fun concatWith(other: ObservableF<A>): ObservableF<A> = super.concatWith(other).f()
 	override fun associateWith(other: Context<ObservableContext, A>) =
-		combineWith(other.asObservable)
+		concatWith(other.asObservable)
 
 	override fun <B, R> zipWith(other: Functor<ObservableContext, B>, f: (A, B) -> R) =
 		(this as Observable<A>).zipWith(other.asObservable, f).f()
@@ -77,10 +77,10 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	}
 }
 
-fun <A: Semigroup<A>> Observable<A>.reduce() = reduce { a1, a2 -> a1.combineWith(a2) }.f()
-fun <A: Semigroup<A>> Observable<A>.fold(initialValue: A) = reduce(initialValue) { a1, a2 -> a1.combineWith(a2) }.f()
-fun <A: Semigroup<A>> Observable<A>.scan() = scan { a1, a2 -> a1.combineWith(a2) }.f()
-fun <A: Semigroup<A>> Observable<A>.scan(initialValue: A) = scan(initialValue) { a1, a2 -> a1.combineWith(a2) }.f()
+fun <A: Semigroup<A>> Observable<A>.reduce() = reduce { a1, a2 -> a1.concatWith(a2) }.f()
+fun <A: Semigroup<A>> Observable<A>.fold(initialValue: A) = reduce(initialValue) { a1, a2 -> a1.concatWith(a2) }.f()
+fun <A: Semigroup<A>> Observable<A>.scan() = scan { a1, a2 -> a1.concatWith(a2) }.f()
+fun <A: Semigroup<A>> Observable<A>.scan(initialValue: A) = scan(initialValue) { a1, a2 -> a1.concatWith(a2) }.f()
 
 fun <A: Any, R: Any> Observable<A>.mapNotNull(f: (A) -> R?): Observable<R> =
 	mapNotNone { f(it).toOptional() }

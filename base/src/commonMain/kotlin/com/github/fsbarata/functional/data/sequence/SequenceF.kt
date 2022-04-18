@@ -66,7 +66,7 @@ class SequenceF<out A>(private val wrapped: Sequence<A>):
 	override fun associateWith(other: Context<SequenceContext, @UnsafeVariance A>) =
 		SequenceF(wrapped + (other.asSequence).wrapped)
 
-	override fun combineWith(other: SequenceF<@UnsafeVariance A>): SequenceF<A> = associateWith(other)
+	override fun concatWith(other: SequenceF<@UnsafeVariance A>): SequenceF<A> = associateWith(other)
 
 	override fun toString() = wrapped.toString()
 	override fun equals(other: Any?) = wrapped == other

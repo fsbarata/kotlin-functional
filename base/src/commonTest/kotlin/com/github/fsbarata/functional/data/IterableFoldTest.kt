@@ -17,5 +17,5 @@ class IterableFoldTest {
 }
 
 data class IntMinusSg(val i: Int): Semigroup<IntMinusSg> {
-	override fun combineWith(other: IntMinusSg) = IntMinusSg(i - other.i)
+	override fun concatWith(other: IntMinusSg) = IntMinusSg(i - other.i)
 }

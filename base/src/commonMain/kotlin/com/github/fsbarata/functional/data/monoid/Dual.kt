@@ -5,7 +5,7 @@ import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.monoid
 
 class Dual<A: Semigroup<A>>(val get: A): Semigroup<Dual<A>> {
-	override fun combineWith(other: Dual<A>) = Dual(other.get.combineWith(get))
+	override fun concatWith(other: Dual<A>) = Dual(other.get.concatWith(get))
 }
 
 fun <A: Semigroup<A>> A.dual() = Dual(this)

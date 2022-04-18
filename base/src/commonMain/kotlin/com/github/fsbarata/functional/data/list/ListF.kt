@@ -84,7 +84,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		asIterable().traverse(appScope, f)
 
 	override fun associateWith(other: Context<ListContext, @UnsafeVariance A>) = plus(other.asList)
-	override fun combineWith(other: ListF<@UnsafeVariance A>) = plus(other)
+	override fun concatWith(other: ListF<@UnsafeVariance A>) = plus(other)
 
 	override fun toString() = wrapped.toString()
 	override fun equals(other: Any?) = wrapped == other

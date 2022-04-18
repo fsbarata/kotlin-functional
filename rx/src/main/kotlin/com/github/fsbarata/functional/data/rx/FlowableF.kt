@@ -41,10 +41,10 @@ class FlowableF<A>(private val wrapped: Flowable<A>): Flowable<A>(),
 	}
 }
 
-fun <A: Semigroup<A>> Flowable<A>.reduce() = reduce { a1, a2 -> a1.combineWith(a2) }.f()
-fun <A: Semigroup<A>> Flowable<A>.fold(initialValue: A) = reduce(initialValue) { a1, a2 -> a1.combineWith(a2) }.f()
-fun <A: Semigroup<A>> Flowable<A>.scan() = scan { a1, a2 -> a1.combineWith(a2) }.f()
-fun <A: Semigroup<A>> Flowable<A>.scan(initialValue: A) = scan(initialValue) { a1, a2 -> a1.combineWith(a2) }.f()
+fun <A: Semigroup<A>> Flowable<A>.reduce() = reduce { a1, a2 -> a1.concatWith(a2) }.f()
+fun <A: Semigroup<A>> Flowable<A>.fold(initialValue: A) = reduce(initialValue) { a1, a2 -> a1.concatWith(a2) }.f()
+fun <A: Semigroup<A>> Flowable<A>.scan() = scan { a1, a2 -> a1.concatWith(a2) }.f()
+fun <A: Semigroup<A>> Flowable<A>.scan(initialValue: A) = scan(initialValue) { a1, a2 -> a1.concatWith(a2) }.f()
 
 fun <A: Any, R: Any> Flowable<A>.mapNotNull(f: (A) -> R?): Flowable<R> =
 	mapNotNone { f(it).toOptional() }

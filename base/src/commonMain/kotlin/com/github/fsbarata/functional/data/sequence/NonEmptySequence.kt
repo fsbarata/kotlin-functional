@@ -75,7 +75,7 @@ abstract class NonEmptySequence<A> internal constructor():
 		)
 	}
 
-	override fun combineWith(other: NonEmptySequence<A>) =
+	override fun concatWith(other: NonEmptySequence<A>) =
 		plus(other)
 
 	companion object:

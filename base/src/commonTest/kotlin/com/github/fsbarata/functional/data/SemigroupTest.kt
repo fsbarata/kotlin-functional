@@ -7,7 +7,7 @@ import kotlin.test.Test
 
 class SemigroupTest {
 	data class StringConcatSg(val str: String): Semigroup<StringConcatSg> {
-		override fun combineWith(other: StringConcatSg) = StringConcatSg(str + other.str)
+		override fun concatWith(other: StringConcatSg) = StringConcatSg(str + other.str)
 	}
 
 	@Test
@@ -19,7 +19,7 @@ class SemigroupTest {
 
 	@Test
 	fun dual() {
-		assertEquals(StringConcatSg("5a3w"), StringConcatSg("3w").dual().combineWith(StringConcatSg("5a").dual()).get)
+		assertEquals(StringConcatSg("5a3w"), StringConcatSg("3w").dual().concatWith(StringConcatSg("5a").dual()).get)
 	}
 
 	@Test
@@ -32,5 +32,5 @@ class SemigroupTest {
 }
 
 data class IntPlusSg(val i: Int): Semigroup<IntPlusSg> {
-	override fun combineWith(other: IntPlusSg) = IntPlusSg(i + other.i)
+	override fun concatWith(other: IntPlusSg) = IntPlusSg(i + other.i)
 }

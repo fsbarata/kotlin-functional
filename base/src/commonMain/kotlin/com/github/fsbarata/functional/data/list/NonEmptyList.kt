@@ -147,7 +147,7 @@ class NonEmptyList<out A> internal constructor(
 		)
 	}
 
-	override fun combineWith(other: NonEmptyList<@UnsafeVariance A>) = this + other
+	override fun concatWith(other: NonEmptyList<@UnsafeVariance A>) = this + other
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true

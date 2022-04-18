@@ -10,7 +10,7 @@ import com.github.fsbarata.functional.data.partial
  * Extensions to kotlin Sequence
  */
 
-fun <A: Semigroup<A>> Sequence<A>.foldL(monoid: Monoid<A>) = fold(monoid.empty) { r, a -> r.combineWith(a) }
+fun <A: Semigroup<A>> Sequence<A>.foldL(monoid: Monoid<A>) = fold(monoid.empty) { r, a -> r.concatWith(a) }
 
 fun <A, B> Sequence<A>.ap(fs: Sequence<(A) -> B>): Sequence<B> =
 	fs.flatMap(this::map)

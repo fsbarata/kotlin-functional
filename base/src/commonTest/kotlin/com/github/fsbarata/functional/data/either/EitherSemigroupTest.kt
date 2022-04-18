@@ -14,17 +14,17 @@ class EitherSemigroupTest: SemigroupLaws<Either<String, Int>> {
 	fun `chooses first right of eithers`() {
 		assertEquals(
 			Either.Left("b"),
-			Either.Left("a").combineWith(Either.Left("b"))
+			Either.Left("a").concatWith(Either.Left("b"))
 		)
 
 		assertEquals(
 			Either.Right(3),
-			(Either.Left("a") as Either<String, Int>).combineWith(Either.Right(3))
+			(Either.Left("a") as Either<String, Int>).concatWith(Either.Right(3))
 		)
 
 		assertEquals(
 			Either.Right(5),
-			Either.Right(5).combineWith(Either.Right(3))
+			Either.Right(5).concatWith(Either.Right(3))
 		)
 	}
 }

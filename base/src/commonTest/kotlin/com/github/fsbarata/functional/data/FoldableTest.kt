@@ -20,7 +20,7 @@ class FoldableTest {
 	val rf = { a: Int, b: String -> b + a }
 
 	class StringSemigroup(val str: String): Semigroup<StringSemigroup> {
-		override fun combineWith(other: StringSemigroup) = StringSemigroup(str + other.str)
+		override fun concatWith(other: StringSemigroup) = StringSemigroup(str + other.str)
 	}
 
 	@Test

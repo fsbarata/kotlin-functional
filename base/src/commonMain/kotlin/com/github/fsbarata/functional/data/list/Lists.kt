@@ -10,7 +10,7 @@ import com.github.fsbarata.functional.data.maybe.Optional
  * Tested by ListFTest
  */
 
-fun <A: Semigroup<A>> List<A>.foldR(initialValue: A): A = foldRight(initialValue, ::combine)
+fun <A: Semigroup<A>> List<A>.foldR(initialValue: A): A = foldRight(initialValue, ::concat)
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun <A, B> List<A>.ap(fs: List<(A) -> B>): List<B> =

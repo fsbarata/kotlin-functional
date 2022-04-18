@@ -73,7 +73,7 @@ sealed class Either<out E, out A>:
 
 	fun swap() = fold(ifLeft = { Right(it) }, ifRight = { Left(it) })
 
-	override fun combineWith(other: Either<@UnsafeVariance E, @UnsafeVariance A>) =
+	override fun concatWith(other: Either<@UnsafeVariance E, @UnsafeVariance A>) =
 		fold(
 			ifLeft = { other },
 			ifRight = { Right(it) },

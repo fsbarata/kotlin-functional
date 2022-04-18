@@ -57,9 +57,9 @@ class SetF<out A>(private val wrapped: Set<A>): Set<A> by wrapped,
 		(this as Set<A>).traverse(appScope, f).map(Set<B>::f)
 
 	override fun associateWith(other: Context<SetContext, @UnsafeVariance A>): SetF<A> =
-		combineWith(other.asSet)
+		concatWith(other.asSet)
 
-	override fun combineWith(other: SetF<@UnsafeVariance A>): SetF<A> =
+	override fun concatWith(other: SetF<@UnsafeVariance A>): SetF<A> =
 		SetF(wrapped + other.wrapped)
 
 	override fun toString() = wrapped.toString()

@@ -16,7 +16,7 @@ class NesSemigroupTest: SemigroupLaws<NonEmptySet<Int>> {
 		val nes2 = factory(5)
 		assertEquals(
 			nes1 + nes2,
-			nes1.combineWith(nes2)
+			nes1.concatWith(nes2)
 		)
 	}
 }

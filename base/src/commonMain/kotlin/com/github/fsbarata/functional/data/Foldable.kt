@@ -57,10 +57,10 @@ fun <A, R> Foldable<A>.scanR(initialValue: R, accumulator: (A, R) -> R): NonEmpt
 		.toList()
 
 fun <A> Foldable<A>.fold(monoid: Monoid<A>) = foldMap(monoid, id())
-fun <A: Semigroup<A>> Foldable<A>.foldL(initialValue: A) = foldL(initialValue, ::combine)
-fun <A: Semigroup<A>> Foldable<A>.foldR(initialValue: A) = foldR(initialValue, ::combine)
-fun <A: Semigroup<A>> Foldable<A>.scanL(initialValue: A): NonEmptyList<A> = scanL(initialValue, ::combine)
-fun <A: Semigroup<A>> Foldable<A>.scanR(initialValue: A): NonEmptyList<A> = scanR(initialValue, ::combine)
+fun <A: Semigroup<A>> Foldable<A>.foldL(initialValue: A) = foldL(initialValue, ::concat)
+fun <A: Semigroup<A>> Foldable<A>.foldR(initialValue: A) = foldR(initialValue, ::concat)
+fun <A: Semigroup<A>> Foldable<A>.scanL(initialValue: A): NonEmptyList<A> = scanL(initialValue, ::concat)
+fun <A: Semigroup<A>> Foldable<A>.scanR(initialValue: A): NonEmptyList<A> = scanR(initialValue, ::concat)
 
 
 fun <A> Foldable<A>.toList(): ListF<A> = foldMap(ListF.monoid()) { ListF.just(it) }
@@ -86,4 +86,4 @@ fun <A, R> Iterable<A>.foldL(initialValue: R, accumulator: (R, A) -> R): R = fol
 inline fun <A, M> Iterable<A>.foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 	fold(monoid.empty) { r, a -> monoid.combine(r, f(a)) }
 
-fun <A: Semigroup<A>> Iterable<A>.foldL(initialValue: A): A = fold(initialValue, ::combine)
+fun <A: Semigroup<A>> Iterable<A>.foldL(initialValue: A): A = fold(initialValue, ::concat)

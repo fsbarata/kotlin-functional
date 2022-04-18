@@ -25,7 +25,7 @@ fun <E: Semigroup<E>, A, R> Validation<E, A>.ap(ff: Validation<E, (A) -> R>): Va
 	ff.fold(
 		ifFailure = { e1 ->
 			Validation.Failure(fold(
-				ifFailure = { e1.combineWith(it) },
+				ifFailure = { e1.concatWith(it) },
 				ifSuccess = { e1 }
 			))
 		},

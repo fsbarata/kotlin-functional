@@ -12,8 +12,8 @@ class LastTest: SemigroupLaws<Last<String>> {
 
 	@Test
 	fun combineWith() {
-		assertEquals(Last(5), Last(3).combineWith(Last(1)).combineWith(Last(5)))
-		assertEquals(Last("z"), Last("1f").combineWith(Last("")).combineWith(Last("z")))
+		assertEquals(Last(5), Last(3).concatWith(Last(1)).concatWith(Last(5)))
+		assertEquals(Last("z"), Last("1f").concatWith(Last("")).concatWith(Last("z")))
 	}
 }
 
@@ -28,13 +28,13 @@ class LastNotNullTest: MonoidLaws<LastNotNull<String?>>(
 	fun combineWith() {
 		assertEquals(LastNotNull(5),
 			LastNotNull<Int?>(3)
-				.combineWith(LastNotNull(1))
-				.combineWith(LastNotNull(5)))
+				.concatWith(LastNotNull(1))
+				.concatWith(LastNotNull(5)))
 		assertEquals(LastNotNull(1),
 			LastNotNull<Int?>(5)
-				.combineWith(LastNotNull(null))
-				.combineWith(LastNotNull(1))
-				.combineWith(LastNotNull(null))
-				.combineWith(LastNotNull(null)))
+				.concatWith(LastNotNull(null))
+				.concatWith(LastNotNull(1))
+				.concatWith(LastNotNull(null))
+				.concatWith(LastNotNull(null)))
 	}
 }
