@@ -95,8 +95,12 @@ class NonEmptyList<out A> internal constructor(
 	override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
 		foldRight(initialValue, accumulator)
 
-	operator fun plus(other: @UnsafeVariance A) = NonEmptyList(head, tail + other)
+	operator fun plus(other: @UnsafeVariance A) = of(head, tail + other)
 	operator fun plus(other: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + other)
+
+	fun startWith(other: Iterable<@UnsafeVariance A>) = other.toNel()?.plus(this) ?: this
+
+	fun uncons(): Pair<A, NonEmptyList<A>?> = Pair(head, tail.toNel())
 
 	override inline fun <B, R> zipWith(other: Functor<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> {
 		val otherNel = other.asNel

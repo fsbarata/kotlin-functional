@@ -13,7 +13,7 @@ import com.github.fsbarata.io.Serializable
 /**
  * Functional list extension.
  *
- * Guaranteed to be immutable by construction
+ * Guaranteed to be immutable by construction. The wrapped list is either immutable or unreachable
  */
 @Suppress("OVERRIDE_BY_INLINE")
 class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> by wrapped,
@@ -29,11 +29,10 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 
 	override fun subList(fromIndex: Int, toIndex: Int) = ListF(wrapped.subList(fromIndex, toIndex))
 
-	operator fun plus(other: @UnsafeVariance A) =
-		if (wrapped.isEmpty()) just(other)
-		else ListF(wrapped + other)
-
+	operator fun plus(other: @UnsafeVariance A): ListF<A> = ListF(wrapped + other)
 	operator fun plus(other: Iterable<@UnsafeVariance A>): ListF<A> = ListF(wrapped + other)
+
+	fun plusElementNel(other: @UnsafeVariance A): NonEmptyList<A> = toNel()?.plus(other) ?: NonEmptyList.just(other)
 
 	override inline fun <B> map(f: (A) -> B): ListF<B> =
 		asIterable().mapTo(ArrayList(size), f).f()
@@ -96,7 +95,17 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 
 	fun asReversed(): ListF<A> = ListF(wrapped.asReversed())
 
-	fun toNel(): NonEmptyList<A>? = if (isEmpty()) null else NonEmptyList(this[0], drop(1))
+	fun toNel(): NonEmptyList<A>? = when {
+		isEmpty() -> null
+		wrapped is NonEmptyList -> wrapped
+		else -> NonEmptyList(this[0], drop(1))
+	}
+
+	fun startWith(other: Iterable<@UnsafeVariance A>): ListF<A> = ListF(other + this)
+
+	fun uncons(): Pair<A, ListF<A>>? =
+		if (isEmpty()) null
+		else Pair(this[0], drop(1))
 
 	companion object:
 		MonadPlus.Scope<ListContext>,
@@ -110,7 +119,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 
 		override fun <A> fromIterable(iterable: Iterable<A>): ListF<A> = when (iterable) {
 			is ListF -> iterable
-			is NonEmptyList<A> -> ListF(iterable)
+			is ImmutableList<A> -> ListF(iterable)
 			else -> ListF(iterable.toList())
 		}
 
@@ -167,14 +176,15 @@ inline fun <A, B> List<A>.fastFlatmap(f: (A) -> List<B>): ListF<B> = when (size)
 	1 -> ListF.fromList(f(get(0)))
 	else -> {
 		val result = ArrayList<B>()
-		for (element in this) {
-			val list = f(element)
-			when (list.size) {
-				0 -> {}
-				1 -> result.add(list[0])
-				else -> result.addAll(list)
-			}
-		}
+		for (element in this) result.append(f(element))
 		ListF.fromList(result)
+	}
+}
+
+inline fun <A> MutableList<A>.append(list: List<A>) {
+	when (list.size) {
+		0 -> return
+		1 -> add(list[0])
+		else -> addAll(list)
 	}
 }
