@@ -16,6 +16,8 @@ interface MonadPlus<M, out A>: Monad<M, A>, Alternative<M, A> {
 
 	override infix fun <B> bind(f: (A) -> Context<M, B>): MonadPlus<M, B>
 
+	override fun combineWith(other: Context<M, @UnsafeVariance A>): MonadPlus<M, A>
+
 	fun filter(predicate: (A) -> Boolean) =
 		bind(scope.filterKleisli(predicate))
 
