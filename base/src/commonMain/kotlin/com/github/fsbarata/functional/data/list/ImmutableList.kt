@@ -25,22 +25,22 @@ internal interface ImmutableList<out A>: List<A> {
 
 	fun slice(indices: ImmutableList<Int>): ListF<A> = ListF.fromList(SlicedList(this, indices))
 
-	fun chunked(size: Int) = windowed(size, size, true)
+	fun <T> chunked(size: Int, transform: (ListF<A>) -> T) = windowed(size, size, true, transform)
 
-	fun windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): ListF<ListF<A>> {
+	fun <T> windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (ListF<A>) -> T): ListF<T> {
 		require(size > 0) { "Size must be greater than 0" }
 		require(step > 0) { "Step must be greater than 0" }
 		val listSize = this.size
 		val windowCount = when {
 			partialWindows -> listSize / step + if (listSize % step == 0) 0 else 1
 			size > listSize -> return ListF.empty()
-			size == listSize -> return ListF.just(ListF.fromList(this))
+			size == listSize -> return ListF.just(transform(ListF.fromList(this)))
 			else -> ((listSize - size) / step) + 1
 		}
 		return ListF(windowCount) { windowIndex ->
 			val windowStart = windowIndex * step
 			val windowEnd = (windowStart + size).coerceAtMost(listSize)
-			subList(windowStart, windowEnd)
+			transform(subList(windowStart, windowEnd))
 		}
 	}
 }

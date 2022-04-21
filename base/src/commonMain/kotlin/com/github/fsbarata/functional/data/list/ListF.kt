@@ -22,6 +22,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	MonadZip<ListContext, A>,
 	MonadPlus<ListContext, A>,
 	Traversable<ListContext, A>,
+	RandomAccess,
 	Semigroup<ListF<@UnsafeVariance A>> {
 	override val scope get() = ListF
 
@@ -121,6 +122,16 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	fun uncons(): Pair<A, ListF<A>>? =
 		if (isEmpty()) null
 		else Pair(this[0], drop(1))
+
+	inline fun windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): ListF<ListF<A>> =
+		windowed(size, step, partialWindows, id())
+
+	inline fun windowedNel(size: Int, step: Int = 1, partialWindows: Boolean = false): ListF<NonEmptyList<A>> =
+		windowed(size, step, partialWindows) { it.toNel() ?: throw NoSuchElementException() }
+
+	inline fun chunked(size: Int): ListF<ListF<A>> = chunked(size, id())
+	inline fun chunkedNel(size: Int): ListF<NonEmptyList<A>> =
+		chunked(size) { it.toNel() ?: throw NoSuchElementException() }
 
 	companion object:
 		MonadPlus.Scope<ListContext>,

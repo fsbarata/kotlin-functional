@@ -162,6 +162,12 @@ class NonEmptyList<out A> internal constructor(
 	override fun toString() =
 		joinToString(prefix = "[", postfix = "]")
 
+	inline fun windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): ListF<ListF<A>> =
+		windowed(size, step, partialWindows, id())
+
+	inline fun windowedNel(size: Int, step: Int = 1, partialWindows: Boolean = false): ListF<NonEmptyList<A>> =
+		asList().windowedNel(size, step, partialWindows)
+
 	companion object: Monad.Scope<NonEmptyContext>, Traversable.Scope<NonEmptyContext> {
 		override fun <A> just(a: A) = NonEmptyList(a, ListF.empty())
 		fun <T> of(head: T, others: List<T>) = NonEmptyList(head, others.f())
