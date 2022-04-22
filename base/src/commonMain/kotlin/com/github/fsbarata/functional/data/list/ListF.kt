@@ -109,6 +109,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	fun toSet(): SetF<A> = SetF.fromIterable(wrapped)
 	fun asSequence(): SequenceF<A> = SequenceF.fromIterable(wrapped)
 
+	inline fun reversed(): ListF<A> = asReversed()
 	fun asReversed(): ListF<A> = ListF(wrapped.asReversed())
 
 	fun toNel(): NonEmptyList<A>? = when {
