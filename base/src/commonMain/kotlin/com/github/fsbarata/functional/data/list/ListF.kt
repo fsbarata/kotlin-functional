@@ -161,6 +161,9 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 }
 
 inline fun <A> List<A>.f() = ListF.fromList(this)
+inline fun <A> List<A>.toListF() = ListF.fromList(this)
+inline fun <A> Iterable<A>.toListF() = ListF.fromIterable(this)
+inline fun <A> Sequence<A>.toListF() = ListF.fromSequence(this)
 
 fun <A> List<A>.asFoldable(): Foldable<A> = f()
 fun <A, R> List<A>.f(block: ListF<A>.() -> Context<ListContext, R>) =
