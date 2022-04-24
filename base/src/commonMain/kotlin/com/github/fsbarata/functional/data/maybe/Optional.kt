@@ -65,7 +65,7 @@ sealed class Optional<out A>:
 		maybe(initialValue) { accumulator(it, initialValue) }
 
 	final override inline fun <B, R> zipWith(other: Context<OptionalContext, B>, f: (A, B) -> R) =
-		lift2(other.asOptional, f)
+		lift2(other, f)
 
 	inline fun <B> maybe(b: B, f: (A) -> B): B = map(f) orElse b
 
