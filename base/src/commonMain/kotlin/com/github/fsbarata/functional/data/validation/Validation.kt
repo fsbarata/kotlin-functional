@@ -21,6 +21,8 @@ sealed class Validation<out E, out A>:
 	Functor<ValidationContext<@UnsafeVariance E>, A>,
 	BiFunctor<ValidationBiContext, E, A>,
 	Serializable {
+	override val scope = object: Functor.Scope<ValidationContext<@UnsafeVariance E>> {}
+
 	data class Failure<out E>(val err: E): Validation<E, Nothing>()
 	data class Success<out A>(val value: A): Validation<Nothing, A>()
 
@@ -44,7 +46,7 @@ sealed class Validation<out E, out A>:
 	inline fun <EE, AA> withEither(f: (Either<E, A>) -> Either<EE, AA>): Validation<EE, AA> =
 		fromEither(f(toEither()))
 
-	fun toValidationNel() = mapLeft { nelOf(it) }
+	fun toValidationNel(): Validation<NonEmptyList<E>, A> = mapLeft { nelOf(it) }
 
 	fun swap() = fold(ifFailure = { Success(it) }, ifSuccess = { Failure(it) })
 

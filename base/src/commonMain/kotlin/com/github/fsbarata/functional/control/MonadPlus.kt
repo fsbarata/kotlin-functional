@@ -11,14 +11,14 @@ import com.github.fsbarata.functional.data.maybe.Optional
 interface MonadPlus<M, out A>: Monad<M, A>, Alternative<M, A> {
 	override val scope: Scope<M>
 
-	override fun <B, R> lift2(fb: Functor<M, B>, f: (A, B) -> R) =
+	override fun <B, R> lift2(fb: Context<M, B>, f: (A, B) -> R): MonadPlus<M, R> =
 		super<Monad>.lift2(fb, f) as MonadPlus<M, R>
 
 	override infix fun <B> bind(f: (A) -> Context<M, B>): MonadPlus<M, B>
 
 	override fun combineWith(other: Context<M, @UnsafeVariance A>): MonadPlus<M, A>
 
-	fun filter(predicate: (A) -> Boolean) =
+	fun filter(predicate: (A) -> Boolean): MonadPlus<M, A> =
 		bind(scope.filterKleisli(predicate))
 
 	fun partition(predicate: (A) -> Boolean): Pair<MonadPlus<M, A>, MonadPlus<M, A>> =
@@ -33,10 +33,7 @@ interface MonadPlus<M, out A>: Monad<M, A>, Alternative<M, A> {
 	fun <B: Any> mapNotNone(f: (A) -> Optional<B>) =
 		mapNotNull { f(it).orNull() }
 
-	interface Scope<M>: Monad.Scope<M>, Alternative.Scope<M> {
-		override fun <A> just(a: A): MonadPlus<M, A>
-		override fun <A> empty(): MonadPlus<M, A>
-	}
+	interface Scope<M>: Monad.Scope<M>, Alternative.Scope<M>
 }
 
 fun <M, A: Any> MonadPlus<M, A?>.filterNotNull() = mapNotNull(id())

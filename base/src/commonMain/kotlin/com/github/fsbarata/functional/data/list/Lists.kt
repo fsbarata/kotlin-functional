@@ -1,8 +1,12 @@
 package com.github.fsbarata.functional.data.list
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.data.*
+import com.github.fsbarata.functional.data.Semigroup
+import com.github.fsbarata.functional.data.concat
+import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.partial
 
 /**
  * Extensions to kotlin List, without needing to wrap in ListF
@@ -21,8 +25,8 @@ inline fun <A, B, C> List<A>.lift2(lb: List<B>, f: (A, B) -> C): List<C> =
 
 inline fun <F, A, B> Iterable<A>.traverse(
 	appScope: Applicative.Scope<F>,
-	f: (A) -> Functor<F, B>,
-): Functor<F, ListF<B>> {
+	f: (A) -> Context<F, B>,
+): Context<F, ListF<B>> {
 	return fold(appScope.just(ListF.empty())) { app, a ->
 		appScope.lift2(f(a), app) { b, lb -> lb + b }
 	}

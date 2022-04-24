@@ -31,8 +31,8 @@ data class Tuple2<X, Y>(val x: X, val y: Y):
 
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (Y) -> Functor<F, B>,
-	) = f(y).map { Tuple2(x, it) }
+		f: (Y) -> Context<F, B>,
+	): Context<F, Tuple2<X, B>> = appScope.map(f(y)) { Tuple2(x, it) }
 
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, Y) -> R): R =
 		accumulator(initialValue, y)

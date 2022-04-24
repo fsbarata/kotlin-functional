@@ -20,10 +20,10 @@ class SetF<out A>(private val wrapped: Set<A>): Set<A> by wrapped,
 	override inline fun <B> map(f: (A) -> B): SetF<B> =
 		mapTo(mutableSetOf(), f).f()
 
-	override infix fun <B> ap(ff: Functor<SetContext, (A) -> B>): SetF<B> =
+	override infix fun <B> ap(ff: Context<SetContext, (A) -> B>): SetF<B> =
 		wrapped.ap(ff.asSet).f()
 
-	override inline fun <B, R> lift2(fb: Functor<SetContext, B>, f: (A, B) -> R): SetF<R> =
+	override inline fun <B, R> lift2(fb: Context<SetContext, B>, f: (A, B) -> R): SetF<R> =
 		(this as Set<A>).lift2(fb.asSet, f).f()
 
 	override inline infix fun <B> bind(f: (A) -> Context<SetContext, B>): SetF<B> =
@@ -52,9 +52,9 @@ class SetF<out A>(private val wrapped: Set<A>): Set<A> by wrapped,
 
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Functor<F, B>,
-	): Functor<F, SetF<B>> =
-		(this as Set<A>).traverse(appScope, f).map(Set<B>::f)
+		f: (A) -> Context<F, B>,
+	): Context<F, SetF<B>> =
+		appScope.map((this as Set<A>).traverse(appScope, f), Set<B>::f)
 
 	override fun combineWith(other: Context<SetContext, @UnsafeVariance A>): SetF<A> =
 		concatWith(other.asSet)
@@ -120,6 +120,6 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 	set4: Set<D>,
 ): SetF<R> = app(set1.f(), set2.f(), set3.f(), set4.f()).asSet
 
-fun <A, R> liftSet(f: (A) -> R): (Set<A>) -> Set<R> = lift(f)::invoke
-fun <A, B, R> liftSet2(f: (A, B) -> R): (Set<A>, Set<B>) -> Set<R> = lift2(f)::invoke
-fun <A, B, C, R> liftSet3(f: (A, B, C) -> R): (Set<A>, Set<B>, Set<C>) -> Set<R> = lift3(f)::invoke
+fun <A, R> liftSet(f: (A) -> R): (Set<A>) -> SetF<R> = lift(f)::invoke
+fun <A, B, R> liftSet2(f: (A, B) -> R): (Set<A>, Set<B>) -> SetF<R> = lift2(f)::invoke
+fun <A, B, C, R> liftSet3(f: (A, B, C) -> R): (Set<A>, Set<B>, Set<C>) -> SetF<R> = lift3(f)::invoke

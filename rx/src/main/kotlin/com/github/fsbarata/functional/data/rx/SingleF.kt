@@ -22,7 +22,7 @@ class SingleF<A>(private val wrapped: Single<A>): Single<A>(),
 	fun <B> flatMap(f: (A) -> Single<B>): SingleF<B> =
 		wrapped.flatMap(f).f()
 
-	override fun <B, R> zipWith(other: Functor<SingleContext, B>, f: (A, B) -> R) =
+	override fun <B, R> zipWith(other: Context<SingleContext, B>, f: (A, B) -> R) =
 		(this as Single<A>).zipWith(other.asSingle, f).f()
 
 	companion object: Monad.Scope<SingleContext> {

@@ -26,7 +26,7 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	override fun <B> map(f: (A) -> B) =
 		wrapped.map(f).f()
 
-	override fun <B> ap(ff: Functor<ObservableContext, (A) -> B>) =
+	override fun <B> ap(ff: Context<ObservableContext, (A) -> B>) =
 		combineLatest(
 			ff.asObservable,
 			this,
@@ -34,7 +34,7 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 			.f()
 
 	override fun <B, R> lift2(
-		fb: Functor<ObservableContext, B>,
+		fb: Context<ObservableContext, B>,
 		f: (A, B) -> R,
 	) = combineLatest(this, fb.asObservable, f).f()
 
@@ -63,7 +63,7 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	override fun combineWith(other: Context<ObservableContext, A>) =
 		concatWith(other.asObservable)
 
-	override fun <B, R> zipWith(other: Functor<ObservableContext, B>, f: (A, B) -> R) =
+	override fun <B, R> zipWith(other: Context<ObservableContext, B>, f: (A, B) -> R) =
 		(this as Observable<A>).zipWith(other.asObservable, f).f()
 
 	companion object: MonadPlus.Scope<ObservableContext> {

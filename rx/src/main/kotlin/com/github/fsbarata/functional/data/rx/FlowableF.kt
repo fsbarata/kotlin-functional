@@ -32,7 +32,7 @@ class FlowableF<A>(private val wrapped: Flowable<A>): Flowable<A>(),
 	fun fold(monoid: Monoid<A>) = super.reduce(monoid.empty, monoid::combine).f()
 	fun scan(monoid: Monoid<A>) = super.scan(monoid.empty, monoid::combine).f()
 
-	override fun <B, R> zipWith(other: Functor<FlowableF<*>, B>, f: (A, B) -> R) =
+	override fun <B, R> zipWith(other: Context<FlowableF<*>, B>, f: (A, B) -> R) =
 		(this as Flowable<A>).zipWith(other.asFlowable, f).f()
 
 	companion object: Monad.Scope<FlowableF<*>> {

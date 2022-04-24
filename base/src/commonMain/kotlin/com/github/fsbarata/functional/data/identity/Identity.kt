@@ -5,7 +5,6 @@ import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Foldable
-import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.partial
 import com.github.fsbarata.io.Serializable
@@ -36,17 +35,17 @@ data class Identity<A>(val a: A):
 
 	override inline fun <B> map(f: (A) -> B) = Identity(f(a))
 
-	override infix fun <B> ap(ff: Functor<IdentityContext, (A) -> B>): Identity<B> =
-		ff.map { it(a) }.asIdentity
+	override infix fun <B> ap(ff: Context<IdentityContext, (A) -> B>): Identity<B> =
+		scope.map(ff) { it(a) }.asIdentity
 
-	override inline fun <B, R> lift2(fb: Functor<IdentityContext, B>, f: (A, B) -> R): Identity<R> =
+	override inline fun <B, R> lift2(fb: Context<IdentityContext, B>, f: (A, B) -> R): Identity<R> =
 		Identity(f(a, fb.asIdentity.a))
 
 	override inline infix fun <B> bind(f: (A) -> Context<IdentityContext, B>) = f(a).asIdentity
 
 	inline fun <B> flatMap(f: (A) -> Identity<B>) = f(a)
 
-	override inline fun <B, R> zipWith(other: Functor<IdentityContext, B>, f: (A, B) -> R): Identity<R> =
+	override inline fun <B, R> zipWith(other: Context<IdentityContext, B>, f: (A, B) -> R): Identity<R> =
 		other.asIdentity.map(f.partial(a))
 
 	companion object: Monad.Scope<IdentityContext> {

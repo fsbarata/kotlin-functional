@@ -22,10 +22,10 @@ class SequenceF<out A>(private val wrapped: Sequence<A>):
 	override fun <B> map(f: (A) -> B) =
 		wrapped.map(f).f()
 
-	override infix fun <B> ap(ff: Functor<SequenceContext, (A) -> B>): SequenceF<B> =
+	override infix fun <B> ap(ff: Context<SequenceContext, (A) -> B>): SequenceF<B> =
 		wrapped.ap(ff.asSequence).f()
 
-	override fun <B, R> lift2(fb: Functor<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
+	override fun <B, R> lift2(fb: Context<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
 		wrapped.lift2(fb.asSequence, f).f()
 
 	override infix fun <B> bind(f: (A) -> Context<SequenceContext, B>) =
@@ -54,14 +54,14 @@ class SequenceF<out A>(private val wrapped: Sequence<A>):
 	override fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M) =
 		(this as Sequence<A>).foldMap(monoid, f)
 
-	override fun <B, R> zipWith(other: Functor<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
+	override fun <B, R> zipWith(other: Context<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
 		zip(other.asSequence, f).f()
 
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Functor<F, B>,
-	): Functor<F, SequenceF<B>> =
-		(this as Sequence<A>).traverse(appScope, f).map(Sequence<B>::f)
+		f: (A) -> Context<F, B>,
+	): Context<F, SequenceF<B>> =
+		appScope.map((this as Sequence<A>).traverse(appScope, f), Sequence<B>::f)
 
 	override fun combineWith(other: Context<SequenceContext, @UnsafeVariance A>) =
 		SequenceF(wrapped + (other.asSequence).wrapped)

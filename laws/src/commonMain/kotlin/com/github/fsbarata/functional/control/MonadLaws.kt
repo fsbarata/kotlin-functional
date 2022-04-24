@@ -1,5 +1,6 @@
 package com.github.fsbarata.functional.control
 
+import com.github.fsbarata.functional.Context
 import kotlin.test.Test
 
 interface MonadLaws<M>: ApplicativeLaws<M> {
@@ -16,7 +17,7 @@ interface MonadLaws<M>: ApplicativeLaws<M> {
 		val a = 7
 		val k = { x: Int -> monadScope.just(x * 3) }
 		val r1 = k(a)
-		val r2 = monadScope.just(a).bind(k)
+		val r2 = monadScope.bind(monadScope.just(a), k)
 		assertEqualF(r1, r2)
 	}
 
@@ -33,7 +34,7 @@ interface MonadLaws<M>: ApplicativeLaws<M> {
 		eachPossibilityMonad { m ->
 			val k = { a: Int -> monadScope.just(a + 2) }
 			val h = { a: Int -> monadScope.just(a * 2) }
-			val r1 = m.bind { x -> k(x).bind { h(it) } }
+			val r1 = m.bind { x -> monadScope.bind(k(x), h) }
 			val r2 = m.bind(k).bind(h)
 			assertEqualF(r1, r2)
 		}
@@ -44,7 +45,7 @@ interface MonadLaws<M>: ApplicativeLaws<M> {
 		eachPossibilityMonad { m ->
 			val mf = monadScope.just { a: Int -> a * 2 }
 			val r1 = m.ap(mf)
-			val r2 = mf.bind { x1 -> m.bind { x2 -> monadScope.just(x1(x2)) } }
+			val r2 = monadScope.bind(mf) { x1 -> m.bind { x2 -> monadScope.just(x1(x2)) } }
 			assertEqualF(r1, r2)
 		}
 	}
@@ -70,18 +71,17 @@ interface MonadLaws<M>: ApplicativeLaws<M> {
 		}
 	}
 
-	private fun Monad<M, Int>.multiply(
-		x: Int,
-	): Monad<M, Int> =
-		if (x == 0) scope.just(0)
-		else bind { scope.just(x * it) }
+	private fun Monad.Scope<M>.multiply(
+		x: Context<M, Int>,
+		y: Int,
+	): Context<M, Int> =
+		if (y == 0) just(0)
+		else bind(x) { just(y * it) }
 
 	@Test
 	fun `multiply accepts monad`() {
-		assertEqualF(monadScope.just(15), monadScope.just(5).multiply(3))
-		assertEqualF(monadScope.just(0), monadScope.just(5).multiply(0))
-		eachPossibilityMonad {
-			assertEqualF(monadScope.just(0), it.multiply(0))
-		}
+		assertEqualF(monadScope.just(15), monadScope.multiply(monadScope.just(5), 3))
+		assertEqualF(monadScope.just(0), monadScope.multiply(monadScope.just(5), 0))
+		eachPossibilityMonad { assertEqualF(monadScope.just(0), monadScope.multiply(it, 0)) }
 	}
 }

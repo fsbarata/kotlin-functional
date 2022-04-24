@@ -34,7 +34,7 @@ abstract class NonEmptySequence<A> internal constructor():
 	}
 
 	override fun <B, R> lift2(
-		fb: Functor<NonEmptySequenceContext, B>,
+		fb: Context<NonEmptySequenceContext, B>,
 		f: (A, B) -> R,
 	) = super.lift2(fb, f).asNes
 
@@ -50,7 +50,7 @@ abstract class NonEmptySequence<A> internal constructor():
 		)
 	}
 
-	override fun <B, R> zipWith(other: Functor<NonEmptySequenceContext, B>, f: (A, B) -> R): NonEmptySequence<R> {
+	override fun <B, R> zipWith(other: Context<NonEmptySequenceContext, B>, f: (A, B) -> R): NonEmptySequence<R> {
 		val otherNes = other.asNes
 		return NonEmptySequence {
 			val iterator1 = iterator()
@@ -64,8 +64,8 @@ abstract class NonEmptySequence<A> internal constructor():
 
 	override fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Functor<F, B>,
-	): Functor<F, Traversable<NonEmptySequenceContext, B>> {
+		f: (A) -> Context<F, B>,
+	): Context<F, Traversable<NonEmptySequenceContext, B>> {
 		val iterator = iterator()
 		val head = iterator.next()
 		return appScope.lift2(

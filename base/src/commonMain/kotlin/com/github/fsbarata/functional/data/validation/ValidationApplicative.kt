@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.data.validation
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
-import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.partial
 
@@ -10,15 +10,15 @@ class ValidationApplicativeScope<E: Semigroup<E>>: Applicative.Scope<ValidationC
 	override fun <A> just(a: A): Validation<E, A> = Validation.Success(a)
 
 	override fun <A, R> ap(
-		app: Functor<ValidationContext<E>, A>,
-		ff: Functor<ValidationContext<E>, (A) -> R>,
+		app: Context<ValidationContext<E>, A>,
+		ff: Context<ValidationContext<E>, (A) -> R>,
 	): Validation<E, R> = app.asValidation.ap(ff.asValidation)
 
 	override fun <A, B, R> lift2(
-		fa: Functor<ValidationContext<E>, A>,
-		fb: Functor<ValidationContext<E>, B>,
+		fa: Context<ValidationContext<E>, A>,
+		fb: Context<ValidationContext<E>, B>,
 		f: (A, B) -> R,
-	): Validation<E, R> = ap(fb, fa.map { partial(f, it) })
+	): Validation<E, R> = ap(fb, map(fa) { partial(f, it) })
 }
 
 fun <E: Semigroup<E>, A, R> Validation<E, A>.ap(ff: Validation<E, (A) -> R>): Validation<E, R> =

@@ -1,5 +1,6 @@
 package com.github.fsbarata.functional.control
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.partial2
 import com.github.fsbarata.functional.data.partial3
@@ -8,6 +9,9 @@ fun <A, R> lift(f: (A) -> R) = Lift1(f)
 
 class Lift1<A, R>(val f: (A) -> R) {
 	fun <F> fmap(fa: Functor<F, A>): Functor<F, R> = fa.map(f)
+
+	fun <F> fmap(scope: Functor.Scope<F>, fa: Context<F, A>): Context<F, R> =
+		scope.map(fa, f)
 }
 
 fun <A, B, R> lift2(f: (A, B) -> R) = Lift2(f)
@@ -16,7 +20,7 @@ class Lift2<A, B, R>(val f: (A, B) -> R) {
 	fun <F> app(fa: Applicative<F, A>, fb: Applicative<F, B>): Applicative<F, R> =
 		fa.lift2(fb, f)
 
-	fun <F> app(scope: Applicative.Scope<F>, fa: Functor<F, A>, fb: Functor<F, B>): Functor<F, R> =
+	fun <F> app(scope: Applicative.Scope<F>, fa: Context<F, A>, fb: Context<F, B>): Context<F, R> =
 		scope.lift2(fa, fb, f)
 }
 
@@ -32,10 +36,10 @@ class Lift3<A, B, C, R>(val f: (A, B, C) -> R) {
 
 	fun <F> app(
 		scope: Applicative.Scope<F>,
-		fa: Functor<F, A>,
-		fb: Functor<F, B>,
-		fc: Functor<F, C>,
-	): Functor<F, R> =
+		fa: Context<F, A>,
+		fb: Context<F, B>,
+		fc: Context<F, C>,
+	): Context<F, R> =
 		scope.ap(fc, scope.lift2(fa, fb, f::partial2))
 }
 
@@ -52,11 +56,11 @@ class Lift4<A, B, C, D, R>(val f: (A, B, C, D) -> R) {
 
 	fun <F> app(
 		scope: Applicative.Scope<F>,
-		fa: Functor<F, A>,
-		fb: Functor<F, B>,
-		fc: Functor<F, C>,
-		fd: Functor<F, D>,
-	): Functor<F, R> =
+		fa: Context<F, A>,
+		fb: Context<F, B>,
+		fc: Context<F, C>,
+		fd: Context<F, D>,
+	): Context<F, R> =
 		scope.ap(fd, lift3(f::partial3).app(scope, fa, fb, fc))
 }
 

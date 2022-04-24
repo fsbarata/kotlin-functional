@@ -70,10 +70,10 @@ class NonEmptyList<out A> internal constructor(
 	inline fun <B> mapIndexed(f: (index: Int, A) -> B): NonEmptyList<B> =
 		of(f(0, head), tail.mapIndexed { index, item -> f(index + 1, item) })
 
-	override fun <B> ap(ff: Functor<NonEmptyContext, (A) -> B>): NonEmptyList<B> =
+	override fun <B> ap(ff: Context<NonEmptyContext, (A) -> B>): NonEmptyList<B> =
 		ff.asNel.flatMap(this::map)
 
-	override inline fun <B, R> lift2(fb: Functor<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> =
+	override inline fun <B, R> lift2(fb: Context<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> =
 		flatMap { a -> fb.asNel.map(f.partial(a)) }
 
 	override inline infix fun <B> bind(f: (A) -> Context<NonEmptyContext, B>): NonEmptyList<B> =
@@ -102,7 +102,7 @@ class NonEmptyList<out A> internal constructor(
 
 	fun uncons(): Pair<A, NonEmptyList<A>?> = Pair(head, tail.toNel())
 
-	override inline fun <B, R> zipWith(other: Functor<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> {
+	override inline fun <B, R> zipWith(other: Context<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> {
 		val otherNel = other.asNel
 		return of(f(head, otherNel.head), tail.zipWith(otherNel.tail, f))
 	}
@@ -133,13 +133,13 @@ class NonEmptyList<out A> internal constructor(
 
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Functor<F, B>,
-	): Functor<F, NonEmptyList<B>> =
+		f: (A) -> Context<F, B>,
+	): Context<F, NonEmptyList<B>> =
 		appScope.lift2(f(head), tail.traverse(appScope, f), ::of)
 
 	inline fun <F, B> traverse(
 		f: (A) -> Applicative<F, B>,
-	): Functor<F, NonEmptyList<B>> {
+	): Context<F, NonEmptyList<B>> {
 		val mappedHead = f(head)
 		return mappedHead.lift2(
 			tail.traverse(mappedHead.scope, f),
@@ -198,36 +198,38 @@ fun <A> Sequence<A>.toNel(): NonEmptyList<A>? = iterator().toNel()
 
 
 operator fun <A, R> Lift1<A, R>.invoke(
-	list: NonEmptyList<A>,
-): NonEmptyList<R> = fmap(list).asNel
+	list: Context<NonEmptyContext, A>,
+): NonEmptyList<R> = fmap(NonEmptyList, list).asNel
 
 operator fun <A, B, R> Lift2<A, B, R>.invoke(
-	list1: NonEmptyList<A>,
-	list2: NonEmptyList<B>,
-): NonEmptyList<R> = app(list1, list2).asNel
+	list1: Context<NonEmptyContext, A>,
+	list2: Context<NonEmptyContext, B>,
+): NonEmptyList<R> = app(NonEmptyList, list1, list2).asNel
 
 operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
-	list1: NonEmptyList<A>,
-	list2: NonEmptyList<B>,
-	list3: NonEmptyList<C>,
-): NonEmptyList<R> = app(list1, list2, list3).asNel
+	list1: Context<NonEmptyContext, A>,
+	list2: Context<NonEmptyContext, B>,
+	list3: Context<NonEmptyContext, C>,
+): NonEmptyList<R> = app(NonEmptyList, list1, list2, list3).asNel
 
 operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
-	list1: NonEmptyList<A>,
-	list2: NonEmptyList<B>,
-	list3: NonEmptyList<C>,
-	list4: NonEmptyList<D>,
-): NonEmptyList<R> = app(list1, list2, list3, list4).asNel
+	list1: Context<NonEmptyContext, A>,
+	list2: Context<NonEmptyContext, B>,
+	list3: Context<NonEmptyContext, C>,
+	list4: Context<NonEmptyContext, D>,
+): NonEmptyList<R> = app(NonEmptyList, list1, list2, list3, list4).asNel
 
-fun <A, R> liftNel(f: (A) -> R): (NonEmptyList<A>) -> NonEmptyList<R> = lift(f)::invoke
-fun <A, B, R> liftNel2(f: (A, B) -> R): (NonEmptyList<A>, NonEmptyList<B>) -> NonEmptyList<R> = lift2(f)::invoke
-fun <A, B, C, R> liftNel3(f: (A, B, C) -> R): (NonEmptyList<A>, NonEmptyList<B>, NonEmptyList<C>) -> NonEmptyList<R> =
+fun <A, R> liftNel(f: (A) -> R): (Context<NonEmptyContext, A>) -> NonEmptyList<R> = lift(f)::invoke
+fun <A, B, R> liftNel2(f: (A, B) -> R): (Context<NonEmptyContext, A>, Context<NonEmptyContext, B>) -> NonEmptyList<R> =
+	lift2(f)::invoke
+
+fun <A, B, C, R> liftNel3(f: (A, B, C) -> R): (Context<NonEmptyContext, A>, Context<NonEmptyContext, B>, Context<NonEmptyContext, C>) -> NonEmptyList<R> =
 	lift3(f)::invoke
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun <F, A> NonEmptyList<Functor<F, A>>.sequenceA(appScope: Applicative.Scope<F>): Functor<F, NonEmptyList<A>> =
+inline fun <F, A> NonEmptyList<Context<F, A>>.sequenceA(appScope: Applicative.Scope<F>): Context<F, NonEmptyList<A>> =
 	traverse(appScope, ::id)
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun <F, A> NonEmptyList<Applicative<F, A>>.sequenceA(): Functor<F, NonEmptyList<A>> =
+inline fun <F, A> NonEmptyList<Applicative<F, A>>.sequenceA(): Context<F, NonEmptyList<A>> =
 	traverse(head.scope, ::id)

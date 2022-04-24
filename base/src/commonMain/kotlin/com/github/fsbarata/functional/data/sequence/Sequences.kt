@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.data.sequence
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.partial
@@ -23,8 +23,8 @@ inline fun <A, M> Sequence<A>.foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 
 inline fun <F, A, B> Sequence<A>.traverse(
 	appScope: Applicative.Scope<F>,
-	f: (A) -> Functor<F, B>,
-): Functor<F, Sequence<B>> {
+	f: (A) -> Context<F, B>,
+): Context<F, Sequence<B>> {
 	return fold(appScope.just(emptySequence())) { app, a ->
 		appScope.lift2(f(a), app) { b, lb -> lb + b }
 	}

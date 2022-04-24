@@ -19,8 +19,8 @@ class Reader<D, out A>(val runReader: (D) -> A):
 	override fun <B> map(f: (A) -> B): Reader<D, B> =
 		Reader { f(runReader(it)) }
 
-	override infix fun <B> ap(ff: Functor<ReaderContext<D>, (A) -> B>): Reader<D, B> =
-		Reader { d -> ff.map { it(runReader(d)) }.asReader.runReader(d) }
+	override infix fun <B> ap(ff: Context<ReaderContext<D>, (A) -> B>): Reader<D, B> =
+		Reader { d -> ff.asReader.map { it(runReader(d)) }.asReader.runReader(d) }
 
 	override infix fun <B> bind(f: (A) -> Context<ReaderContext<D>, B>): Reader<D, B> =
 		flatMap { f(it).asReader }

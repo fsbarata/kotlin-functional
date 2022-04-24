@@ -41,11 +41,11 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	inline fun <B> mapIndexed(f: (index: Int, A) -> B): ListF<B> =
 		asIterable().mapIndexedTo(ArrayList(size), f).f()
 
-	override infix fun <B> ap(ff: Functor<ListContext, (A) -> B>): ListF<B> =
+	override infix fun <B> ap(ff: Context<ListContext, (A) -> B>): ListF<B> =
 		ff.asList.flatMap(::map)
 
-	override inline fun <B, R> lift2(fb: Functor<ListContext, B>, f: (A, B) -> R): ListF<R> =
-		bind { a -> fb.map(f.partial(a)) }
+	override inline fun <B, R> lift2(fb: Context<ListContext, B>, f: (A, B) -> R): ListF<R> =
+		bind { a -> scope.map(fb, f.partial(a)) }
 
 	override inline infix fun <B> bind(f: (A) -> Context<ListContext, B>): ListF<B> =
 		flatMap { f(it).asList }
@@ -90,13 +90,13 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	override inline fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 		asIterable().foldMap(monoid, f)
 
-	override inline fun <B, R> zipWith(other: Functor<ListContext, B>, f: (A, B) -> R): ListF<R> =
+	override inline fun <B, R> zipWith(other: Context<ListContext, B>, f: (A, B) -> R): ListF<R> =
 		zip(other.asList, f).f()
 
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Functor<F, B>,
-	): Functor<F, ListF<B>> =
+		f: (A) -> Context<F, B>,
+	): Context<F, ListF<B>> =
 		asIterable().traverse(appScope, f)
 
 	override fun combineWith(other: Context<ListContext, @UnsafeVariance A>) = plus(other.asList)
@@ -177,7 +177,7 @@ val <A> Context<ListContext, A>.asList: ListF<A>
 
 operator fun <A, R> Lift1<A, R>.invoke(
 	list: List<A>,
-): List<R> = ListF(list.map(f))
+): ListF<R> = ListF(list.map(f))
 
 operator fun <A, B, R> Lift2<A, B, R>.invoke(
 	list1: List<A>,
@@ -197,7 +197,7 @@ operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 	list4: List<D>,
 ): ListF<R> = app(ListF(list1), ListF(list2), ListF(list3), ListF(list4)).asList
 
-fun <A, R> liftList(f: (A) -> R): (List<A>) -> List<R> = lift(f)::invoke
-fun <A, B, R> liftList2(f: (A, B) -> R): (List<A>, List<B>) -> List<R> = lift2(f)::invoke
-fun <A, B, C, R> liftList3(f: (A, B, C) -> R): (List<A>, List<B>, List<C>) -> List<R> = lift3(f)::invoke
+fun <A, R> liftList(f: (A) -> R): (List<A>) -> ListF<R> = lift(f)::invoke
+fun <A, B, R> liftList2(f: (A, B) -> R): (List<A>, List<B>) -> ListF<R> = lift2(f)::invoke
+fun <A, B, C, R> liftList3(f: (A, B, C) -> R): (List<A>, List<B>, List<C>) -> ListF<R> = lift3(f)::invoke
 

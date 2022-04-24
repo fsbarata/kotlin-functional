@@ -51,9 +51,9 @@ data class OptionalT<M, out A>(
 		private val monadScope: Monad.Scope<M>,
 	): MonadTrans.Scope<OptionalContext, M>,
 		MonadPlus.Scope<Monad<M, OptionalContext>> {
-		override fun <A> empty(): OptionalT<M, A> = OptionalT(monadScope.just(None))
+		override fun <A> empty(): OptionalT<M, A> = OptionalT(monadScope.just(None) as Monad<M, Optional<A>>)
 
-		override fun <A> just(a: A) = OptionalT(monadScope.just(Optional.just(a)))
+		override fun <A> just(a: A) = OptionalT(monadScope.just(Optional.just(a)) as Monad<M, Optional<A>>)
 
 		override inline fun <A> lift(monad: Monad<M, A>) = OptionalT.lift(monad)
 	}
