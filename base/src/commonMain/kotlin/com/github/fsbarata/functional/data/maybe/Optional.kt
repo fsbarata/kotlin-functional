@@ -78,8 +78,7 @@ sealed class Optional<out A>:
 			ifSome = { appScope.map(f(it), ::Some) },
 		)
 
-	override fun combineWith(other: Context<OptionalContext, @UnsafeVariance A>) =
-		orOptional(other.asOptional)
+	override fun combineWith(other: Context<OptionalContext, @UnsafeVariance A>) = orOptional(other)
 
 	companion object:
 		MonadPlus.Scope<OptionalContext>,

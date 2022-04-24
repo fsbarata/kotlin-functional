@@ -69,7 +69,6 @@ fun <A> Foldable<A>.toList(): ListF<A> = foldMap(ListF.monoid()) { ListF.just(it
 fun <F, A> Foldable<Context<F, A>>.asum(scope: Alternative.Scope<F>): Context<F, A> =
 	foldL(scope.empty(), scope::combine)
 
-
 fun <A> Iterable<A>.fold(monoid: Monoid<A>): A = foldMap(monoid, id())
 
 @Suppress("OVERRIDE_BY_INLINE")
