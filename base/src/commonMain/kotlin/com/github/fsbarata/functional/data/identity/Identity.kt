@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package com.github.fsbarata.functional.data.identity
 
 import com.github.fsbarata.functional.Context
@@ -35,8 +37,8 @@ data class Identity<A>(val a: A):
 
 	override inline fun <B> map(f: (A) -> B) = Identity(f(a))
 
-	override infix fun <B> ap(ff: Context<IdentityContext, (A) -> B>): Identity<B> =
-		scope.map(ff) { it(a) }.asIdentity
+	override inline infix fun <B> ap(ff: Context<IdentityContext, (A) -> B>): Identity<B> =
+		ff.asIdentity.map { it(a) }
 
 	override inline fun <B, R> lift2(fb: Context<IdentityContext, B>, f: (A, B) -> R): Identity<R> =
 		Identity(f(a, fb.asIdentity.a))
