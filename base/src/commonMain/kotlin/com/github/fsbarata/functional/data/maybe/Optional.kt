@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package com.github.fsbarata.functional.data.maybe
 
 import com.github.fsbarata.functional.Context
@@ -25,25 +27,25 @@ sealed class Optional<out A>:
 	fun isPresent() = orNull() != null
 	fun isAbsent() = !isPresent()
 
-	final override inline fun filter(predicate: (A) -> Boolean) =
+	final override inline fun filter(predicate: (A) -> Boolean): Optional<A> =
 		ofNullable(orNull()?.takeIf(predicate))
 
-	final override inline fun partition(predicate: (A) -> Boolean) =
+	final override inline fun partition(predicate: (A) -> Boolean): Pair<Optional<A>, Optional<A>> =
 		Pair(filter(predicate), filter { !predicate(it) })
 
-	final override inline fun <B: Any> mapNotNull(f: (A) -> B?) =
+	final override inline fun <B: Any> mapNotNull(f: (A) -> B?): Optional<B> =
 		flatMap { f(it).toOptional() }
 
 	@Deprecated("Same as flatMap", replaceWith = ReplaceWith("flatMap"))
 	final override inline fun <B: Any> mapNotNone(f: (A) -> Optional<B>) = flatMap(f)
 
-	final override inline fun <B> map(f: (A) -> B) =
+	final override inline fun <B> map(f: (A) -> B): Optional<B> =
 		flatMap { just(f(it)) }
 
-	final override inline fun <B, R> lift2(fb: Context<OptionalContext, B>, f: (A, B) -> R) =
+	final override inline fun <B, R> lift2(fb: Context<OptionalContext, B>, f: (A, B) -> R): Optional<R> =
 		flatMap { fb.asOptional.map(f.partial(it)) }
 
-	final override inline infix fun <B> bind(f: (A) -> Context<OptionalContext, B>) =
+	final override inline infix fun <B> bind(f: (A) -> Context<OptionalContext, B>): Optional<B> =
 		flatMap { f(it).asOptional }
 
 	inline fun <B> flatMap(f: (A) -> Optional<B>): Optional<B> =
@@ -107,17 +109,24 @@ object None: Optional<Nothing>() {
 
 internal typealias OptionalContext = Optional<*>
 
-infix fun <A> Optional<A>.orElse(a: A) = orNull() ?: a
-inline infix fun <A> Optional<A>.orElseGet(a: () -> A) = orNull() ?: a()
-infix fun <A> Optional<A>.orOptional(a: Context<OptionalContext, A>) =
+inline fun <A> Context<OptionalContext, A>.orNull() = asOptional.orNull()
+inline fun <A> Context<OptionalContext, A>.isPresent() = asOptional.isPresent()
+inline fun <A> Context<OptionalContext, A>.isAbsent() = asOptional.isAbsent()
+
+inline infix fun <A> Context<OptionalContext, A>.orElse(a: A): A = orNull() ?: a
+inline infix fun <A> Context<OptionalContext, A>.orElseGet(a: () -> A): A = orNull() ?: a()
+inline infix fun <A> Context<OptionalContext, A>.orOptional(a: Context<OptionalContext, A>): Optional<A> =
 	orOptionalGet { a }
 
-inline infix fun <A> Optional<A>.orOptionalGet(a: () -> Context<OptionalContext, A>): Optional<A> =
+inline fun <A, R> Context<OptionalContext, A>.fold(ifEmpty: () -> R, ifSome: (A) -> R): R =
+	asOptional.fold(ifEmpty, ifSome)
+
+inline infix fun <A> Context<OptionalContext, A>.orOptionalGet(a: () -> Context<OptionalContext, A>): Optional<A> =
 	fold(ifEmpty = { a().asOptional }, ifSome = { Optional.just(it) })
 
-fun <A: Any> A?.toOptional() = Optional.ofNullable(this)
+inline fun <A: Any> A?.toOptional() = Optional.ofNullable(this)
 
-val <A> Context<OptionalContext, A>.asOptional
+inline val <A> Context<OptionalContext, A>.asOptional
 	get() = this as Optional<A>
 
 operator fun <A, R> Lift1<A, R>.invoke(
