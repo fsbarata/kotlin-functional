@@ -3,7 +3,6 @@ package com.github.fsbarata.functional.control
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.arrow.Kleisli
 import com.github.fsbarata.functional.control.arrow.kleisli
-import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.compose
 import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.maybe.Optional
@@ -19,7 +18,7 @@ interface MonadPlus<M, out A>: Monad<M, A>, Alternative<M, A> {
 	override fun combineWith(other: Context<M, @UnsafeVariance A>): MonadPlus<M, A>
 
 	fun filter(predicate: (A) -> Boolean): MonadPlus<M, A> =
-		bind(scope.filterKleisli(predicate))
+		scope.filter(this, predicate) as MonadPlus<M, A>
 
 	fun partition(predicate: (A) -> Boolean): Pair<MonadPlus<M, A>, MonadPlus<M, A>> =
 		Pair(
@@ -27,13 +26,19 @@ interface MonadPlus<M, out A>: Monad<M, A>, Alternative<M, A> {
 			filter(Boolean::not compose predicate)
 		)
 
-	fun <B: Any> mapNotNull(f: (A) -> B?) =
-		bind(scope.mapNotNullKleisli(f))
+	fun <B: Any> mapNotNull(f: (A) -> B?): MonadPlus<M, B> =
+		scope.mapNotNull(this, f) as MonadPlus<M, B>
 
-	fun <B: Any> mapNotNone(f: (A) -> Optional<B>) =
+	fun <B: Any> mapNotNone(f: (A) -> Optional<B>): MonadPlus<M, B> =
 		mapNotNull { f(it).orNull() }
 
-	interface Scope<M>: Monad.Scope<M>, Alternative.Scope<M>
+	interface Scope<M>: Monad.Scope<M>, Alternative.Scope<M> {
+		fun <A> filter(ca: Context<M, A>, predicate: (A) -> Boolean): Context<M, A> =
+			bind(ca, filterKleisli(predicate))
+
+		fun <A, B: Any> mapNotNull(ca: Context<M, A>, f: (A) -> B?): Context<M, B> =
+			bind(ca, mapNotNullKleisli(f))
+	}
 }
 
 fun <M, A: Any> MonadPlus<M, A?>.filterNotNull() = mapNotNull(id())
