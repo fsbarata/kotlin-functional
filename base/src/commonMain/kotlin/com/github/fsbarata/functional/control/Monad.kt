@@ -19,7 +19,7 @@ interface Monad<M, out A>: Applicative<M, A> {
 		bind { a -> scope.map(fb, f.partial(a)) }
 
 	interface Scope<M>: Applicative.Scope<M> {
-		fun <M, A, B> bind(ca: Context<M, A>, f: (A) -> Context<M, B>): Context<M, B> =
+		fun <A, B> bind(ca: Context<M, A>, f: (A) -> Context<M, B>): Context<M, B> =
 			(ca as Monad<M, A>).bind(f)
 	}
 }
