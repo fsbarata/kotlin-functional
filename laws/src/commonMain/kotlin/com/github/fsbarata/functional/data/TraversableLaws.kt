@@ -33,18 +33,17 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 		val f = { a: Int -> ListF.of(a - 5, a - 1) }
 		val g = { a: Int -> Optional.just(a + 3) }
 
-		val r1 =
-			t.traverse(ComposedApplicative.Scope(ListF, Optional)) { a ->
-				ComposedApplicative(
-					f(a).map(g),
-					ListF,
-					Optional)
-			}
-		val r2 = t.traverse(ListF, f).asList.map { it.traverse(Optional, g) }
-		val r1Items = r1.asComposed.underlying.asList
-		val r2Items = r2
-		assertEquals(r2Items.size, r1Items.size)
-		r1Items.zipWith(r2Items) { optional1, optional2 ->
+		val r1: ListF<Optional<Traversable<T, Int>>> = t.traverse(ComposedApplicative.Scope(ListF, Optional)) { a ->
+			ComposedApplicative(
+				f(a).map(g),
+				ListF,
+				Optional)
+		}.asComposed.underlying.asList.map { it.asOptional }
+
+		val r2: ListF<Optional<Traversable<T, Int>>> =
+			t.traverse(ListF, f).asList.map { it.traverse(Optional, g).asOptional }
+		assertEquals(r2.size, r1.size)
+		r1.zipWith(r2) { optional1, optional2 ->
 			val item1 = optional1.asOptional.orNull() ?: run {
 				assertTrue(optional2.asOptional.isPresent(), message = "Item from r2 is not null")
 				return@zipWith
