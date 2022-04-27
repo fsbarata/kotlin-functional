@@ -10,10 +10,10 @@ import com.github.fsbarata.functional.data.list.NonEmptyList
  * For eg., Numbers, String
  */
 interface Semigroup<A> {
-	fun combineWith(other: A): A
+	fun concatWith(other: A): A
 }
 
-fun <A: Semigroup<A>> combine(a1: A, a2: A) = a1.combineWith(a2)
+fun <A: Semigroup<A>> concat(a1: A, a2: A) = a1.concatWith(a2)
 
 fun <A: Semigroup<A>> A.stimes(n: Int): A {
 	require(n >= 1)
@@ -22,7 +22,7 @@ fun <A: Semigroup<A>> A.stimes(n: Int): A {
 
 private tailrec fun <A: Semigroup<A>> A.add(a: A, n: Int): A =
 	if (n == 0) this
-	else combineWith(a).add(a, n - 1)
+	else concatWith(a).add(a, n - 1)
 
 fun <A: Semigroup<A>> NonEmptyList<A>.sconcat() =
-	reduce { a1, a2 -> a1.combineWith(a2) }
+	reduce { a1, a2 -> a1.concatWith(a2) }

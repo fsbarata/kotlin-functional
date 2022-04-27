@@ -34,7 +34,7 @@ interface MonadPlusLaws<M>: MonadLaws<M> {
 	fun `filter from bind`() {
 		eachPossibilityMonadPlus { mp ->
 			val f = { a: Int -> a > 3 }
-			assertEqualF(mp.filterFromBind(f), mp.filter(f))
+			assertEqualF(mp.bind(mp.scope.filterKleisli(f)), mp.filter(f))
 		}
 	}
 }

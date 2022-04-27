@@ -35,7 +35,7 @@ sealed class Either<out E, out A>:
 		flatMap { Right(f(it)) }
 
 	final override inline fun <B, R> lift2(
-		fb: Functor<EitherContext<@UnsafeVariance E>, B>,
+		fb: Context<EitherContext<@UnsafeVariance E>, B>,
 		f: (A, B) -> R,
 	): Either<E, R> =
 		flatMap { fb.asEither.map(f.partial(it)) }
@@ -62,10 +62,10 @@ sealed class Either<out E, out A>:
 
 	final override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Functor<F, B>,
-	): Functor<F, Either<E, B>> = fold(
+		f: (A) -> Context<F, B>,
+	): Context<F, Either<E, B>> = fold(
 		ifLeft = { appScope.just(Left(it)) },
-		ifRight = { f(it).map(::Right) }
+		ifRight = { appScope.map(f(it), ::Right) }
 	)
 
 	fun orNull() = fold({ null }, { it })
@@ -73,7 +73,7 @@ sealed class Either<out E, out A>:
 
 	fun swap() = fold(ifLeft = { Right(it) }, ifRight = { Left(it) })
 
-	override fun combineWith(other: Either<@UnsafeVariance E, @UnsafeVariance A>) =
+	override fun concatWith(other: Either<@UnsafeVariance E, @UnsafeVariance A>) =
 		fold(
 			ifLeft = { other },
 			ifRight = { Right(it) },
@@ -142,6 +142,6 @@ operator fun <E, A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 ): Either<E, R> = app(either1, either2, either3, either4).asEither
 
 fun <E, A, R> liftEither(f: (A) -> R): (Either<E, A>) -> Either<E, R> = lift(f)::invoke
-fun <E, A, B, R> lift2Either(f: (A, B) -> R): (Either<E, A>, Either<E, B>) -> Either<E, R> = lift2(f)::invoke
-fun <E, A, B, C, R> lift3Either(f: (A, B, C) -> R): (Either<E, A>, Either<E, B>, Either<E, C>) -> Either<E, R> =
+fun <E, A, B, R> liftEither2(f: (A, B) -> R): (Either<E, A>, Either<E, B>) -> Either<E, R> = lift2(f)::invoke
+fun <E, A, B, C, R> liftEither3(f: (A, B, C) -> R): (Either<E, A>, Either<E, B>, Either<E, C>) -> Either<E, R> =
 	lift3(f)::invoke

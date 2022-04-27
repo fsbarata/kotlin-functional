@@ -3,6 +3,7 @@ package com.github.fsbarata.functional.data.list
 import com.github.fsbarata.functional.assertEquals
 import com.github.fsbarata.functional.control.MonadPlusLaws
 import com.github.fsbarata.functional.control.MonadZipLaws
+import com.github.fsbarata.functional.data.IntMinusSg
 import com.github.fsbarata.functional.data.TraversableLaws
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.validation.Validation
@@ -10,12 +11,16 @@ import com.github.fsbarata.functional.data.validation.ValidationApplicativeScope
 import com.github.fsbarata.functional.data.validation.asValidation
 import kotlin.test.Test
 
-class ListFTest:
+internal class ListFTest:
+	ImmutableListTest(),
 	MonadPlusLaws<ListContext>,
 	MonadZipLaws<ListContext>,
 	TraversableLaws<ListContext> {
 	override val traversableScope = ListF
 	override val monadScope = ListF
+
+	override fun empty() = ListF.empty<Int>()
+	override fun of(item1: Int, vararg items: Int): ListF<Int> = ListF.just(item1) + items.asIterable()
 
 	override val possibilities = 10
 	override fun factory(possibility: Int) = createList(possibility)
@@ -68,6 +73,17 @@ class ListFTest:
 				}
 				.asValidation
 				.map { it.sum() }
+		)
+	}
+
+	@Test
+	fun foldR() {
+		assertEquals(
+			53,
+			ListF.of(10, 11)
+				.map(::IntMinusSg)
+				.foldR(IntMinusSg(54))
+				.i
 		)
 	}
 }

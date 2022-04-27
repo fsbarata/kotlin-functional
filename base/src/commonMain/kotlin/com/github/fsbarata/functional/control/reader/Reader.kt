@@ -2,6 +2,7 @@ package com.github.fsbarata.functional.control.reader
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.control.arrow.Kleisli
 import com.github.fsbarata.functional.control.arrow.kleisli
 import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.id
@@ -18,8 +19,8 @@ class Reader<D, out A>(val runReader: (D) -> A):
 	override fun <B> map(f: (A) -> B): Reader<D, B> =
 		Reader { f(runReader(it)) }
 
-	override infix fun <B> ap(ff: Functor<ReaderContext<D>, (A) -> B>): Reader<D, B> =
-		Reader { d -> ff.map { it(runReader(d)) }.asReader.runReader(d) }
+	override infix fun <B> ap(ff: Context<ReaderContext<D>, (A) -> B>): Reader<D, B> =
+		Reader { d -> ff.asReader.map { it(runReader(d)) }.asReader.runReader(d) }
 
 	override infix fun <B> bind(f: (A) -> Context<ReaderContext<D>, B>): Reader<D, B> =
 		flatMap { f(it).asReader }
@@ -40,7 +41,7 @@ class Reader<D, out A>(val runReader: (D) -> A):
 
 		fun <D> ask(): Reader<D, D> = Reader(::id)
 
-		fun <D, A, B> kleisli(f: (A) -> Reader<D, B>) = Scope<D>().kleisli(f)
+		fun <D, A, B> kleisli(f: (A) -> Reader<D, B>): Kleisli<Reader<D, *>, A, B> = Scope<D>().kleisli(f)
 	}
 }
 

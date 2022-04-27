@@ -1,8 +1,7 @@
 package com.github.fsbarata.functional.data
 
-import com.github.fsbarata.functional.data.compose.Composed
 import com.github.fsbarata.functional.data.compose.ComposedApplicative
-import com.github.fsbarata.functional.data.compose.asCompose
+import com.github.fsbarata.functional.data.compose.asComposed
 import com.github.fsbarata.functional.data.identity.Identity
 import com.github.fsbarata.functional.data.identity.runIdentity
 import com.github.fsbarata.functional.data.list.ListF
@@ -34,18 +33,17 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 		val f = { a: Int -> ListF.of(a - 5, a - 1) }
 		val g = { a: Int -> Optional.just(a + 3) }
 
-		val r1 =
-			t.traverse(ComposedApplicative.Scope(ListF, Optional)) { a ->
-				ComposedApplicative(
-					f(a).map(g),
-					ListF,
-					Optional)
-			}
-		val r2 = Composed(t.traverse(ListF, f).map { it.traverse(Optional, g) })
-		val r1Items = r1.asCompose.underlying.asList
-		val r2Items = r2.underlying.asList
-		assertEquals(r2Items.size, r1Items.size)
-		r1Items.zipWith(r2Items) { optional1, optional2 ->
+		val r1: ListF<Optional<Traversable<T, Int>>> = t.traverse(ComposedApplicative.Scope(ListF, Optional)) { a ->
+			ComposedApplicative(
+				f(a).map(g),
+				ListF,
+				Optional)
+		}.asComposed.underlying.asList.map { it.asOptional }
+
+		val r2: ListF<Optional<Traversable<T, Int>>> =
+			t.traverse(ListF, f).asList.map { it.traverse(Optional, g).asOptional }
+		assertEquals(r2.size, r1.size)
+		r1.zipWith(r2) { optional1, optional2 ->
 			val item1 = optional1.asOptional.orNull() ?: run {
 				assertTrue(optional2.asOptional.isPresent(), message = "Item from r2 is not null")
 				return@zipWith
@@ -60,7 +58,7 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 		val t = createTraversable(1, 5, 2, -2, 0, 2)
 		val f = { a: Int -> listOf(a.toString(), (a + 2).toString()).f() }
 		val r1 = t.traverse(ListF, f).asList
-		val r2 = traverseFromSequence(ListF, t, f).asList
+		val r2 = traverseFromSequence(traversableScope, t, ListF, f).asList
 		assertEquals(r2.size, r1.size)
 		r1.indices.forEach { assertEqualF(r1[it], r2[it]) }
 	}
@@ -69,7 +67,7 @@ interface TraversableLaws<T>: FunctorLaws<T>, FoldableLaws {
 	fun `sequence = sequenceFromTraverse`() {
 		val t = createTraversable(listOf(1, 5, 2, -2, 0, 2).f())
 		val r1 = traversableScope.sequenceA(ListF, t).asList
-		val r2 = sequenceFromTraverse(ListF, t).asList
+		val r2 = sequenceFromTraverse(traversableScope, t, ListF).asList
 		assertEquals(r2.size, r1.size)
 		r1.indices.forEach { assertEqualF(r1[it], r2[it]) }
 	}

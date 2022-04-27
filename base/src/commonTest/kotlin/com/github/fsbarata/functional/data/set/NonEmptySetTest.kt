@@ -87,16 +87,22 @@ class NonEmptySetTest:
 	@Test
 	fun plus() {
 		assertEquals(nesOf(9, 3), nes1 + 3)
-		assertEquals(nesOf(5, 1, 3, 3), nes2 + 3)
+		assertEquals(2, (nes1 + 3).size)
+		assertEquals(nesOf(5, 1, 3), nes2 + 3)
+		assertEquals(3, (nes2 + 3).size)
 		assertEquals(nesOf(2, 4, 5, 3), nes3 + 3)
+		assertEquals(4, (nes3 + 3).size)
 
 		assertEquals(nes1, nes1 + emptySet())
 		assertEquals(nes2, nes2 + emptySet())
 		assertEquals(nes3, nes3 + emptySet())
 
-		assertEquals(nesOf(9, 5, 5), nes1 + setOf(5, 5))
+		assertEquals(nesOf(9, 5), nes1 + setOf(5, 5))
+		assertEquals(2, (nes1 + setOf(5, 5)).size)
 		assertEquals(nesOf(5, 1, 3, 2, 6), nes2 + setOf(1, 2, 6))
+		assertEquals(5, (nes2 + setOf(1, 2, 6)).size)
 		assertEquals(nesOf(2, 4, 5, 3), nes3 + setOf(3))
+		assertEquals(4, (nes3 + setOf(3)).size)
 	}
 
 	@Test
@@ -128,6 +134,13 @@ class NonEmptySetTest:
 	}
 
 	@Test
+	fun maxWith() {
+		assertEquals(9, nes1.maxWith(compareBy { it % 3 }))
+		assertEquals(5, nes2.maxWith(compareBy { it % 3 }))
+		assertEquals(2, nes3.maxWith(compareBy { -it }))
+	}
+
+	@Test
 	fun minBy() {
 		assertEquals(9, nes1.minBy { it })
 		assertEquals(3, nes2.minBy { it % 3L })
@@ -139,6 +152,13 @@ class NonEmptySetTest:
 		assertEquals(9L, nes1.minOf { it.toLong() })
 		assertEquals(0.5, nes2.minOf { (it % 3L) + 0.5 })
 		assertEquals(0, nes3.minOf { it % 5 })
+	}
+
+	@Test
+	fun minWith() {
+		assertEquals(9, nes1.minWith(compareBy { it % 3 }))
+		assertEquals(3, nes2.minWith(compareBy { it % 3 }))
+		assertEquals(2, nes3.minWith(compareBy { it }))
 	}
 
 	@Test

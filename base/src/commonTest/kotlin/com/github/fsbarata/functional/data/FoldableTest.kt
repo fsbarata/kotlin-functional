@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.data
 
 import com.github.fsbarata.functional.assertEquals
+import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.list.nelOf
 import kotlin.test.Test
 
@@ -20,7 +21,7 @@ class FoldableTest {
 	val rf = { a: Int, b: String -> b + a }
 
 	class StringSemigroup(val str: String): Semigroup<StringSemigroup> {
-		override fun combineWith(other: StringSemigroup) = StringSemigroup(str + other.str)
+		override fun concatWith(other: StringSemigroup) = StringSemigroup(str + other.str)
 	}
 
 	@Test
@@ -54,6 +55,19 @@ class FoldableTest {
 		assertEquals(
 			nelOf(StringF("0"), StringF("03"), StringF("035"), StringF("0351")),
 			nelOf(StringF("3"), StringF("5"), StringF("1")).scanL(StringF("0")),
+		)
+	}
+
+	@Test
+	fun asum() {
+		assertEquals(
+			ListF.of(3, 3, 5, 2, 1),
+			nelOf(
+				ListF.just(3),
+				ListF.of(3, 5),
+				ListF.empty(),
+				ListF.of(2, 1)
+			).asum(ListF)
 		)
 	}
 }

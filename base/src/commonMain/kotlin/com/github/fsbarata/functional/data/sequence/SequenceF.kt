@@ -3,15 +3,18 @@ package com.github.fsbarata.functional.data.sequence
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
+import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.maybe.Optional
+import com.github.fsbarata.functional.data.set.SetF
+import com.github.fsbarata.functional.utils.singleItemIterator
 import com.github.fsbarata.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
-class SequenceF<A>(private val wrapped: Sequence<A>):
+class SequenceF<out A>(private val wrapped: Sequence<A>):
 	MonadZip<SequenceContext, A>,
 	MonadPlus<SequenceContext, A>,
 	Traversable<SequenceContext, A>,
-	Semigroup<SequenceF<A>>,
+	Semigroup<SequenceF<@UnsafeVariance A>>,
 	Sequence<A> by wrapped,
 	Serializable {
 	override val scope get() = SequenceF
@@ -19,10 +22,10 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 	override fun <B> map(f: (A) -> B) =
 		wrapped.map(f).f()
 
-	override infix fun <B> ap(ff: Functor<SequenceContext, (A) -> B>): SequenceF<B> =
+	override infix fun <B> ap(ff: Context<SequenceContext, (A) -> B>): SequenceF<B> =
 		wrapped.ap(ff.asSequence).f()
 
-	override fun <B, R> lift2(fb: Functor<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
+	override fun <B, R> lift2(fb: Context<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
 		wrapped.lift2(fb.asSequence, f).f()
 
 	override infix fun <B> bind(f: (A) -> Context<SequenceContext, B>) =
@@ -51,33 +54,38 @@ class SequenceF<A>(private val wrapped: Sequence<A>):
 	override fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M) =
 		(this as Sequence<A>).foldMap(monoid, f)
 
-	override fun <B, R> zipWith(other: Functor<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
+	override fun <B, R> zipWith(other: Context<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
 		zip(other.asSequence, f).f()
 
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Functor<F, B>,
-	): Functor<F, SequenceF<B>> =
-		(this as Sequence<A>).traverse(appScope, f).map(Sequence<B>::f)
+		f: (A) -> Context<F, B>,
+	): Context<F, SequenceF<B>> =
+		appScope.map((this as Sequence<A>).traverse(appScope, f), Sequence<B>::f)
 
-	override fun associateWith(other: Context<SequenceContext, A>) =
+	override fun combineWith(other: Context<SequenceContext, @UnsafeVariance A>) =
 		SequenceF(wrapped + (other.asSequence).wrapped)
 
-	override fun combineWith(other: SequenceF<A>): SequenceF<A> = associateWith(other)
+	override fun concatWith(other: SequenceF<@UnsafeVariance A>): SequenceF<A> = combineWith(other)
 
 	override fun toString() = wrapped.toString()
 	override fun equals(other: Any?) = wrapped == other
 	override fun hashCode() = wrapped.hashCode()
 
+	fun toList(): ListF<A> = ListF.fromSequence(wrapped)
+	fun toSet(): SetF<A> = SetF.fromSequence(wrapped)
+
 	companion object:
 		MonadPlus.Scope<SequenceContext>,
 		Traversable.Scope<SequenceContext> {
 		override fun <A> empty(): SequenceF<A> = emptySequence<A>().f()
-		override fun <A> just(a: A) = sequenceOf(a).f()
+		override fun <A> just(a: A) = Sequence { singleItemIterator(a) }.f()
 		fun <A> of(vararg items: A) = sequenceOf(*items).f()
 
 		fun <A> monoid() = monoid(empty<A>())
 
+		override fun <A> fromIterable(iterable: Iterable<A>) = iterable.asSequence().f()
+		override fun <A> fromSequence(sequence: Sequence<A>) = sequence.f()
 		override fun <A> fromList(list: List<A>) = list.asSequence().f()
 		override fun <A> fromOptional(optional: Optional<A>) = optional.maybe(empty(), ::just)
 	}
@@ -87,6 +95,7 @@ fun <A> Sequence<A>.f() = when (this) {
 	is SequenceF -> this
 	else -> SequenceF(this)
 }
+
 fun <A, R> Sequence<A>.f(block: SequenceF<A>.() -> Context<SequenceContext, R>) =
 	f().block().asSequence
 

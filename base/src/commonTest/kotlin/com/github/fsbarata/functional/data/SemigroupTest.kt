@@ -6,24 +6,20 @@ import com.github.fsbarata.functional.data.monoid.dual
 import kotlin.test.Test
 
 class SemigroupTest {
-	data class SgInt(val i: Int): Semigroup<SgInt> {
-		override fun combineWith(other: SgInt) = SgInt(i + other.i)
-	}
-
-	data class SgString(val str: String): Semigroup<SgString> {
-		override fun combineWith(other: SgString) = SgString(str + other.str)
+	data class StringConcatSg(val str: String): Semigroup<StringConcatSg> {
+		override fun concatWith(other: StringConcatSg) = StringConcatSg(str + other.str)
 	}
 
 	@Test
 	fun stimes() {
-		assertEquals(SgInt(3), SgInt(3).stimes(1))
-		assertEquals(SgInt(45), SgInt(3).stimes(15))
-		assertEquals(SgString("4a4a4a4a"), SgString("4a").stimes(4))
+		assertEquals(IntPlusSg(3), IntPlusSg(3).stimes(1))
+		assertEquals(IntPlusSg(45), IntPlusSg(3).stimes(15))
+		assertEquals(StringConcatSg("4a4a4a4a"), StringConcatSg("4a").stimes(4))
 	}
 
 	@Test
 	fun dual() {
-		assertEquals(SgString("5a3w"), SgString("3w").dual().combineWith(SgString("5a").dual()).get)
+		assertEquals(StringConcatSg("5a3w"), StringConcatSg("3w").dual().concatWith(StringConcatSg("5a").dual()).get)
 	}
 
 	@Test
@@ -33,4 +29,8 @@ class SemigroupTest {
 			nelOf(StringF("5a"), StringF("g"), StringF(""), StringF("2")).sconcat(),
 		)
 	}
+}
+
+data class IntPlusSg(val i: Int): Semigroup<IntPlusSg> {
+	override fun concatWith(other: IntPlusSg) = IntPlusSg(i + other.i)
 }

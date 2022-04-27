@@ -4,8 +4,6 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
-import com.github.fsbarata.functional.data.list.NonEmptyList
-import com.github.fsbarata.functional.data.list.asNel
 import com.github.fsbarata.functional.utils.toNes
 import com.github.fsbarata.io.Serializable
 
@@ -36,10 +34,10 @@ class NonEmptySet<out A> private constructor(
 	override inline fun <B> map(f: (A) -> B): NonEmptySet<B> =
 		of(f(head), tail.mapTo(mutableSetOf(), f))
 
-	override fun <B> ap(ff: Functor<NonEmptySetContext, (A) -> B>): NonEmptySet<B> =
+	override fun <B> ap(ff: Context<NonEmptySetContext, (A) -> B>): NonEmptySet<B> =
 		ff.asNes.flatMap(this::map)
 
-	override inline fun <B, R> lift2(fb: Functor<NonEmptySetContext, B>, f: (A, B) -> R): NonEmptySet<R> =
+	override inline fun <B, R> lift2(fb: Context<NonEmptySetContext, B>, f: (A, B) -> R): NonEmptySet<R> =
 		flatMap { a -> fb.asNes.map(f.partial(a)) }
 
 	override inline infix fun <B> bind(f: (A) -> Context<NonEmptySetContext, B>): NonEmptySet<B> =
@@ -66,8 +64,8 @@ class NonEmptySet<out A> private constructor(
 
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Functor<F, B>,
-	): Functor<F, NonEmptySet<B>> =
+		f: (A) -> Context<F, B>,
+	): Context<F, NonEmptySet<B>> =
 		appScope.lift2(f(head), tail.traverse(appScope, f), ::of)
 
 	inline fun <F, B> traverse(
@@ -80,11 +78,15 @@ class NonEmptySet<out A> private constructor(
 		)
 	}
 
-	override fun combineWith(other: NonEmptySet<@UnsafeVariance A>): NonEmptySet<A> = this + other
+	override fun concatWith(other: NonEmptySet<@UnsafeVariance A>): NonEmptySet<A> = this + other
 
 	companion object: Monad.Scope<NonEmptySetContext>, Traversable.Scope<NonEmptySetContext> {
-		override fun <A> just(a: A) = NonEmptySet(a, emptySet())
-		fun <T> of(head: T, others: Set<T>) = NonEmptySet(head, others - head)
+		override fun <A> just(a: A) = NonEmptySet(a, SetF.empty())
+		fun <T> of(head: T, others: Set<T>) =
+			NonEmptySet(
+				head,
+				others - head,
+			)
 	}
 }
 
@@ -103,36 +105,41 @@ fun <A> Iterable<A>.toNes(): NonEmptySet<A>? {
 	}
 }
 
+fun <A> Sequence<A>.toNes(): NonEmptySet<A>? = iterator().toNes()
+
 @Suppress("NOTHING_TO_INLINE")
-inline fun <F, A> NonEmptySet<Functor<F, A>>.sequenceA(appScope: Applicative.Scope<F>): Functor<F, NonEmptySet<A>> =
+inline fun <F, A> NonEmptySet<Context<F, A>>.sequenceA(appScope: Applicative.Scope<F>): Context<F, NonEmptySet<A>> =
 	traverse(appScope, ::id)
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun <F, A> NonEmptySet<Applicative<F, A>>.sequenceA(): Functor<F, NonEmptySet<A>> =
+inline fun <F, A> NonEmptySet<Applicative<F, A>>.sequenceA(): Context<F, NonEmptySet<A>> =
 	traverse(head.scope, ::id)
 
 operator fun <A, R> Lift1<A, R>.invoke(
-	set: NonEmptySet<A>,
-): NonEmptySet<R> = fmap(set).asNes
+	set: Context<NonEmptySetContext, A>,
+): NonEmptySet<R> = fmap(NonEmptySet, set).asNes
 
 operator fun <A, B, R> Lift2<A, B, R>.invoke(
-	set1: NonEmptySet<A>,
-	set2: NonEmptySet<B>,
-): NonEmptySet<R> = app(set1, set2).asNes
+	set1: Context<NonEmptySetContext, A>,
+	set2: Context<NonEmptySetContext, B>,
+): NonEmptySet<R> = app(NonEmptySet, set1, set2).asNes
 
 operator fun <A, B, C, R> Lift3<A, B, C, R>.invoke(
-	set1: NonEmptySet<A>,
-	set2: NonEmptySet<B>,
-	set3: NonEmptySet<C>,
-): NonEmptySet<R> = app(set1, set2, set3).asNes
+	set1: Context<NonEmptySetContext, A>,
+	set2: Context<NonEmptySetContext, B>,
+	set3: Context<NonEmptySetContext, C>,
+): NonEmptySet<R> = app(NonEmptySet, set1, set2, set3).asNes
 
 operator fun <A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
-	set1: NonEmptySet<A>,
-	set2: NonEmptySet<B>,
-	set3: NonEmptySet<C>,
-	set4: NonEmptySet<D>,
-): NonEmptySet<R> = app(set1, set2, set3, set4).asNes
+	set1: Context<NonEmptySetContext, A>,
+	set2: Context<NonEmptySetContext, B>,
+	set3: Context<NonEmptySetContext, C>,
+	set4: Context<NonEmptySetContext, D>,
+): NonEmptySet<R> = app(NonEmptySet, set1, set2, set3, set4).asNes
 
-fun <A, R> liftNes(f: (A) -> R): (NonEmptySet<A>) -> NonEmptySet<R> = lift(f)::invoke
-fun <A, B, R> lift2Nes(f: (A, B) -> R): (NonEmptySet<A>, NonEmptySet<B>) -> NonEmptySet<R> = lift2(f)::invoke
-fun <A, B, C, R> lift3Nes(f: (A, B, C) -> R): (NonEmptySet<A>, NonEmptySet<B>, NonEmptySet<C>) -> NonEmptySet<R> = lift3(f)::invoke
+fun <A, R> liftNes(f: (A) -> R): (Context<NonEmptySetContext, A>) -> NonEmptySet<R> = lift(f)::invoke
+fun <A, B, R> liftNes2(f: (A, B) -> R): (Context<NonEmptySetContext, A>, Context<NonEmptySetContext, B>) -> NonEmptySet<R> =
+	lift2(f)::invoke
+
+fun <A, B, C, R> liftNes3(f: (A, B, C) -> R): (Context<NonEmptySetContext, A>, Context<NonEmptySetContext, B>, Context<NonEmptySetContext, C>) -> NonEmptySet<R> =
+	lift3(f)::invoke

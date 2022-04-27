@@ -9,7 +9,7 @@ import kotlin.test.fail
 
 class ValidationApplicativeKtTest {
 	data class IntSemigroup(val i: Int): Semigroup<IntSemigroup> {
-		override fun combineWith(other: IntSemigroup) = IntSemigroup(i + other.i)
+		override fun concatWith(other: IntSemigroup) = IntSemigroup(i + other.i)
 	}
 
 	@Test

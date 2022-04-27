@@ -1,14 +1,14 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package com.github.fsbarata.functional.data.tuple
 
 import com.github.fsbarata.functional.BiContext
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Comonad
-import com.github.fsbarata.functional.data.BiFunctor
-import com.github.fsbarata.functional.data.Functor
-import com.github.fsbarata.functional.data.Monoid
-import com.github.fsbarata.functional.data.Traversable
+import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.io.Serializable
+import kotlin.jvm.JvmName
 
 @Suppress("OVERRIDE_BY_INLINE")
 data class Tuple2<X, Y>(val x: X, val y: Y):
@@ -31,8 +31,8 @@ data class Tuple2<X, Y>(val x: X, val y: Y):
 
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (Y) -> Functor<F, B>,
-	) = f(y).map { Tuple2(x, it) }
+		f: (Y) -> Context<F, B>,
+	): Context<F, Tuple2<X, B>> = appScope.map(f(y)) { Tuple2(x, it) }
 
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, Y) -> R): R =
 		accumulator(initialValue, y)
@@ -67,8 +67,20 @@ val <X, Y> Context<Tuple2Context<X>, Y>.asTuple
 val <X, Y> BiContext<Tuple2BiContext, X, Y>.asTuple
 	get() = this as Tuple2<X, Y>
 
-fun <A, B> Pair<A, B>.f() = Tuple2(first, second)
-fun <A, B, X, Y> Pair<A, B>.f(block: Tuple2<A, B>.() -> Context<Tuple2Context<X>, Y>): Tuple2<X, Y> =
+inline fun <A, B> Pair<A, B>.f() = toTuple()
+inline fun <A, B, X, Y> Pair<A, B>.f(block: Tuple2<A, B>.() -> Context<Tuple2Context<X>, Y>): Tuple2<X, Y> =
 	f().block().asTuple
 
-fun <X, Y> Tuple2<X, Y>.toPair() = Pair(x, y)
+inline fun <X, Y> Pair<X, Y>.toTuple() = Tuple2(first, second)
+inline fun <X, Y> Tuple2<X, Y>.toPair() = Pair(x, y)
+
+inline fun <A, B, R> F2<A, B, R>.packT(): (Tuple2<A, B>) -> R = { t: Tuple2<A, B> -> invoke(t.x, t.y) }
+inline fun <A, B, R> F1<Tuple2<A, B>, R>.unpackT(): F2<A, B, R> = { a: A, b: B -> invoke(Tuple2(a, b)) }
+
+@JvmName("tupleExt")
+inline fun <A, B, R> F1<Pair<A, B>, R>.tuple(): F1<Tuple2<A, B>, R> = compose(Tuple2<A, B>::toPair)
+inline fun <A, B, R> tuple(crossinline f: F1<Pair<A, B>, R>): F1<Tuple2<A, B>, R> = f.tuple()
+
+@JvmName("pairExt")
+inline fun <A, B, R> F1<Tuple2<A, B>, R>.pair(): F1<Pair<A, B>, R> = compose(Pair<A, B>::toTuple)
+inline fun <A, B, R> pair(crossinline f: F1<Tuple2<A, B>, R>): F1<Pair<A, B>, R> = { f(Tuple2(it.first, it.second)) }

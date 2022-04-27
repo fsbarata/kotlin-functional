@@ -4,6 +4,7 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.assertEquals
 import com.github.fsbarata.functional.control.MonadPlusLaws
 import com.github.fsbarata.functional.control.MonadZipLaws
+import com.github.fsbarata.functional.control.arrow.kleisli
 import com.github.fsbarata.functional.data.TraversableLaws
 import kotlin.test.*
 
@@ -68,5 +69,14 @@ class OptionalTest:
 		assertEquals(Optional.empty<Long>(), Optional.just(9).flatMap { Optional.empty<Long>() })
 		assertEquals(Optional.empty<Long>(), Optional.empty<Int>().flatMap { Optional.just(5L * it) })
 		assertEquals(Optional.empty<Long>(), Optional.empty<Int>().flatMap { Optional.empty<Long>() })
+	}
+
+	@Test
+	fun kleisli() {
+		val m = Optional.just(3)
+		val f = optionalKleisli { b: Int -> "$b" }
+		assertEquals(Optional.just("3"), m.bind(f))
+		val g = optionalKleisli { b: Int -> null }
+		assertEquals(Optional.empty<Nothing>(), m.bind(g))
 	}
 }

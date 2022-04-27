@@ -26,17 +26,31 @@ It abstracts the nullability of a value.
 
 Most commonly used with the RxJava framework, where nulls are forbidden.
 
+Example 1:
+```
+Observable.just(1, 2, 3, 5, 6, 7)
+	.map { if (it % 2 == 0) Optional.empty() else Optional.just(it) }
+	.filterNotNone() // returns an Observable with items [1, 3, 5, 7]
+```
+
+Example 2:
+```
+Observable.just(1, 2, 3, 5, 6, 7)
+	.map { if (it % 2 == 0) Optional.empty() else Optional.just(it) }
+	.mapNotNone(liftOpt { it + 1 }) // returns an Observable with items [2, 4, 6, 8]
+```
+
 ### Either
 
 A data structure that can only carry one of two possibilities.
 
 Most commonly used to represent Correct (Right) or Error (Left) result of one computation.
 
-### NonEmpty List
+### NonEmpty List/Set
 
-A list that must have at least one element.
+A list/set that must have at least one element.
 As a result, multiple operations are guaranteed to yield more predictable results,
-such as `first()` or `last()`.
+such as `first`, `last`, `max`, `reduce`, etc.
 
 Most commonly used to represent Lists that have been tested for emptiness.
 

@@ -10,29 +10,34 @@ import com.github.fsbarata.functional.kotlin.plusElementNe
 interface Alternative<F, out A>: Applicative<F, A> {
 	override val scope: Scope<F>
 
-	override fun <B, R> lift2(fb: Functor<F, B>, f: (A, B) -> R) =
+	override fun <B, R> lift2(fb: Context<F, B>, f: (A, B) -> R) =
 		super.lift2(fb, f) as Alternative<F, R>
 
-	fun associateWith(other: Context<F, @UnsafeVariance A>): Alternative<F, A>
+	fun combineWith(other: Context<F, @UnsafeVariance A>): Alternative<F, A>
 
 	fun some(): Alternative<F, NonEmptySequence<@UnsafeVariance A>> =
 		lift2(many(), Sequence<A>::plusElementNe.flip())
 
 	fun many(): Alternative<F, Sequence<@UnsafeVariance A>> =
-		associate(some(), scope.just(emptySequence()))
+		combine(some(), scope.just(emptySequence()))
 
 	interface Scope<F>: Applicative.Scope<F> {
-		fun <A> empty(): Alternative<F, A>
-		override fun <A> just(a: A): Alternative<F, A>
+		fun <A> empty(): Context<F, A>
 
-		fun <A> fromList(list: List<A>): Alternative<F, A> =
-			list.fold(empty()) { r, a -> r.associateWith(just(a)) }
+		fun <A> fromIterable(iterable: Iterable<A>): Context<F, A> =
+			iterable.fold(empty()) { r, a -> combine(r, just(a)) }
 
-		fun <A> fromOptional(optional: Optional<A>): Alternative<F, A> =
+		fun <A> combine(item1: Context<F, A>, item2: Context<F, A>): Context<F, A> =
+			(item1 as Alternative<F, A>).combineWith(item2)
+
+		fun <A> fromSequence(sequence: Sequence<A>): Context<F, A> = fromIterable(sequence.asIterable())
+		fun <A> fromList(list: List<A>): Context<F, A> = fromIterable(list)
+
+		fun <A> fromOptional(optional: Optional<A>): Context<F, A> =
 			optional.maybe(empty(), ::just)
 	}
 }
 
-fun <C, A> associate(alt1: Alternative<C, A>, alt2: Context<C, A>) =
-	alt1.associateWith(alt2)
+fun <C, A> combine(alt1: Alternative<C, A>, alt2: Context<C, A>): Alternative<C, A> =
+	alt1.combineWith(alt2)
 

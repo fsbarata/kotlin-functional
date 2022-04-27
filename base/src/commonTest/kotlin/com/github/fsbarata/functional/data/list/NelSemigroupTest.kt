@@ -15,7 +15,7 @@ class NelSemigroupTest: SemigroupLaws<NonEmptyList<Int>> {
 		val nel2 = factory(5)
 		assertEquals(
 			nel1 + nel2,
-			nel1.combineWith(nel2)
+			nel1.concatWith(nel2)
 		)
 	}
 }

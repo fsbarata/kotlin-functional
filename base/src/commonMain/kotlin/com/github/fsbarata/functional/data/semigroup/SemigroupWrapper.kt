@@ -2,11 +2,11 @@ package com.github.fsbarata.functional.data.semigroup
 
 import com.github.fsbarata.functional.data.Invariant
 import com.github.fsbarata.functional.data.Semigroup
-import com.github.fsbarata.functional.data.combine
+import com.github.fsbarata.functional.data.concat
 
 abstract class SemigroupWrapper<A>(val get: A): Semigroup<SemigroupWrapper<A>>, Invariant<Semigroup<*>, A> {
 	abstract fun combine(a1: A, a2: A): A
-	override fun combineWith(other: SemigroupWrapper<A>): SemigroupWrapper<A> =
+	override fun concatWith(other: SemigroupWrapper<A>): SemigroupWrapper<A> =
 		copy(combine(get, other.get))
 
 	fun copy(a: A): SemigroupWrapper<A> = object: SemigroupWrapper<A>(a) {
@@ -23,4 +23,4 @@ fun <A> wrapInSemigroup(a: A, combine: (A, A) -> A): SemigroupWrapper<A> = objec
 }
 
 fun <A: Semigroup<A>> A.toInvariant(): Invariant<Semigroup<*>, A> =
-	wrapInSemigroup(this, ::combine)
+	wrapInSemigroup(this, ::concat)

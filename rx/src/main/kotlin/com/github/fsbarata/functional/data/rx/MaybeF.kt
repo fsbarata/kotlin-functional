@@ -27,7 +27,7 @@ class MaybeF<A>(private val wrapped: Maybe<A>): Maybe<A>(),
 	fun <B> flatMap(f: (A) -> Maybe<B>): MaybeF<B> =
 		wrapped.flatMap(f).f()
 
-	override fun <B, R> zipWith(other: Functor<MaybeContext, B>, f: (A, B) -> R) =
+	override fun <B, R> zipWith(other: Context<MaybeContext, B>, f: (A, B) -> R) =
 		(this as Maybe<A>).zipWith(other.asMaybe, f).f()
 
 	companion object: Monad.Scope<MaybeContext> {

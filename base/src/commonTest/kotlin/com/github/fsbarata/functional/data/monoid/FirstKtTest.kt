@@ -12,8 +12,8 @@ class FirstTest: SemigroupLaws<First<String>> {
 
 	@Test
 	fun combineWith() {
-		assertEquals(First(3), First(3).combineWith(First(1)).combineWith(First(5)))
-		assertEquals(First("1f"), First("1f").combineWith(First("1fg")).combineWith(First("")))
+		assertEquals(First(3), First(3).concatWith(First(1)).concatWith(First(5)))
+		assertEquals(First("1f"), First("1f").concatWith(First("1fg")).concatWith(First("")))
 	}
 }
 
@@ -28,13 +28,13 @@ class FirstNotNullTest: MonoidLaws<FirstNotNull<String?>>(
 	fun combineWith() {
 		assertEquals(FirstNotNull(3),
 			FirstNotNull<Int?>(3)
-				.combineWith(FirstNotNull(1))
-				.combineWith(FirstNotNull(5)))
+				.concatWith(FirstNotNull(1))
+				.concatWith(FirstNotNull(5)))
 		assertEquals(FirstNotNull(1),
 			FirstNotNull<Int?>(null)
-				.combineWith(FirstNotNull(null))
-				.combineWith(FirstNotNull(1))
-				.combineWith(FirstNotNull(null))
-				.combineWith(FirstNotNull(5)))
+				.concatWith(FirstNotNull(null))
+				.concatWith(FirstNotNull(1))
+				.concatWith(FirstNotNull(null))
+				.concatWith(FirstNotNull(5)))
 	}
 }

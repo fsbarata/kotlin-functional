@@ -15,7 +15,7 @@ fun <A: Semigroup<A>> maybeMonoid(): Monoid<Maybe<A>> =
 	monoid(Maybe.empty()) { maybe1, maybe2 ->
 		maybe1
 			.flatMapSingle { a ->
-				maybe2.map { a.combineWith(it) }
+				maybe2.map { a.concatWith(it) }
 					.defaultIfEmpty(a)
 			}
 			.switchIfEmpty(maybe2)

@@ -17,7 +17,7 @@ class ConcatSequenceMonoid: MonoidLaws<SequenceF<Int>>(SequenceF.monoid()) {
 		assertEquals(
 			listOf("6", "5", "1", "1L", "ajfg"),
 			sequenceOf("6", "5").f()
-				.combineWith(sequenceOf("1", "1L", "ajfg").f())
+				.concatWith(sequenceOf("1", "1L", "ajfg").f())
 				.toList()
 		)
 	}

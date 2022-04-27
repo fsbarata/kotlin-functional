@@ -5,7 +5,6 @@ import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
-import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.partial
@@ -18,16 +17,15 @@ typealias Forest<A> = Sequence<Tree<A>>
 
 internal typealias TreeContext = Tree<*>
 
-@Suppress("OVERRIDE_BY_INLINE")
-class Tree<out A>(
-	val root: A,
-	val sub: Forest<A> = emptySequence(),
-):
+interface Tree<out A>:
 	MonadZip<TreeContext, A>,
 	Comonad<TreeContext, A>,
 	Traversable<TreeContext, A>,
 	NonEmptySequenceBase<A> {
-	override val scope = Tree
+	override val scope get() = Tree
+
+	val root: A
+	val sub: Forest<A>
 
 	override fun iterator() = nonEmptyIterator(
 		root,
@@ -46,7 +44,7 @@ class Tree<out A>(
 		)
 	}
 
-	override fun <B> ap(ff: Functor<TreeContext, (A) -> B>): Tree<B> {
+	override fun <B> ap(ff: Context<TreeContext, (A) -> B>): Tree<B> {
 		val s = ff.asTree
 		val f = s.root
 		val tfs = s.sub
@@ -56,9 +54,9 @@ class Tree<out A>(
 		)
 	}
 
-	override fun <B, R> lift2(fb: Functor<TreeContext, B>, f: (A, B) -> R): Tree<R> {
+	override fun <B, R> lift2(fb: Context<TreeContext, B>, f: (A, B) -> R): Tree<R> {
 		val tb = fb.asTree
-		val x: Forest<R> = tb.sub.map { it.map(f.partial(root)) }
+		val x: Forest<R> = tb.sub.map { it.map(partial(f, root)) }
 		val y: Forest<R> = sub.map { it.lift2(tb, f) }
 		return Tree(
 			f(root, tb.root),
@@ -73,7 +71,7 @@ class Tree<out A>(
 		monoid.combine(f(root), sub.foldMap(monoid) { ta -> ta.foldMap(monoid, f) })
 
 	override fun <B, R> zipWith(
-		other: Functor<TreeContext, B>,
+		other: Context<TreeContext, B>,
 		f: (A, B) -> R,
 	): Tree<R> {
 		val otherTree = other.asTree
@@ -88,13 +86,13 @@ class Tree<out A>(
 
 	override fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Functor<F, B>,
-	): Functor<F, Tree<B>> =
+		f: (A) -> Context<F, B>,
+	): Context<F, Tree<B>> =
 		appScope.lift2(f(root), sub.traverse(appScope) { it.traverse(appScope, f) }, ::Tree)
 
 	fun <F, B> traverse(
 		f: (A) -> Applicative<F, B>,
-	): Functor<F, Tree<B>> {
+	): Applicative<F, Tree<B>> {
 		val mappedRoot = f(root)
 		return mappedRoot.lift2(sub.traverse(mappedRoot.scope) { it.traverse(f) }, ::Tree)
 	}
@@ -108,3 +106,11 @@ class Tree<out A>(
 
 val <A> Context<TreeContext, A>.asTree
 	get() = this as Tree<A>
+
+fun <A> Tree(
+	root: A,
+	sub: Sequence<Tree<A>> = emptySequence(),
+): Tree<A> = object: Tree<A> {
+	override val root: A = root
+	override val sub: Sequence<Tree<A>> = sub
+}

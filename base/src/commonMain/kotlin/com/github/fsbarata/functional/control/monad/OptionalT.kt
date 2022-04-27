@@ -16,6 +16,8 @@ data class OptionalT<M, out A>(
 	private val innerScope get() = wrapped.scope
 	override val scope = Scope(wrapped.scope)
 
+	fun unwrap() = wrapped
+
 	inline fun <MM> mapOptionalT(f: (Monad<M, Optional<A>>) -> Monad<MM, Optional<@UnsafeVariance A>>) =
 		OptionalT(f(wrapped))
 
@@ -25,16 +27,19 @@ data class OptionalT<M, out A>(
 	override fun <B> bind(f: (A) -> Context<Monad<M, OptionalContext>, B>) =
 		flatMap { f(it).asOptionalT }
 
-	fun <B> flatMap(f: (A) -> OptionalT<M, B>) = OptionalT(
+	fun <B> flatMap(f: (A) -> OptionalT<M, B>): OptionalT<M, B> =
+		flatMapT { a: A -> f(a).wrapped }
+
+	fun <B> flatMapT(f: (A) -> Monad<M, Optional<B>>): OptionalT<M, B> = OptionalT(
 		wrapped.bind { v ->
 			v.fold(
 				ifEmpty = { innerScope.just(None) },
-				ifSome = { f(it).wrapped },
+				ifSome = f,
 			)
 		}
 	)
 
-	override fun associateWith(other: Context<Monad<M, OptionalContext>, @UnsafeVariance A>): OptionalT<M, A> =
+	override fun combineWith(other: Context<Monad<M, OptionalContext>, @UnsafeVariance A>): OptionalT<M, A> =
 		OptionalT(wrapped.bind { v ->
 			v.fold(
 				ifEmpty = { other.asOptionalT.wrapped },
@@ -46,9 +51,9 @@ data class OptionalT<M, out A>(
 		private val monadScope: Monad.Scope<M>,
 	): MonadTrans.Scope<OptionalContext, M>,
 		MonadPlus.Scope<Monad<M, OptionalContext>> {
-		override fun <A> empty(): OptionalT<M, A> = OptionalT(monadScope.just(None))
+		override fun <A> empty(): OptionalT<M, A> = OptionalT(monadScope.just(None) as Monad<M, Optional<A>>)
 
-		override fun <A> just(a: A) = OptionalT(monadScope.just(Optional.just(a)))
+		override fun <A> just(a: A) = OptionalT(monadScope.just(Optional.just(a)) as Monad<M, Optional<A>>)
 
 		override inline fun <A> lift(monad: Monad<M, A>) = OptionalT.lift(monad)
 	}
@@ -61,6 +66,8 @@ data class OptionalT<M, out A>(
 }
 
 val <M, A> Context<Monad<M, OptionalContext>, A>.asOptionalT get() = this as OptionalT<M, A>
+
+fun <M, A> Monad<M, Optional<A>>.transformer() = OptionalT(this)
 
 fun <M: MonadZip<M, *>, A, B, R> zip(opt1: OptionalT<M, A>, opt2: OptionalT<M, B>, f: (A, B) -> R) =
 	opt1.zipWith(opt2, f)

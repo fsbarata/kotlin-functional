@@ -22,8 +22,8 @@ interface SemigroupLaws<A: Semigroup<A>>: PossibilitiesTest {
 			eachPossibility { val2 ->
 				eachPossibility { val3 ->
 					assertEqual(
-						val1.combineWith(val2.combineWith(val3)),
-						val1.combineWith(val2).combineWith(val3),
+						val1.concatWith(val2.concatWith(val3)),
+						val1.concatWith(val2).concatWith(val3),
 					)
 				}
 			}

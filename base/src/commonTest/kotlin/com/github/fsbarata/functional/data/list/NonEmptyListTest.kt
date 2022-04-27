@@ -14,7 +14,8 @@ import com.github.fsbarata.functional.data.validation.ValidationApplicativeScope
 import com.github.fsbarata.functional.data.validation.asValidation
 import kotlin.test.Test
 
-class NonEmptyListTest:
+internal class NonEmptyListTest:
+	ImmutableListTest(),
 	MonadZipLaws<NonEmptyContext>,
 	TraversableLaws<NonEmptyContext>,
 	ComonadLaws<NonEmptyContext> {
@@ -30,6 +31,9 @@ class NonEmptyListTest:
 	private val nel1 = NonEmptyList.just(9)
 	private val nel2 = nelOf(5, 1, 3)
 	private val nel3 = NonEmptyList.of(2, nelOf(4, 2, 5))
+
+	override fun empty() = null
+	override fun of(item1: Int, vararg items: Int) = nelOf(item1, *items.toTypedArray())
 
 	@Test
 	fun size() {
@@ -220,6 +224,13 @@ class NonEmptyListTest:
 	}
 
 	@Test
+	fun maxWith() {
+		assertEquals(9, nel1.maxWith(compareBy { it % 3 }))
+		assertEquals(5, nel2.maxWith(compareBy { it % 3 }))
+		assertEquals(2, nel3.maxWith(compareBy { -it }))
+	}
+
+	@Test
 	fun minBy() {
 		assertEquals(9, nel1.minBy { it })
 		assertEquals(3, nel2.minBy { it % 3L })
@@ -231,6 +242,13 @@ class NonEmptyListTest:
 		assertEquals(9L, nel1.minOf { it.toLong() })
 		assertEquals(0.5, nel2.minOf { (it % 3L) + 0.5 })
 		assertEquals(0, nel3.minOf { it % 5 })
+	}
+
+	@Test
+	fun minWith() {
+		assertEquals(9, nel1.minWith(compareBy { it % 3 }))
+		assertEquals(3, nel2.minWith(compareBy { it % 3 }))
+		assertEquals(2, nel3.minWith(compareBy { it }))
 	}
 
 	@Test

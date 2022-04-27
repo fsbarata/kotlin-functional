@@ -26,7 +26,7 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	override fun <B> map(f: (A) -> B) =
 		wrapped.map(f).f()
 
-	override fun <B> ap(ff: Functor<ObservableContext, (A) -> B>) =
+	override fun <B> ap(ff: Context<ObservableContext, (A) -> B>) =
 		combineLatest(
 			ff.asObservable,
 			this,
@@ -34,7 +34,7 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 			.f()
 
 	override fun <B, R> lift2(
-		fb: Functor<ObservableContext, B>,
+		fb: Context<ObservableContext, B>,
 		f: (A, B) -> R,
 	) = combineLatest(this, fb.asObservable, f).f()
 
@@ -59,26 +59,28 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	fun fold(monoid: Monoid<A>): SingleF<A> = super.reduce(monoid.empty, monoid::combine).f()
 	fun scan(monoid: Monoid<A>): ObservableF<A> = super.scan(monoid.empty, monoid::combine).f()
 
-	override fun combineWith(other: ObservableF<A>) = mergeWith(other).f()
-	override fun associateWith(other: Context<ObservableContext, A>) =
-		combineWith(other.asObservable)
+	override fun concatWith(other: ObservableF<A>): ObservableF<A> = super.concatWith(other).f()
+	override fun combineWith(other: Context<ObservableContext, A>) =
+		concatWith(other.asObservable)
 
-	override fun <B, R> zipWith(other: Functor<ObservableContext, B>, f: (A, B) -> R) =
+	override fun <B, R> zipWith(other: Context<ObservableContext, B>, f: (A, B) -> R) =
 		(this as Observable<A>).zipWith(other.asObservable, f).f()
 
 	companion object: MonadPlus.Scope<ObservableContext> {
 		override fun <A> empty() = Observable.empty<A>().f()
 		override fun <A> just(a: A) = Observable.just(a).f()
 
-		override fun <A> fromList(list: List<A>) = fromIterable(list).f()
+		override fun <A> fromIterable(iterable: Iterable<A>) = Observable.fromIterable(iterable).f()
+		override fun <A> fromSequence(sequence: Sequence<A>) = fromIterable(sequence.asIterable())
+		override fun <A> fromList(list: List<A>) = fromIterable(list)
 		override fun <A> fromOptional(optional: Optional<A>) = optional.maybe(empty(), ::just)
 	}
 }
 
-fun <A: Semigroup<A>> Observable<A>.reduce() = reduce { a1, a2 -> a1.combineWith(a2) }.f()
-fun <A: Semigroup<A>> Observable<A>.fold(initialValue: A) = reduce(initialValue) { a1, a2 -> a1.combineWith(a2) }.f()
-fun <A: Semigroup<A>> Observable<A>.scan() = scan { a1, a2 -> a1.combineWith(a2) }.f()
-fun <A: Semigroup<A>> Observable<A>.scan(initialValue: A) = scan(initialValue) { a1, a2 -> a1.combineWith(a2) }.f()
+fun <A: Semigroup<A>> Observable<A>.reduce() = reduce { a1, a2 -> a1.concatWith(a2) }.f()
+fun <A: Semigroup<A>> Observable<A>.fold(initialValue: A) = reduce(initialValue) { a1, a2 -> a1.concatWith(a2) }.f()
+fun <A: Semigroup<A>> Observable<A>.scan() = scan { a1, a2 -> a1.concatWith(a2) }.f()
+fun <A: Semigroup<A>> Observable<A>.scan(initialValue: A) = scan(initialValue) { a1, a2 -> a1.concatWith(a2) }.f()
 
 fun <A: Any, R: Any> Observable<A>.mapNotNull(f: (A) -> R?): Observable<R> =
 	mapNotNone { f(it).toOptional() }

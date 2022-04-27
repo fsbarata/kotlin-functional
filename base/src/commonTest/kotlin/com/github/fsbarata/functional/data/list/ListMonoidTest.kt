@@ -13,7 +13,7 @@ class ListMonoidTest: MonoidLaws<ListF<Int>>(ListF.monoid()) {
 		assertEquals(
 			listOf("6", "5", "1", "1L", "ajfg"),
 			ListF.of("6", "5")
-				.combineWith(ListF.of("1", "1L", "ajfg"))
+				.concatWith(ListF.of("1", "1L", "ajfg"))
 
 		)
 	}

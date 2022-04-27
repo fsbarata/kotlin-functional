@@ -5,7 +5,6 @@ import com.github.fsbarata.functional.Fractional
 import com.github.fsbarata.functional.Num
 import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Monad
-import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Traversable
 import kotlin.jvm.JvmName
 import kotlin.math.atan2
@@ -25,10 +24,10 @@ data class Complex<out A>(
 	override inline fun <B> map(f: (A) -> B) = Complex(f(real), f(imag))
 
 	@Suppress("NOTHING_TO_INLINE")
-	override inline fun <B> ap(ff: Functor<ComplexContext, (A) -> B>): Complex<B> =
+	override inline fun <B> ap(ff: Context<ComplexContext, (A) -> B>): Complex<B> =
 		ff.asComplex.let { Complex(it.real(real), it.imag(imag)) }
 
-	override inline fun <B, R> lift2(fb: Functor<ComplexContext, B>, f: (A, B) -> R): Complex<R> {
+	override inline fun <B, R> lift2(fb: Context<ComplexContext, B>, f: (A, B) -> R): Complex<R> {
 		val other = fb.asComplex
 		return Complex(
 			f(real, other.real),
@@ -51,8 +50,8 @@ data class Complex<out A>(
 
 	override fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
-		f: (A) -> Functor<F, B>,
-	): Functor<F, Complex<B>> = appScope.lift2(f(real), f(imag), ::Complex)
+		f: (A) -> Context<F, B>,
+	): Context<F, Complex<B>> = appScope.lift2(f(real), f(imag), ::Complex)
 
 
 	companion object: Monad.Scope<ComplexContext>, Traversable.Scope<ComplexContext> {

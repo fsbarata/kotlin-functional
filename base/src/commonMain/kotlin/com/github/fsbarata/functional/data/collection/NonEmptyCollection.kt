@@ -2,6 +2,7 @@ package com.github.fsbarata.functional.data.collection
 
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.list.NonEmptyList
+import com.github.fsbarata.functional.data.list.toNel
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
 import com.github.fsbarata.functional.data.set.NonEmptySet
 import com.github.fsbarata.functional.kotlin.scanNel
@@ -19,11 +20,14 @@ interface NonEmptyCollection<out A>:
 	@Deprecated("Non empty collection cannot be empty", replaceWith = ReplaceWith("false"))
 	override fun isEmpty() = false
 
+	@Deprecated("Non empty collection cannot be empty", replaceWith = ReplaceWith("false"))
+	fun none() = false
+
 	fun first() = head
 
 	@Deprecated("Non empty collection always has a first", replaceWith = ReplaceWith("first()"))
 	fun firstOrNull(): Nothing = throw UnsupportedOperationException()
-	fun last() = if (tail.isEmpty()) head else tail.last()
+	fun last(): A = tail.lastOrNull() ?: head
 
 	@Deprecated("Non empty collection always has a last", replaceWith = ReplaceWith("last()"))
 	fun lastOrNull(): Nothing = throw UnsupportedOperationException()
@@ -51,6 +55,14 @@ interface NonEmptyCollection<out A>:
 	fun <R: Comparable<R>> maxOf(selector: (A) -> R): R =
 		tail.maxOfOrNull(selector)?.coerceAtLeast(selector(head)) ?: selector(head)
 
+	@Deprecated("Non empty collection always has a max", replaceWith = ReplaceWith("maxWith()"))
+	fun maxWithOrNull(comparator: Comparator<@UnsafeVariance A>): Nothing =
+		throw UnsupportedOperationException()
+
+	fun maxWith(comparator: Comparator<@UnsafeVariance A>): A {
+		return maxOf(tail.maxWithOrNull(comparator) ?: return head, head, comparator)
+	}
+
 	@Deprecated("Non empty collection always has a min", replaceWith = ReplaceWith("minBy()"))
 	fun <R: Comparable<R>> minByOrNull(selector: (A) -> R): Nothing = throw UnsupportedOperationException()
 	fun <R: Comparable<R>> minBy(selector: (A) -> R): A = (this as Iterable<A>).minByOrNull(selector)!!
@@ -60,11 +72,28 @@ interface NonEmptyCollection<out A>:
 	fun <R: Comparable<R>> minOf(selector: (A) -> R): R =
 		tail.minOfOrNull(selector)?.coerceAtMost(selector(head)) ?: selector(head)
 
-	infix fun union(other: NonEmptyCollection<@UnsafeVariance A>): NonEmptySet<A> =
+	@Deprecated("Non empty collection always has a min", replaceWith = ReplaceWith("minWith()"))
+	fun minWithOrNull(comparator: Comparator<@UnsafeVariance A>): Nothing =
+		throw UnsupportedOperationException()
+
+	fun minWith(comparator: Comparator<@UnsafeVariance A>): A {
+		return minOf(tail.minWithOrNull(comparator) ?: return head, head, comparator)
+	}
+
+	infix fun union(other: Iterable<@UnsafeVariance A>): NonEmptySet<A> =
 		NonEmptySet.of(head, tail.union(other))
 
 	fun toList() = NonEmptyList.of(head, tail.toList())
 	fun toSet() = NonEmptySet.of(head, tail.toSet())
+
+	fun <K: Comparable<K>> sortedBy(selector: (A) -> K): NonEmptyList<A> =
+		sortedWith(compareBy(selector))
+
+	fun <K: Comparable<K>> sortedByDescending(selector: (A) -> K): NonEmptyList<A> =
+		sortedWith(compareByDescending(selector))
+
+	fun sortedWith(comparator: Comparator<@UnsafeVariance A>): NonEmptyList<A> =
+		(this as Collection<A>).sortedWith(comparator).toNelUnsafe()
 
 	fun asSequence(): NonEmptySequence<@UnsafeVariance A> = NonEmptySequence.of(head, tail)
 }
@@ -83,3 +112,6 @@ fun <S, A: S> NonEmptyCollection<A>.runningReduceNel(operation: (S, A) -> S): No
 
 fun <T: Comparable<T>> NonEmptyCollection<T>.max() = tail.maxOrNull()?.coerceAtLeast(head) ?: head
 fun <T: Comparable<T>> NonEmptyCollection<T>.min() = tail.minOrNull()?.coerceAtMost(head) ?: head
+
+private fun <A> Iterable<A>.toNelUnsafe(): NonEmptyList<A> =
+	toNel() ?: throw NoSuchElementException()

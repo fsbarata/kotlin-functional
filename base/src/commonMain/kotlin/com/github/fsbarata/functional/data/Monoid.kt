@@ -12,7 +12,7 @@ fun <A> monoid(empty: A, combine: (A, A) -> A) = object: Monoid<A> {
 
 fun <A: Semigroup<A>> monoid(empty: A) = object: Monoid<A> {
 	override val empty: A = empty
-	override fun combine(a1: A, a2: A) = a1.combineWith(a2)
+	override fun combine(a1: A, a2: A) = a1.concatWith(a2)
 }
 
 class MonoidSemigroupFactory<A>(val monoid: Monoid<A>) {
@@ -22,7 +22,7 @@ class MonoidSemigroupFactory<A>(val monoid: Monoid<A>) {
 	inner class WrappedMonoid(private val a: A): Semigroup<WrappedMonoid> {
 		fun unwrap() = a
 
-		override fun combineWith(other: WrappedMonoid): WrappedMonoid =
+		override fun concatWith(other: WrappedMonoid): WrappedMonoid =
 			wrap(monoid.combine(a, other.a))
 
 		override fun toString() = "Wrapped($a)"

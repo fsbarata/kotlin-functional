@@ -32,7 +32,7 @@ class FlowableF<A>(private val wrapped: Flowable<A>): Flowable<A>(),
 	fun fold(monoid: Monoid<A>) = super.reduce(monoid.empty, monoid::combine).f()
 	fun scan(monoid: Monoid<A>) = super.scan(monoid.empty, monoid::combine).f()
 
-	override fun <B, R> zipWith(other: Functor<FlowableF<*>, B>, f: (A, B) -> R) =
+	override fun <B, R> zipWith(other: Context<FlowableF<*>, B>, f: (A, B) -> R) =
 		(this as Flowable<A>).zipWith(other.asFlowable, f).f()
 
 	companion object: Monad.Scope<FlowableF<*>> {
@@ -41,10 +41,10 @@ class FlowableF<A>(private val wrapped: Flowable<A>): Flowable<A>(),
 	}
 }
 
-fun <A: Semigroup<A>> Flowable<A>.reduce() = reduce { a1, a2 -> a1.combineWith(a2) }.f()
-fun <A: Semigroup<A>> Flowable<A>.fold(initialValue: A) = reduce(initialValue) { a1, a2 -> a1.combineWith(a2) }.f()
-fun <A: Semigroup<A>> Flowable<A>.scan() = scan { a1, a2 -> a1.combineWith(a2) }.f()
-fun <A: Semigroup<A>> Flowable<A>.scan(initialValue: A) = scan(initialValue) { a1, a2 -> a1.combineWith(a2) }.f()
+fun <A: Semigroup<A>> Flowable<A>.reduce() = reduce { a1, a2 -> a1.concatWith(a2) }.f()
+fun <A: Semigroup<A>> Flowable<A>.fold(initialValue: A) = reduce(initialValue) { a1, a2 -> a1.concatWith(a2) }.f()
+fun <A: Semigroup<A>> Flowable<A>.scan() = scan { a1, a2 -> a1.concatWith(a2) }.f()
+fun <A: Semigroup<A>> Flowable<A>.scan(initialValue: A) = scan(initialValue) { a1, a2 -> a1.concatWith(a2) }.f()
 
 fun <A: Any, R: Any> Flowable<A>.mapNotNull(f: (A) -> R?): Flowable<R> =
 	mapNotNone { f(it).toOptional() }

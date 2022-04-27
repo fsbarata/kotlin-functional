@@ -5,11 +5,11 @@ import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.monoid
 
 data class Last<A: Any>(val get: A): Semigroup<Last<A>> {
-	override fun combineWith(other: Last<A>) = Last(other.get)
+	override fun concatWith(other: Last<A>) = Last(other.get)
 }
 
 data class LastNotNull<A>(val get: A): Semigroup<LastNotNull<A>> {
-	override fun combineWith(other: LastNotNull<A>) = LastNotNull(other.get ?: get)
+	override fun concatWith(other: LastNotNull<A>) = LastNotNull(other.get ?: get)
 
 	companion object {
 		fun <A: Any> monoid(): Monoid<LastNotNull<A?>> = monoid(LastNotNull(null))

@@ -1,11 +1,10 @@
 package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.control.lift
-import com.github.fsbarata.functional.control.lift2
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.maybe.invoke
-import com.github.fsbarata.functional.data.maybe.lift2Opt
 import com.github.fsbarata.functional.data.maybe.liftOpt
+import com.github.fsbarata.functional.data.maybe.liftOpt2
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
 import org.junit.Test
@@ -41,7 +40,7 @@ class RxCompositionsTest {
 		val observer = Observable.combineLatest(
 			subject1,
 			subject2,
-			lift2Opt { a: Int, b: Int -> a + b },
+			liftOpt2 { a: Int, b: Int -> a + b },
 		)
 			.map(lift { a: Int -> a + 2 }::invoke)
 			.test()

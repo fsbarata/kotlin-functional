@@ -24,13 +24,16 @@ inline fun <T, K> Iterable<T>.groupByNel(crossinline keySelector: (T) -> K): Map
 
 inline fun <T, K, V> Iterable<T>.groupByNel(
 	crossinline keySelector: (T) -> K,
-	valueSelector: (T) -> V,
+	valueTransform: (T) -> V,
 ): Map<K, NonEmptyList<V>> =
 	groupingBy(keySelector)
 		.aggregate { _, accumulator, element, _ ->
-			val value = valueSelector(element)
+			val value = valueTransform(element)
 			accumulator?.plus(value) ?: nelOf(value)
 		}
+
+fun <T> Iterable<T>.chunkedNel(size: Int): List<NonEmptyList<T>> =
+	windowedNel(size, size, partialWindows = true)
 
 fun <T> Iterable<T>.windowedNel(size: Int, step: Int = 1, partialWindows: Boolean = false): List<NonEmptyList<T>> =
 	windowed(size, step, partialWindows) { it.toNel() ?: throw NoSuchElementException() }
