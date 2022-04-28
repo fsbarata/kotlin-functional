@@ -20,8 +20,5 @@ fun <T> Sequence<T>.windowedNel(size: Int, step: Int = 1, partialWindows: Boolea
 
 fun <A, R> Sequence<A>.scanNe(initialValue: R, operation: (R, A) -> R): NonEmptySequence<R> {
 	val scan = scan(initialValue, operation)
-	return NonEmptySequence {
-		val iterator = scan.iterator()
-		nonEmptyIterator(iterator.next(), iterator)
-	}
+	return NonEmptySequence { scan.iterator() }
 }

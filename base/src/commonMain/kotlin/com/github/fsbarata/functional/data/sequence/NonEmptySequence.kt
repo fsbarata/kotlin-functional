@@ -7,7 +7,6 @@ import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Foldable
-import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.list.NonEmptyList
@@ -119,35 +118,43 @@ interface NonEmptySequenceBase<out A>:
 	}
 }
 
-internal inline fun <A> NonEmptySequence(crossinline iterator: () -> Iterator<A>) = object : NonEmptySequence<A>() {
+/**
+ * Creates a Non empty sequence. This does not check that it actually has any items.
+ * For a nullable version use Sequence<A>.nonEmpty
+ */
+internal inline fun <A> NonEmptySequence(crossinline iterator: () -> Iterator<A>) = object: NonEmptySequence<A>() {
 	override fun iterator() = iterator()
 }
 
 val <A> Context<NonEmptySequenceContext, A>.asNes get() = this as NonEmptySequence<A>
 
-fun <A: Any> nonEmptySequence(initialFunction: () -> A, nextFunction: (A) -> A?) =
+fun <A: Any> nonEmptySequence(initialFunction: () -> A, nextFunction: (A) -> A?): NonEmptySequence<A> =
 	NonEmptySequence {
 		val head = initialFunction()
 		nonEmptyIterator(head, generateSequence(nextFunction(head), nextFunction).iterator())
 	}
 
-fun <A: Any> nonEmptySequence(head: A, nextFunction: (A) -> A?) =
+fun <A: Any> nonEmptySequence(head: A, nextFunction: (A) -> A?): NonEmptySequence<A> =
 	NonEmptySequence { nonEmptyIterator(head, generateSequence(nextFunction(head), nextFunction).iterator()) }
 
-inline fun <A> Sequence<A>.startWithItem(item: A) =
+inline fun <A> Sequence<A>.startWithItem(item: A): NonEmptySequence<A> =
 	NonEmptySequence.of(item, this)
 
-fun <A> nonEmptySequenceOf(head: A, vararg tail: A) =
+fun <A> nonEmptySequenceOf(head: A, vararg tail: A): NonEmptySequence<A> =
 	NonEmptySequence { nonEmptyIterator(head, tail.iterator()) }
 
-fun <A> Sequence<A>.nonEmpty(ifEmpty: NonEmptySequenceBase<A>) =
-	nonEmpty { ifEmpty }
+fun <A> Sequence<A>.nonEmpty(ifEmpty: NonEmptySequenceBase<A>): NonEmptySequence<A> = nonEmpty { ifEmpty }
 
-fun <A> Sequence<A>.nonEmpty(ifEmpty: () -> NonEmptySequenceBase<A>) =
+fun <A> Sequence<A>.nonEmpty(ifEmpty: () -> NonEmptySequenceBase<A>): NonEmptySequence<A> =
 	NonEmptySequence {
 		val iterator = iterator()
 		val nonEmptyIterator = if (iterator.hasNext()) iterator else ifEmpty().iterator()
 		nonEmptyIterator(nonEmptyIterator.next(), nonEmptyIterator)
 	}
+
+fun <S, A: S> NonEmptySequenceBase<A>.runningReduceNe(operation: (S, A) -> S): NonEmptySequence<S> {
+	val runningReduce = runningReduce(operation)
+	return NonEmptySequence { runningReduce.iterator() }
+}
 
 
