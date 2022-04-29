@@ -77,10 +77,10 @@ inline fun <X, Y> Tuple2<X, Y>.toPair() = Pair(x, y)
 inline fun <A, B, R> F2<A, B, R>.packT(): (Tuple2<A, B>) -> R = { t: Tuple2<A, B> -> invoke(t.x, t.y) }
 inline fun <A, B, R> F1<Tuple2<A, B>, R>.unpackT(): F2<A, B, R> = { a: A, b: B -> invoke(Tuple2(a, b)) }
 
-@JvmName("tupleExt")
-inline fun <A, B, R> F1<Pair<A, B>, R>.tuple(): F1<Tuple2<A, B>, R> = compose(Tuple2<A, B>::toPair)
-inline fun <A, B, R> tuple(crossinline f: F1<Pair<A, B>, R>): F1<Tuple2<A, B>, R> = f.tuple()
+@JvmName("tuplefExt")
+inline fun <A, B, R> F1<Pair<A, B>, R>.tuplef(): F1<Tuple2<A, B>, R> = compose(Tuple2<A, B>::toPair)
+inline fun <A, B, R> tuplef(crossinline f: F1<Pair<A, B>, R>): F1<Tuple2<A, B>, R> = f.tuplef()
 
-@JvmName("pairExt")
-inline fun <A, B, R> F1<Tuple2<A, B>, R>.pair(): F1<Pair<A, B>, R> = compose(Pair<A, B>::toTuple)
-inline fun <A, B, R> pair(crossinline f: F1<Tuple2<A, B>, R>): F1<Pair<A, B>, R> = { f(Tuple2(it.first, it.second)) }
+@JvmName("pairfExt")
+inline fun <A, B, R> F1<Tuple2<A, B>, R>.pairf(): F1<Pair<A, B>, R> = compose(Pair<A, B>::toTuple)
+inline fun <A, B, R> pairf(crossinline f: F1<Tuple2<A, B>, R>): F1<Pair<A, B>, R> = { f(Tuple2(it.first, it.second)) }
