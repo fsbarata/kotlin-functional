@@ -46,6 +46,11 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	inline fun <B> mapIndexed(f: (index: Int, A) -> B): ListF<B> =
 		asIterable().mapIndexedTo(ArrayList(size), f).f()
 
+	inline fun onEachIndexed(f: (index: Int, A) -> Unit): ListF<A> {
+		forEachIndexed(f)
+		return this
+	}
+
 	override infix fun <B> ap(ff: Context<ListContext, (A) -> B>): ListF<B> =
 		ff.asList.flatMap(::map)
 

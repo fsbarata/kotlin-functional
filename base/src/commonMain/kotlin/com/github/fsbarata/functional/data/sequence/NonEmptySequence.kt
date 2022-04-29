@@ -35,6 +35,12 @@ abstract class NonEmptySequence<A> internal constructor():
 
 	override fun onEach(f: (A) -> Unit): NonEmptySequence<A> = map { a -> f(a); a }
 
+	fun <R> mapIndexed(f: (Int, A) -> R): NonEmptySequence<R> =
+		nonEmptySequence(0, Int::inc).zipWith(this, f)
+
+	fun onEachIndexed(f: (Int, A) -> Unit): NonEmptySequence<A> =
+		mapIndexed { index, a -> f(index, a); a }
+
 	override fun <B, R> lift2(
 		fb: Context<NonEmptySequenceContext, B>,
 		f: (A, B) -> R,

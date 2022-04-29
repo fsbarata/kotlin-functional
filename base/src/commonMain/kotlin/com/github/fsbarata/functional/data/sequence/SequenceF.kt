@@ -59,6 +59,12 @@ class SequenceF<out A>(private val wrapped: Sequence<A>):
 	override fun <B, R> zipWith(other: Context<SequenceContext, B>, f: (A, B) -> R): SequenceF<R> =
 		zip(other.asSequence, f).f()
 
+	fun <R> mapIndexed(f: (Int, A) -> R): SequenceF<R> =
+		SequenceF(generateSequence(0, Int::inc).zip(wrapped, f))
+
+	fun onEachIndexed(f: (Int, A) -> Unit): SequenceF<A> =
+		mapIndexed { index, a -> f(index, a); a }
+
 	override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Context<F, B>,

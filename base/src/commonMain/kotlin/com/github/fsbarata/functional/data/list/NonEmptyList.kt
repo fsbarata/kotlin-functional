@@ -76,6 +76,11 @@ class NonEmptyList<out A>(
 	inline fun <B> mapIndexed(f: (index: Int, A) -> B): NonEmptyList<B> =
 		of(f(0, head), tail.mapIndexed { index, item -> f(index + 1, item) })
 
+	inline fun onEachIndexed(f: (index: Int, A) -> Unit): NonEmptyList<A> {
+		forEachIndexed(f)
+		return this
+	}
+
 	override fun <B> ap(ff: Context<NonEmptyContext, (A) -> B>): NonEmptyList<B> =
 		ff.asNel.flatMap(this::map)
 

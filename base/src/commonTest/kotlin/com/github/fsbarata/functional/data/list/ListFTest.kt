@@ -86,5 +86,19 @@ internal class ListFTest:
 				.i
 		)
 	}
+
+	@Test
+	fun mapIndexed() {
+		assertEquals(ListF.of(10, 3, 12), ListF.of(5, 1, 3).mapIndexed { index, item -> item * (2 + index) })
+		assertEquals(ListF.empty<Int>(), ListF.empty<Int>().mapIndexed { index, item -> item * (2 + index) })
+	}
+
+	@Test
+	fun onEachIndexed() {
+		val list = ListF.of(5, 1, 3)
+		var x = 0
+		assertEquals(list, list.onEachIndexed { index, item -> x += item * (2 + index) })
+		assertEquals(25, x)
+	}
 }
 

@@ -46,4 +46,22 @@ class SequenceFTest:
 				}
 		)
 	}
+
+	@Test
+	fun mapIndexed() {
+		assertEquals(
+			listOf(10, 3, 12),
+			sequenceOf(5, 1, 3).f().mapIndexed { index, item -> item * (2 + index) }.toList(),
+		)
+	}
+
+	@Test
+	fun onEachIndexed() {
+		val sequence = sequenceOf(5, 1, 3).f()
+		var x = 0
+		val transformed = sequence.onEachIndexed { index, item -> x += item * (2 + index) }
+		assertEquals(0, x)
+		assertEquals(listOf(5, 1, 3), transformed.toList())
+		assertEquals(25, x)
+	}
 }

@@ -150,6 +150,13 @@ internal class NonEmptyListTest:
 	}
 
 	@Test
+	fun onEachIndexed() {
+		var x = 0
+		assertEquals(nel2, nel2.onEachIndexed { index, item -> x += item * (2 + index) })
+		assertEquals(25, x)
+	}
+
+	@Test
 	fun flatMap() {
 		assertEquals(nelOf(90, 9), nel1.flatMap { nelOf(10 * it, it) })
 		assertEquals(nelOf(50, 5, 10, 1, 30, 3), nel2.flatMap { nelOf(10 * it, it) })

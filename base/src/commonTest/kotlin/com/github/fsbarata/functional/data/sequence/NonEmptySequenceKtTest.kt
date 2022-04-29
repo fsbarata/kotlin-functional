@@ -62,4 +62,21 @@ class NonEmptySequenceKtTest:
 			}.toList()
 		)
 	}
+
+	@Test
+	fun mapIndexed() {
+		assertEquals(
+			nelOf(10, 3, 12),
+			nonEmptySequenceOf(5, 1, 3).f().mapIndexed { index, item -> item * (2 + index) }.toList(),
+		)
+	}
+
+	@Test
+	fun onEachIndexed() {
+		var x = 0
+		val transformed = nonEmptySequenceOf(5, 1, 3).onEachIndexed { index, item -> x += item * (2 + index) }
+		assertEquals(0, x)
+		assertEquals(listOf(5, 1, 3), transformed.toList())
+		assertEquals(25, x)
+	}
 }
