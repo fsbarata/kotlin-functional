@@ -82,6 +82,7 @@ sealed class Optional<out A>:
 
 	companion object:
 		MonadPlus.Scope<OptionalContext>,
+		MonadZip.Scope<OptionalContext>,
 		Traversable.Scope<OptionalContext> {
 		override fun <A> empty(): Optional<A> = None
 		override fun <A> just(a: A): Optional<A> = Some(a)

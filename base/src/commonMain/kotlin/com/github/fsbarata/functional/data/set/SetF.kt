@@ -4,6 +4,7 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.list.ListF
+import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.invoke
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.sequence.SequenceF
@@ -19,6 +20,11 @@ class SetF<out A>(private val wrapped: Set<A>): Set<A> by wrapped,
 
 	override inline fun <B> map(f: (A) -> B): SetF<B> =
 		mapTo(mutableSetOf(), f).f()
+
+	override inline fun onEach(f: (A) -> Unit): SetF<A> {
+		forEach(f)
+		return this
+	}
 
 	override infix fun <B> ap(ff: Context<SetContext, (A) -> B>): SetF<B> =
 		wrapped.ap(ff.asSet).f()

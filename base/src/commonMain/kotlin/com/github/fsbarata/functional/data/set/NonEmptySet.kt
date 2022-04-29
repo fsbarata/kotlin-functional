@@ -4,6 +4,7 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
+import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.utils.toNes
 import com.github.fsbarata.io.Serializable
 
@@ -33,6 +34,11 @@ class NonEmptySet<out A> private constructor(
 
 	override inline fun <B> map(f: (A) -> B): NonEmptySet<B> =
 		of(f(head), tail.mapTo(mutableSetOf(), f))
+
+	override inline fun onEach(f: (A) -> Unit): NonEmptySet<A> {
+		forEach(f)
+		return this
+	}
 
 	override fun <B> ap(ff: Context<NonEmptySetContext, (A) -> B>): NonEmptySet<B> =
 		ff.asNes.flatMap(this::map)

@@ -4,7 +4,6 @@ package com.github.fsbarata.functional.data.identity
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Comonad
-import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Monoid
@@ -50,7 +49,7 @@ data class Identity<A>(val a: A):
 	override inline fun <B, R> zipWith(other: Context<IdentityContext, B>, f: (A, B) -> R): Identity<R> =
 		other.asIdentity.map(f.partial(a))
 
-	companion object: Monad.Scope<IdentityContext> {
+	companion object: MonadZip.Scope<IdentityContext> {
 		override fun <A> just(a: A) = Identity(a)
 	}
 }

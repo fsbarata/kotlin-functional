@@ -2,7 +2,6 @@ package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
-import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.id
@@ -66,7 +65,9 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	override fun <B, R> zipWith(other: Context<ObservableContext, B>, f: (A, B) -> R) =
 		(this as Observable<A>).zipWith(other.asObservable, f).f()
 
-	companion object: MonadPlus.Scope<ObservableContext> {
+	companion object:
+		MonadPlus.Scope<ObservableContext>,
+		MonadZip.Scope<ObservableContext> {
 		override fun <A> empty() = Observable.empty<A>().f()
 		override fun <A> just(a: A) = Observable.just(a).f()
 

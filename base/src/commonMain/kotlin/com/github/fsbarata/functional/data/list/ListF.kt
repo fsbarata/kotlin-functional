@@ -38,6 +38,11 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	override inline fun <B> map(f: (A) -> B): ListF<B> =
 		asIterable().mapTo(ArrayList(size), f).f()
 
+	override inline fun onEach(f: (A) -> Unit): ListF<A> {
+		forEach(f)
+		return this
+	}
+
 	inline fun <B> mapIndexed(f: (index: Int, A) -> B): ListF<B> =
 		asIterable().mapIndexedTo(ArrayList(size), f).f()
 
@@ -138,6 +143,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 
 	companion object:
 		MonadPlus.Scope<ListContext>,
+		MonadZip.Scope<ListContext>,
 		Traversable.Scope<ListContext> {
 		private val EMPTY = ListF<Nothing>(emptyList())
 		override fun <A> empty(): ListF<A> = EMPTY

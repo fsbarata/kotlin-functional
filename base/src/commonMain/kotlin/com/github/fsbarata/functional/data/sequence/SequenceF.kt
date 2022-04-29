@@ -19,8 +19,10 @@ class SequenceF<out A>(private val wrapped: Sequence<A>):
 	Serializable {
 	override val scope get() = SequenceF
 
-	override fun <B> map(f: (A) -> B) =
+	override fun <B> map(f: (A) -> B): SequenceF<B> =
 		wrapped.map(f).f()
+
+	override fun onEach(f: (A) -> Unit): SequenceF<A> = wrapped.onEach(f).f()
 
 	override infix fun <B> ap(ff: Context<SequenceContext, (A) -> B>): SequenceF<B> =
 		wrapped.ap(ff.asSequence).f()
@@ -77,6 +79,7 @@ class SequenceF<out A>(private val wrapped: Sequence<A>):
 
 	companion object:
 		MonadPlus.Scope<SequenceContext>,
+		MonadZip.Scope<SequenceContext>,
 		Traversable.Scope<SequenceContext> {
 		override fun <A> empty(): SequenceF<A> = emptySequence<A>().f()
 		override fun <A> just(a: A) = Sequence { singleItemIterator(a) }.f()

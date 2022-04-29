@@ -1,14 +1,16 @@
 package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.*
-import com.github.fsbarata.functional.data.Functor
+import com.github.fsbarata.functional.control.Lift2
+import com.github.fsbarata.functional.control.Lift3
+import com.github.fsbarata.functional.control.Lift4
+import com.github.fsbarata.functional.control.MonadZip
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleObserver
 
 class SingleF<A>(private val wrapped: Single<A>): Single<A>(),
 	MonadZip<SingleContext, A> {
-	override val scope get() = Companion
+	override val scope get() = SingleF
 
 	override fun subscribeActual(observer: SingleObserver<in A>) {
 		wrapped.subscribe(observer)
@@ -25,7 +27,7 @@ class SingleF<A>(private val wrapped: Single<A>): Single<A>(),
 	override fun <B, R> zipWith(other: Context<SingleContext, B>, f: (A, B) -> R) =
 		(this as Single<A>).zipWith(other.asSingle, f).f()
 
-	companion object: Monad.Scope<SingleContext> {
+	companion object: MonadZip.Scope<SingleContext> {
 		override fun <A> just(a: A) = Single.just(a).f()
 	}
 }

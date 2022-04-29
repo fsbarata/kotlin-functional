@@ -1,8 +1,10 @@
 package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.*
-import com.github.fsbarata.functional.data.Functor
+import com.github.fsbarata.functional.control.Lift2
+import com.github.fsbarata.functional.control.Lift3
+import com.github.fsbarata.functional.control.Lift4
+import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.id
@@ -14,7 +16,7 @@ import org.reactivestreams.Subscriber
 
 class FlowableF<A>(private val wrapped: Flowable<A>): Flowable<A>(),
 	MonadZip<FlowableF<*>, A> {
-	override val scope get() = Companion
+	override val scope get() = FlowableF
 
 	override fun subscribeActual(observer: Subscriber<in A>) {
 		wrapped.subscribe(observer)
@@ -35,7 +37,7 @@ class FlowableF<A>(private val wrapped: Flowable<A>): Flowable<A>(),
 	override fun <B, R> zipWith(other: Context<FlowableF<*>, B>, f: (A, B) -> R) =
 		(this as Flowable<A>).zipWith(other.asFlowable, f).f()
 
-	companion object: Monad.Scope<FlowableF<*>> {
+	companion object: MonadZip.Scope<FlowableF<*>> {
 		fun <A> empty() = Flowable.empty<A>().f()
 		override fun <A> just(a: A) = Flowable.just(a).f()
 	}

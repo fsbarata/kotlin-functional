@@ -9,8 +9,13 @@ interface Functor<F, out A>: Invariant<F, A> {
 
 	override fun <B> invmap(f: (A) -> B, g: (B) -> @UnsafeVariance A): Functor<F, B> = map(f)
 
+	fun onEach(f: (A) -> Unit): Functor<F, A> = map { a -> f(a); a }
+
 	interface Scope<F> {
 		fun <A, B> map(ca: Context<F, A>, f: (A) -> B): Context<F, B> =
 			(ca as Functor<F, A>).map(f)
+
+		fun <A> onEach(ca: Context<F, A>, f: (A) -> Unit): Context<F, A> =
+			(ca as Functor<F, A>).onEach(f)
 	}
 }

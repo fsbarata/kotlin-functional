@@ -67,6 +67,12 @@ class NonEmptyList<out A>(
 	}
 
 	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
+
+	override inline fun onEach(f: (A) -> Unit): NonEmptyList<A> {
+		forEach(f)
+		return this
+	}
+
 	inline fun <B> mapIndexed(f: (index: Int, A) -> B): NonEmptyList<B> =
 		of(f(0, head), tail.mapIndexed { index, item -> f(index + 1, item) })
 
@@ -169,7 +175,7 @@ class NonEmptyList<out A>(
 	inline fun windowedNel(size: Int, step: Int = 1, partialWindows: Boolean = false): ListF<NonEmptyList<A>> =
 		toList().windowedNel(size, step, partialWindows)
 
-	companion object: Monad.Scope<NonEmptyContext>, Traversable.Scope<NonEmptyContext> {
+	companion object: MonadZip.Scope<NonEmptyContext>, Traversable.Scope<NonEmptyContext> {
 		override fun <A> just(a: A) = NonEmptyList(a, ListF.empty())
 		fun <T> of(head: T, others: List<T>) = NonEmptyList(head, others.f())
 	}

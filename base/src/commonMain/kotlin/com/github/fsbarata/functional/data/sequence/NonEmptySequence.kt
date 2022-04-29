@@ -4,7 +4,6 @@ package com.github.fsbarata.functional.data.sequence
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Semigroup
@@ -33,6 +32,8 @@ abstract class NonEmptySequence<A> internal constructor():
 		val iterator = iterator()
 		nonEmptyIterator(f(iterator.next()), iterator.asSequence().map(f).iterator())
 	}
+
+	override fun onEach(f: (A) -> Unit): NonEmptySequence<A> = map { a -> f(a); a }
 
 	override fun <B, R> lift2(
 		fb: Context<NonEmptySequenceContext, B>,
@@ -80,7 +81,7 @@ abstract class NonEmptySequence<A> internal constructor():
 		plus(other)
 
 	companion object:
-		Monad.Scope<NonEmptySequenceContext>,
+		MonadZip.Scope<NonEmptySequenceContext>,
 		Traversable.Scope<NonEmptySequenceContext> {
 
 		override fun <A> just(a: A) =

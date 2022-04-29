@@ -3,7 +3,6 @@ package com.github.fsbarata.functional.data.tree
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.control.Comonad
-import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Traversable
@@ -67,6 +66,8 @@ interface Tree<out A>:
 	override fun <B> map(f: (A) -> B): Tree<B> =
 		Tree(f(root), sub.map { it.map(f) })
 
+	override fun onEach(f: (A) -> Unit): Tree<A> = map { a -> f(a); a }
+
 	override fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 		monoid.combine(f(root), sub.foldMap(monoid) { ta -> ta.foldMap(monoid, f) })
 
@@ -98,7 +99,7 @@ interface Tree<out A>:
 	}
 
 	companion object:
-		Monad.Scope<TreeContext>,
+		MonadZip.Scope<TreeContext>,
 		Traversable.Scope<TreeContext> {
 		override fun <A> just(a: A) = Tree(a)
 	}

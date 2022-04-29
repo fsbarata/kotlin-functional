@@ -1,18 +1,19 @@
 package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.*
-import com.github.fsbarata.functional.data.Functor
+import com.github.fsbarata.functional.control.Lift2
+import com.github.fsbarata.functional.control.Lift3
+import com.github.fsbarata.functional.control.Lift4
+import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.maybe.toOptional
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.MaybeObserver
-import io.reactivex.rxjava3.core.Observable
 
 class MaybeF<A>(private val wrapped: Maybe<A>): Maybe<A>(),
 	MonadZip<MaybeContext, A> {
-	override val scope get() = Companion
+	override val scope get() = MaybeF
 
 	override fun subscribeActual(observer: MaybeObserver<in A>) {
 		wrapped.subscribe(observer)
@@ -30,7 +31,7 @@ class MaybeF<A>(private val wrapped: Maybe<A>): Maybe<A>(),
 	override fun <B, R> zipWith(other: Context<MaybeContext, B>, f: (A, B) -> R) =
 		(this as Maybe<A>).zipWith(other.asMaybe, f).f()
 
-	companion object: Monad.Scope<MaybeContext> {
+	companion object: MonadZip.Scope<MaybeContext> {
 		fun <A> empty() = Maybe.empty<A>().f()
 		override fun <A> just(a: A) = Maybe.just(a).f()
 	}

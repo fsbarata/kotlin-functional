@@ -5,7 +5,14 @@ import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.tuple.Tuple2
 
 interface MonadZip<M, out A>: Monad<M, A> {
+	override val scope: Scope<M>
+
 	fun <B, R> zipWith(other: Context<M, B>, f: (A, B) -> R): MonadZip<M, R>
+
+	interface Scope<M>: Monad.Scope<M> {
+		fun <A, B, R> zipWith(ca: Context<M, A>, cb: Context<M, B>, f: (A, B) -> R): Context<M, R> =
+			(ca as MonadZip<M, A>).zipWith(cb, f)
+	}
 }
 
 fun <M, A, B, R> zip(monad1: MonadZip<M, A>, monad2: Context<M, B>, f: (A, B) -> R) =
