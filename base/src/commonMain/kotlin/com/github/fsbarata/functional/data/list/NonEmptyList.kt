@@ -18,7 +18,7 @@ import com.github.fsbarata.io.Serializable
  * By definition, this object is guaranteed to have at least one item.
  */
 @Suppress("OVERRIDE_BY_INLINE")
-class NonEmptyList<out A> internal constructor(
+class NonEmptyList<out A>(
 	override val head: A,
 	override val tail: ListF<A>,
 ): List<A>,
@@ -109,7 +109,7 @@ class NonEmptyList<out A> internal constructor(
 
 	fun reversed(): NonEmptyList<A> = tail.asReversed().toNel()?.plus(head) ?: this
 
-	fun distinct(): NonEmptyList<A> = toSet().toList()
+	fun distinct(): NonEmptyList<A> = toNes().toNel()
 	inline fun <K> distinctBy(selector: (A) -> K): NonEmptyList<A> {
 		val set = HashSet<K>()
 		set.add(selector(head))
@@ -157,7 +157,8 @@ class NonEmptyList<out A> internal constructor(
 
 	override fun hashCode() = head.hashCode() + tail.hashCode()
 
-	fun asList() = ListF(this)
+	@Deprecated("Unnecessary call to toNel()", replaceWith = ReplaceWith("this"))
+	override fun toNel() = this
 
 	override fun toString() =
 		joinToString(prefix = "[", postfix = "]")
@@ -166,7 +167,7 @@ class NonEmptyList<out A> internal constructor(
 		windowed(size, step, partialWindows, id())
 
 	inline fun windowedNel(size: Int, step: Int = 1, partialWindows: Boolean = false): ListF<NonEmptyList<A>> =
-		asList().windowedNel(size, step, partialWindows)
+		toList().windowedNel(size, step, partialWindows)
 
 	companion object: Monad.Scope<NonEmptyContext>, Traversable.Scope<NonEmptyContext> {
 		override fun <A> just(a: A) = NonEmptyList(a, ListF.empty())

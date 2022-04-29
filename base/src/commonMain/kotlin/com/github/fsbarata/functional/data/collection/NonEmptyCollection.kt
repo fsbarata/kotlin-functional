@@ -1,10 +1,12 @@
 package com.github.fsbarata.functional.data.collection
 
 import com.github.fsbarata.functional.data.Foldable
+import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.toNel
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
 import com.github.fsbarata.functional.data.set.NonEmptySet
+import com.github.fsbarata.functional.data.set.SetF
 import com.github.fsbarata.functional.kotlin.scanNel
 import com.github.fsbarata.functional.utils.nonEmptyIterator
 import kotlin.random.Random
@@ -83,8 +85,10 @@ interface NonEmptyCollection<out A>:
 	infix fun union(other: Iterable<@UnsafeVariance A>): NonEmptySet<A> =
 		NonEmptySet.of(head, tail.union(other))
 
-	fun toList() = NonEmptyList.of(head, tail.toList())
-	fun toSet() = NonEmptySet.of(head, tail.toSet())
+	override fun toList() = ListF(toNel())
+	override fun toSet() = SetF(toNes())
+	fun toNel() = NonEmptyList(head, ListF.fromIterable(tail))
+	fun toNes() = NonEmptySet.of(head, tail.toSet())
 
 	fun <K: Comparable<K>> sortedBy(selector: (A) -> K): NonEmptyList<A> =
 		sortedWith(compareBy(selector))

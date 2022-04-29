@@ -9,6 +9,7 @@ import com.github.fsbarata.functional.data.monoid.Endo
 import com.github.fsbarata.functional.data.monoid.dual
 import com.github.fsbarata.functional.data.monoid.endoMonoid
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
+import com.github.fsbarata.functional.data.set.SetF
 
 /**
  * Foldable structure
@@ -41,6 +42,16 @@ interface Foldable<out A> {
 	 */
 	fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 		foldL(monoid.empty) { r, a -> monoid.combine(r, f(a)) }
+
+	fun toList(): ListF<A> = ListF.fromList(foldL(ArrayList()) { mutableList, item ->
+		mutableList += item
+		mutableList
+	})
+
+	fun toSet(): SetF<A> = SetF.fromList(foldL(ArrayList()) { mutableList, item ->
+		mutableList += item
+		mutableList
+	})
 }
 
 fun <A, R> Foldable<A>.scanL(initialValue: R, accumulator: (R, A) -> R): NonEmptyList<R> =
@@ -48,14 +59,14 @@ fun <A, R> Foldable<A>.scanL(initialValue: R, accumulator: (R, A) -> R): NonEmpt
 		val newValue = accumulator(carry, v)
 		Pair(newValue, nes + newValue)
 	}.second
-		.toList()
+		.toNel()
 
 fun <A, R> Foldable<A>.scanR(initialValue: R, accumulator: (A, R) -> R): NonEmptyList<R> =
 	foldR(Pair(initialValue, NonEmptySequence.just(initialValue))) { v, (carry, nes) ->
 		val newValue = accumulator(v, carry)
 		Pair(newValue, nes + newValue)
 	}.second
-		.toList()
+		.toNel()
 
 fun <A> Foldable<A>.fold(monoid: Monoid<A>) = foldMap(monoid, id())
 fun <A: Semigroup<A>> Foldable<A>.foldL(initialValue: A) = foldL(initialValue, ::concat)
@@ -63,8 +74,6 @@ fun <A: Semigroup<A>> Foldable<A>.foldR(initialValue: A) = foldR(initialValue, :
 fun <A: Semigroup<A>> Foldable<A>.scanL(initialValue: A): NonEmptyList<A> = scanL(initialValue, ::concat)
 fun <A: Semigroup<A>> Foldable<A>.scanR(initialValue: A): NonEmptyList<A> = scanR(initialValue, ::concat)
 
-
-fun <A> Foldable<A>.toList(): ListF<A> = foldMap(ListF.monoid()) { ListF.just(it) }
 
 fun <F, A> Foldable<Context<F, A>>.asum(scope: Alternative.Scope<F>): Context<F, A> =
 	foldL(scope.empty(), scope::combine)

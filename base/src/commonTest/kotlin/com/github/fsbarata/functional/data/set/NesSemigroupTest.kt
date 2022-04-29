@@ -8,7 +8,7 @@ import kotlin.test.Test
 class NesSemigroupTest: SemigroupLaws<NonEmptySet<Int>> {
 	override val possibilities = 10
 
-	override fun factory(possibility: Int): NonEmptySet<Int> = createNel(possibility).toSet()
+	override fun factory(possibility: Int): NonEmptySet<Int> = createNel(possibility).toNes()
 
 	@Test
 	fun combine() {

@@ -66,7 +66,11 @@ class SetF<out A>(private val wrapped: Set<A>): Set<A> by wrapped,
 	override fun equals(other: Any?) = wrapped == other
 	override fun hashCode() = wrapped.hashCode()
 
-	fun toList(): ListF<A> = ListF.fromIterable(wrapped)
+	override fun toList(): ListF<A> = ListF.fromIterable(wrapped)
+
+	@Deprecated("Unnecessary call to toSet()", replaceWith = ReplaceWith("this"))
+	override fun toSet(): SetF<A> = this
+
 	fun asSequence(): SequenceF<A> = SequenceF.fromIterable(wrapped)
 
 	companion object:

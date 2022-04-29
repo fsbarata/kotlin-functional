@@ -9,8 +9,10 @@ import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.Traversable
+import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.set.NonEmptySet
+import com.github.fsbarata.functional.data.set.SetF
 import com.github.fsbarata.functional.utils.*
 
 internal typealias NonEmptySequenceContext = NonEmptySequence<*>
@@ -106,8 +108,10 @@ interface NonEmptySequenceBase<out A>:
 	fun lastOrNull(): Nothing = throw UnsupportedOperationException()
 	fun last() = iterator().asSequence().last()
 
-	fun toList(): NonEmptyList<A> = iterator().toNelUnsafe()
-	fun toSet(): NonEmptySet<A> = iterator().toNesUnsafe()
+	override fun toList() = ListF.fromSequence(this)
+	override fun toSet() = SetF.fromSequence(this)
+	fun toNel(): NonEmptyList<A> = iterator().toNelUnsafe()
+	fun toNes(): NonEmptySet<A> = iterator().toNesUnsafe()
 
 	operator fun plus(element: @UnsafeVariance A): NonEmptySequence<@UnsafeVariance A> =
 		NonEmptySequence { nonEmptyIterator(iterator(), element) }

@@ -11,13 +11,13 @@ fun <A> Iterable<A>.plusElementNel(item: A): NonEmptyList<A> =
 	toNel()?.plus(item) ?: NonEmptyList.just(item)
 
 fun <A> Iterable<A>.plusNel(other: NonEmptyCollection<A>): NonEmptyList<A> =
-	toNel()?.plus(other) ?: other.toList()
+	toNel()?.plus(other) ?: other.toNel()
 
 fun <A> Set<A>.plusElementNes(item: A): NonEmptySet<A> =
 	toNes()?.plus(item) ?: NonEmptySet.just(item)
 
 fun <A> Set<A>.plusNes(other: NonEmptyCollection<A>): NonEmptySet<A> =
-	toNes()?.plus(other) ?: other.toSet()
+	toNes()?.plus(other) ?: other.toNes()
 
 inline fun <T, K> Iterable<T>.groupByNel(crossinline keySelector: (T) -> K): Map<K, NonEmptyList<T>> =
 	groupByNel(keySelector) { it }

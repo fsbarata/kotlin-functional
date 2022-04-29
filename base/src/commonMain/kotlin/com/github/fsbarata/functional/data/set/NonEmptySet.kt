@@ -80,12 +80,15 @@ class NonEmptySet<out A> private constructor(
 
 	override fun concatWith(other: NonEmptySet<@UnsafeVariance A>): NonEmptySet<A> = this + other
 
+	@Deprecated("Unnecessary call to toNes()", replaceWith = ReplaceWith("this"))
+	override fun toNes() = this
+
 	companion object: Monad.Scope<NonEmptySetContext>, Traversable.Scope<NonEmptySetContext> {
 		override fun <A> just(a: A) = NonEmptySet(a, SetF.empty())
-		fun <T> of(head: T, others: Set<T>) =
+		fun <T> of(head: T, others: Iterable<T>) =
 			NonEmptySet(
 				head,
-				others - head,
+				SetF.fromIterable(others) - head,
 			)
 	}
 }

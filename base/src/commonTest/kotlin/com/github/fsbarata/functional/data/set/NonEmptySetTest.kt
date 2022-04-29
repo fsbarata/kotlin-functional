@@ -22,7 +22,7 @@ class NonEmptySetTest:
 		items.toSet().toNes() ?: throw NoSuchElementException()
 
 	override val possibilities = 10
-	override fun factory(possibility: Int) = createNel(possibility).toSet()
+	override fun factory(possibility: Int) = createNel(possibility).toNes()
 
 	private val nes1 = NonEmptySet.just(9)
 	private val nes2 = nesOf(5, 1, 3)
