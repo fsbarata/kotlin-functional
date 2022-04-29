@@ -84,3 +84,12 @@ inline fun <A, B, R> tuplef(crossinline f: F1<Pair<A, B>, R>): F1<Tuple2<A, B>, 
 @JvmName("pairfExt")
 inline fun <A, B, R> F1<Tuple2<A, B>, R>.pairf(): F1<Pair<A, B>, R> = compose(Pair<A, B>::toTuple)
 inline fun <A, B, R> pairf(crossinline f: F1<Tuple2<A, B>, R>): F1<Pair<A, B>, R> = { f(Tuple2(it.first, it.second)) }
+
+@JvmName("entryfExt")
+inline fun <K, V, R> F1<Pair<K, V>, R>.entryf(): F1<Map.Entry<K, V>, R> = entryf(this)
+inline fun <K, V, R> entryf(crossinline f: F1<Pair<K, V>, R>): F1<Map.Entry<K, V>, R> = { f(it.toPair()) }
+
+@JvmName("entryfTExt")
+inline fun <K, V, R> F1<Tuple2<K, V>, R>.entryf(): F1<Map.Entry<K, V>, R> = entryf(this)
+@JvmName("entryfT")
+inline fun <K, V, R> entryf(crossinline f: F1<Tuple2<K, V>, R>): F1<Map.Entry<K, V>, R> = { f(it.toPair().toTuple()) }
