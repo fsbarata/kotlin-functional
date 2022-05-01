@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.data
 
 import com.github.fsbarata.functional.Context
+import com.github.fsbarata.functional.control.Lift1
 
 interface Functor<F, out A>: Invariant<F, A> {
 	val scope: Scope<F>
@@ -19,3 +20,5 @@ interface Functor<F, out A>: Invariant<F, A> {
 			(ca as Functor<F, A>).onEach(f)
 	}
 }
+
+fun <A> liftOnEach(f: (A) -> Unit): Lift1<A, A> = Lift1 { a -> f(a); a }

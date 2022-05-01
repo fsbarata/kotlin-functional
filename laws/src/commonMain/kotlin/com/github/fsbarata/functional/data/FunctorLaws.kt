@@ -11,9 +11,7 @@ interface FunctorLaws<F>: InvariantLaws<F>, PossibilitiesTest {
 
 	@Test
 	fun `map identity`() {
-		eachPossibilityFunctor { f1 ->
-			assertEqualF(f1, f1.map(id()))
-		}
+		eachPossibilityFunctor { fa -> assertEqualF(fa, fa.map(id())) }
 	}
 
 	@Test
@@ -26,6 +24,17 @@ interface FunctorLaws<F>: InvariantLaws<F>, PossibilitiesTest {
 				{ fx: Functor<F, String> -> fx.map(f) }.compose { fx: Functor<F, Int> -> fx.map(g) }
 					.invoke(fa)
 			assertEqualF(r1, r2)
+		}
+	}
+
+	@Test
+	fun `onEach retains original functor`() {
+		val f = { a: Int -> }
+		eachPossibilityFunctor { fa ->
+			val r1 = fa.onEach(f)
+			val r2 = liftOnEach(f).fmap(fa)
+			assertEqualF(fa, r1)
+			assertEqualF(r2, r1)
 		}
 	}
 }
