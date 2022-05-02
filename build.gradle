@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlin_version = '1.6.10'
+        kotlin_version = '1.6.21'
     }
 
     repositories {
@@ -15,11 +15,10 @@ buildscript {
     }
 }
 
-subprojects {
+allprojects {
     repositories {
         mavenCentral()
         maven { url "https://jitpack.io" }
-        mavenLocal()
     }
 
     group = "com.github.fsbarata.kotlin-functional"
