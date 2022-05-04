@@ -116,7 +116,7 @@ interface NonEmptySequenceBase<out A>:
 	fun last() = iterator().asSequence().last()
 
 	override fun toList() = ListF.fromSequence(this)
-	override fun toSet() = SetF.fromSequence(this)
+	override fun toSetF() = SetF.fromSequence(this)
 	fun toNel(): NonEmptyList<A> = iterator().toNelUnsafe()
 	fun toNes(): NonEmptySet<A> = iterator().toNesUnsafe()
 

@@ -184,9 +184,9 @@ class NonEmptySetTest:
 
 	@Test
 	fun asSequence() {
-		assertEquals(nes1, nes1.asSequence().toSet())
-		assertEquals(nes2, nes2.asSequence().toSet())
-		assertEquals(nes3, nes3.asSequence().toSet())
+		assertEquals(nes1, nes1.asSequence().toSetF())
+		assertEquals(nes2, nes2.asSequence().toSetF())
+		assertEquals(nes3, nes3.asSequence().toSetF())
 
 		assertEquals(setOf(9), nes1.asSequence().filter { it > 3 }.toSet())
 		assertEquals(setOf(5), nes2.asSequence().filter { it > 3 }.toSet())

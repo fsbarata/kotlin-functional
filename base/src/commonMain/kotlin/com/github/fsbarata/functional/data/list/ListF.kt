@@ -118,7 +118,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 
 	@Deprecated("Unnecessary call to toList()", replaceWith = ReplaceWith("this"))
 	override fun toList() = this
-	override fun toSet(): SetF<A> = SetF.fromIterable(wrapped)
+	override fun toSetF(): SetF<A> = SetF.fromIterable(wrapped)
 	fun asSequence(): SequenceF<A> = SequenceF.fromIterable(wrapped)
 
 	inline fun reversed(): ListF<A> = asReversed()

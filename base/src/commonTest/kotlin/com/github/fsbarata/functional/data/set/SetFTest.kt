@@ -14,7 +14,7 @@ class SetFTest:
 	override val monadScope = SetF
 
 	override val possibilities = 10
-	override fun factory(possibility: Int) = createList(possibility).toSet().f()
+	override fun factory(possibility: Int) = createList(possibility).toSetF().f()
 
 	override fun <A> createTraversable(vararg items: A) =
 		items.toSet().f()

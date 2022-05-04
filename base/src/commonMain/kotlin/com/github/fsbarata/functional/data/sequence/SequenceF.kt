@@ -81,7 +81,7 @@ class SequenceF<out A>(private val wrapped: Sequence<A>):
 	override fun hashCode() = wrapped.hashCode()
 
 	override fun toList(): ListF<A> = ListF.fromSequence(wrapped)
-	override fun toSet(): SetF<A> = SetF.fromSequence(wrapped)
+	override fun toSetF(): SetF<A> = SetF.fromSequence(wrapped)
 
 	companion object:
 		MonadPlus.Scope<SequenceContext>,

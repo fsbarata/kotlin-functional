@@ -48,7 +48,7 @@ interface Foldable<out A> {
 		mutableList
 	})
 
-	fun toSet(): SetF<A> = SetF.fromList(foldL(ArrayList()) { mutableList, item ->
+	fun toSetF(): SetF<A> = SetF.fromList(foldL(ArrayList()) { mutableList, item ->
 		mutableList += item
 		mutableList
 	})

@@ -86,7 +86,7 @@ interface NonEmptyCollection<out A>:
 		NonEmptySet.of(head, tail.union(other))
 
 	override fun toList() = ListF(toNel())
-	override fun toSet() = SetF(toNes())
+	override fun toSetF() = SetF(toNes())
 	fun toNel() = NonEmptyList(head, ListF.fromIterable(tail))
 	fun toNes() = NonEmptySet.of(head, tail.toSet())
 
