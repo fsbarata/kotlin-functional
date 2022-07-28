@@ -81,7 +81,7 @@ fun <F, A> Foldable<Context<F, A>>.asum(scope: Alternative.Scope<F>): Context<F,
 fun <A> Iterable<A>.fold(monoid: Monoid<A>): A = foldMap(monoid, id())
 
 @Suppress("OVERRIDE_BY_INLINE")
-class FoldableIterable<A>(val iterable: Iterable<A>): Foldable<A>, Iterable<A> by iterable {
+private class FoldableIterable<A>(val iterable: Iterable<A>): Foldable<A>, Iterable<A> by iterable {
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R) =
 		iterable.fold(initialValue, accumulator)
 
@@ -89,7 +89,7 @@ class FoldableIterable<A>(val iterable: Iterable<A>): Foldable<A>, Iterable<A> b
 		iterable.foldMap(monoid, f)
 }
 
-fun <A> Iterable<A>.asFoldable() = FoldableIterable(this)
+fun <A> Iterable<A>.asFoldable(): Foldable<A> = FoldableIterable(this)
 
 fun <A, R> Iterable<A>.foldL(initialValue: R, accumulator: (R, A) -> R): R = fold(initialValue, accumulator)
 inline fun <A, M> Iterable<A>.foldMap(monoid: Monoid<M>, f: (A) -> M): M =
