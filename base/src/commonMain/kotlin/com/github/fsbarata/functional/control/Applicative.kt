@@ -21,11 +21,15 @@ interface Applicative<F, out A>: Functor<F, A> {
 	interface Scope<F>: Functor.Scope<F> {
 		fun <A> just(a: A): Context<F, A>
 
-		fun <A, R> ap(app: Context<F, A>, ff: Context<F, (A) -> R>): Context<F, R> =
-			(app as Applicative<F, A>).ap(ff)
+		fun <A, R> ap(fa: Context<F, A>, ff: Context<F, (A) -> R>): Context<F, R> =
+			(fa as Applicative<F, A>).ap(ff)
 
 		fun <A, B, R> lift2(fa: Context<F, A>, fb: Context<F, B>, f: (A, B) -> R): Context<F, R> =
 			(fa as Applicative<F, A>).lift2(fb, f)
+
+		override fun <A, B> map(ca: Context<F, A>, f: (A) -> B): Context<F, B> =
+			if (ca is Functor<F, A>) super.map(ca, f)
+			else ap(ca, just(f))
 	}
 }
 

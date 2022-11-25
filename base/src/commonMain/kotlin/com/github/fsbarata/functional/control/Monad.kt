@@ -21,6 +21,14 @@ interface Monad<M, out A>: Applicative<M, A> {
 	interface Scope<M>: Applicative.Scope<M> {
 		fun <A, B> bind(ca: Context<M, A>, f: (A) -> Context<M, B>): Context<M, B> =
 			(ca as Monad<M, A>).bind(f)
+
+		override fun <A, B, R> lift2(fa: Context<M, A>, fb: Context<M, B>, f: (A, B) -> R): Context<M, R> =
+			if (fa is Monad<M, A>) fa.lift2(fb, f)
+			else bind(fa) { a -> map(fb, partial(f, a)) }
+
+		override fun <A, R> ap(fa: Context<M, A>, ff: Context<M, (A) -> R>): Context<M, R> =
+			if (fa is Monad<M, A>) fa.ap(ff)
+			else bind(ff, partial(::map, fa))
 	}
 }
 

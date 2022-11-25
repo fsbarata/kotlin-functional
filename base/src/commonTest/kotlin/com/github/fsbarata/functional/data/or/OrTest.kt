@@ -1,17 +1,14 @@
 package com.github.fsbarata.functional.data.or
 
+import com.github.fsbarata.functional.PossibilitiesTest
 import com.github.fsbarata.functional.assertEquals
+import com.github.fsbarata.functional.control.MonadScopeLaws
 import com.github.fsbarata.functional.data.BiFunctorLaws
 import com.github.fsbarata.functional.data.TraversableLaws
 import kotlin.test.Test
 import kotlin.test.fail
 
-class OrTest:
-	TraversableLaws<OrContext<String>>,
-	BiFunctorLaws<OrBiContext> {
-	override val functorScope = Or.Scope<String>()
-	override val traversableScope = Or.Scope<String>()
-
+abstract class OrPossibilities: PossibilitiesTest {
 	val left = "a left item"
 	override val possibilities: Int = 5
 	override fun factory(possibility: Int) = when (possibility) {
@@ -19,6 +16,13 @@ class OrTest:
 		1, 2 -> Or.Right(possibility - 1)
 		else -> Or.Both(left, possibility - 1)
 	}
+}
+
+class OrTest: OrPossibilities(),
+	TraversableLaws<OrContext<String>>,
+	BiFunctorLaws<OrBiContext> {
+	override val functorScope = Or.Scope<String>()
+	override val traversableScope = Or.Scope<String>()
 
 	override fun <A> createTraversable(vararg items: A): Or<String, A> =
 		when (items.size) {
@@ -99,4 +103,8 @@ class OrTest:
 		private val RIGHT: Or<String, Int> = Or.Right(5)
 		private val BOTH: Or<String, Int> = Or.Both("5", 7)
 	}
+}
+
+class OrMonadTest: OrPossibilities(), MonadScopeLaws<OrContext<String>> {
+	override val monadScope = Or.MonadScope(String::plus)
 }

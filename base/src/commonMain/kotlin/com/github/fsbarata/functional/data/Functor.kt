@@ -16,8 +16,10 @@ interface Functor<F, out A>: Invariant<F, A> {
 		fun <A, B> map(ca: Context<F, A>, f: (A) -> B): Context<F, B> =
 			(ca as Functor<F, A>).map(f)
 
-		fun <A> onEach(ca: Context<F, A>, f: (A) -> Unit): Context<F, A> =
-			(ca as Functor<F, A>).onEach(f)
+		fun <A> onEach(ca: Context<F, A>, f: (A) -> Unit): Context<F, A> = when (ca) {
+			is Functor<F, A> -> ca.onEach(f)
+			else -> map(ca) { a -> f(a); a }
+		}
 	}
 }
 
