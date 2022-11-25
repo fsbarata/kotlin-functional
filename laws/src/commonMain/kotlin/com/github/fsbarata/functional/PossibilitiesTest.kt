@@ -5,7 +5,10 @@ interface PossibilitiesTest {
 	fun factory(possibility: Int): Any
 
 	fun <T> eachPossibility(block: (Any) -> T) =
-		(0 until possibilities)
-			.map { block(factory(it)) }
+		(0 until possibilities).map { block(factory(it)) }
 
+	fun requestOne(): Any {
+		(0 until possibilities).map { return factory(it) }
+		throw NoSuchElementException()
+	}
 }

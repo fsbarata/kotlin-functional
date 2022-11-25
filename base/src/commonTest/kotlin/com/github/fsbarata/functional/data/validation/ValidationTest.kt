@@ -3,6 +3,7 @@ package com.github.fsbarata.functional.data.validation
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.assertEquals
 import com.github.fsbarata.functional.data.BiFunctorLaws
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.FunctorLaws
 import com.github.fsbarata.functional.data.either.Either
 import com.github.fsbarata.functional.data.either.flatMap
@@ -17,6 +18,8 @@ import kotlin.test.fail
 class ValidationTest:
 	FunctorLaws<ValidationContext<String>>,
 	BiFunctorLaws<ValidationBiContext> {
+	override val functorScope = object: Functor.Scope<ValidationContext<String>> {}
+
 	override fun <B, A> createBiFunctor(a: A, b: B) =
 		if (a == null) Failure(b) else Success(a)
 

@@ -1,27 +1,18 @@
 package com.github.fsbarata.functional.control
 
-import com.github.fsbarata.functional.ContextTest
-import com.github.fsbarata.functional.PossibilitiesTest
-import com.github.fsbarata.functional.data.F1
-import com.github.fsbarata.functional.data.Functor
-import com.github.fsbarata.functional.data.compose
-import com.github.fsbarata.functional.data.id
+import com.github.fsbarata.functional.data.*
 import kotlin.math.roundToInt
 import kotlin.test.Test
 
-interface ApplicativeScopeLaws<F>: ContextTest<F>, PossibilitiesTest {
+interface ApplicativeScopeLaws<F>: FunctorScopeLaws<F> {
 	override fun factory(possibility: Int): Functor<F, Int>
 
 	val applicativeScope: Applicative.Scope<F>
-
-	@Suppress("UNCHECKED_CAST")
-	private fun <T> eachPossibilityApp(block: (Functor<F, Int>) -> T): List<T> {
-		return eachPossibility { block(it as Functor<F, Int>) }
-	}
+	override val functorScope: Functor.Scope<F> get() = applicativeScope
 
 	@Test
 	fun `just identity`() {
-		eachPossibilityApp { r1 ->
+		eachPossibility { r1 ->
 			val r2 = applicativeScope.ap(r1, applicativeScope.just(id()))
 			assertEqualF(r1, r2)
 		}
@@ -29,7 +20,7 @@ interface ApplicativeScopeLaws<F>: ContextTest<F>, PossibilitiesTest {
 
 	@Test
 	fun `scope ap composition`() {
-		eachPossibilityApp { w ->
+		eachPossibility { w ->
 			val u = applicativeScope.just { a: Int -> a * 2 }
 			val v = applicativeScope.just { a: Int -> a + 2 }
 			val r1 = applicativeScope.ap(applicativeScope.ap(w, v), u)
@@ -60,9 +51,9 @@ interface ApplicativeScopeLaws<F>: ContextTest<F>, PossibilitiesTest {
 
 	@Test
 	fun `scope lift2 = lift2FromAp`() {
-		eachPossibilityApp { u ->
-			eachPossibilityApp { v ->
-				val v2 = v.map { it + 0.5 }
+		eachPossibility { u ->
+			eachPossibility { v ->
+				val v2 = applicativeScope.map(v) { it + 0.5 }
 				val f = { a: Int, b: Double -> (a * b).toString() }
 				val r1 = lift2FromAp(applicativeScope, u, v2, f)
 				val r2 = applicativeScope.lift2(u, v2, f)

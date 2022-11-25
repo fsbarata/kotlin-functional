@@ -1,9 +1,8 @@
 package com.github.fsbarata.functional.data
 
-import com.github.fsbarata.functional.PossibilitiesTest
 import kotlin.test.Test
 
-interface FunctorLaws<F>: InvariantLaws<F>, PossibilitiesTest {
+interface FunctorLaws<F>: FunctorScopeLaws<F>, InvariantLaws<F> {
 	@Suppress("UNCHECKED_CAST")
 	private fun eachPossibilityFunctor(block: (Functor<F, Int>) -> Unit) {
 		eachPossibility { block(it as Functor<F, Int>) }

@@ -101,7 +101,7 @@ internal typealias EitherBiContext = Either<*, *>
 
 @Suppress("UNCHECKED_CAST")
 val <E, A> Context<EitherContext<E>, A>.asEither
-	get() = this as Either<Nothing, A>
+	get() = this as Either<E, A>
 
 val <E, A> BiContext<EitherBiContext, E, A>.asEither
 	get() = this as Either<E, A>

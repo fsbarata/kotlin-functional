@@ -8,7 +8,7 @@ import kotlin.test.Test
 
 interface ApplicativeLaws<F>: ApplicativeScopeLaws<F>, FunctorLaws<F> {
 	@Suppress("UNCHECKED_CAST")
-	private fun <T> eachPossibilityApp(block: (Applicative<F, Int>) -> T): List<T> {
+	private fun eachPossibilityApp(block: (Applicative<F, Int>) -> Unit) {
 		return eachPossibility { block(it as Applicative<F, Int>) }
 	}
 

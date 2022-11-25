@@ -3,12 +3,12 @@ package com.github.fsbarata.functional.control
 import com.github.fsbarata.functional.data.FunctorLaws
 import com.github.fsbarata.functional.data.compose
 import com.github.fsbarata.functional.data.id
-import kotlin.test.assertEquals
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 interface ComonadLaws<W>: FunctorLaws<W> {
 	@Suppress("UNCHECKED_CAST")
-	private fun <T> eachPossibilityComonad(block: (Comonad<W, Int>) -> T): List<T> {
+	private fun eachPossibilityComonad(block: (Comonad<W, Int>) -> Unit) {
 		return eachPossibility { block(it as Comonad<W, Int>) }
 	}
 

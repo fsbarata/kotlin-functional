@@ -3,6 +3,7 @@ package com.github.fsbarata.functional.data.tuple
 import com.github.fsbarata.functional.assertEquals
 import com.github.fsbarata.functional.control.ComonadLaws
 import com.github.fsbarata.functional.data.BiFunctorLaws
+import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.TraversableLaws
 import com.github.fsbarata.functional.data.maybe.Optional
 import kotlin.test.Test
@@ -11,10 +12,10 @@ class Tuple2Test:
 	TraversableLaws<Tuple2Context<String>>,
 	BiFunctorLaws<Tuple2BiContext>,
 	ComonadLaws<Tuple2Context<String>> {
-
 	override fun <B, A> createBiFunctor(a: A, b: B) = Tuple2(b, a)
 
 	override val traversableScope = Tuple2.Scope<String>()
+	override val functorScope = traversableScope
 
 	override fun <A> createTraversable(vararg items: A) = Tuple2("2.0", items.first())
 
