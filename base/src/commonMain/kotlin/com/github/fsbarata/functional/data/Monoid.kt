@@ -1,8 +1,7 @@
 package com.github.fsbarata.functional.data
 
-interface Monoid<A> {
+interface Monoid<A>: Semigroup.Scope<A> {
 	val empty: A
-	fun combine(a1: A, a2: A): A
 }
 
 fun <A> monoid(empty: A, combine: (A, A) -> A) = object: Monoid<A> {
