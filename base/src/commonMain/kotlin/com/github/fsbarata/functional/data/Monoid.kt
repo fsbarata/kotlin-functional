@@ -4,15 +4,14 @@ interface Monoid<A>: Semigroup.Scope<A> {
 	val empty: A
 }
 
-fun <A> monoid(empty: A, combine: (A, A) -> A) = object: Monoid<A> {
-	override val empty: A = empty
-	override fun combine(a1: A, a2: A) = combine(a1, a2)
-}
+fun <A: Semigroup<A>> monoid(empty: A) = semigroupScopeOf<A>().monoid(empty)
 
-fun <A: Semigroup<A>> monoid(empty: A) = object: Monoid<A> {
-	override val empty: A = empty
-	override fun combine(a1: A, a2: A) = a1.concatWith(a2)
-}
+fun <A> Semigroup.Scope<A>.monoid(empty: A): Monoid<A> =
+	object: Monoid<A>, Semigroup.Scope<A> by this@monoid {
+		override val empty: A = empty
+	}
+
+inline fun <A> monoid(empty: A, semigroup: Semigroup.Scope<A>) = semigroup.monoid(empty)
 
 class MonoidSemigroupFactory<A>(val monoid: Monoid<A>) {
 	fun wrap(a: A) = WrappedMonoid(a)
