@@ -19,9 +19,6 @@ interface Semigroup<A> {
 
 fun <A: Semigroup<A>> semigroupScopeOf(): Semigroup.Scope<A> = Semigroup.Scope { a1, a2 -> a1.concatWith(a2) }
 
-fun <A> semigroupScope(combinator: (A, A) -> A): Semigroup.Scope<A> =
-	Semigroup.Scope { a1, a2 -> combinator(a1, a2) }
-
 fun <A: Semigroup<A>> concat(a1: A, a2: A) = a1.concatWith(a2)
 
 fun <A: Semigroup<A>> A.stimes(n: Int): A {
