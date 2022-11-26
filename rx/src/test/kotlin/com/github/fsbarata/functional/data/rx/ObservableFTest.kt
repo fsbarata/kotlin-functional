@@ -27,5 +27,10 @@ class ObservableFTest:
 	@Test
 	override fun `lift2 is correct`() {
 	}
+
+	@Ignore
+	@Test
+	override fun `scope lift2 is correct`() {
+	}
 }
 
