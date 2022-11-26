@@ -2,10 +2,8 @@ package com.github.fsbarata.functional.data.maybe
 
 import com.github.fsbarata.functional.assertEquals
 import com.github.fsbarata.functional.data.MonoidLaws
-import com.github.fsbarata.functional.data.MonoidSemigroupFactory
 import com.github.fsbarata.functional.data.StringF
 import com.github.fsbarata.functional.data.monoid.concatStringMonoid
-import com.github.fsbarata.functional.data.semigroupFactory
 import kotlin.test.Test
 
 class OptionalMonoidTest: MonoidLaws<Optional<StringF>>(
@@ -16,21 +14,20 @@ class OptionalMonoidTest: MonoidLaws<Optional<StringF>>(
 
 	@Test
 	fun combines() {
-		val semigroupFactory = concatStringMonoid().semigroupFactory()
-		with(Optional.monoid<MonoidSemigroupFactory<String>.WrappedMonoid>()) {
+		with(Optional.monoid(concatStringMonoid())) {
 			assertEquals(
-				Optional.just(semigroupFactory("5")),
-				concat(Optional.just(semigroupFactory("5")), Optional.empty())
+				Optional.just("5"),
+				concat(Optional.just("5"), Optional.empty()),
 			)
 
 			assertEquals(
-				Optional.just(semigroupFactory("2")),
-				concat(Optional.empty(), Optional.just(semigroupFactory("2")))
+				Optional.just("2"),
+				concat(Optional.empty(), Optional.just("2")),
 			)
 
 			assertEquals(
-				Optional.just(semigroupFactory("42")),
-				concat(Optional.just(semigroupFactory("4")), Optional.just(semigroupFactory("2")))
+				Optional.just("42"),
+				concat(Optional.just("4"), Optional.just("2")),
 			)
 		}
 	}
