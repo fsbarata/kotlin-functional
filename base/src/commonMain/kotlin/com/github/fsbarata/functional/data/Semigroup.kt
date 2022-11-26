@@ -14,6 +14,8 @@ interface Semigroup<A> {
 
 	fun interface Scope<A> {
 		fun concat(a1: A, a2: A): A
+
+		fun A.concatWith(a2: A): A = concat(this, a2)
 	}
 }
 
@@ -22,13 +24,20 @@ inline fun <A: Semigroup<A>> semigroupScopeOf(): Semigroup.Scope<A> = Semigroup.
 inline fun <A: Semigroup<A>> concat(a1: A, a2: A) = a1.concatWith(a2)
 
 fun <A: Semigroup<A>> A.stimes(n: Int): A {
-	require(n >= 1)
-	return add(this, n - 1)
+	return semigroupScopeOf<A>().stimes(this, n)
 }
 
-private tailrec fun <A: Semigroup<A>> A.add(a: A, n: Int): A =
-	if (n == 0) this
-	else concatWith(a).add(a, n - 1)
+fun <A> Semigroup.Scope<A>.stimes(a: A, n: Int): A {
+	require(n >= 1)
+	return add(a, a, n - 1)
+}
+
+private tailrec fun <A> Semigroup.Scope<A>.add(ac: A, a: A, n: Int): A =
+	if (n == 0) ac
+	else add(concat(ac, a), a, n - 1)
 
 fun <A: Semigroup<A>> NonEmptyList<A>.sconcat() =
-	reduce { a1, a2 -> a1.concatWith(a2) }
+	sconcat(::concat)
+
+fun <A> NonEmptyList<A>.sconcat(semigroupScope: Semigroup.Scope<A>) =
+	reduce { a1, a2 -> semigroupScope.concat(a1, a2) }

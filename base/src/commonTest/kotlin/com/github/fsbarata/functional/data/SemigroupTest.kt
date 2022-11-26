@@ -2,7 +2,10 @@ package com.github.fsbarata.functional.data
 
 import com.github.fsbarata.functional.assertEquals
 import com.github.fsbarata.functional.data.list.nelOf
+import com.github.fsbarata.functional.data.monoid.concatStringMonoid
 import com.github.fsbarata.functional.data.monoid.dual
+import com.github.fsbarata.functional.data.monoid.productLongMonoid
+import com.github.fsbarata.functional.data.monoid.sumIntMonoid
 import kotlin.test.Test
 
 class SemigroupTest {
@@ -12,9 +15,11 @@ class SemigroupTest {
 
 	@Test
 	fun stimes() {
-		assertEquals(IntPlusSg(3), IntPlusSg(3).stimes(1))
-		assertEquals(IntPlusSg(45), IntPlusSg(3).stimes(15))
+		assertEquals(3, sumIntMonoid().stimes(3, 1))
+		assertEquals(45, sumIntMonoid().stimes(3, 15))
+		assertEquals(243L, productLongMonoid().stimes(3, 5)) // = 3^5
 		assertEquals(StringConcatSg("4a4a4a4a"), StringConcatSg("4a").stimes(4))
+		assertEquals("4a4a4a4a", concatStringMonoid().stimes("4a", 4))
 	}
 
 	@Test
@@ -25,12 +30,8 @@ class SemigroupTest {
 	@Test
 	fun sconcat() {
 		assertEquals(
-			StringF("5ag2"),
-			nelOf(StringF("5a"), StringF("g"), StringF(""), StringF("2")).sconcat(),
+			"5ag2",
+			nelOf("5a", "g", "", "2").sconcat(concatStringMonoid()),
 		)
 	}
-}
-
-data class IntPlusSg(val i: Int): Semigroup<IntPlusSg> {
-	override fun concatWith(other: IntPlusSg) = IntPlusSg(i + other.i)
 }

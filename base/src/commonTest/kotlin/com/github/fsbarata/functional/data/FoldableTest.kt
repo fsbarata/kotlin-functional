@@ -20,8 +20,8 @@ class FoldableTest {
 	val lf = { b: String, a: Int -> b + a }
 	val rf = { a: Int, b: String -> b + a }
 
-	class StringSemigroup(val str: String): Semigroup<StringSemigroup> {
-		override fun concatWith(other: StringSemigroup) = StringSemigroup(str + other.str)
+	data class StringConcatSg(val str: String): Semigroup<StringConcatSg> {
+		override fun concatWith(other: StringConcatSg) = StringConcatSg(str + other.str)
 	}
 
 	@Test
@@ -31,8 +31,8 @@ class FoldableTest {
 
 	@Test
 	fun foldMap() {
-		assertEquals("572", foldableList2.foldMap(monoid(StringSemigroup(""))) {
-			StringSemigroup(it.toString())
+		assertEquals("572", foldableList2.foldMap(monoid(StringConcatSg(""))) {
+			StringConcatSg(it.toString())
 		}.str)
 	}
 
@@ -53,8 +53,8 @@ class FoldableTest {
 	@Test
 	fun scanL_semigroup() {
 		assertEquals(
-			nelOf(StringF("0"), StringF("03"), StringF("035"), StringF("0351")),
-			nelOf(StringF("3"), StringF("5"), StringF("1")).scanL(StringF("0")),
+			nelOf(StringConcatSg("0"), StringConcatSg("03"), StringConcatSg("035"), StringConcatSg("0351")),
+			nelOf(StringConcatSg("3"), StringConcatSg("5"), StringConcatSg("1")).scanL(StringConcatSg("0")),
 		)
 	}
 
