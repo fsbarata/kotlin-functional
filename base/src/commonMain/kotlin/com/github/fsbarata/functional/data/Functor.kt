@@ -10,16 +10,20 @@ interface Functor<F, out A>: Invariant<F, A> {
 
 	fun onEach(f: (A) -> Unit): Functor<F, A> = map { a -> f(a); a }
 
-	interface Scope<F> {
+	interface Scope<F>: Invariant.Scope<F> {
 		fun <A, B> map(ca: Context<F, A>, f: (A) -> B): Context<F, B> =
 			(ca as Functor<F, A>).map(f)
 
 		fun <A> onEach(ca: Context<F, A>, f: (A) -> Unit): Context<F, A> =
 			if (ca is Functor) ca.onEach(f)
 			else map(ca) { a -> f(a); a }
+
+		override fun <A, B> invmap(ca: Context<F, A>, f: (A) -> B, g: (B) -> A): Context<F, B> =
+			if (ca is Invariant) ca.invmap(f, g)
+			else map(ca, f)
 	}
 }
 
 fun <A> liftOnEach(f: (A) -> Unit): Lift1<A, A> = Lift1 { a -> f(a); a }
 
-fun <F> Functor<F, *>.functorScope() = object : Functor.Scope<F> {}
+fun <F> Functor<F, *>.functorScope() = object: Functor.Scope<F> {}

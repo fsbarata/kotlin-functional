@@ -21,7 +21,7 @@ interface Semigroup<A> {
 
 inline fun <A: Semigroup<A>> semigroupScopeOf(): Semigroup.Scope<A> = Semigroup.Scope(::concat)
 
-inline fun <A: Semigroup<A>> concat(a1: A, a2: A) = a1.concatWith(a2)
+inline fun <A: Semigroup<A>> concat(a1: A, a2: A): A = a1.concatWith(a2)
 
 fun <A: Semigroup<A>> A.stimes(n: Int): A {
 	return semigroupScopeOf<A>().stimes(this, n)
