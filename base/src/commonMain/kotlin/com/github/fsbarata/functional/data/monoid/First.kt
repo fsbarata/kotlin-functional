@@ -19,5 +19,5 @@ data class FirstNotNull<A>(val get: A): Semigroup<FirstNotNull<A>> {
 fun <A> firstNotNullMonoid() = object: Monoid<A?> {
 	override val empty: A? = null
 
-	override fun combine(a1: A?, a2: A?): A? = a1 ?: a2
+	override fun concat(a1: A?, a2: A?): A? = a1 ?: a2
 }

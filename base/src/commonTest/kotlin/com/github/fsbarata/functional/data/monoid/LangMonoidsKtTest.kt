@@ -13,7 +13,7 @@ class ConcatStringMonoidTest: MonoidLaws<String>(
 
 	@Test
 	fun concats() {
-		assertEquals("a2bb", concatStringMonoid().combine("a2", "bb"))
+		assertEquals("a2bb", concatStringMonoid().concat("a2", "bb"))
 	}
 }
 
@@ -31,7 +31,7 @@ class ConcatArrayMonoidTest: MonoidLaws<Array<Any>>(
 	fun concats() {
 		assertContentEquals(
 			arrayOf("6", "5", "1", "1L", "ajfg"),
-			concatArrayMonoid<String>().combine(arrayOf("6", "5"), arrayOf("1", "1L", "ajfg"))
+			concatArrayMonoid<String>().concat(arrayOf("6", "5"), arrayOf("1", "1L", "ajfg"))
 		)
 	}
 }

@@ -32,7 +32,6 @@ class ValidationApplicativeKtTest {
 		)
 	}
 
-	@Suppress("UNREACHABLE_CODE")
 	@Test
 	fun lift2() {
 		assertEquals(

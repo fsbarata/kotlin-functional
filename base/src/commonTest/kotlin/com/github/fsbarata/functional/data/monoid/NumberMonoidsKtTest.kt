@@ -11,9 +11,9 @@ class SumIntMonoidTest: MonoidLaws<Int>(sumIntMonoid()) {
 
 	@Test
 	fun adds() {
-		assertEquals(8, sumIntMonoid().combine(5, 3))
-		assertEquals(2, sumIntMonoid().combine(5, -3))
-		assertEquals(-8, sumIntMonoid().combine(-5, -3))
+		assertEquals(8, sumIntMonoid().concat(5, 3))
+		assertEquals(2, sumIntMonoid().concat(5, -3))
+		assertEquals(-8, sumIntMonoid().concat(-5, -3))
 	}
 }
 
@@ -23,9 +23,9 @@ class ProductIntMonoidTest: MonoidLaws<Int>(productIntMonoid()) {
 
 	@Test
 	fun multiplies() {
-		assertEquals(15, productIntMonoid().combine(5, 3))
-		assertEquals(-15, productIntMonoid().combine(5, -3))
-		assertEquals(15, productIntMonoid().combine(-5, -3))
+		assertEquals(15, productIntMonoid().concat(5, 3))
+		assertEquals(-15, productIntMonoid().concat(5, -3))
+		assertEquals(15, productIntMonoid().concat(-5, -3))
 	}
 }
 
@@ -35,9 +35,9 @@ class SumLongMonoidTest: MonoidLaws<Long>(sumLongMonoid()) {
 
 	@Test
 	fun adds() {
-		assertEquals(8L, sumLongMonoid().combine(5, 3))
-		assertEquals(2L, sumLongMonoid().combine(5, -3))
-		assertEquals(-8L, sumLongMonoid().combine(-5, -3))
+		assertEquals(8L, sumLongMonoid().concat(5, 3))
+		assertEquals(2L, sumLongMonoid().concat(5, -3))
+		assertEquals(-8L, sumLongMonoid().concat(-5, -3))
 	}
 }
 
@@ -47,9 +47,9 @@ class ProductLongMonoidTest: MonoidLaws<Long>(productLongMonoid()) {
 
 	@Test
 	fun multiplies() {
-		assertEquals(15L, productLongMonoid().combine(5, 3))
-		assertEquals(-15L, productLongMonoid().combine(5, -3))
-		assertEquals(15L, productLongMonoid().combine(-5, -3))
+		assertEquals(15L, productLongMonoid().concat(5, 3))
+		assertEquals(-15L, productLongMonoid().concat(5, -3))
+		assertEquals(15L, productLongMonoid().concat(-5, -3))
 	}
 }
 
@@ -59,9 +59,9 @@ class SumFloatMonoidTest: MonoidLaws<Float>(sumFloatMonoid()) {
 
 	@Test
 	fun adds() {
-		assertEquals(8f, sumFloatMonoid().combine(5f, 3f))
-		assertEquals(4.8f, sumFloatMonoid().combine(5f, -0.2f))
-		assertEquals(-8.1f, sumFloatMonoid().combine(-5f, -3.1f))
+		assertEquals(8f, sumFloatMonoid().concat(5f, 3f))
+		assertEquals(4.8f, sumFloatMonoid().concat(5f, -0.2f))
+		assertEquals(-8.1f, sumFloatMonoid().concat(-5f, -3.1f))
 	}
 }
 
@@ -71,9 +71,9 @@ class ProductFloatMonoidTest: MonoidLaws<Float>(productFloatMonoid()) {
 
 	@Test
 	fun multiplies() {
-		assertEquals(15f, productFloatMonoid().combine(5f, 3f))
-		assertEquals(-1f, productFloatMonoid().combine(5f, -0.2f))
-		assertEquals(15.5f, productFloatMonoid().combine(-5f, -3.1f))
+		assertEquals(15f, productFloatMonoid().concat(5f, 3f))
+		assertEquals(-1f, productFloatMonoid().concat(5f, -0.2f))
+		assertEquals(15.5f, productFloatMonoid().concat(-5f, -3.1f))
 	}
 }
 
@@ -83,9 +83,9 @@ class SumDoubleMonoidTest: MonoidLaws<Double>(sumDoubleMonoid()) {
 
 	@Test
 	fun adds() {
-		assertEquals(8.0, sumDoubleMonoid().combine(5.0, 3.0), 1e-8)
-		assertEquals(4.8, sumDoubleMonoid().combine(5.0, -0.2), 1e-8)
-		assertEquals(-8.1, sumDoubleMonoid().combine(-5.0, -3.1), 1e-8)
+		assertEquals(8.0, sumDoubleMonoid().concat(5.0, 3.0), 1e-8)
+		assertEquals(4.8, sumDoubleMonoid().concat(5.0, -0.2), 1e-8)
+		assertEquals(-8.1, sumDoubleMonoid().concat(-5.0, -3.1), 1e-8)
 	}
 }
 
@@ -95,8 +95,8 @@ class ProductDoubleMonoidTest: MonoidLaws<Double>(productDoubleMonoid()) {
 
 	@Test
 	fun multiplies() {
-		assertEquals(15.0, productDoubleMonoid().combine(5.0, 3.0), 1e-8)
-		assertEquals(-1.0, productDoubleMonoid().combine(5.0, -0.2), 1e-8)
-		assertEquals(15.5, productDoubleMonoid().combine(-5.0, -3.1), 1e-8)
+		assertEquals(15.0, productDoubleMonoid().concat(5.0, 3.0), 1e-8)
+		assertEquals(-1.0, productDoubleMonoid().concat(5.0, -0.2), 1e-8)
+		assertEquals(15.5, productDoubleMonoid().concat(-5.0, -3.1), 1e-8)
 	}
 }

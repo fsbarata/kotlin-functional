@@ -20,7 +20,7 @@ abstract class MonoidLaws<A>(private val monoid: Monoid<A>): PossibilitiesTest {
 		eachPossibility {
 			assertEqual(
 				it,
-				monoid.combine(monoid.empty, it)
+				monoid.concat(monoid.empty, it)
 			)
 		}
 	}
@@ -30,7 +30,7 @@ abstract class MonoidLaws<A>(private val monoid: Monoid<A>): PossibilitiesTest {
 		eachPossibility {
 			assertEqual(
 				it,
-				monoid.combine(it, monoid.empty)
+				monoid.concat(it, monoid.empty)
 			)
 		}
 	}

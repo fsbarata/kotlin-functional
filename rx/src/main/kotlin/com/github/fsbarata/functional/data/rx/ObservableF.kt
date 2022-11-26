@@ -55,8 +55,8 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	override fun <B: Any> mapNotNone(f: (A) -> Optional<B>) =
 		flatMapMaybe { Maybe.just(f(it).orNull() ?: return@flatMapMaybe Maybe.empty()) }.f()
 
-	fun fold(monoid: Monoid<A>): SingleF<A> = super.reduce(monoid.empty, monoid::combine).f()
-	fun scan(monoid: Monoid<A>): ObservableF<A> = super.scan(monoid.empty, monoid::combine).f()
+	fun fold(monoid: Monoid<A>): SingleF<A> = super.reduce(monoid.empty, monoid::concat).f()
+	fun scan(monoid: Monoid<A>): ObservableF<A> = super.scan(monoid.empty, monoid::concat).f()
 
 	override fun concatWith(other: ObservableF<A>): ObservableF<A> = super.concatWith(other).f()
 	override fun combineWith(other: Context<ObservableContext, A>) =

@@ -20,17 +20,17 @@ class OptionalMonoidTest: MonoidLaws<Optional<StringF>>(
 		with(Optional.monoid<MonoidSemigroupFactory<String>.WrappedMonoid>()) {
 			assertEquals(
 				Optional.just(semigroupFactory("5")),
-				combine(Optional.just(semigroupFactory("5")), Optional.empty())
+				concat(Optional.just(semigroupFactory("5")), Optional.empty())
 			)
 
 			assertEquals(
 				Optional.just(semigroupFactory("2")),
-				combine(Optional.empty(), Optional.just(semigroupFactory("2")))
+				concat(Optional.empty(), Optional.just(semigroupFactory("2")))
 			)
 
 			assertEquals(
 				Optional.just(semigroupFactory("42")),
-				combine(Optional.just(semigroupFactory("4")), Optional.just(semigroupFactory("2")))
+				concat(Optional.just(semigroupFactory("4")), Optional.just(semigroupFactory("2")))
 			)
 		}
 	}

@@ -41,7 +41,7 @@ interface Foldable<out A> {
 	 * Fold the structure by mapping to a monoidal value
 	 */
 	fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
-		foldL(monoid.empty) { r, a -> monoid.combine(r, f(a)) }
+		foldL(monoid.empty) { r, a -> monoid.concat(r, f(a)) }
 
 	fun toList(): ListF<A> = ListF.fromList(foldL(ArrayList()) { mutableList, item ->
 		mutableList += item
@@ -93,6 +93,6 @@ fun <A> Iterable<A>.asFoldable(): Foldable<A> = FoldableIterable(this)
 
 fun <A, R> Iterable<A>.foldL(initialValue: R, accumulator: (R, A) -> R): R = fold(initialValue, accumulator)
 inline fun <A, M> Iterable<A>.foldMap(monoid: Monoid<M>, f: (A) -> M): M =
-	fold(monoid.empty) { r, a -> monoid.combine(r, f(a)) }
+	fold(monoid.empty) { r, a -> monoid.concat(r, f(a)) }
 
 fun <A: Semigroup<A>> Iterable<A>.foldL(initialValue: A): A = fold(initialValue, ::concat)

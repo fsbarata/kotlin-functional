@@ -30,7 +30,7 @@ fun <E, A, R> Validation<E, A>.ap(semigroupScope: Semigroup.Scope<E>, ff: Valida
 	ff.fold(
 		ifFailure = { e1 ->
 			Validation.Failure(fold(
-				ifFailure = { semigroupScope.combine(e1, it) },
+				ifFailure = { semigroupScope.concat(e1, it) },
 				ifSuccess = { e1 }
 			))
 		},

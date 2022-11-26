@@ -133,9 +133,9 @@ inline fun <L, R, A> Context<OrContext<L>, R>.flatMap(
 		is Or.Left -> t
 		is Or.Right -> f(t.value).asOr
 		is Or.Both -> when (val fm = f(t.right).asOr) {
-			is Or.Left -> Or.Left(semigroupScope.combine(t.left, fm.value))
+			is Or.Left -> Or.Left(semigroupScope.concat(t.left, fm.value))
 			is Or.Right -> Or.Both(t.left, fm.value)
-			is Or.Both -> Or.Both(semigroupScope.combine(t.left, fm.left), fm.right)
+			is Or.Both -> Or.Both(semigroupScope.concat(t.left, fm.left), fm.right)
 		}
 	}
 }

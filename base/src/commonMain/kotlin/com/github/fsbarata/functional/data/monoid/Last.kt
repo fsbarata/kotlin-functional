@@ -19,5 +19,5 @@ data class LastNotNull<A>(val get: A): Semigroup<LastNotNull<A>> {
 fun <A> lastNotNullMonoid() = object: Monoid<A?> {
 	override val empty: A? = null
 
-	override fun combine(a1: A?, a2: A?): A? = a2 ?: a1
+	override fun concat(a1: A?, a2: A?): A? = a2 ?: a1
 }

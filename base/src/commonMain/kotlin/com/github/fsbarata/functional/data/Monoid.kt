@@ -21,7 +21,7 @@ class MonoidSemigroupFactory<A>(val monoid: Monoid<A>) {
 		fun unwrap() = a
 
 		override fun concatWith(other: WrappedMonoid): WrappedMonoid =
-			wrap(monoid.combine(a, other.a))
+			wrap(monoid.concat(a, other.a))
 
 		override fun toString() = "Wrapped($a)"
 

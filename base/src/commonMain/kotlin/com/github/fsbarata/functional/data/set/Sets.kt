@@ -2,7 +2,6 @@ package com.github.fsbarata.functional.data.set
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Applicative
-import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.partial
@@ -21,7 +20,7 @@ inline fun <A, B, C> Set<A>.lift2(lb: Set<B>, f: (A, B) -> C): Set<C> =
 	flatMap { a -> lb.map(f.partial(a)) }
 
 inline fun <A, M> Set<A>.foldMap(monoid: Monoid<M>, f: (A) -> M): M =
-	fold(monoid.empty) { r, a -> monoid.combine(r, f(a)) }
+	fold(monoid.empty) { r, a -> monoid.concat(r, f(a)) }
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun <A, B> Set<A>.flatMap(f: (A) -> Iterable<B>): Set<B> =

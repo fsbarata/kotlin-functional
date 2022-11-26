@@ -31,8 +31,8 @@ class FlowableF<A>(private val wrapped: Flowable<A>): Flowable<A>(),
 	fun <B> flatMap(f: (A) -> Publisher<B>): FlowableF<B> =
 		wrapped.flatMap(f).f()
 
-	fun fold(monoid: Monoid<A>) = super.reduce(monoid.empty, monoid::combine).f()
-	fun scan(monoid: Monoid<A>) = super.scan(monoid.empty, monoid::combine).f()
+	fun fold(monoid: Monoid<A>) = super.reduce(monoid.empty, monoid::concat).f()
+	fun scan(monoid: Monoid<A>) = super.scan(monoid.empty, monoid::concat).f()
 
 	override fun <B, R> zipWith(other: Context<FlowableF<*>, B>, f: (A, B) -> R) =
 		(this as Flowable<A>).zipWith(other.asFlowable, f).f()

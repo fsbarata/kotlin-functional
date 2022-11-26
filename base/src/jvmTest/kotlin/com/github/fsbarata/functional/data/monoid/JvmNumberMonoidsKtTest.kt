@@ -11,7 +11,7 @@ class SumBigDecimalMonoidTest: MonoidLaws<BigDecimal>(sumBigDecimalMonoid()) {
 
 	@Test
 	fun adds() {
-		assertEquals(BigDecimal("5.8"), sumBigDecimalMonoid().combine(BigDecimal("1.3"), BigDecimal("4.5")))
+		assertEquals(BigDecimal("5.8"), sumBigDecimalMonoid().concat(BigDecimal("1.3"), BigDecimal("4.5")))
 	}
 }
 
@@ -22,6 +22,6 @@ class ProductBigDecimalMonoidTest: MonoidLaws<BigDecimal>(productBigDecimalMonoi
 	@Test
 	fun multiplies() {
 		assertEquals(BigDecimal("6.75"),
-			productBigDecimalMonoid().combine(BigDecimal("1.5"), BigDecimal("4.5")))
+			productBigDecimalMonoid().concat(BigDecimal("1.5"), BigDecimal("4.5")))
 	}
 }

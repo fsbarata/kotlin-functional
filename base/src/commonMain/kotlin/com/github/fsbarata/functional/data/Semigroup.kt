@@ -13,7 +13,7 @@ interface Semigroup<A> {
 	fun concatWith(other: A): A
 
 	fun interface Scope<A> {
-		fun combine(a1: A, a2: A): A
+		fun concat(a1: A, a2: A): A
 	}
 }
 

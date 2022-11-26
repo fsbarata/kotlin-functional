@@ -69,7 +69,7 @@ interface Tree<out A>:
 	override fun onEach(f: (A) -> Unit): Tree<A> = map { a -> f(a); a }
 
 	override fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
-		monoid.combine(f(root), sub.foldMap(monoid) { ta -> ta.foldMap(monoid, f) })
+		monoid.concat(f(root), sub.foldMap(monoid) { ta -> ta.foldMap(monoid, f) })
 
 	override fun <B, R> zipWith(
 		other: Context<TreeContext, B>,
