@@ -17,7 +17,7 @@ interface Semigroup<A> {
 	}
 }
 
-inline fun <A: Semigroup<A>> semigroupScopeOf(): Semigroup.Scope<A> = Semigroup.Scope { a1, a2 -> a1.concatWith(a2) }
+inline fun <A: Semigroup<A>> semigroupScopeOf(): Semigroup.Scope<A> = Semigroup.Scope(::concat)
 
 inline fun <A: Semigroup<A>> concat(a1: A, a2: A) = a1.concatWith(a2)
 
