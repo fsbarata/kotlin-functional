@@ -18,8 +18,6 @@ sealed class Validation<out E, out A>:
 	Functor<ValidationContext<@UnsafeVariance E>, A>,
 	BiFunctor<ValidationBiContext, E, A>,
 	Serializable {
-	override val scope = object: Functor.Scope<ValidationContext<@UnsafeVariance E>> {}
-
 	data class Failure<out E>(val err: E): Validation<E, Nothing>()
 	data class Success<out A>(val value: A): Validation<Nothing, A>()
 

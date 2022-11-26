@@ -4,7 +4,7 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Applicative
 
 interface Traversable<T, out A>: Functor<T, A>, Foldable<A> {
-	override val scope: Scope<T>
+	val scope: Scope<T>
 
 	override fun <B> map(f: (A) -> B): Traversable<T, B>
 

@@ -4,8 +4,6 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Lift1
 
 interface Functor<F, out A>: Invariant<F, A> {
-	val scope: Scope<F>
-
 	fun <B> map(f: (A) -> B): Functor<F, B>
 
 	override fun <B> invmap(f: (A) -> B, g: (B) -> @UnsafeVariance A): Functor<F, B> = map(f)
@@ -23,3 +21,5 @@ interface Functor<F, out A>: Invariant<F, A> {
 }
 
 fun <A> liftOnEach(f: (A) -> Unit): Lift1<A, A> = Lift1 { a -> f(a); a }
+
+fun <F> Functor<F, *>.functorScope() = object : Functor.Scope<F> {}

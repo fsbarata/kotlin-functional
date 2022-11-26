@@ -7,7 +7,7 @@ import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.uncurry
 
 interface Applicative<F, out A>: Functor<F, A> {
-	override val scope: Scope<F>
+	val scope: Scope<F>
 
 	infix fun <R> ap(ff: Context<F, (A) -> R>): Applicative<F, R> =
 		apFromLift2(scope, this, ff) as Applicative<F, R>
