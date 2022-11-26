@@ -4,11 +4,8 @@ import com.github.fsbarata.functional.BiContext
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Lift1
 import com.github.fsbarata.functional.control.lift
-import com.github.fsbarata.functional.data.BiFunctor
-import com.github.fsbarata.functional.data.Functor
-import com.github.fsbarata.functional.data.Semigroup
+import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.either.Either
-import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.maybe.Optional
@@ -62,6 +59,9 @@ sealed class Validation<out E, out A>:
 
 		fun <E, B, A> liftError(either: Either<B, A>, f: (B) -> E): Validation<E, A> =
 			either.fold({ Failure(f(it)) }, { Success(it) })
+
+		fun <E> applicative(semigroupScope: Semigroup.Scope<E>) = ValidationApplicativeScope(semigroupScope)
+		fun <E: Semigroup<E>> applicative() = applicative(semigroupScopeOf<E>())
 	}
 }
 

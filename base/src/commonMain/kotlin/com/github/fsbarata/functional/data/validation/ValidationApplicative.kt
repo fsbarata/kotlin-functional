@@ -4,15 +4,17 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.partial
+import com.github.fsbarata.functional.data.semigroupScopeOf
 
 
-class ValidationApplicativeScope<E: Semigroup<E>>: Applicative.Scope<ValidationContext<E>> {
+class ValidationApplicativeScope<E>(private val semigroupScope: Semigroup.Scope<E>):
+	Applicative.Scope<ValidationContext<E>> {
 	override fun <A> just(a: A): Validation<E, A> = Validation.Success(a)
 
 	override fun <A, R> ap(
-		app: Context<ValidationContext<E>, A>,
+		fa: Context<ValidationContext<E>, A>,
 		ff: Context<ValidationContext<E>, (A) -> R>,
-	): Validation<E, R> = app.asValidation.ap(ff.asValidation)
+	): Validation<E, R> = fa.asValidation.ap(semigroupScope, ff.asValidation)
 
 	override fun <A, B, R> lift2(
 		fa: Context<ValidationContext<E>, A>,
@@ -21,11 +23,14 @@ class ValidationApplicativeScope<E: Semigroup<E>>: Applicative.Scope<ValidationC
 	): Validation<E, R> = ap(fb, map(fa) { partial(f, it) })
 }
 
-fun <E: Semigroup<E>, A, R> Validation<E, A>.ap(ff: Validation<E, (A) -> R>): Validation<E, R> =
+inline fun <E: Semigroup<E>, A, R> Validation<E, A>.ap(ff: Validation<E, (A) -> R>): Validation<E, R> =
+	ap(semigroupScopeOf(), ff)
+
+fun <E, A, R> Validation<E, A>.ap(semigroupScope: Semigroup.Scope<E>, ff: Validation<E, (A) -> R>): Validation<E, R> =
 	ff.fold(
 		ifFailure = { e1 ->
 			Validation.Failure(fold(
-				ifFailure = { e1.concatWith(it) },
+				ifFailure = { semigroupScope.combine(e1, it) },
 				ifSuccess = { e1 }
 			))
 		},
@@ -33,7 +38,15 @@ fun <E: Semigroup<E>, A, R> Validation<E, A>.ap(ff: Validation<E, (A) -> R>): Va
 	)
 
 inline fun <E: Semigroup<E>, A, B, R> lift2(fa: Validation<E, A>, fb: Validation<E, B>, f: (A, B) -> R) =
-	fb.ap(fa.map { f.partial(it) })
+	lift2(fa, fb, semigroupScopeOf(), f)
+
+inline fun <E, A, B, R> lift2(
+	fa: Validation<E, A>,
+	fb: Validation<E, B>,
+	semigroupScope: Semigroup.Scope<E>,
+	f: (A, B) -> R,
+) =
+	fb.ap(semigroupScope, fa.map { f.partial(it) })
 
 operator fun <E: Semigroup<E>, A, B, R> Lift2<A, B, R>.invoke(
 	v1: Validation<E, A>,
@@ -44,14 +57,14 @@ operator fun <E: Semigroup<E>, A, B, C, R> Lift3<A, B, C, R>.invoke(
 	v1: Validation<E, A>,
 	v2: Validation<E, B>,
 	v3: Validation<E, C>,
-) = app(ValidationApplicativeScope(), v1, v2, v3).asValidation
+) = app(Validation.applicative(), v1, v2, v3).asValidation
 
 operator fun <E: Semigroup<E>, A, B, C, D, R> Lift4<A, B, C, D, R>.invoke(
 	v1: Validation<E, A>,
 	v2: Validation<E, B>,
 	v3: Validation<E, C>,
 	v4: Validation<E, D>,
-) = app(ValidationApplicativeScope(), v1, v2, v3, v4).asValidation
+) = app(Validation.applicative(), v1, v2, v3, v4).asValidation
 
 
 fun <E: Semigroup<E>, A, B, R> liftValid2(f: (A, B) -> R): (Validation<E, A>, Validation<E, B>) -> Validation<E, R> =
