@@ -106,6 +106,9 @@ sealed class Or<out L, out R>:
 	companion object: Traversable.Scope<OrContext<Nothing>> {
 		fun <L, R> left(value: L): Or<L, R> = Left(value)
 		fun <L, R> right(value: R): Or<L, R> = Right(value)
+
+		fun <L> monad(semigroupScope: Semigroup.Scope<L>) = MonadScope(semigroupScope)
+		fun <L: Semigroup<L>> monad() = monad(semigroupScopeOf<L>())
 	}
 }
 
