@@ -55,7 +55,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		ff.asList.flatMap(::map)
 
 	override inline fun <B, R> lift2(fb: Context<ListContext, B>, f: (A, B) -> R): ListF<R> =
-		bind { a -> scope.map(fb, f.partial(a)) }
+		bind { a -> fb.asList.map { b -> f(a, b) } }
 
 	override inline infix fun <B> bind(f: (A) -> Context<ListContext, B>): ListF<B> =
 		flatMap { f(it).asList }

@@ -8,11 +8,11 @@ interface Traversable<T, out A>: Functor<T, A>, Foldable<A> {
 
 	override fun <B> map(f: (A) -> B): Traversable<T, B>
 
+	@Suppress("UNCHECKED_CAST")
 	fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Context<F, B>,
 	): Context<F, Traversable<T, B>> =
-		@Suppress("UNCHECKED_CAST")
 		traverseFromSequence(scope, this, appScope, f) as Context<F, Traversable<T, B>>
 
 	interface Scope<T>: Functor.Scope<T> {

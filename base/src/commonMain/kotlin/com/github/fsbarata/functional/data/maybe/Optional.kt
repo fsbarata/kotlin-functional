@@ -43,7 +43,7 @@ sealed class Optional<out A>:
 		flatMap { just(f(it)) }
 
 	final override inline fun <B, R> lift2(fb: Context<OptionalContext, B>, f: (A, B) -> R): Optional<R> =
-		flatMap { fb.asOptional.map(f.partial(it)) }
+		flatMap { a -> fb.asOptional.map { b -> f(a, b) } }
 
 	final override inline infix fun <B> bind(f: (A) -> Context<OptionalContext, B>): Optional<B> =
 		flatMap { f(it).asOptional }
@@ -167,5 +167,5 @@ fun <A: Any, B: Any, R: Any> liftNull2(f: (A, B) -> R): (A?, B?) -> R? =
 fun <A: Any, B: Any, C: Any, R: Any> liftNull3(f: (A, B, C) -> R): (A?, B?, C?) -> R? =
 	t@{ a, b, c -> f(a ?: return@t null, b ?: return@t null, c ?: return@t null) }
 
-inline fun <A, R: Any> optionalKleisli(f: (A) -> R?): Kleisli<OptionalContext, A, R> =
-	Optional.kleisli(f composeForward { it.toOptional() })
+fun <A, R: Any> optionalKleisli(f: (A) -> R?): Kleisli<OptionalContext, A, R> =
+	Optional.kleisli(composeForward(f) { it.toOptional() })

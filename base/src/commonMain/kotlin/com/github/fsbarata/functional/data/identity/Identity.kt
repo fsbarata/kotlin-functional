@@ -7,7 +7,6 @@ import com.github.fsbarata.functional.control.Comonad
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.Monoid
-import com.github.fsbarata.functional.data.partial
 import com.github.fsbarata.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
@@ -47,7 +46,7 @@ data class Identity<A>(val a: A):
 	inline fun <B> flatMap(f: (A) -> Identity<B>) = f(a)
 
 	override inline fun <B, R> zipWith(other: Context<IdentityContext, B>, f: (A, B) -> R): Identity<R> =
-		other.asIdentity.map(f.partial(a))
+		other.asIdentity.map { f(a, it) }
 
 	companion object: MonadZip.Scope<IdentityContext> {
 		override fun <A> just(a: A) = Identity(a)

@@ -85,7 +85,7 @@ class NonEmptyList<out A>(
 		ff.asNel.flatMap(this::map)
 
 	override inline fun <B, R> lift2(fb: Context<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> =
-		flatMap { a -> fb.asNel.map(f.partial(a)) }
+		flatMap { a -> fb.asNel.map { b -> f(a, b) } }
 
 	override inline infix fun <B> bind(f: (A) -> Context<NonEmptyContext, B>): NonEmptyList<B> =
 		flatMap { f(it).asNel }

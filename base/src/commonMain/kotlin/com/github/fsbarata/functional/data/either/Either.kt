@@ -38,7 +38,7 @@ sealed class Either<out E, out A>:
 		fb: Context<EitherContext<@UnsafeVariance E>, B>,
 		f: (A, B) -> R,
 	): Either<E, R> =
-		flatMap { fb.asEither.map(f.partial(it)) }
+		flatMap { a -> fb.asEither.map { b -> f(a, b) } }
 
 	final override inline fun <B> mapLeft(f: (E) -> B): Either<B, A> {
 		return fold(ifLeft = { Left(f(it)) }, { Right(it) })

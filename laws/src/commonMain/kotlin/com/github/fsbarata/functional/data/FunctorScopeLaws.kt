@@ -34,7 +34,7 @@ interface FunctorScopeLaws<F>: ContextTest<F>, PossibilitiesTest {
 
 	@Test
 	fun `scope onEach retains original functor`() {
-		val f = { a: Int -> }
+		val f = { _: Int -> }
 		eachPossibility { fa ->
 			val r1 = functorScope.onEach(fa, f)
 			val r2 = liftOnEach(f).fmap(functorScope, fa)

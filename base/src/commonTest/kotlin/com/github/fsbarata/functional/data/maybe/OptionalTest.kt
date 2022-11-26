@@ -76,7 +76,7 @@ class OptionalTest:
 		val m = Optional.just(3)
 		val f = optionalKleisli { b: Int -> "$b" }
 		assertEquals(Optional.just("3"), m.bind(f))
-		val g = optionalKleisli { b: Int -> null }
+		val g = optionalKleisli { _: Int -> null }
 		assertEquals(Optional.empty<Nothing>(), m.bind(g))
 	}
 }

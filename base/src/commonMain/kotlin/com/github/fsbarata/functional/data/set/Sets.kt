@@ -4,7 +4,6 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.maybe.Optional
-import com.github.fsbarata.functional.data.partial
 
 /**
  * Extensions to kotlin Set, without needing to wrap in SetF
@@ -17,7 +16,7 @@ inline fun <A, B> Set<A>.ap(fs: Set<(A) -> B>): Set<B> =
 	fs.flatMap(this::map)
 
 inline fun <A, B, C> Set<A>.lift2(lb: Set<B>, f: (A, B) -> C): Set<C> =
-	flatMap { a -> lb.map(f.partial(a)) }
+	flatMap { a -> lb.map { b -> f(a, b) } }
 
 inline fun <A, M> Set<A>.foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 	fold(monoid.empty) { r, a -> monoid.concat(r, f(a)) }

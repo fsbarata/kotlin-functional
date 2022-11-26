@@ -28,7 +28,7 @@ interface FunctorLaws<F>: FunctorScopeLaws<F>, InvariantLaws<F> {
 
 	@Test
 	fun `onEach retains original functor`() {
-		val f = { a: Int -> }
+		val f = { _: Int -> }
 		eachPossibilityFunctor { fa ->
 			val r1 = fa.onEach(f)
 			val r2 = liftOnEach(f).fmap(fa)

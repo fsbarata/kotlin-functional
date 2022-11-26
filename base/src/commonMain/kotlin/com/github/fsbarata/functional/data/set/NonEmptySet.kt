@@ -4,7 +4,6 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
-import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.utils.toNes
 import com.github.fsbarata.io.Serializable
 
@@ -44,7 +43,7 @@ class NonEmptySet<out A> private constructor(
 		ff.asNes.flatMap(this::map)
 
 	override inline fun <B, R> lift2(fb: Context<NonEmptySetContext, B>, f: (A, B) -> R): NonEmptySet<R> =
-		flatMap { a -> fb.asNes.map(f.partial(a)) }
+		flatMap { a -> fb.asNes.map { b -> f(a, b) } }
 
 	override inline infix fun <B> bind(f: (A) -> Context<NonEmptySetContext, B>): NonEmptySet<B> =
 		flatMap { f(it).asNes }

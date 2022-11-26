@@ -6,7 +6,6 @@ import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.concat
 import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.maybe.Optional
-import com.github.fsbarata.functional.data.partial
 
 /**
  * Extensions to kotlin List, without needing to wrap in ListF
@@ -21,7 +20,7 @@ inline fun <A, B> List<A>.ap(fs: List<(A) -> B>): List<B> =
 	fs.flatMap(::map)
 
 inline fun <A, B, C> List<A>.lift2(lb: List<B>, f: (A, B) -> C): List<C> =
-	flatMap { a -> lb.map(f.partial(a)) }
+	flatMap { a -> lb.map { b -> f(a, b) } }
 
 inline fun <F, A, B> Iterable<A>.traverse(
 	appScope: Applicative.Scope<F>,

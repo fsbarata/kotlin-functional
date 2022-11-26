@@ -11,7 +11,7 @@ class KleisliTest {
 		val m = Optional.just(3)
 		val f = Optional.kleisli { b: Int -> Optional.just("$b") }
 		assertEquals(Optional.just("3"), m.bind(f))
-		val g = Optional.kleisli { b: Int -> Optional.empty<Nothing>() }
+		val g = Optional.kleisli { _: Int -> Optional.empty<Nothing>() }
 		assertEquals(Optional.empty<Nothing>(), m.bind(g))
 	}
 

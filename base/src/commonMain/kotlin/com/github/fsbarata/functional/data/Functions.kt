@@ -115,12 +115,12 @@ inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partialLast3(b: B, c: C, d: D): F1<
 
 @JvmName("curryExt")
 inline fun <A, B, R> F2<A, B, R>.curry(): (A) -> (B) -> R = curry(this)
-inline fun <A, B, R> curry(crossinline f: F2<A, B, R>): (A) -> (B) -> R = { a -> f.partial(a) }
+inline fun <A, B, R> curry(crossinline f: F2<A, B, R>): (A) -> (B) -> R = { a -> partial(f, a) }
 
 @JvmName("curryExt")
 inline fun <A, B, C, R> F3<A, B, C, R>.curry(): (A) -> (B) -> (C) -> R = curry(this)
 inline fun <A, B, C, R> curry(crossinline f: F3<A, B, C, R>): (A) -> (B) -> (C) -> R =
-	{ a -> { b -> f.partial2(a, b) } }
+	{ a -> { b -> partial2(f, a, b) } }
 
 @JvmName("uncurryExt")
 inline fun <A, B, R> ((A) -> (B) -> R).uncurry(): F2<A, B, R> = uncurry(this)
