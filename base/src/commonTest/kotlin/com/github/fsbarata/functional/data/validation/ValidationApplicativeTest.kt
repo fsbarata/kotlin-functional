@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.fail
 
 class ValidationApplicativeTest: ApplicativeScopeLaws<ValidationContext<IntPlusSg>> {
-	override val applicativeScope = ValidationApplicativeScope<IntPlusSg>()
+	override val applicativeScope = Validation.applicative<IntPlusSg>()
 
 	override val possibilities: Int = 10
 

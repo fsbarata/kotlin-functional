@@ -341,7 +341,7 @@ internal class NonEmptyListTest:
 		assertEquals(
 			Validation.success<NonEmptyList<String>, Int>(2),
 			nelOf(5, 2, 1)
-				.traverse(ValidationApplicativeScope()) { a ->
+				.traverse(Validation.applicative()) { a ->
 					when {
 						a < 1 -> Validation.Failure(NonEmptyList.just("a"))
 						a < 3 -> Validation.success(1)
@@ -380,7 +380,7 @@ internal class NonEmptyListTest:
 				Validation.success(0),
 				Validation.success(1),
 			)
-				.sequenceA(ValidationApplicativeScope())
+				.sequenceA(Validation.applicative())
 				.asValidation
 				.map { it.sum() }
 		)
