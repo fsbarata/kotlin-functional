@@ -4,15 +4,11 @@ import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.monoid
 
-data class First<A: Any>(val get: A): Semigroup<First<A>> {
-	override fun concatWith(other: First<A>) = First(get)
-}
-
-data class FirstNotNull<A>(val get: A): Semigroup<FirstNotNull<A>> {
+data class FirstNotNull<A: Any>(val get: A?): Semigroup<FirstNotNull<A>> {
 	override fun concatWith(other: FirstNotNull<A>) = FirstNotNull(get ?: other.get)
 
 	companion object {
-		fun <A: Any> monoid(): Monoid<FirstNotNull<A?>> = monoid(FirstNotNull(null))
+		fun <A: Any> monoid(): Monoid<FirstNotNull<A>> = monoid(FirstNotNull(null))
 	}
 }
 

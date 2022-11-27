@@ -5,36 +5,40 @@ import com.github.fsbarata.functional.data.MonoidLaws
 import com.github.fsbarata.functional.data.SemigroupLaws
 import kotlin.test.Test
 
-class LastTest: SemigroupLaws<Last<String>> {
+class LastNotNullTest: SemigroupLaws<LastNotNull<String>> {
 	override val possibilities: Int = 10
 
-	override fun factory(possibility: Int) = Last(possibility)
+	override fun factory(possibility: Int) = LastNotNull(possibility.takeIf { it > 0 }?.toString())
 
 	@Test
-	fun combineWith() {
-		assertEquals(Last(5), Last(3).concatWith(Last(1)).concatWith(Last(5)))
-		assertEquals(Last("z"), Last("1f").concatWith(Last("")).concatWith(Last("z")))
+	fun concatWith() {
+		assertEquals(
+			LastNotNull(5),
+			LastNotNull(3)
+				.concatWith(LastNotNull(1))
+				.concatWith(LastNotNull(5)),
+		)
+		assertEquals(
+			LastNotNull(1),
+			LastNotNull(5)
+				.concatWith(LastNotNull(null))
+				.concatWith(LastNotNull(1))
+				.concatWith(LastNotNull(null))
+				.concatWith(LastNotNull(null)),
+		)
 	}
 }
 
-class LastNotNullTest: MonoidLaws<LastNotNull<String?>>(
-	LastNotNull.monoid()
-) {
+class LastNotNullMonoidTest: MonoidLaws<String?>(lastNotNullMonoid()) {
 	override val possibilities: Int = 10
 
-	override fun factory(possibility: Int) = LastNotNull(possibility.takeIf { it > 0 })
+	override fun factory(possibility: Int) = possibility.takeIf { it > 0 }?.toString()
 
 	@Test
-	fun combineWith() {
-		assertEquals(LastNotNull(5),
-			LastNotNull<Int?>(3)
-				.concatWith(LastNotNull(1))
-				.concatWith(LastNotNull(5)))
-		assertEquals(LastNotNull(1),
-			LastNotNull<Int?>(5)
-				.concatWith(LastNotNull(null))
-				.concatWith(LastNotNull(1))
-				.concatWith(LastNotNull(null))
-				.concatWith(LastNotNull(null)))
+	fun concat() {
+		with(lastNotNullMonoid<Int>()) {
+			assertEquals(5, 3.concatWith(1).concatWith(5))
+			assertEquals(5, null.concatWith(1).concatWith(null).concatWith(5).concatWith(null))
+		}
 	}
 }

@@ -5,6 +5,8 @@ import kotlin.test.Test
 import kotlin.test.asserter
 
 interface SemigroupLaws<A: Semigroup<A>>: PossibilitiesTest {
+	override fun factory(possibility: Int): A
+
 	fun equals(a1: A, a2: A): Boolean = a1 == a2
 
 	fun assertEqual(a1: A, a2: A) {

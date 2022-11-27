@@ -8,6 +8,8 @@ import kotlin.test.Test
 interface FunctorScopeLaws<F>: ContextTest<F>, PossibilitiesTest {
 	val functorScope: Functor.Scope<F>
 
+	override fun factory(possibility: Int): Context<F, Int>
+
 	@Suppress("UNCHECKED_CAST")
 	fun eachPossibility(block: (Context<F, Int>) -> Unit) {
 		super.eachPossibility { block(it as Context<F, Int>) }
