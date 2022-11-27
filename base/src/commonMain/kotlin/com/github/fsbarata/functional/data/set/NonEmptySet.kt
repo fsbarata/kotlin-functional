@@ -50,7 +50,7 @@ class NonEmptySet<out A> private constructor(
 
 	inline fun <B> flatMap(f: (A) -> NonEmptySet<B>): NonEmptySet<B> {
 		val mappedHead = f(head)
-		return of(mappedHead.head, mappedHead.tail + tail.flatMap(f))
+		return of(mappedHead.head, mappedHead.tail + tail.flatMapToSet(f))
 	}
 
 	operator fun plus(other: @UnsafeVariance A) = of(head, tail + other)
