@@ -1,9 +1,11 @@
 package com.github.fsbarata.functional.kotlin
 
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
+import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.list.toNel
+import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.set.NonEmptySet
 import com.github.fsbarata.functional.data.set.toNes
 
@@ -42,3 +44,21 @@ inline fun <T, R> Iterable<T>.scanNel(initialValue: R, operation: (R, T) -> R) =
 	initialValue,
 	scan(initialValue, operation).drop(1)
 )
+
+inline fun <A, R: Any> Iterable<A>.mapNotNone(f: (A) -> Optional<R>): List<R> =
+	mapNotNull { f(it).orNull() }
+
+inline fun <A: Any> Iterable<Optional<A>>.filterNotNone(): List<A> =
+	mapNotNone(id())
+
+inline fun <A, R: Any> Iterable<A>.mapNotNullToSet(f: (A) -> R?): Set<R> =
+	mapNotNullTo(mutableSetOf(), f)
+
+inline fun <A: Any> Iterable<A?>.filterNotNullToSet(): Set<A> =
+	filterNotNullTo(mutableSetOf())
+
+inline fun <A, R: Any> Iterable<A>.mapNotNoneToSet(f: (A) -> Optional<R>): Set<R> =
+	mapNotNullToSet { f(it).orNull() }
+
+inline fun <A: Any> Iterable<Optional<A>>.filterNotNoneToSet(): Set<A> =
+	mapNotNoneToSet(id())

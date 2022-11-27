@@ -31,9 +31,3 @@ inline fun <F, A, B> Set<A>.traverse(
 		appScope.lift2(f(a), app) { b, lb -> lb + b }
 	}
 }
-
-inline fun <A, R: Any> Set<A>.mapNotNull(f: (A) -> R?) =
-	mapNotNullTo(mutableSetOf(), f)
-
-inline fun <A, R: Any> Set<A>.mapNotNone(f: (A) -> Optional<R>) =
-	mapNotNull { f(it).orNull() }

@@ -4,8 +4,6 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Applicative
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.concat
-import com.github.fsbarata.functional.data.id
-import com.github.fsbarata.functional.data.maybe.Optional
 
 /**
  * Extensions to kotlin List, without needing to wrap in ListF
@@ -31,7 +29,3 @@ inline fun <F, A, B> Iterable<A>.traverse(
 	}
 }
 
-inline fun <A, R: Any> Iterable<A>.mapNotNone(f: (A) -> Optional<R>): List<R> =
-	mapNotNull { f(it).orNull() }
-
-fun <A: Any> Iterable<Optional<A>>.filterNotNone(): List<A> = mapNotNone(id())
