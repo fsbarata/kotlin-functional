@@ -105,13 +105,39 @@ inline fun <A, B, C, R> partialLast(crossinline f: F3<A, B, C, R>, c: C): F2<A, 
 inline fun <A, B, C, R> F3<A, B, C, R>.partialLast2(b: B, c: C): F1<A, R> = partialLast2(this, b, c)
 inline fun <A, B, C, R> partialLast2(crossinline f: F3<A, B, C, R>, b: B, c: C): F1<A, R> = { a -> f(a, b, c) }
 
-inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partial(a: A): F3<B, C, D, R> = { b, c, d -> invoke(a, b, c, d) }
-inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partial2(a: A, b: B): F2<C, D, R> = { c, d -> invoke(a, b, c, d) }
-inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partial3(a: A, b: B, c: C): F1<D, R> = { d -> invoke(a, b, c, d) }
-inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partial4(a: A, b: B, c: C, d: D): F0<R> = { invoke(a, b, c, d) }
-inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partialLast(d: D): F3<A, B, C, R> = { a, b, c -> invoke(a, b, c, d) }
-inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partialLast2(c: C, d: D): F2<A, B, R> = { a, b -> invoke(a, b, c, d) }
-inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partialLast3(b: B, c: C, d: D): F1<A, R> = { a -> invoke(a, b, c, d) }
+@JvmName("partialExt")
+inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partial(a: A): F3<B, C, D, R> = partial(this, a)
+inline fun <A, B, C, D, R> partial(crossinline f: F4<A, B, C, D, R>, a: A): F3<B, C, D, R> =
+	{ b, c, d -> f(a, b, c, d) }
+
+@JvmName("partial2Ext")
+inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partial2(a: A, b: B): F2<C, D, R> = partial2(this, a, b)
+inline fun <A, B, C, D, R> partial2(crossinline f: F4<A, B, C, D, R>, a: A, b: B): F2<C, D, R> =
+	{ c, d -> f(a, b, c, d) }
+
+@JvmName("partial3Ext")
+inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partial3(a: A, b: B, c: C): F1<D, R> = partial3(this, a, b, c)
+inline fun <A, B, C, D, R> partial3(crossinline f: F4<A, B, C, D, R>, a: A, b: B, c: C): F1<D, R> =
+	{ d -> f(a, b, c, d) }
+
+@JvmName("partial4Ext")
+inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partial4(a: A, b: B, c: C, d: D): F0<R> = partial4(this, a, b, c, d)
+inline fun <A, B, C, D, R> partial4(crossinline f: F4<A, B, C, D, R>, a: A, b: B, c: C, d: D): F0<R> = { f(a, b, c, d) }
+
+@JvmName("partialLastExt")
+inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partialLast(d: D): F3<A, B, C, R> = partialLast(this, d)
+inline fun <A, B, C, D, R> partialLast(crossinline f: F4<A, B, C, D, R>, d: D): F3<A, B, C, R> =
+	{ a, b, c -> f(a, b, c, d) }
+
+@JvmName("partialLast2Ext")
+inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partialLast2(c: C, d: D): F2<A, B, R> = partialLast2(this, c, d)
+inline fun <A, B, C, D, R> partialLast2(crossinline f: F4<A, B, C, D, R>, c: C, d: D): F2<A, B, R> =
+	{ a, b -> f(a, b, c, d) }
+
+@JvmName("partial3LastExt")
+inline fun <A, B, C, D, R> F4<A, B, C, D, R>.partialLast3(b: B, c: C, d: D): F1<A, R> = partialLast3(this, b, c, d)
+inline fun <A, B, C, D, R> partialLast3(crossinline f: F4<A, B, C, D, R>, b: B, c: C, d: D): F1<A, R> =
+	{ a -> f(a, b, c, d) }
 
 @JvmName("curryExt")
 inline fun <A, B, R> F2<A, B, R>.curry(): (A) -> (B) -> R = curry(this)

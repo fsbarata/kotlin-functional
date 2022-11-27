@@ -5,7 +5,6 @@ package com.github.fsbarata.functional.data.validation
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.Semigroup
-import com.github.fsbarata.functional.data.partial
 import com.github.fsbarata.functional.data.semigroupScopeOf
 
 
