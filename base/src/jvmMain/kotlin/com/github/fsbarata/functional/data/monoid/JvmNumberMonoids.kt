@@ -1,7 +1,7 @@
 package com.github.fsbarata.functional.data.monoid
 
-import com.github.fsbarata.functional.data.monoid
+import com.github.fsbarata.functional.data.monoidOf
 import java.math.BigDecimal
 
-fun sumBigDecimalMonoid() = monoid(BigDecimal.ZERO, BigDecimal::plus)
-fun productBigDecimalMonoid() = monoid(BigDecimal.ONE, BigDecimal::times)
+fun sumBigDecimalMonoid() = monoidOf(BigDecimal.ZERO, BigDecimal::plus)
+fun productBigDecimalMonoid() = monoidOf(BigDecimal.ONE, BigDecimal::times)

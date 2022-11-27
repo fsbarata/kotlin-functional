@@ -11,5 +11,5 @@ fun <A> Semigroup.Scope<A>.monoid(empty: A): Monoid<A> =
 		override val empty: A = empty
 	}
 
-inline fun <A> monoid(empty: A, semigroup: Semigroup.Scope<A>) = semigroup.monoid(empty)
+inline fun <A> monoidOf(empty: A, semigroup: Semigroup.Scope<A>) = semigroup.monoid(empty)
 

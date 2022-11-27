@@ -5,6 +5,8 @@ import kotlin.test.Test
 import kotlin.test.asserter
 
 abstract class MonoidLaws<A>(private val monoid: Monoid<A>): PossibilitiesTest {
+	abstract override fun factory(possibility: Int): A
+
 	open fun equals(a1: A, a2: A): Boolean = a1 == a2
 
 	open fun assertEqual(a1: A, a2: A) =
