@@ -180,4 +180,40 @@ inline fun <A, B, R> on(crossinline f1: ((B) -> (B) -> R), crossinline f2: F1<A,
 	{ a1: A -> val fa1: B = f2(a1); { a2: A -> f1(fa1)(f2(a2)) } }
 
 
+/**
+ * Experimental functions
+ */
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@Target(
+	AnnotationTarget.CLASS,
+	AnnotationTarget.ANNOTATION_CLASS,
+	AnnotationTarget.PROPERTY,
+	AnnotationTarget.FIELD,
+	AnnotationTarget.LOCAL_VARIABLE,
+	AnnotationTarget.VALUE_PARAMETER,
+	AnnotationTarget.CONSTRUCTOR,
+	AnnotationTarget.FUNCTION,
+	AnnotationTarget.PROPERTY_GETTER,
+	AnnotationTarget.PROPERTY_SETTER,
+	AnnotationTarget.TYPEALIAS
+)
+@Retention(AnnotationRetention.BINARY)
+annotation class ExperimentalFunctions
 
+/**
+ * Allows curried operations without converting a function using curry().
+ *
+ * Note: Must be explicitly imported, the IDE does not suggest importing these.
+ */
+
+// for any (f: (A, B) -> R), f(a) becomes (B) -> R, which is equivalent to partial application
+@ExperimentalFunctions
+inline operator fun <A, B, R> F2<A, B, R>.invoke(a: A): F1<B, R> = partial(this, a)
+
+// for any (f: (A, B, C) -> R), f(a) becomes (B, C) -> R, which is equivalent to partial application
+@ExperimentalFunctions
+inline operator fun <A, B, C, R> F3<A, B, C, R>.invoke(a: A): F2<B, C, R> = partial(this, a)
+
+// for any (f: (A, B, C, D) -> R), f(a) becomes (B, C, D) -> R, which is equivalent to partial application
+@ExperimentalFunctions
+operator fun <A, B, C, D, R> F4<A, B, C, D, R>.invoke(a: A): F3<B, C, D, R> = partial(this, a)
