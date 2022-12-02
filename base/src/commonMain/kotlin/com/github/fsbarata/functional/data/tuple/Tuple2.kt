@@ -71,11 +71,18 @@ inline fun <A, B> Pair<A, B>.f() = toTuple()
 inline fun <A, B, X, Y> Pair<A, B>.f(block: Tuple2<A, B>.() -> Context<Tuple2Context<X>, Y>): Tuple2<X, Y> =
 	f().block().asTuple
 
+inline fun <X, Y> Map.Entry<X, Y>.toTuple() = Tuple2(key, value)
 inline fun <X, Y> Pair<X, Y>.toTuple() = Tuple2(first, second)
 inline fun <X, Y> Tuple2<X, Y>.toPair() = Pair(x, y)
 
 inline fun <A, B, R> F2<A, B, R>.packT(): (Tuple2<A, B>) -> R = { t: Tuple2<A, B> -> invoke(t.x, t.y) }
 inline fun <A, B, R> F1<Tuple2<A, B>, R>.unpackT(): F2<A, B, R> = { a: A, b: B -> invoke(Tuple2(a, b)) }
+
+@JvmName("packTSuspending")
+inline fun <A, B, R> sF2<A, B, R>.packT(): suspend (Tuple2<A, B>) -> R = { t: Tuple2<A, B> -> invoke(t.x, t.y) }
+
+@JvmName("unpackTSuspending")
+inline fun <A, B, R> sF1<Tuple2<A, B>, R>.unpackT(): sF2<A, B, R> = { a: A, b: B -> invoke(Tuple2(a, b)) }
 
 @JvmName("tuplefExt")
 inline fun <A, B, R> F1<Pair<A, B>, R>.tuplef(): F1<Tuple2<A, B>, R> = tuplef(this)
@@ -91,5 +98,6 @@ inline fun <K, V, R> entryf(crossinline f: F1<Pair<K, V>, R>): F1<Map.Entry<K, V
 
 @JvmName("entryfTExt")
 inline fun <K, V, R> F1<Tuple2<K, V>, R>.entryf(): F1<Map.Entry<K, V>, R> = entryf(this)
+
 @JvmName("entryfT")
-inline fun <K, V, R> entryf(crossinline f: F1<Tuple2<K, V>, R>): F1<Map.Entry<K, V>, R> = { f(it.toPair().toTuple()) }
+inline fun <K, V, R> entryf(crossinline f: F1<Tuple2<K, V>, R>): F1<Map.Entry<K, V>, R> = { f(it.toTuple()) }
