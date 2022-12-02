@@ -77,12 +77,8 @@ inline fun <X, Y> Tuple2<X, Y>.toPair() = Pair(x, y)
 
 inline fun <A, B, R> F2<A, B, R>.packT(): (Tuple2<A, B>) -> R = { t: Tuple2<A, B> -> invoke(t.x, t.y) }
 inline fun <A, B, R> F1<Tuple2<A, B>, R>.unpackT(): F2<A, B, R> = { a: A, b: B -> invoke(Tuple2(a, b)) }
-
-@JvmName("packTSuspending")
-inline fun <A, B, R> sF2<A, B, R>.packT(): suspend (Tuple2<A, B>) -> R = { t: Tuple2<A, B> -> invoke(t.x, t.y) }
-
-@JvmName("unpackTSuspending")
-inline fun <A, B, R> sF1<Tuple2<A, B>, R>.unpackT(): sF2<A, B, R> = { a: A, b: B -> invoke(Tuple2(a, b)) }
+inline fun <A, B, R> sF2<A, B, R>.packTS(): suspend (Tuple2<A, B>) -> R = { t: Tuple2<A, B> -> invoke(t.x, t.y) }
+inline fun <A, B, R> sF1<Tuple2<A, B>, R>.unpackTS(): sF2<A, B, R> = { a: A, b: B -> invoke(Tuple2(a, b)) }
 
 @JvmName("tuplefExt")
 inline fun <A, B, R> F1<Pair<A, B>, R>.tuplef(): F1<Tuple2<A, B>, R> = tuplef(this)

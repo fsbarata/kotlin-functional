@@ -18,34 +18,26 @@ fun <A, B> Pair<A, B>.swap(): Pair<B, A> = Pair(second, first)
 @JvmName("packExt")
 inline fun <A, B, R> F2<A, B, R>.pack(): (Pair<A, B>) -> R = pack(this)
 inline fun <A, B, R> pack(crossinline f: F2<A, B, R>): (Pair<A, B>) -> R = { t: Pair<A, B> -> f(t.first, t.second) }
-
-@JvmName("packSuspending")
-inline fun <A, B, R> pack(crossinline f: sF2<A, B, R>): suspend (Pair<A, B>) -> R =
+inline fun <A, B, R> packS(crossinline f: sF2<A, B, R>): suspend (Pair<A, B>) -> R =
 	{ t: Pair<A, B> -> f(t.first, t.second) }
 
 @JvmName("unpackExt")
 inline fun <A, B, R> F1<Pair<A, B>, R>.unpack(): F2<A, B, R> = unpack(this)
 inline fun <A, B, R> unpack(crossinline f: F1<Pair<A, B>, R>): F2<A, B, R> = { a: A, b: B -> f(a to b) }
-
-@JvmName("unpackSuspending")
-inline fun <A, B, R> unpack(crossinline f: sF1<Pair<A, B>, R>): sF2<A, B, R> = { a: A, b: B -> f(a to b) }
+inline fun <A, B, R> unpackS(crossinline f: sF1<Pair<A, B>, R>): sF2<A, B, R> = { a: A, b: B -> f(a to b) }
 
 @JvmName("packExt")
 inline fun <A, B, C, R> F3<A, B, C, R>.pack(): (Triple<A, B, C>) -> R = pack(this)
 inline fun <A, B, C, R> pack(crossinline f: F3<A, B, C, R>): (Triple<A, B, C>) -> R =
 	{ t: Triple<A, B, C> -> f(t.first, t.second, t.third) }
-
-@JvmName("packSuspending")
-inline fun <A, B, C, R> pack(crossinline f: sF3<A, B, C, R>): suspend (Triple<A, B, C>) -> R =
+inline fun <A, B, C, R> packS(crossinline f: sF3<A, B, C, R>): suspend (Triple<A, B, C>) -> R =
 	{ t: Triple<A, B, C> -> f(t.first, t.second, t.third) }
 
 @JvmName("unpackExt")
 inline fun <A, B, C, R> F1<Triple<A, B, C>, R>.unpack(): F3<A, B, C, R> = unpack(this)
 inline fun <A, B, C, R> unpack(crossinline f: F1<Triple<A, B, C>, R>): F3<A, B, C, R> =
 	{ a: A, b: B, c: C -> f(Triple(a, b, c)) }
-
-@JvmName("unpackSuspending")
-inline fun <A, B, C, R> unpack(crossinline f: sF1<Triple<A, B, C>, R>): sF3<A, B, C, R> =
+inline fun <A, B, C, R> unpackS(crossinline f: sF1<Triple<A, B, C>, R>): sF3<A, B, C, R> =
 	{ a: A, b: B, c: C -> f(Triple(a, b, c)) }
 
 fun <A> dupe(a: A) = Pair(a, a)
