@@ -22,48 +22,48 @@ inline fun <A> id(): (A) -> A = ::id
 
 
 inline fun <A, R> compose0(crossinline f1: F1<A, R>, crossinline f2: F0<A>): F0<R> = { f1(f2()) }
-inline fun <A, R> compose0(crossinline f1: sF1<A, R>, crossinline f2: sF0<A>): sF0<R> = { f1(f2()) }
+inline fun <A, R> composeS0(crossinline f1: sF1<A, R>, crossinline f2: sF0<A>): sF0<R> = { f1(f2()) }
 inline fun <A, B, R> compose(crossinline f1: F1<B, R>, crossinline f2: F1<A, B>): F1<A, R> = { f1(f2(it)) }
-inline fun <A, B, R> compose(crossinline f1: sF1<B, R>, crossinline f2: sF1<A, B>): sF1<A, R> = { f1(f2(it)) }
+inline fun <A, B, R> composeS(crossinline f1: sF1<B, R>, crossinline f2: sF1<A, B>): sF1<A, R> = { f1(f2(it)) }
 
 inline fun <A, B, C, R> compose2(crossinline f1: F1<C, R>, crossinline f2: F2<A, B, C>): F2<A, B, R> =
 	{ a, b -> f1(f2(a, b)) }
 
-inline fun <A, B, C, R> compose2(crossinline f1: sF1<C, R>, crossinline f2: sF2<A, B, C>): sF2<A, B, R> =
+inline fun <A, B, C, R> composeS2(crossinline f1: sF1<C, R>, crossinline f2: sF2<A, B, C>): sF2<A, B, R> =
 	{ a, b -> f1(f2(a, b)) }
 
 inline fun <A, B, R> compose0(crossinline f1: F2<A, B, R>, crossinline f2: F0<A>): F1<B, R> = { b -> f1(f2(), b) }
-inline fun <A, B, R> compose0(crossinline f1: sF2<A, B, R>, crossinline f2: sF0<A>): sF1<B, R> =
+inline fun <A, B, R> composeS0(crossinline f1: sF2<A, B, R>, crossinline f2: sF0<A>): sF1<B, R> =
 	{ b -> f1(f2(), b) }
 
 inline fun <A, B, C, R> compose(crossinline f1: F2<B, C, R>, crossinline f2: F1<A, B>): F2<A, C, R> =
 	{ a, c -> f1(f2(a), c) }
 
-inline fun <A, B, C, R> compose(crossinline f1: sF2<B, C, R>, crossinline f2: sF1<A, B>): sF2<A, C, R> =
+inline fun <A, B, C, R> composeS(crossinline f1: sF2<B, C, R>, crossinline f2: sF1<A, B>): sF2<A, C, R> =
 	{ a, c -> f1(f2(a), c) }
 
 inline fun <A, R> composeForward(crossinline f1: F0<A>, crossinline f2: F1<A, R>): F0<R> = compose0(f2, f1)
-inline fun <A, R> composeForward(crossinline f1: sF0<A>, crossinline f2: sF1<A, R>): sF0<R> =
-	compose0(f2, f1)
+inline fun <A, R> composeForwardS(crossinline f1: sF0<A>, crossinline f2: sF1<A, R>): sF0<R> =
+	composeS0(f2, f1)
 
 inline fun <A, B, R> composeForward(crossinline f1: F1<A, B>, crossinline f2: F1<B, R>): F1<A, R> = compose(f2, f1)
-inline fun <A, B, R> composeForward(crossinline f1: sF1<A, B>, crossinline f2: sF1<B, R>): sF1<A, R> =
-	compose(f2, f1)
+inline fun <A, B, R> composeForwardS(crossinline f1: sF1<A, B>, crossinline f2: sF1<B, R>): sF1<A, R> =
+	composeS(f2, f1)
 
 inline fun <A, B, C, R> composeForward(crossinline f1: F2<A, B, C>, crossinline f2: F1<C, R>): F2<A, B, R> =
 	compose2(f2, f1)
 
-inline fun <A, B, C, R> composeForward(crossinline f1: sF2<A, B, C>, crossinline f2: sF1<C, R>): sF2<A, B, R> =
-	compose2(f2, f1)
+inline fun <A, B, C, R> composeForwardS(crossinline f1: sF2<A, B, C>, crossinline f2: sF1<C, R>): sF2<A, B, R> =
+	composeS2(f2, f1)
 
 inline fun <A, B, R> composeForward2(crossinline f1: F0<A>, crossinline f2: F2<A, B, R>): F1<B, R> = compose0(f2, f1)
-inline fun <A, B, R> composeForward2(crossinline f1: sF0<A>, crossinline f2: sF2<A, B, R>): sF1<B, R> = compose0(f2, f1)
+inline fun <A, B, R> composeForwardS2(crossinline f1: sF0<A>, crossinline f2: sF2<A, B, R>): sF1<B, R> = composeS0(f2, f1)
 
 inline fun <A, B, C, R> composeForward2(crossinline f1: F1<A, B>, crossinline f2: F2<B, C, R>): F2<A, C, R> =
 	compose(f2, f1)
 
-inline fun <A, B, C, R> composeForward2(crossinline f1: sF1<A, B>, crossinline f2: sF2<B, C, R>): sF2<A, C, R> =
-	compose(f2, f1)
+inline fun <A, B, C, R> composeForwardS2(crossinline f1: sF1<A, B>, crossinline f2: sF2<B, C, R>): sF2<A, C, R> =
+	composeS(f2, f1)
 
 
 @JvmName("compose0Ext")
