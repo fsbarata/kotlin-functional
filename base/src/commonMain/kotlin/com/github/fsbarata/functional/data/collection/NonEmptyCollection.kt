@@ -8,6 +8,7 @@ import com.github.fsbarata.functional.data.sequence.NonEmptySequence
 import com.github.fsbarata.functional.data.set.NonEmptySet
 import com.github.fsbarata.functional.data.set.SetF
 import com.github.fsbarata.functional.kotlin.scanNel
+import com.github.fsbarata.functional.kotlin.windowedNel
 import com.github.fsbarata.functional.utils.nonEmptyIterator
 import kotlin.random.Random
 
@@ -98,6 +99,14 @@ interface NonEmptyCollection<out A>:
 
 	fun sortedWith(comparator: Comparator<@UnsafeVariance A>): NonEmptyList<A> =
 		(this as Collection<A>).sortedWith(comparator).toNelUnsafe()
+
+
+	fun chunked(size: Int): NonEmptyList<NonEmptyList<A>> =
+		windowedNel(size, size, partialWindows = true).toNel()
+			?: throw NoSuchElementException("Chunked must not be empty")
+
+	@Deprecated("Same as chunked", replaceWith = ReplaceWith("chunked"))
+	fun chunkedNel(size: Int): NonEmptyList<NonEmptyList<A>> = chunked(size)
 
 	fun asSequence(): NonEmptySequence<@UnsafeVariance A> = NonEmptySequence.of(head, tail)
 }

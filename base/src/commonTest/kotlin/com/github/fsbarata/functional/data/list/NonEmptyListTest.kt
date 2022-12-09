@@ -296,6 +296,15 @@ internal class NonEmptyListTest:
 	}
 
 	@Test
+	fun chunked() {
+		assertEquals(nelOf(nel2), nel2.chunked(3))
+		assertEquals(nelOf(nel2), nel2.chunked(4))
+		assertEquals(nelOf(nelOf(5), nelOf(1), nelOf(3)), nel2.chunked(1))
+		assertEquals(nelOf(nelOf(2, 4), nelOf(2, 5)), nel3.chunked(2))
+		assertEquals(nelOf(nelOf(2, 4, 2), nelOf(5)), nel3.chunked(3))
+	}
+
+	@Test
 	fun asSequence() {
 		assertEquals(nel1, nel1.asSequence().toList())
 		assertEquals(nel2, nel2.asSequence().toList())

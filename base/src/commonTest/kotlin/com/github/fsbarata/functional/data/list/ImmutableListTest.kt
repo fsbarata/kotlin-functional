@@ -72,7 +72,7 @@ internal abstract class ImmutableListTest {
 	}
 
 	@Test
-	fun chunked() {
+	fun chunkedIterable() {
 		assertEquals(ListF.of(listOf(1), listOf(2), listOf(3), listOf(5)), of(1, 2, 3, 5).chunked(1))
 		assertEquals(ListF.of(listOf(1, 2), listOf(3, 5)), of(1, 2, 3, 5).chunked(2))
 		assertEquals(ListF.of(listOf(1, 2), listOf(3, 5), listOf(6)), of(1, 2, 3, 5, 6).chunked(2))
