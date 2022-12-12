@@ -21,6 +21,12 @@ inline fun <A> id(a: A): A = a
 inline fun <A> id(): (A) -> A = ::id
 
 
+fun <A> void(f: F1<A, *>): (A) -> Unit = { a: A -> f(a) }
+fun <A, B> void(f: F2<A, B, *>): (A, B) -> Unit = { a: A, b: B -> f(a, b) }
+fun <A, B, C> void(f: F3<A, B, C, *>): (A, B, C) -> Unit = { a: A, b: B, c: C -> f(a, b, c) }
+fun <A, B, C, D> void(f: F4<A, B, C, D, *>): (A, B, C, D) -> Unit = { a: A, b: B, c: C, d: D -> f(a, b, c, d) }
+
+
 inline fun <A, R> compose0(crossinline f1: F1<A, R>, crossinline f2: F0<A>): F0<R> = { f1(f2()) }
 inline fun <A, R> composeS0(crossinline f1: sF1<A, R>, crossinline f2: sF0<A>): sF0<R> = { f1(f2()) }
 inline fun <A, B, R> compose(crossinline f1: F1<B, R>, crossinline f2: F1<A, B>): F1<A, R> = { f1(f2(it)) }
@@ -57,7 +63,8 @@ inline fun <A, B, C, R> composeForwardS(crossinline f1: sF2<A, B, C>, crossinlin
 	composeS2(f2, f1)
 
 inline fun <A, B, R> composeForward2(crossinline f1: F0<A>, crossinline f2: F2<A, B, R>): F1<B, R> = compose0(f2, f1)
-inline fun <A, B, R> composeForwardS2(crossinline f1: sF0<A>, crossinline f2: sF2<A, B, R>): sF1<B, R> = composeS0(f2, f1)
+inline fun <A, B, R> composeForwardS2(crossinline f1: sF0<A>, crossinline f2: sF2<A, B, R>): sF1<B, R> =
+	composeS0(f2, f1)
 
 inline fun <A, B, C, R> composeForward2(crossinline f1: F1<A, B>, crossinline f2: F2<B, C, R>): F2<A, C, R> =
 	compose(f2, f1)
