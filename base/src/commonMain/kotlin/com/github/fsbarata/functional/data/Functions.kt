@@ -199,9 +199,43 @@ inline fun <A, B, C, D, R> partialLast3(crossinline f: F4<A, B, C, D, R>, b: B, 
 inline fun <A, B, C, D, R> partialLastS3(crossinline f: sF4<A, B, C, D, R>, b: B, c: C, d: D): sF1<A, R> =
 	{ a -> f(a, b, c, d) }
 
+@JvmName("curry0Ext")
+inline fun <A, R> F1<A, R>.curry0(): (A) -> () -> R = curry0(this)
+inline fun <A, R> curry0(crossinline f: F1<A, R>): (A) -> () -> R = { a -> partial(f, a) }
+
+@JvmName("curryS0Ext")
+inline fun <A, R> sF1<A, R>.curryS0(): suspend (A) -> suspend () -> R = curryS0(this)
+inline fun <A, R> curryS0(crossinline f: sF1<A, R>): suspend (A) -> suspend () -> R =
+	{ a -> partialS(f, a) }
+
+@JvmName("curry0Ext")
+inline fun <A, B, R> F2<A, B, R>.curry0(): (A) -> (B) -> () -> R = curry0(this)
+inline fun <A, B, R> curry0(crossinline f: F2<A, B, R>): (A) -> (B) -> () -> R = { a -> { b -> partial2(f, a, b) } }
+
+@JvmName("curryS0Ext")
+inline fun <A, B, R> sF2<A, B, R>.curryS0(): suspend (A) -> suspend (B) -> suspend () -> R = curryS0(this)
+inline fun <A, B, R> curryS0(crossinline f: sF2<A, B, R>): suspend (A) -> suspend (B) -> suspend () -> R =
+	{ a -> { b -> partialS2(f, a, b) } }
+
+@JvmName("curry0Ext")
+inline fun <A, B, C, R> F3<A, B, C, R>.curry0(): (A) -> (B) -> (C) -> () -> R = curry0(this)
+inline fun <A, B, C, R> curry0(crossinline f: F3<A, B, C, R>): (A) -> (B) -> (C) -> () -> R =
+	{ a -> { b -> { c -> partial3(f, a, b, c) } } }
+
+@JvmName("curryS0Ext")
+inline fun <A, B, C, R> sF3<A, B, C, R>.curryS0(): suspend (A) -> suspend (B) -> suspend (C) -> suspend () -> R =
+	curryS0(this)
+
+inline fun <A, B, C, R> curryS0(crossinline f: sF3<A, B, C, R>): suspend (A) -> suspend (B) -> suspend (C) -> suspend () -> R =
+	{ a -> { b -> { c -> partialS3(f, a, b, c) } } }
+
+
 @JvmName("curryExt")
 inline fun <A, B, R> F2<A, B, R>.curry(): (A) -> (B) -> R = curry(this)
 inline fun <A, B, R> curry(crossinline f: F2<A, B, R>): (A) -> (B) -> R = { a -> partial(f, a) }
+
+@JvmName("currySExt")
+inline fun <A, B, R> sF2<A, B, R>.curryS(): suspend (A) -> suspend (B) -> R = curryS(this)
 inline fun <A, B, R> curryS(crossinline f: sF2<A, B, R>): suspend (A) -> suspend (B) -> R = { a -> partialS(f, a) }
 
 @JvmName("curryExt")
@@ -209,6 +243,8 @@ inline fun <A, B, C, R> F3<A, B, C, R>.curry(): (A) -> (B) -> (C) -> R = curry(t
 inline fun <A, B, C, R> curry(crossinline f: F3<A, B, C, R>): (A) -> (B) -> (C) -> R =
 	{ a -> { b -> partial2(f, a, b) } }
 
+@JvmName("currySExt")
+inline fun <A, B, C, R> sF3<A, B, C, R>.curryS(): suspend (A) -> suspend (B) -> suspend (C) -> R = curryS(this)
 inline fun <A, B, C, R> curryS(crossinline f: sF3<A, B, C, R>): suspend (A) -> suspend (B) -> suspend (C) -> R =
 	{ a -> { b -> partialS2(f, a, b) } }
 
@@ -216,6 +252,8 @@ inline fun <A, B, C, R> curryS(crossinline f: sF3<A, B, C, R>): suspend (A) -> s
 inline fun <A, B, R> ((A) -> (B) -> R).uncurry(): F2<A, B, R> = uncurry(this)
 inline fun <A, B, R> uncurry(crossinline f: ((A) -> (B) -> R)): F2<A, B, R> = { a, b -> f(a).invoke(b) }
 
+@JvmName("uncurrySExt")
+inline fun <A, B, R> (suspend (A) -> suspend (B) -> R).uncurryS(): sF2<A, B, R> = uncurryS(this)
 inline fun <A, B, R> uncurryS(crossinline f: (suspend (A) -> suspend (B) -> R)): sF2<A, B, R> =
 	{ a, b -> f(a).invoke(b) }
 
@@ -224,12 +262,17 @@ inline fun <A, B, C, R> ((A) -> (B) -> (C) -> R).uncurry(): F3<A, B, C, R> = unc
 inline fun <A, B, C, R> uncurry(crossinline f: ((A) -> (B) -> (C) -> R)): F3<A, B, C, R> =
 	{ a, b, c -> f(a).invoke(b).invoke(c) }
 
+@JvmName("uncurrySExt")
+inline fun <A, B, C, R> (suspend (A) -> suspend (B) -> suspend (C) -> R).uncurryS(): sF3<A, B, C, R> = uncurryS(this)
 inline fun <A, B, C, R> uncurryS(crossinline f: (suspend (A) -> suspend (B) -> suspend (C) -> R)): sF3<A, B, C, R> =
 	{ a, b, c -> f(a).invoke(b).invoke(c) }
 
 @JvmName("uncurryExt")
 inline fun <A, B, C, R> ((A, B) -> (C) -> R).uncurry(): F3<A, B, C, R> = uncurry(this)
 inline fun <A, B, C, R> uncurry(crossinline f: ((A, B) -> (C) -> R)): F3<A, B, C, R> = { a, b, c -> f(a, b).invoke(c) }
+
+@JvmName("uncurrySExt")
+inline fun <A, B, C, R> (suspend (A, B) -> suspend (C) -> R).uncurryS(): sF3<A, B, C, R> = uncurryS(this)
 inline fun <A, B, C, R> uncurryS(crossinline f: (suspend (A, B) -> suspend (C) -> R)): sF3<A, B, C, R> =
 	{ a, b, c -> f(a, b).invoke(c) }
 
