@@ -1,4 +1,4 @@
-package com.github.fsbarata.functional.rx.monoids
+package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.Semigroup

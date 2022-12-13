@@ -1,8 +1,6 @@
 package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.data.MonoidLaws
-import com.github.fsbarata.functional.rx.monoids.concatCompletableMonoid
-import com.github.fsbarata.functional.rx.monoids.concatObservableMonoid
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 

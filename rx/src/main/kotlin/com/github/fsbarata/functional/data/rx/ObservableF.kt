@@ -14,8 +14,7 @@ import io.reactivex.rxjava3.core.Observer
 
 class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	MonadZip<ObservableContext, A>,
-	MonadPlus<ObservableContext, A>,
-	Semigroup<ObservableF<A>> {
+	MonadPlus<ObservableContext, A> {
 	override val scope get() = ObservableF
 
 	override fun subscribeActual(observer: Observer<in A>) {
@@ -58,9 +57,8 @@ class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
 	fun fold(monoid: Monoid<A>): SingleF<A> = super.reduce(monoid.empty, monoid::concat).f()
 	fun scan(monoid: Monoid<A>): ObservableF<A> = super.scan(monoid.empty, monoid::concat).f()
 
-	override fun concatWith(other: ObservableF<A>): ObservableF<A> = super.concatWith(other).f()
-	override fun combineWith(other: Context<ObservableContext, A>) =
-		concatWith(other.asObservable)
+	override fun combineWith(other: Context<ObservableContext, A>): ObservableF<A> =
+		concatWith(other.asObservable).f()
 
 	override fun <B, R> zipWith(other: Context<ObservableContext, B>, f: (A, B) -> R) =
 		(this as Observable<A>).zipWith(other.asObservable, f).f()
