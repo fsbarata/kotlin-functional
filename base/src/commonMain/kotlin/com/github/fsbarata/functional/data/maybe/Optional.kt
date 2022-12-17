@@ -88,9 +88,9 @@ sealed class Optional<out A>:
 		override fun <A> just(a: A): Optional<A> = Some(a)
 		fun <A> ofNullable(a: A?) = if (a != null) Some(a) else None
 
-		fun <A: Semigroup<A>> monoid(): OptionalMonoid<A> = monoid(semigroupScopeOf<A>())
+		fun <A: Semigroup<A>> monoid(): Monoid<Optional<A>> = monoid(semigroupScopeOf())
 
-		fun <A> monoid(semigroupScope: Semigroup.Scope<A>): OptionalMonoid<A> = OptionalMonoid(semigroupScope)
+		fun <A> monoid(semigroupScope: Semigroup.Scope<A>): Monoid<Optional<A>> = optionalMonoid(semigroupScope)
 
 		override fun <A> fromIterable(iterable: Iterable<A>) = iterable.firstOrNull().toOptional()
 		override fun <A> fromSequence(sequence: Sequence<A>) = sequence.firstOrNull().toOptional()

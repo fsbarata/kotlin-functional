@@ -8,11 +8,13 @@ import kotlin.test.Test
 class OptionalMonoidTest: MonoidLaws<Optional<String>>(
 	Optional.monoid(concatStringMonoid()),
 ) {
-	override val possibilities: Int = 100
-	override fun factory(possibility: Int) = Optional.just("$possibility")
+	override val possibilities: Int = 3
+	override fun factory(possibility: Int) =
+		if (possibility == 0) Optional.empty()
+		else Optional.just("$possibility")
 
 	@Test
-	fun combines() {
+	fun concats() {
 		with(Optional.monoid(concatStringMonoid())) {
 			assertEquals(
 				Optional.empty<String>(),
