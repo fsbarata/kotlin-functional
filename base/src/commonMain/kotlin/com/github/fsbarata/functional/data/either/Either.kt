@@ -79,6 +79,18 @@ sealed class Either<out E, out A>:
 			ifRight = { Right(it) },
 		)
 
+	final override inline fun onEach(f: (A) -> Unit): Either<E, A> = onRight(f)
+
+	inline fun onRight(f: (A) -> Unit): Either<E, A> {
+		(this as? Right)?.value?.also(f)
+		return this
+	}
+
+	inline fun onLeft(f: (E) -> Unit): Either<E, A> {
+		(this as? Left)?.value?.also(f)
+		return this
+	}
+
 	class Scope<E>: Monad.Scope<EitherContext<E>>, Traversable.Scope<EitherContext<E>> {
 		override fun <A> just(a: A) = right<E, A>(a)
 	}
