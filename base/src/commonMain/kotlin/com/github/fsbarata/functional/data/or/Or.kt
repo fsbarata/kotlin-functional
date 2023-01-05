@@ -22,7 +22,9 @@ sealed class Or<out L, out R>:
 
 	data class Left<out A>(val value: A): Or<A, Nothing>()
 	data class Right<out A>(val value: A): Or<Nothing, A>()
-	data class Both<out L, out R>(val left: L, val right: R): Or<L, R>()
+	data class Both<out L, out R>(val left: L, val right: R): Or<L, R>() {
+		inline fun asPair(): Pair<L, R> = Pair(left, right)
+	}
 
 	inline fun <T> fold(ifLeft: (L) -> T, ifRight: (R) -> T, ifBoth: (L, R) -> T): T = when (this) {
 		is Left -> ifLeft(value)
@@ -72,21 +74,21 @@ sealed class Or<out L, out R>:
 		ifBoth = { left, right -> appScope.map(f(right)) { Both(left, it) } }
 	)
 
-	fun swap(): Or<R, L> = when (this) {
+	inline fun swap(): Or<R, L> = when (this) {
 		is Left -> Right(value)
 		is Right -> Left(value)
 		is Both -> Both(right, left)
 	}
 
-	fun toPair(): Pair<L?, R?> = Pair(leftOrNull(), rightOrNull())
+	inline fun toPair(): Pair<L?, R?> = Pair(leftOrNull(), rightOrNull())
 
-	fun leftOrNull(): L? = when (this) {
+	inline fun leftOrNull(): L? = when (this) {
 		is Left -> value
 		is Right -> null
 		is Both -> left
 	}
 
-	fun rightOrNull(): R? = when (this) {
+	inline fun rightOrNull(): R? = when (this) {
 		is Left -> null
 		is Right -> value
 		is Both -> right
@@ -140,11 +142,11 @@ inline fun <L, R, A> Context<OrContext<L>, R>.flatMap(
 	}
 }
 
-fun <A, B> Pair<A, B>.toOr() = Or.Both(first, second)
-fun <A, B: Any> Pair<A, B?>.firstOrBoth(): Or<A, B> {
+inline fun <A, B> Pair<A, B>.asOr(): Or.Both<A, B> = Or.Both(first, second)
+inline fun <A, B: Any> Pair<A, B?>.firstOrBoth(): Or<A, B> {
 	return Or.Both(first, second ?: return Or.Left(first))
 }
 
-fun <A: Any, B> Pair<A?, B>.secondOrBoth(): Or<A, B> {
+inline fun <A: Any, B> Pair<A?, B>.secondOrBoth(): Or<A, B> {
 	return Or.Both(first ?: return Or.Right(second), second)
 }
