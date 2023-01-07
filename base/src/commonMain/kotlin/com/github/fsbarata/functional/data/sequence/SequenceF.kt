@@ -105,9 +105,6 @@ fun <A> Sequence<A>.f() = when (this) {
 	else -> SequenceF(this)
 }
 
-fun <A, R> Sequence<A>.f(block: SequenceF<A>.() -> Context<SequenceContext, R>) =
-	f().block().asSequence
-
 internal typealias SequenceContext = SequenceF<*>
 
 val <A> Context<SequenceContext, A>.asSequence: SequenceF<A>

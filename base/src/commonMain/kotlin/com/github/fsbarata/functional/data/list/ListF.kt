@@ -179,8 +179,6 @@ inline fun <A> Iterable<A>.toListF() = ListF.fromIterable(this)
 inline fun <A> Sequence<A>.toListF() = ListF.fromSequence(this)
 
 fun <A> List<A>.asFoldable(): Foldable<A> = f()
-fun <A, R> List<A>.f(block: ListF<A>.() -> Context<ListContext, R>) =
-	f().block().asList
 
 internal typealias ListContext = ListF<*>
 

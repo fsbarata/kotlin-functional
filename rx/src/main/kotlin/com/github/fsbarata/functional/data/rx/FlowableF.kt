@@ -62,8 +62,6 @@ fun <A: Any> Flowable<A>.partition(predicate: (A) -> Boolean): Pair<Flowable<A>,
 	Pair(filter(predicate), filter { !predicate(it) })
 
 fun <A> Flowable<A>.f() = FlowableF(this)
-fun <A: Any, R: Any> Flowable<A>.f(block: FlowableF<A>.() -> Context<FlowableF<*>, R>) =
-	f().block().asFlowable
 
 val <A> Context<FlowableF<*>, A>.asFlowable
 	get() = this as FlowableF<A>

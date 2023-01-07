@@ -50,8 +50,6 @@ fun <A: Any> Maybe<Optional<A>>.filterNotNone(): Maybe<A> =
 internal typealias MaybeContext = Maybe<*>
 
 fun <A> Maybe<A>.f() = MaybeF(this)
-fun <A: Any, R: Any> Maybe<A>.f(block: MaybeF<A>.() -> Context<MaybeContext, R>) =
-	f().block().asMaybe
 
 val <A> Context<MaybeContext, A>.asMaybe
 	get() = this as MaybeF<A>

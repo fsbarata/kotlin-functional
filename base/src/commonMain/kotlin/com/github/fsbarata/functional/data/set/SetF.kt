@@ -99,8 +99,6 @@ class SetF<out A>(private val wrapped: Set<A>): Set<A> by wrapped,
 
 fun <A> Set<A>.f() = if (this is SetF) this else SetF(this)
 fun <A> Set<A>.asFoldable(): Foldable<A> = f()
-fun <A, R> Set<A>.f(block: SetF<A>.() -> Context<SetContext, R>) =
-	f().block().asSet
 
 internal typealias SetContext = SetF<*>
 

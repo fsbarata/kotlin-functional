@@ -35,8 +35,6 @@ class SingleF<A>(private val wrapped: Single<A>): Single<A>(),
 internal typealias SingleContext = Single<*>
 
 fun <A> Single<A>.f() = SingleF(this)
-fun <A: Any, R: Any> Single<A>.f(block: SingleF<A>.() -> Context<SingleContext, R>) =
-	SingleF(this).block().asSingle
 
 val <A> Context<SingleContext, A>.asSingle
 	get() = this as SingleF<A>

@@ -95,8 +95,6 @@ fun <A: Any> Observable<A>.partition(predicate: (A) -> Boolean): Pair<Observable
 	Pair(filter(predicate), filter { !predicate(it) })
 
 fun <A> Observable<A>.f() = ObservableF(this)
-fun <A: Any, R: Any> Observable<A>.f(block: ObservableF<A>.() -> Context<ObservableContext, R>): ObservableF<R> =
-	f().block().asObservable
 
 internal typealias ObservableContext = ObservableF<*>
 
