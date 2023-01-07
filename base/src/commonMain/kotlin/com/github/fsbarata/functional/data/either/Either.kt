@@ -68,10 +68,11 @@ sealed class Either<out E, out A>:
 		ifRight = { appScope.map(f(it), ::Right) }
 	)
 
-	fun orNull() = fold({ null }, { it })
-	fun toOptional(): Optional<A> = fold({ Optional.empty() }, { Optional.just(it) })
+	inline fun orNull(): A? = valueOr { null }
 
-	fun swap() = fold(ifLeft = { Right(it) }, ifRight = { Left(it) })
+	inline fun toOptional(): Optional<A> = fold({ Optional.empty() }, { Optional.just(it) })
+
+	inline fun swap() = fold(ifLeft = { Right(it) }, ifRight = { Left(it) })
 
 	override fun concatWith(other: Either<@UnsafeVariance E, @UnsafeVariance A>) =
 		fold(
@@ -129,6 +130,8 @@ inline fun <E, A> Optional<A>.toEither(e: () -> E) =
 
 infix fun <A> Either<*, A>.orElse(a: A): A = valueOr { a }
 inline infix fun <E, A> Either<E, A>.valueOr(f: (E) -> A): A = fold(ifLeft = f, ifRight = { it })
+
+inline fun <A> Either<Throwable, A>.orThrow() = valueOr { throw it }
 
 inline fun <E, A, B> Either<E, A>.ensure(e: E, f: (A) -> Optional<B>): Either<E, B> =
 	flatMap { a -> f(a).toEither { e } }
