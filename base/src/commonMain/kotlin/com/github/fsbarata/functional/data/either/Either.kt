@@ -99,13 +99,20 @@ sealed class Either<out E, out A>:
 	companion object: Monad.Scope<EitherContext<Nothing>> {
 		override fun <A> just(a: A) = Right(a)
 
-		fun <E, A> ofNullable(a: A?, e: () -> E): Either<E, A> =
-			a?.let(::Right) ?: Left(e())
+		fun <E, A> ofNullable(a: A?, e: () -> E): Either<E, A> {
+			return Right(a ?: return Left(e()))
+		}
 
 		fun <E, A> left(e: E): Either<E, A> = Left(e)
 		fun <E, A> right(a: A): Either<E, A> = Right(a)
 
 		fun <A, E, R> kleisli(f: (A) -> Either<E, R>) = Scope<E>().kleisli(f)
+
+		fun <E> monad() = MonadScope<E>()
+	}
+
+	class MonadScope<E>: Monad.Scope<EitherContext<E>> {
+		override fun <A> just(a: A): Either<E, A> = Right(a)
 	}
 }
 
@@ -125,7 +132,7 @@ inline fun <E, A, B> Either<E, A>.flatMap(f: (A) -> Either<E, B>): Either<E, B> 
 
 inline fun <E, A> Either<E, Either<E, A>>.flatten(): Either<E, A> = flatMap { it }
 
-inline fun <E, A> Optional<A>.toEither(e: () -> E) =
+inline fun <E, A> Optional<A>.toEither(e: () -> E): Either<E, A> =
 	fold(ifEmpty = { Either.Left(e()) }, ifSome = { Either.Right(it) })
 
 infix fun <A> Either<*, A>.orElse(a: A): A = valueOr { a }
