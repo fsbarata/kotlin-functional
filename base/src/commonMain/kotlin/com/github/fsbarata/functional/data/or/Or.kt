@@ -48,31 +48,26 @@ sealed class Or<out L, out R>:
 		}
 	}
 
-	final override inline fun <M> foldMap(monoid: Monoid<M>, f: (R) -> M): M =
-		rightOrNull()?.let(f) ?: monoid.empty
+	final override inline fun <M> foldMap(monoid: Monoid<M>, f: (R) -> M): M {
+		return f(rightOrNull() ?: return monoid.empty)
+	}
 
-	final override inline fun <A> foldL(initialValue: A, accumulator: (A, R) -> A): A =
-		fold(
-			ifLeft = { initialValue },
-			ifRight = { right -> accumulator(initialValue, right) },
-			ifBoth = { _, right -> accumulator(initialValue, right) },
-		)
+	final override inline fun <A> foldL(initialValue: A, accumulator: (A, R) -> A): A {
+		return accumulator(initialValue, rightOrNull() ?: return initialValue)
+	}
 
-	final override inline fun <A> foldR(initialValue: A, accumulator: (R, A) -> A) =
-		fold(
-			ifLeft = { initialValue },
-			ifRight = { right -> accumulator(right, initialValue) },
-			ifBoth = { _, right -> accumulator(right, initialValue) },
-		)
+	final override inline fun <A> foldR(initialValue: A, accumulator: (R, A) -> A): A {
+		return accumulator(rightOrNull() ?: return initialValue, initialValue)
+	}
 
 	final override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
 		f: (R) -> Context<F, B>,
-	): Context<F, Or<L, B>> = fold(
-		ifLeft = { left -> appScope.just(Left(left)) },
-		ifRight = { right -> appScope.map(f(right), ::Right) },
-		ifBoth = { left, right -> appScope.map(f(right)) { Both(left, it) } }
-	)
+	): Context<F, Or<L, B>> = when (this) {
+		is Left -> appScope.just(this)
+		is Right -> appScope.map(f(value), ::Right)
+		is Both -> appScope.map(f(right)) { Both(left, it) }
+	}
 
 	inline fun swap(): Or<R, L> = when (this) {
 		is Left -> Right(value)
