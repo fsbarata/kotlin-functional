@@ -33,7 +33,7 @@ interface Monad<M, out A>: Applicative<M, A> {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <M, A, MA: Monad<M, A>> Monad<M, MA>.flatten() =
+fun <M, A, MA: Monad<M, A>> Monad<M, MA>.flatten(): MA =
 	bind(::id) as MA
 
 

@@ -122,6 +122,8 @@ inline fun <E, A, B> Either<E, A>.flatMap(f: (A) -> Either<E, B>): Either<E, B> 
 	return fold(ifLeft = { Either.Left(it) }, ifRight = { f(it) })
 }
 
+inline fun <E, A> Either<E, Either<E, A>>.flatten(): Either<E, A> = flatMap { it }
+
 inline fun <E, A> Optional<A>.toEither(e: () -> E) =
 	fold(ifEmpty = { Either.Left(e()) }, ifSome = { Either.Right(it) })
 
