@@ -92,12 +92,12 @@ sealed class Or<out L, out R>:
 	class Scope<L>: Traversable.Scope<OrContext<L>>
 
 	class MonadScope<L>(private val semigroupScope: Semigroup.Scope<L>): Monad.Scope<OrContext<L>> {
-		override fun <R> just(a: R) = right<L, R>(a)
+		override fun <R> just(a: R): Or<L, R> = right(a)
 
 		override fun <A, B> bind(
 			ca: Context<OrContext<L>, A>,
 			f: (A) -> Context<OrContext<L>, B>,
-		): Context<OrContext<L>, B> = ca.flatMap(semigroupScope, f)
+		): Or<L, B> = ca.flatMap(semigroupScope, f)
 	}
 
 	companion object: Traversable.Scope<OrContext<Nothing>> {
