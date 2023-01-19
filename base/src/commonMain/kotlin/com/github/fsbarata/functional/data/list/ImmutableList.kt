@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.data.list
 
-internal interface ImmutableList<out A>: List<A> {
+sealed interface ImmutableList<out A>: List<A> {
 	override fun subList(fromIndex: Int, toIndex: Int): ListF<A>
 
 	fun drop(count: Int): ListF<A> =
