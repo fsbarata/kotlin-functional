@@ -1,13 +1,14 @@
 package com.github.fsbarata.functional.data.maybe
 
 import com.github.fsbarata.functional.assertEquals
+import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.MonoidLaws
 import com.github.fsbarata.functional.data.monoid.concatStringMonoid
 import kotlin.test.Test
 
-class OptionalMonoidTest: MonoidLaws<Optional<String>>(
-	Optional.monoid(concatStringMonoid()),
-) {
+class OptionalMonoidTest: MonoidLaws<Optional<String>> {
+	override val monoid: Monoid<Optional<String>> = Optional.monoid(concatStringMonoid())
+
 	override val possibilities: Int = 3
 	override fun factory(possibility: Int) =
 		if (possibility == 0) Optional.empty()

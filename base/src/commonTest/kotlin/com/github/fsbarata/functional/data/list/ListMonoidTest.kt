@@ -1,10 +1,13 @@
 package com.github.fsbarata.functional.data.list
 
 import com.github.fsbarata.functional.assertEquals
+import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.MonoidLaws
 import kotlin.test.Test
 
-class ListMonoidTest: MonoidLaws<ListF<Int>>(ListF.monoid()) {
+class ListMonoidTest: MonoidLaws<ListF<Int>> {
+	override val monoid: Monoid<ListF<Int>> = ListF.monoid()
+
 	override val possibilities: Int = 10
 	override fun factory(possibility: Int) = createList(possibility)
 

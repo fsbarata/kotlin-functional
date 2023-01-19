@@ -1,11 +1,14 @@
 package com.github.fsbarata.functional.data.sequence
 
 import com.github.fsbarata.functional.assertEquals
+import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.MonoidLaws
 import kotlin.test.Test
 
 
-class ConcatSequenceMonoid: MonoidLaws<SequenceF<Int>>(SequenceF.monoid()) {
+class ConcatSequenceMonoid: MonoidLaws<SequenceF<Int>> {
+	override val monoid: Monoid<SequenceF<Int>> = SequenceF.monoid()
+
 	override val possibilities: Int = 10
 	override fun factory(possibility: Int) = createSequence(possibility)
 

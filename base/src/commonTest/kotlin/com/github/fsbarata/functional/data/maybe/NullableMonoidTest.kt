@@ -1,13 +1,14 @@
 package com.github.fsbarata.functional.data.maybe
 
 import com.github.fsbarata.functional.assertEquals
+import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.MonoidLaws
 import com.github.fsbarata.functional.data.monoid.concatStringMonoid
 import kotlin.test.Test
 
-class NullableMonoidTest: MonoidLaws<String?>(
-	nullableMonoid(concatStringMonoid()),
-) {
+class NullableMonoidTest: MonoidLaws<String?> {
+	override val monoid: Monoid<String?> = nullableMonoid(concatStringMonoid())
+
 	override val possibilities: Int = 3
 	override fun factory(possibility: Int) =
 		if (possibility == 0) null

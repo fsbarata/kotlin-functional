@@ -1,16 +1,12 @@
 package com.github.fsbarata.functional.data
 
-import com.github.fsbarata.functional.PossibilitiesTest
 import kotlin.test.Test
 import kotlin.test.asserter
 
-abstract class MonoidLaws<A>(private val monoid: Monoid<A>): PossibilitiesTest {
-	abstract override fun factory(possibility: Int): A
+interface MonoidLaws<A>: SemigroupScopeLaws<A> {
+	val monoid: Monoid<A>
 
-	open fun equals(a1: A, a2: A): Boolean = a1 == a2
-
-	open fun assertEqual(a1: A, a2: A) =
-		asserter.assertTrue({ "$a1 should be equal to $a2" }, equals(a1, a2))
+	override val semigroupScope: Semigroup.Scope<A> get() = monoid
 
 	@Suppress("UNCHECKED_CAST")
 	private fun eachPossibility(block: (A) -> Unit) {

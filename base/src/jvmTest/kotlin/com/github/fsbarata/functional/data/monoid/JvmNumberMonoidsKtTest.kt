@@ -1,11 +1,14 @@
 package com.github.fsbarata.functional.data.monoid
 
 import com.github.fsbarata.functional.assertEquals
+import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.MonoidLaws
 import java.math.BigDecimal
 import kotlin.test.Test
 
-class SumBigDecimalMonoidTest: MonoidLaws<BigDecimal>(sumBigDecimalMonoid()) {
+class SumBigDecimalMonoidTest: MonoidLaws<BigDecimal> {
+	override val monoid: Monoid<BigDecimal> = sumBigDecimalMonoid()
+
 	override val possibilities: Int = 25
 	override fun factory(possibility: Int) = BigDecimal("$possibility")
 
@@ -15,7 +18,9 @@ class SumBigDecimalMonoidTest: MonoidLaws<BigDecimal>(sumBigDecimalMonoid()) {
 	}
 }
 
-class ProductBigDecimalMonoidTest: MonoidLaws<BigDecimal>(productBigDecimalMonoid()) {
+class ProductBigDecimalMonoidTest: MonoidLaws<BigDecimal> {
+	override val monoid: Monoid<BigDecimal> = productBigDecimalMonoid()
+
 	override val possibilities: Int = 25
 	override fun factory(possibility: Int) = BigDecimal("$possibility")
 

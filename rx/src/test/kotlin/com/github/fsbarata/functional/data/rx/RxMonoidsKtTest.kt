@@ -1,13 +1,14 @@
 package com.github.fsbarata.functional.data.rx
 
+import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.MonoidLaws
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 
 
-class ConcatCompletableMonoidTest: MonoidLaws<Completable>(
-	concatCompletableMonoid(),
-) {
+class ConcatCompletableMonoidTest: MonoidLaws<Completable> {
+	override val monoid: Monoid<Completable> = concatCompletableMonoid()
+
 	override val possibilities: Int = 3
 	override fun factory(possibility: Int) = completableFactory(possibility)
 
@@ -18,9 +19,9 @@ class ConcatCompletableMonoidTest: MonoidLaws<Completable>(
 	}
 }
 
-class ConcatObservableMonoidTest: MonoidLaws<Observable<Int>>(
-	concatObservableMonoid<Int>(),
-) {
+class ConcatObservableMonoidTest: MonoidLaws<Observable<Int>> {
+	override val monoid: Monoid<Observable<Int>> = concatObservableMonoid<Int>()
+
 	override val possibilities: Int = 5
 	override fun factory(possibility: Int) = observableFactory(possibility)
 

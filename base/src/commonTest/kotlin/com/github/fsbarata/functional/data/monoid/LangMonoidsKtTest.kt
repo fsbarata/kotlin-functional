@@ -1,13 +1,14 @@
 package com.github.fsbarata.functional.data.monoid
 
 import com.github.fsbarata.functional.assertEquals
+import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.MonoidLaws
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
-class ConcatStringMonoidTest: MonoidLaws<String>(
-	concatStringMonoid(),
-) {
+class ConcatStringMonoidTest: MonoidLaws<String> {
+	override val monoid: Monoid<String> = concatStringMonoid()
+
 	override val possibilities: Int = 25
 	override fun factory(possibility: Int) = "$possibility"
 
@@ -17,9 +18,9 @@ class ConcatStringMonoidTest: MonoidLaws<String>(
 	}
 }
 
-class ConcatArrayMonoidTest: MonoidLaws<Array<Any>>(
-	concatArrayMonoid(),
-) {
+class ConcatArrayMonoidTest: MonoidLaws<Array<Any>> {
+	override val monoid: Monoid<Array<Any>> = concatArrayMonoid()
+
 	override val possibilities: Int = 30
 	override fun factory(possibility: Int): Array<Any> =
 		(0..(possibility / 2)).map { possibility - it }

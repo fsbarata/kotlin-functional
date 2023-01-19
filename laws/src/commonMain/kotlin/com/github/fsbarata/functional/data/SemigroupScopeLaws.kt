@@ -4,7 +4,9 @@ import com.github.fsbarata.functional.PossibilitiesTest
 import kotlin.test.Test
 import kotlin.test.asserter
 
-interface SemigroupLaws<A: Semigroup<A>>: PossibilitiesTest {
+interface SemigroupScopeLaws<A>: PossibilitiesTest {
+	val semigroupScope: Semigroup.Scope<A>
+
 	override fun factory(possibility: Int): A
 
 	fun equals(a1: A, a2: A): Boolean = a1 == a2
@@ -19,13 +21,13 @@ interface SemigroupLaws<A: Semigroup<A>>: PossibilitiesTest {
 	}
 
 	@Test
-	fun `concatWith associativity`() {
+	fun `concat associativity`() {
 		eachPossibility { val1 ->
 			eachPossibility { val2 ->
 				eachPossibility { val3 ->
 					assertEqual(
-						val1.concatWith(val2.concatWith(val3)),
-						val1.concatWith(val2).concatWith(val3),
+						semigroupScope.concat(val1, semigroupScope.concat(val2, val3)),
+						semigroupScope.concat(semigroupScope.concat(val1, val2), val3),
 					)
 				}
 			}

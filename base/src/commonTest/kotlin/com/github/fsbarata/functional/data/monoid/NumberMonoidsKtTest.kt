@@ -1,11 +1,14 @@
 package com.github.fsbarata.functional.data.monoid
 
 import com.github.fsbarata.functional.assertEquals
+import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.MonoidLaws
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class SumIntMonoidTest: MonoidLaws<Int>(sumIntMonoid()) {
+class SumIntMonoidTest: MonoidLaws<Int> {
+	override val monoid: Monoid<Int> = sumIntMonoid()
+
 	override val possibilities: Int = 20
 	override fun factory(possibility: Int) = possibility - 10
 
@@ -17,7 +20,9 @@ class SumIntMonoidTest: MonoidLaws<Int>(sumIntMonoid()) {
 	}
 }
 
-class ProductIntMonoidTest: MonoidLaws<Int>(productIntMonoid()) {
+class ProductIntMonoidTest: MonoidLaws<Int> {
+	override val monoid: Monoid<Int> = productIntMonoid()
+
 	override val possibilities: Int = 20
 	override fun factory(possibility: Int) = possibility - 10
 
@@ -29,7 +34,9 @@ class ProductIntMonoidTest: MonoidLaws<Int>(productIntMonoid()) {
 	}
 }
 
-class SumLongMonoidTest: MonoidLaws<Long>(sumLongMonoid()) {
+class SumLongMonoidTest: MonoidLaws<Long> {
+	override val monoid: Monoid<Long> = sumLongMonoid()
+
 	override val possibilities: Int = 20
 	override fun factory(possibility: Int) = (possibility - 10).toLong()
 
@@ -41,7 +48,9 @@ class SumLongMonoidTest: MonoidLaws<Long>(sumLongMonoid()) {
 	}
 }
 
-class ProductLongMonoidTest: MonoidLaws<Long>(productLongMonoid()) {
+class ProductLongMonoidTest: MonoidLaws<Long> {
+	override val monoid: Monoid<Long> = productLongMonoid()
+
 	override val possibilities: Int = 20
 	override fun factory(possibility: Int) = (possibility - 10).toLong()
 
@@ -53,7 +62,9 @@ class ProductLongMonoidTest: MonoidLaws<Long>(productLongMonoid()) {
 	}
 }
 
-class SumFloatMonoidTest: MonoidLaws<Float>(sumFloatMonoid()) {
+class SumFloatMonoidTest: MonoidLaws<Float> {
+	override val monoid: Monoid<Float> = sumFloatMonoid()
+
 	override val possibilities: Int = 20
 	override fun factory(possibility: Int) = (possibility - 10) * 0.25f
 
@@ -65,7 +76,9 @@ class SumFloatMonoidTest: MonoidLaws<Float>(sumFloatMonoid()) {
 	}
 }
 
-class ProductFloatMonoidTest: MonoidLaws<Float>(productFloatMonoid()) {
+class ProductFloatMonoidTest: MonoidLaws<Float> {
+	override val monoid: Monoid<Float> = productFloatMonoid()
+
 	override val possibilities: Int = 20
 	override fun factory(possibility: Int) = (possibility - 10) * 0.25f
 
@@ -77,7 +90,9 @@ class ProductFloatMonoidTest: MonoidLaws<Float>(productFloatMonoid()) {
 	}
 }
 
-class SumDoubleMonoidTest: MonoidLaws<Double>(sumDoubleMonoid()) {
+class SumDoubleMonoidTest: MonoidLaws<Double> {
+	override val monoid: Monoid<Double> = sumDoubleMonoid()
+
 	override val possibilities: Int = 20
 	override fun factory(possibility: Int) = (possibility - 10) * 0.25
 
@@ -89,7 +104,9 @@ class SumDoubleMonoidTest: MonoidLaws<Double>(sumDoubleMonoid()) {
 	}
 }
 
-class ProductDoubleMonoidTest: MonoidLaws<Double>(productDoubleMonoid()) {
+class ProductDoubleMonoidTest: MonoidLaws<Double> {
+	override val monoid: Monoid<Double> = productDoubleMonoid()
+
 	override val possibilities: Int = 20
 	override fun factory(possibility: Int) = (possibility - 10) * 0.25
 

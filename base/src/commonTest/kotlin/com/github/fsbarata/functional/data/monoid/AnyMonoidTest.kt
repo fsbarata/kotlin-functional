@@ -1,12 +1,15 @@
 package com.github.fsbarata.functional.data.monoid
 
 import com.github.fsbarata.functional.assertEquals
+import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.MonoidLaws
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class AnyMonoidTest: MonoidLaws<Boolean>(anyMonoid()) {
+class AnyMonoidTest: MonoidLaws<Boolean> {
+	override val monoid: Monoid<Boolean> = anyMonoid()
+
 	override val possibilities: Int = 2
 
 	override fun factory(possibility: Int) = possibility > 0

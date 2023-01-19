@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.data.monoid
 
 import com.github.fsbarata.functional.assertEquals
+import com.github.fsbarata.functional.data.Monoid
 import com.github.fsbarata.functional.data.MonoidLaws
 import com.github.fsbarata.functional.data.SemigroupLaws
 import kotlin.test.Test
@@ -25,7 +26,9 @@ class FirstNotNullSemigroupTest: SemigroupLaws<FirstNotNull<String>> {
 	}
 }
 
-class FirstNotNullMonoidTest: MonoidLaws<String?>(firstNotNullMonoid()) {
+class FirstNotNullMonoidTest: MonoidLaws<String?> {
+	override val monoid: Monoid<String?> = firstNotNullMonoid()
+
 	override val possibilities: Int = 10
 
 	override fun factory(possibility: Int) = possibility.takeIf { it > 0 }?.toString()
