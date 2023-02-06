@@ -1,10 +1,9 @@
 package com.github.fsbarata.functional.control.monad
 
-import com.github.fsbarata.functional.control.Monad
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.MonadPlusLaws
-import com.github.fsbarata.functional.control.MonadZipLaws
+import com.github.fsbarata.functional.control.MonadZipScopeLaws
 import com.github.fsbarata.functional.control.trans.MonadTransLaws
-import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.identity.Identity
 import com.github.fsbarata.functional.data.identity.asIdentity
 import com.github.fsbarata.functional.data.list.ListContext
@@ -17,8 +16,7 @@ import kotlin.test.assertEquals
 
 class OptionalTTest:
 	MonadTransLaws<OptionalContext>,
-	MonadPlusLaws<Monad<ListContext, OptionalContext>>,
-	MonadZipLaws<Monad<ListContext, OptionalContext>> {
+	MonadPlusLaws<Context<ListContext, OptionalContext>> {
 	override val possibilities: Int = 4
 	override val monadScope = OptionalT(ListF)
 
@@ -28,12 +26,6 @@ class OptionalTTest:
 		2 -> OptionalT(ListF.of(Optional.just(3), Optional.empty()))
 		else -> monadScope.just(possibility)
 	}
-
-	override fun <A, B, R> zip(
-		arg1: Monad<Monad<ListContext, OptionalContext>, A>,
-		arg2: Functor<Monad<ListContext, OptionalContext>, B>,
-		f: (A, B) -> R
-	) = arg1.asOptionalT.zipWith(arg2.asOptionalT, f)
 
 	@Test
 	fun mapOptionalT() {
@@ -54,12 +46,14 @@ class OptionalTTest:
 	@Test
 	fun flatMapT() {
 		assertEquals(
-			OptionalT(ListF.of(
-				Optional.just("1"),
-				Optional.just("6"), Optional.empty(),
-				Optional.just("3"),
-				Optional.empty(),
-			)),
+			OptionalT(
+				ListF.of(
+					Optional.just("1"),
+					Optional.just("6"), Optional.empty(),
+					Optional.just("3"),
+					Optional.empty(),
+				)
+			),
 			OptionalT(ListF.of(Optional.just(1), Optional.just(5), Optional.just(3), Optional.empty())).flatMapT {
 				if (it < 4) ListF.just(Optional.just(it.toString()))
 				else ListF.of(Optional.just((it + 1).toString()), None)
@@ -70,14 +64,16 @@ class OptionalTTest:
 	@Test
 	fun flatMap() {
 		assertEquals(
-			OptionalT(ListF.of(
-				Optional.just("1"),
-				Optional.just("6"), Optional.empty(),
-				Optional.just("3"),
-				Optional.empty(),
-			)),
+			OptionalT(
+				ListF.of(
+					Optional.just("1"),
+					Optional.just("6"), Optional.empty(),
+					Optional.just("3"),
+					Optional.empty(),
+				)
+			),
 			OptionalT(ListF.of(Optional.just(1), Optional.just(5), Optional.just(3), Optional.empty())).flatMap {
-				if (it < 4) OptionalT.Scope(ListF).just(it.toString())
+				if (it < 4) OptionalT(ListF).just(it.toString())
 				else OptionalT(ListF.of(Optional.just((it + 1).toString()), None))
 			}
 		)
@@ -88,7 +84,15 @@ class OptionalTTest:
 		assertEquals(
 			OptionalT(ListF.of(Optional.just("3"), Optional.empty(), Optional.empty(), Optional.just("6"))),
 			zip(
-				OptionalT(ListF.of(Optional.just(2), Optional.empty(), Optional.just(4), Optional.just(3), Optional.just(4))),
+				OptionalT(
+					ListF.of(
+						Optional.just(2),
+						Optional.empty(),
+						Optional.just(4),
+						Optional.just(3),
+						Optional.just(4)
+					)
+				),
 				OptionalT(ListF.of(Optional.just(1), Optional.just(2), Optional.empty(), Optional.just(3)))
 			) { a, b -> (a + b).toString() }
 		)
