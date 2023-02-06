@@ -1,78 +1,125 @@
 package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.*
-import com.github.fsbarata.functional.data.Monoid
+import com.github.fsbarata.functional.control.MonadPlus
+import com.github.fsbarata.functional.control.MonadZip
+import com.github.fsbarata.functional.control.apFromLift2
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.maybe.toOptional
-import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableSource
 import io.reactivex.rxjava3.core.Observer
 
-class ObservableF<A>(private val wrapped: Observable<A>): Observable<A>(),
-	MonadZip<ObservableContext, A>,
-	MonadPlus<ObservableContext, A> {
-	override val scope get() = ObservableF
-
+class ObservableF<A: Any>(private val wrapped: Observable<A>): Observable<A>(),
+	Context<ObservableContext, A> {
 	override fun subscribeActual(observer: Observer<in A>) {
 		wrapped.subscribe(observer)
 	}
 
-	override fun <B> map(f: (A) -> B) =
-		wrapped.map(f).f()
+	companion object {
+		fun <A: Any> empty(): ObservableF<A> = ObservableF(Observable.empty())
+		fun <A: Any> just(a: A): ObservableF<A> = ObservableF(Observable.just(a))
+	}
+}
 
-	override fun <B> ap(ff: Context<ObservableContext, (A) -> B>) =
-		combineLatest(
-			ff.asObservable,
-			this,
-		) { f, a -> f(a) }
-			.f()
+abstract class ObservableMonad: MonadPlus.Scope<ObservableContext>, MonadZip.Scope<ObservableContext> {
+	override fun <A> empty(): ObservableF<A & Any> = ObservableF(Observable.empty())
+	override fun <A> just(a: A): ObservableF<A & Any> = ObservableF(Observable.just(a!!))
 
-	override fun <B, R> lift2(
+	override fun <A> fromIterable(iterable: Iterable<A>): ObservableF<A & Any> =
+		ObservableF(Observable.fromIterable(iterable as Iterable<A & Any>))
+
+	override fun <A> fromSequence(sequence: Sequence<A>): ObservableF<A & Any> =
+		fromIterable(sequence.asIterable())
+
+	override fun <A> fromList(list: List<A>): ObservableF<A & Any> =
+		fromIterable(list)
+
+	override fun <A> fromOptional(optional: Optional<A>): ObservableF<A & Any> =
+		optional.maybe(empty(), ObservableSwitchMonad::just)
+
+	override fun <A, B> map(ca: Context<ObservableContext, A>, f: (A) -> B): Context<ObservableContext, B & Any> {
+		return ObservableF(ca.asObservable.map { f(it)!! })
+	}
+
+	override fun <A> combine(
+		fa1: Context<ObservableContext, A>,
+		fa2: Context<ObservableContext, A>,
+	): Context<ObservableContext, A & Any> {
+		return ObservableF(
+			Observable.concatArray(
+				fa1 as ObservableF<A & Any>,
+				fa2 as ObservableF<A & Any>,
+			)
+		)
+	}
+
+	override fun <A> filter(
+		ca: Context<ObservableContext, A>,
+		predicate: (A) -> Boolean,
+	): Context<ObservableContext, A & Any> {
+		return ObservableF(ca.asObservable.filter(predicate))
+	}
+
+	override fun <A, B: Any> mapNotNull(
+		ca: Context<ObservableContext, A>,
+		f: (A) -> B?,
+	): Context<ObservableContext, B> {
+		return ObservableF(ca.asObservable.mapNotNull(f))
+	}
+
+	override fun <A, B, R> zip(
+		ca: Context<ObservableContext, A>,
+		cb: Context<ObservableContext, B>,
+		f: (A, B) -> R,
+	): Context<ObservableContext, R & Any> {
+		return ObservableF((ca as Observable<A & Any>).zipWith(cb as Observable<B & Any>) { a, b -> f(a, b)!! })
+	}
+}
+
+object ObservableSwitchMonad: ObservableMonad() {
+	override fun <A, B, R> lift2(
+		fa: Context<ObservableContext, A>,
 		fb: Context<ObservableContext, B>,
 		f: (A, B) -> R,
-	) = combineLatest(this, fb.asObservable, f).f()
+	): Context<ObservableContext, R & Any> {
+		return ObservableF(Observable.combineLatest(
+			fa as Observable<A&Any>,
+			fb as Observable<B&Any>,
+		) { a, b -> f(a, b)!! })
+	}
 
-	override infix fun <B> bind(f: (A) -> Context<ObservableContext, B>): ObservableF<B> =
-		wrapped.switchMap { f(it).asObservable }.f()
+	override fun <A, R> ap(
+		fa: Context<ObservableContext, A>,
+		ff: Context<ObservableContext, (A) -> R>
+	): Context<ObservableContext, R> {
+		return apFromLift2(this, fa, ff)
+	}
 
-	fun <B> flatMap(f: (A) -> ObservableSource<B>): ObservableF<B> =
-		wrapped.flatMap(f).f()
+	override fun <A, B> bind(
+		ca: Context<ObservableContext, A>,
+		f: (A) -> Context<ObservableContext, B>,
+	): Context<ObservableContext, B & Any> {
+		return ObservableF(ca.asObservable.switchMap { f(it) as ObservableF<B & Any> })
+	}
+}
 
-	override fun filter(predicate: (A) -> Boolean) =
-		wrapped.filter(predicate).f()
+object ObservableConcatMonad: ObservableMonad() {
+	override fun <A, B> bind(
+		ca: Context<ObservableContext, A>,
+		f: (A) -> Context<ObservableContext, B>,
+	): Context<ObservableContext, B & Any> {
+		return ObservableF(ca.asObservable.concatMap { f(it) as ObservableF<B & Any> })
+	}
+}
 
-	override fun partition(predicate: (A) -> Boolean) =
-		Pair(filter(predicate), filter { !predicate(it) })
-
-	override fun <B: Any> mapNotNull(f: (A) -> B?) =
-		flatMapMaybe { Maybe.just(f(it) ?: return@flatMapMaybe Maybe.empty()) }.f()
-
-	override fun <B: Any> mapNotNone(f: (A) -> Optional<B>) =
-		flatMapMaybe { Maybe.just(f(it).orNull() ?: return@flatMapMaybe Maybe.empty()) }.f()
-
-	fun fold(monoid: Monoid<A>): SingleF<A> = super.reduce(monoid.empty, monoid::concat).f()
-	fun scan(monoid: Monoid<A>): ObservableF<A> = super.scan(monoid.empty, monoid::concat).f()
-
-	override fun combineWith(other: Context<ObservableContext, A>): ObservableF<A> =
-		concatWith(other.asObservable).f()
-
-	override fun <B, R> zipWith(other: Context<ObservableContext, B>, f: (A, B) -> R) =
-		(this as Observable<A>).zipWith(other.asObservable, f).f()
-
-	companion object:
-		MonadPlus.Scope<ObservableContext>,
-		MonadZip.Scope<ObservableContext> {
-		override fun <A> empty() = Observable.empty<A>().f()
-		override fun <A> just(a: A) = Observable.just(a).f()
-
-		override fun <A> fromIterable(iterable: Iterable<A>) = Observable.fromIterable(iterable).f()
-		override fun <A> fromSequence(sequence: Sequence<A>) = fromIterable(sequence.asIterable())
-		override fun <A> fromList(list: List<A>) = fromIterable(list)
-		override fun <A> fromOptional(optional: Optional<A>) = optional.maybe(empty(), ::just)
+object ObservableMergeMonad: ObservableMonad() {
+	override fun <A, B> bind(
+		ca: Context<ObservableContext, A>,
+		f: (A) -> Context<ObservableContext, B>,
+	): Context<ObservableContext, B & Any> {
+		return ObservableF(ca.asObservable.flatMap { f(it) as ObservableF<B & Any> })
 	}
 }
 
@@ -94,27 +141,9 @@ fun <A: Any> Observable<Optional<A>>.filterNotNone(): Observable<A> =
 fun <A: Any> Observable<A>.partition(predicate: (A) -> Boolean): Pair<Observable<A>, Observable<A>> =
 	Pair(filter(predicate), filter { !predicate(it) })
 
-fun <A> Observable<A>.f() = ObservableF(this)
+fun <A: Any> Observable<A>.f(): ObservableF<A> = ObservableF(this)
 
 internal typealias ObservableContext = ObservableF<*>
 
-val <A> Context<ObservableContext, A>.asObservable
-	get() = this as ObservableF<A>
-
-operator fun <A: Any, B: Any, R: Any> Lift2<A, B, R>.invoke(
-	obs1: Observable<A>,
-	obs2: Observable<B>,
-): ObservableF<R> = Observable.combineLatest(obs1, obs2, f).f()
-
-operator fun <A: Any, B: Any, C: Any, R: Any> Lift3<A, B, C, R>.invoke(
-	obs1: Observable<A>,
-	obs2: Observable<B>,
-	obs3: Observable<C>,
-): ObservableF<R> = Observable.combineLatest(obs1, obs2, obs3, f).f()
-
-operator fun <A: Any, B: Any, C: Any, D: Any, R: Any> Lift4<A, B, C, D, R>.invoke(
-	obs1: Observable<A>,
-	obs2: Observable<B>,
-	obs3: Observable<C>,
-	obs4: Observable<D>,
-): ObservableF<R> = Observable.combineLatest(obs1, obs2, obs3, obs4, f).f()
+val <A> Context<ObservableContext, A>.asObservable: ObservableF<A & Any>
+	get() = this as ObservableF<A & Any>

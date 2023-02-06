@@ -1,11 +1,12 @@
 package com.github.fsbarata.functional.control
 
+import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.data.*
 import kotlin.math.roundToInt
 import kotlin.test.Test
 
 interface ApplicativeScopeLaws<F>: FunctorScopeLaws<F> {
-	override fun factory(possibility: Int): Functor<F, Int>
+	override fun factory(possibility: Int): Context<F, Int>
 
 	val applicativeScope: Applicative.Scope<F>
 	override val functorScope: Functor.Scope<F> get() = applicativeScope

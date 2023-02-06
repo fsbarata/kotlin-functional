@@ -16,7 +16,8 @@ import kotlin.test.assertEquals
 
 class OptionalTTest:
 	MonadTransLaws<OptionalContext>,
-	MonadPlusLaws<Context<ListContext, OptionalContext>> {
+	MonadPlusLaws<Context<ListContext, OptionalContext>>,
+	MonadZipScopeLaws<Context<ListContext, OptionalContext>> {
 	override val possibilities: Int = 4
 	override val monadScope = OptionalT(ListF)
 

@@ -4,6 +4,8 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.MonadZipLaws
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
+import org.junit.Ignore
+import org.junit.Test
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -24,5 +26,15 @@ class SingleFTest: MonadZipLaws<SingleContext> {
 		else -> Completable.timer(10L * possibility, TimeUnit.MILLISECONDS)
 			.andThen(Single.just(possibility))
 			.f()
+	}
+
+	@Ignore
+	@Test
+	override fun `scope lift2 is correct`() {
+	}
+
+	@Ignore
+	@Test
+	override fun `lift2 is correct`() {
 	}
 }

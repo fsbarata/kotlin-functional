@@ -37,7 +37,7 @@ internal fun observableFactory(possibility: Int): ObservableF<Int> = when (possi
 		.f()
 }
 
-internal fun <A> assertEqualObs(a1: ObservableF<A>, a2: ObservableF<A>) {
+internal fun <A: Any> assertEqualObs(a1: ObservableF<A>, a2: ObservableF<A>) {
 	val testObserver1 = a1.materialize().test()
 	val testObserver2 = a2.materialize().test()
 
