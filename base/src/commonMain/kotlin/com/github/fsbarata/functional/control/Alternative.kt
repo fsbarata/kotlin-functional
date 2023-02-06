@@ -1,7 +1,6 @@
 package com.github.fsbarata.functional.control
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.data.Functor
 import com.github.fsbarata.functional.data.flip
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
@@ -24,11 +23,11 @@ interface Alternative<F, out A>: Applicative<F, A> {
 	interface Scope<F>: Applicative.Scope<F> {
 		fun <A> empty(): Context<F, A>
 
+		fun <A> combine(fa1: Context<F, A>, fa2: Context<F, A>): Context<F, A> =
+			(fa1 as Alternative<F, A>).combineWith(fa2)
+
 		fun <A> fromIterable(iterable: Iterable<A>): Context<F, A> =
 			iterable.fold(empty()) { r, a -> combine(r, just(a)) }
-
-		fun <A> combine(item1: Context<F, A>, item2: Context<F, A>): Context<F, A> =
-			(item1 as Alternative<F, A>).combineWith(item2)
 
 		fun <A> fromSequence(sequence: Sequence<A>): Context<F, A> = fromIterable(sequence.asIterable())
 		fun <A> fromList(list: List<A>): Context<F, A> = fromIterable(list)

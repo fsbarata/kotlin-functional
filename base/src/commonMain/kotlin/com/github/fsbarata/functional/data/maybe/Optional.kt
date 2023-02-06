@@ -86,7 +86,7 @@ sealed class Optional<out A>:
 		Traversable.Scope<OptionalContext> {
 		override fun <A> empty(): Optional<A> = None
 		override fun <A> just(a: A): Optional<A> = Some(a)
-		fun <A> ofNullable(a: A?) = if (a != null) Some(a) else None
+		fun <A: Any> ofNullable(a: A?): Optional<A> = if (a != null) Some(a) else None
 
 		fun <A: Semigroup<A>> monoid(): Monoid<Optional<A>> = monoid(semigroupScopeOf())
 

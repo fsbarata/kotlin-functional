@@ -29,13 +29,20 @@ interface Monad<M, out A>: Applicative<M, A> {
 		override fun <A, R> ap(fa: Context<M, A>, ff: Context<M, (A) -> R>): Context<M, R> =
 			if (fa is Applicative) fa.ap(ff)
 			else bind(ff) { map(fa, it) }
+
+		fun <A> flatten(ca: Context<M, Context<M, A>>): Context<M, A> =
+			bind(ca, ::id)
+
+		fun <B> andThen(ca: Context<M, *>, cb: Context<M, B>): Context<M, B> {
+			bind(ca) { just(Unit) }
+			return cb
+		}
 	}
 }
 
 @Suppress("UNCHECKED_CAST")
 fun <M, A, MA: Monad<M, A>> Monad<M, MA>.flatten(): MA =
 	bind(::id) as MA
-
 
 fun <M, B, MB: Monad<M, B>> Monad<M, *>.andThen(other: MB): MB {
 	bind { scope.just(Unit) }

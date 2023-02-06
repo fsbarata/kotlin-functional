@@ -10,8 +10,20 @@ interface MonadZip<M, out A>: Monad<M, A> {
 	fun <B, R> zipWith(other: Context<M, B>, f: (A, B) -> R): MonadZip<M, R>
 
 	interface Scope<M>: Monad.Scope<M> {
-		fun <A, B, R> zipWith(ca: Context<M, A>, cb: Context<M, B>, f: (A, B) -> R): Context<M, R> =
+		fun <A, B, R> zip(ca: Context<M, A>, cb: Context<M, B>, f: (A, B) -> R): Context<M, R> =
 			(ca as MonadZip<M, A>).zipWith(cb, f)
+
+		fun <A, B, R> zip(ca: Context<M, A>, cb: Context<M, B>): Context<M, Pair<A, B>> =
+			zip(ca, cb, ::Pair)
+
+		fun <A, B, R> zipT(ca: Context<M, A>, cb: Context<M, B>): Context<M, Tuple2<A, B>> =
+			zip(ca, cb, ::Tuple2)
+
+		fun <A, B> unzip(zipped: Context<M, Pair<A, B>>): Pair<Context<M, A>, Context<M, B>> =
+			Pair(map(zipped) { it.first }, map(zipped) { it.second })
+
+		fun <X, Y> unzipT(zipped: Context<M, Tuple2<X, Y>>): Tuple2<Context<M, X>, Context<M, Y>> =
+			Tuple2(map(zipped) { it.x }, map(zipped) { it.y })
 	}
 }
 

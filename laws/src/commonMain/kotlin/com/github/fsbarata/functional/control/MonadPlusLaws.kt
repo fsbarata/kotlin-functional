@@ -2,11 +2,9 @@ package com.github.fsbarata.functional.control
 
 import kotlin.test.Test
 
-interface MonadPlusLaws<M>: MonadLaws<M> {
-	override val monadScope: MonadPlus.Scope<M>
-
-	private fun <A> zero() = monadScope.empty<A>() as MonadPlus<M, A>
-	private val zero get() = zero<Any>()
+interface MonadPlusLaws<M>: MonadLaws<M>, MonadPlusScopeLaws<M> {
+	private fun <A> empty() = monadScope.empty<A>() as MonadPlus<M, A>
+	private val zero get() = empty<Any>()
 
 	@Suppress("UNCHECKED_CAST")
 	private fun <T> eachPossibilityMonadPlus(block: (MonadPlus<M, Int>) -> T) =
@@ -14,12 +12,12 @@ interface MonadPlusLaws<M>: MonadLaws<M> {
 
 	@Test
 	fun `left zero`() {
-		assertEqualF(zero(), zero<Int>().bind {
+		assertEqualF(empty(), empty<Int>().bind {
 			if (it < 0) monadScope.empty()
 			else monadScope.just(it)
 		})
-		eachPossibilityMonadPlus { mp ->
-			assertEqualF(zero(), zero<Int>().bind { mp })
+		eachPossibility { mp ->
+			assertEqualF(empty(), empty<Int>().bind { mp })
 		}
 	}
 

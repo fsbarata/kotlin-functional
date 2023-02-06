@@ -4,7 +4,6 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.list.ListF
-import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.invoke
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.sequence.SequenceF

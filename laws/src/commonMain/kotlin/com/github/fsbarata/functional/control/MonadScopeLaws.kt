@@ -18,7 +18,7 @@ interface MonadScopeLaws<M>: ApplicativeScopeLaws<M> {
 	}
 
 	@Test
-	fun `cope bind right identity`() {
+	fun `scope bind right identity`() {
 		eachPossibility { m ->
 			val b = monadScope.bind(m) { monadScope.just(it) }
 			assertEqualF(m, b)
@@ -26,7 +26,7 @@ interface MonadScopeLaws<M>: ApplicativeScopeLaws<M> {
 	}
 
 	@Test
-	fun `cope bind associativity`() {
+	fun `scope bind associativity`() {
 		eachPossibility { m ->
 			val k = { a: Int -> monadScope.just(a + 2) }
 			val h = { a: Int -> monadScope.just(a * 2) }
