@@ -61,7 +61,7 @@ class SetF<out A> internal constructor(private val wrapped: Set<A>): Set<A> by w
 		appScope: Applicative.Scope<F>,
 		f: (A) -> Context<F, B>,
 	): Context<F, SetF<B>> =
-		appScope.map((this as Set<A>).traverse(appScope, f), Set<B>::f)
+		appScope.map((this as Set<A>).traverse(appScope, f), Set<B>::toSetF)
 
 	override fun combineWith(other: Context<SetContext, @UnsafeVariance A>): SetF<A> =
 		concatWith(other.asSet)

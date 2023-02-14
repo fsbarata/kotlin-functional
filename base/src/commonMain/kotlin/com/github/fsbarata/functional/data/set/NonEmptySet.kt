@@ -8,7 +8,7 @@ import com.github.fsbarata.functional.utils.toNes
 import com.github.fsbarata.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
-class NonEmptySet<out A>(
+class NonEmptySet<out A> private constructor(
 	override val head: A,
 	override val tail: SetF<A>,
 ): Set<A>,
@@ -35,7 +35,8 @@ class NonEmptySet<out A>(
 		of(f(head), tail.mapTo(mutableSetOf(), f))
 
 	override inline fun onEach(f: (A) -> Unit): NonEmptySet<A> {
-		forEach(f)
+		f(head)
+		tail.forEach(f)
 		return this
 	}
 
