@@ -74,8 +74,9 @@ class SetF<out A> internal constructor(private val wrapped: Set<A>): Set<A> by w
 	override fun hashCode() = wrapped.hashCode()
 
 	override fun toList(): ListF<A> = ListF.fromIterable(wrapped)
+	fun toSet(): Set<A> = this
 
-	@Deprecated("Unnecessary call to toSet()", replaceWith = ReplaceWith("this"))
+	@Deprecated("Unnecessary call to toSetF()", replaceWith = ReplaceWith("this"))
 	override fun toSetF(): SetF<A> = this
 
 	fun asSequence(): SequenceF<A> = SequenceF.fromIterable(wrapped)

@@ -32,7 +32,7 @@ class NonEmptySet<out A> private constructor(
 	override fun iterator(): Iterator<A> = super.iterator()
 
 	override inline fun <B> map(f: (A) -> B): NonEmptySet<B> =
-		of(f(head), tail.mapTo(mutableSetOf(), f))
+		of(f(head), tail.map(f))
 
 	override inline fun onEach(f: (A) -> Unit): NonEmptySet<A> {
 		f(head)
@@ -51,7 +51,7 @@ class NonEmptySet<out A> private constructor(
 
 	inline fun <B> flatMap(f: (A) -> NonEmptySet<B>): NonEmptySet<B> {
 		val mappedHead = f(head)
-		return of(mappedHead.head, mappedHead.tail + tail.flatMapToSet(f))
+		return of(mappedHead.head, mappedHead.tail + tail.flatMap(f))
 	}
 
 	operator fun plus(other: @UnsafeVariance A) = of(head, tail + other)
@@ -64,7 +64,7 @@ class NonEmptySet<out A> private constructor(
 		val newHead = f(this)
 		return of(
 			newHead,
-			(tail.toNes() ?: return just(newHead)).coflatMap(f)
+			(tail.toNes() ?: return just(newHead)).coflatMap(f),
 		)
 	}
 
