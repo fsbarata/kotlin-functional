@@ -89,7 +89,7 @@ interface NonEmptyCollection<out A>:
 	override fun toList() = ListF(toNel())
 	override fun toSetF() = SetF(toNes())
 	fun toNel() = NonEmptyList(head, ListF.fromIterable(tail))
-	fun toNes() = NonEmptySet.of(head, tail.toSet())
+	fun toNes() = NonEmptySet(head, SetF.fromIterable(tail))
 
 	fun <K: Comparable<K>> sortedBy(selector: (A) -> K): NonEmptyList<A> =
 		sortedWith(compareBy(selector))

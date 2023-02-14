@@ -160,7 +160,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		override fun <A> fromIterable(iterable: Iterable<A>): ListF<A> = when (iterable) {
 			is ListF -> iterable
 			is ImmutableList<A> -> ListF(iterable)
-			else -> ListF(iterable.toList())
+			else -> fromSequence(iterable.asSequence())
 		}
 
 		override fun <A> fromSequence(sequence: Sequence<A>) = ListF(sequence.toList())
@@ -168,7 +168,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 			if (list.isEmpty()) empty()
 			else fromIterable(list)
 
-		override fun <A> fromOptional(optional: Optional<A>): ListF<A> =
+		override inline fun <A> fromOptional(optional: Optional<A>): ListF<A> =
 			optional.fold(ifEmpty = ::empty, ifSome = ::just)
 	}
 }

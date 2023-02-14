@@ -8,9 +8,9 @@ import com.github.fsbarata.functional.utils.toNes
 import com.github.fsbarata.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
-class NonEmptySet<out A> private constructor(
+class NonEmptySet<out A>(
 	override val head: A,
-	override val tail: Set<A>,
+	override val tail: SetF<A>,
 ): Set<A>,
 	AbstractSet<A>(),
 	NonEmptyCollection<A>,
@@ -90,9 +90,9 @@ class NonEmptySet<out A> private constructor(
 
 	companion object: Monad.Scope<NonEmptySetContext>, Traversable.Scope<NonEmptySetContext> {
 		override fun <A> just(a: A) = NonEmptySet(a, SetF.empty())
-		fun <T> of(head: T, others: Iterable<T>): NonEmptySet<T> = of(head, others.toSet())
+		fun <T> of(head: T, others: Iterable<T>): NonEmptySet<T> = of(head, others.toSetF())
 
-		fun <T> of(head: T, others: Set<T>) = NonEmptySet(head, others - head)
+		fun <T> of(head: T, others: Set<T>) = NonEmptySet(head, (others - head).toSetF())
 	}
 }
 

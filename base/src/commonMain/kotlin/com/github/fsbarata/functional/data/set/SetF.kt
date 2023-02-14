@@ -3,6 +3,7 @@ package com.github.fsbarata.functional.data.set
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
+import com.github.fsbarata.functional.data.list.ImmutableList
 import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.list.invoke
 import com.github.fsbarata.functional.data.maybe.Optional
@@ -10,15 +11,16 @@ import com.github.fsbarata.functional.data.sequence.SequenceF
 import com.github.fsbarata.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
-class SetF<out A>(private val wrapped: Set<A>): Set<A> by wrapped,
+class SetF<out A> internal constructor(private val wrapped: Set<A>): Set<A> by wrapped,
 	Serializable,
 	MonadPlus<SetContext, A>,
 	Traversable<SetContext, A>,
 	Semigroup<SetF<@UnsafeVariance A>> {
 	override val scope get() = SetF
 
-	override inline fun <B> map(f: (A) -> B): SetF<B> =
-		mapTo(mutableSetOf(), f).f()
+	override inline fun <B> map(f: (A) -> B): SetF<B> {
+		return mapTo(mutableSetOf(), f).f()
+	}
 
 	override inline fun onEach(f: (A) -> Unit): SetF<A> {
 		forEach(f)
@@ -87,17 +89,28 @@ class SetF<out A>(private val wrapped: Set<A>): Set<A> by wrapped,
 
 		fun <A> monoid() = monoid(empty<A>())
 
-		override fun <A> fromIterable(iterable: Iterable<A>) = SetF(iterable.toSet())
-		override fun <A> fromSequence(sequence: Sequence<A>) = SetF(sequence.toSet())
-		override fun <A> fromList(list: List<A>): SetF<A> = fromIterable(list)
+		override inline fun <A> fromIterable(iterable: Iterable<A>) = when (iterable) {
+			is SetF -> iterable
+			else -> fromSequence(iterable.asSequence())
+		}
 
-		override fun <A> fromOptional(optional: Optional<A>): SetF<A> =
+		override fun <A> fromSequence(sequence: Sequence<A>) = SetF(sequence.toSet())
+		override inline fun <A> fromList(list: List<A>): SetF<A> = fromIterable(list)
+
+		inline fun <A> fromSet(set: Set<A>): SetF<A> =
+			if (set.isEmpty()) empty()
+			else fromIterable(set)
+
+		override inline fun <A> fromOptional(optional: Optional<A>): SetF<A> =
 			optional.maybe(empty(), ::just)
 	}
 }
 
-fun <A> Set<A>.f() = if (this is SetF) this else SetF(this)
-fun <A> Set<A>.asFoldable(): Foldable<A> = f()
+inline fun <A> Set<A>.f() = if (this is SetF) this else toSetF()
+inline fun <A> Set<A>.asFoldable(): Foldable<A> = f()
+inline fun <A> Set<A>.toSetF() = SetF.fromSet(this)
+inline fun <A> Iterable<A>.toSetF() = SetF.fromIterable(this)
+inline fun <A> Sequence<A>.toSetF() = SetF.fromSequence(this)
 
 internal typealias SetContext = SetF<*>
 
