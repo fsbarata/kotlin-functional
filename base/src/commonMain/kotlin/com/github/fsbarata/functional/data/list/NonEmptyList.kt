@@ -114,7 +114,7 @@ class NonEmptyList<out A>(
 		foldRight(initialValue, accumulator)
 
 	inline fun <R> foldRight(initialValue: R, accumulator: (A, R) -> R): R {
-		return accumulator(head, tail.foldRight(initialValue, accumulator))
+		return accumulator(head, tail.foldR(initialValue, accumulator))
 	}
 
 	operator fun plus(other: @UnsafeVariance A) = of(head, tail + other)

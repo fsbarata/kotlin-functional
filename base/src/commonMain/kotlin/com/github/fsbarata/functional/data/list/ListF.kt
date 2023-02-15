@@ -92,10 +92,10 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		mapNotNull { f(it).orNull() }
 
 	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
-		asIterable().fold(initialValue, accumulator)
+		fold(initialValue, accumulator)
 
 	override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
-		(this as List<A>).foldRight(initialValue, accumulator)
+		foldRight(initialValue, accumulator)
 
 	override inline fun <M> foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 		asIterable().foldMap(monoid, f)
