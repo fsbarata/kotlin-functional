@@ -103,8 +103,19 @@ class NonEmptyList<out A>(
 		)
 	}
 
+	override inline fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
+		fold(initialValue, accumulator)
+
+	inline fun <R> fold(initialValue: R, accumulator: (R, A) -> R): R {
+		return tail.fold(accumulator(initialValue, head), accumulator)
+	}
+
 	override inline fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
 		foldRight(initialValue, accumulator)
+
+	inline fun <R> foldRight(initialValue: R, accumulator: (A, R) -> R): R {
+		return accumulator(head, tail.foldRight(initialValue, accumulator))
+	}
 
 	operator fun plus(other: @UnsafeVariance A) = of(head, tail + other)
 	operator fun plus(other: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + other)
