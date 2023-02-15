@@ -7,8 +7,6 @@ import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
 import com.github.fsbarata.functional.data.maybe.invoke
-import com.github.fsbarata.functional.utils.LambdaListIterator
-import com.github.fsbarata.functional.utils.listEquals
 import com.github.fsbarata.functional.utils.toNel
 import com.github.fsbarata.io.Serializable
 
@@ -22,6 +20,7 @@ class NonEmptyList<out A>(
 	override val head: A,
 	override val tail: ListF<A>,
 ): List<A>,
+	AbstractList<A>(),
 	NonEmptyCollection<A>,
 	ImmutableList<A>,
 	Serializable,
@@ -36,8 +35,8 @@ class NonEmptyList<out A>(
 	@Deprecated("Non empty list cannot be empty", replaceWith = ReplaceWith("false"))
 	override fun isEmpty() = false
 
-	override fun contains(element: @UnsafeVariance A): Boolean = super.contains(element)
-	override fun containsAll(elements: Collection<@UnsafeVariance A>) = super.containsAll(elements)
+	override fun contains(element: @UnsafeVariance A): Boolean = super<NonEmptyCollection>.contains(element)
+	override fun containsAll(elements: Collection<@UnsafeVariance A>) = super<NonEmptyCollection>.containsAll(elements)
 
 	override fun get(index: Int): A =
 		if (index == 0) head
@@ -58,7 +57,7 @@ class NonEmptyList<out A>(
 		}
 	}
 
-	override fun iterator(): Iterator<A> = super.iterator()
+	override fun iterator(): Iterator<A> = super<NonEmptyCollection>.iterator()
 
 	override fun subList(fromIndex: Int, toIndex: Int): ListF<A> = when {
 		fromIndex == 0 && toIndex == 0 -> ListF.empty()
@@ -69,7 +68,8 @@ class NonEmptyList<out A>(
 	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
 
 	override inline fun onEach(f: (A) -> Unit): NonEmptyList<A> {
-		forEach(f)
+		f(head)
+		tail.forEach(f)
 		return this
 	}
 
@@ -141,9 +141,6 @@ class NonEmptyList<out A>(
 		)
 	}
 
-	override fun listIterator(): ListIterator<A> = LambdaListIterator(size) { get(it) }
-	override fun listIterator(index: Int): ListIterator<A> = LambdaListIterator(size, index) { get(it) }
-
 	override fun extract(): A = head
 	override fun <B> extend(f: (Comonad<NonEmptyContext, A>) -> B): NonEmptyList<B> = coflatMap(f)
 
@@ -170,14 +167,6 @@ class NonEmptyList<out A>(
 	}
 
 	override fun concatWith(other: NonEmptyList<@UnsafeVariance A>) = this + other
-
-	override fun equals(other: Any?): Boolean {
-		if (this === other) return true
-		if (other !is List<*>) return false
-		return listEquals(this, other)
-	}
-
-	override fun hashCode() = head.hashCode() + tail.hashCode()
 
 	@Deprecated("Unnecessary call to toNel()", replaceWith = ReplaceWith("this"))
 	override fun toNel() = this
