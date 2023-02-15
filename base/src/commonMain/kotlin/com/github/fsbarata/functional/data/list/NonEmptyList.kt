@@ -182,6 +182,8 @@ class NonEmptyList<out A>(
 	@Deprecated("Unnecessary call to toNel()", replaceWith = ReplaceWith("this"))
 	override fun toNel() = this
 
+	inline fun asList(): List<A> = this
+
 	override fun toString() =
 		joinToString(prefix = "[", postfix = "]")
 

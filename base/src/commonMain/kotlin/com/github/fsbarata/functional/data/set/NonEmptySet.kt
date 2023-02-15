@@ -89,6 +89,8 @@ class NonEmptySet<out A> private constructor(
 	@Deprecated("Unnecessary call to toNes()", replaceWith = ReplaceWith("this"))
 	override fun toNes() = this
 
+	inline fun asSet(): Set<A> = this
+
 	companion object: Monad.Scope<NonEmptySetContext>, Traversable.Scope<NonEmptySetContext> {
 		override fun <A> just(a: A) = NonEmptySet(a, SetF.empty())
 		fun <T> of(head: T, others: Iterable<T>): NonEmptySet<T> = of(head, others.toSetF())
