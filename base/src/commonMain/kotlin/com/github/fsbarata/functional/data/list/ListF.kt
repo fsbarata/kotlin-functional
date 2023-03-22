@@ -26,8 +26,6 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	Semigroup<ListF<@UnsafeVariance A>> {
 	override val scope get() = ListF
 
-	constructor(size: Int, init: (index: Int) -> A): this(List(size, init))
-
 	override fun subList(fromIndex: Int, toIndex: Int) = ListF(wrapped.subList(fromIndex, toIndex))
 
 	operator fun plus(other: @UnsafeVariance A): ListF<A> = ListF(wrapped + other)
@@ -36,7 +34,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	fun plusElementNel(other: @UnsafeVariance A): NonEmptyList<A> = toNel()?.plus(other) ?: NonEmptyList.just(other)
 
 	override inline fun <B> map(f: (A) -> B): ListF<B> =
-		asIterable().mapTo(ArrayList(size), f).f()
+		buildListF(size) { forEach { add(f(it)) } }
 
 	override inline fun onEach(f: (A) -> Unit): ListF<A> {
 		forEach(f)
@@ -44,7 +42,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	}
 
 	inline fun <B> mapIndexed(f: (index: Int, A) -> B): ListF<B> =
-		asIterable().mapIndexedTo(ArrayList(size), f).f()
+		buildListF(size) { forEachIndexed { index, item -> add(f(index, item)) } }
 
 	inline fun onEachIndexed(f: (index: Int, A) -> Unit): ListF<A> {
 		forEachIndexed(f)
@@ -60,25 +58,11 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	override inline infix fun <B> bind(f: (A) -> Context<ListContext, B>): ListF<B> =
 		flatMap { f(it).asList }
 
-	inline fun <B> flatMap(f: (A) -> List<B>): ListF<B> = when (size) {
-		0 -> empty()
-		1 -> fromList(f(get(0)))
-		else -> {
-			val result = ArrayList<B>()
-			for (element in this) {
-				val list = f(element)
-				when (list.size) {
-					0 -> {}
-					1 -> result.add(list[0])
-					else -> result.addAll(list)
-				}
-			}
-			fromList(result)
-		}
-	}
+	inline fun <B> flatMap(f: (A) -> List<B>): ListF<B> =
+		buildListF { forEach { addAll(f(it)) } }
 
 	override inline fun filter(predicate: (A) -> Boolean): ListF<A> =
-		asIterable().filter(predicate).f()
+		buildListF { forEach { if (predicate(it)) add(it) } }
 
 	override inline fun partition(predicate: (A) -> Boolean): Pair<ListF<A>, ListF<A>> {
 		val p = asIterable().partition(predicate)
@@ -86,7 +70,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	}
 
 	override inline fun <B: Any> mapNotNull(f: (A) -> B?): ListF<B> =
-		asIterable().mapNotNull(f).f()
+		buildListF { forEach { add(f(it) ?: return@forEach) } }
 
 	override inline fun <B: Any> mapNotNone(f: (A) -> Optional<B>): ListF<B> =
 		mapNotNull { f(it).orNull() }
@@ -170,6 +154,12 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 
 		override inline fun <A> fromOptional(optional: Optional<A>): ListF<A> =
 			optional.fold(ifEmpty = ::empty, ifSome = ::just)
+	}
+}
+
+inline fun <A> ListF(size: Int, f: (index: Int) -> A): ListF<A> = buildListF {
+	for (index in 0 until size) {
+		add(f(index))
 	}
 }
 
