@@ -52,14 +52,19 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	override infix fun <B> ap(ff: Context<ListContext, (A) -> B>): ListF<B> =
 		ff.asList.flatMap(::map)
 
-	override inline fun <B, R> lift2(fb: Context<ListContext, B>, f: (A, B) -> R): ListF<R> =
-		bind { a -> fb.asList.map { b -> f(a, b) } }
+	override inline fun <B, R> lift2(fb: Context<ListContext, B>, f: (A, B) -> R): ListF<R> {
+		return lift2Iterable(fb.asList, f)
+	}
+
+	inline fun <B, R> lift2Iterable(other: Iterable<B>, f: (A, B) -> R): ListF<R> {
+		return buildListF { forEach { a -> other.forEach { add(f(a, it)) } } }
+	}
 
 	override inline infix fun <B> bind(f: (A) -> Context<ListContext, B>): ListF<B> =
 		flatMap { f(it).asList }
 
-	inline fun <B> flatMap(f: (A) -> List<B>): ListF<B> =
-		buildListF { forEach { addAll(f(it)) } }
+	inline fun <B> flatMap(f: (A) -> Iterable<B>): ListF<B> =
+		buildListF { forEach { f(it).forEach(::add) } }
 
 	override inline fun filter(predicate: (A) -> Boolean): ListF<A> =
 		buildListF { forEach { if (predicate(it)) add(it) } }
