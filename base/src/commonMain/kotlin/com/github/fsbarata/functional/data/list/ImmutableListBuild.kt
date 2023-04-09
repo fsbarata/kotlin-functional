@@ -8,7 +8,7 @@ class ImmutableListBuildScope<A>(sizeHint: Int = -1) {
 	fun isEmpty(): Boolean = size == 0
 
 	fun build(): ListF<A> {
-		val unreachableList = list ?: throw IllegalStateException("Build can only be called once")
+		val unreachableList = list ?: throw IllegalStateException("build() can only be called once")
 		list = null
 		return ListF(unreachableList)
 	}
