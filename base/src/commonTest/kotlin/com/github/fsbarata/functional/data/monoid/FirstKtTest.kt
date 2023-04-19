@@ -1,10 +1,24 @@
 package com.github.fsbarata.functional.data.monoid
 
 import com.github.fsbarata.functional.assertEquals
-import com.github.fsbarata.functional.data.Monoid
-import com.github.fsbarata.functional.data.MonoidLaws
-import com.github.fsbarata.functional.data.SemigroupLaws
+import com.github.fsbarata.functional.data.*
 import kotlin.test.Test
+
+class FirstSemigroupScopeTest: SemigroupScopeLaws<String?> {
+	override val semigroupScope: Semigroup.Scope<String?> = firstSemigroupScope()
+
+	override val possibilities: Int = 10
+
+	override fun factory(possibility: Int) = possibility.takeIf { it > 0 }?.toString()
+
+	@Test
+	fun concat() {
+		with(firstSemigroupScope<Int>()) {
+			assertEquals(3, 3.concatWith(1).concatWith(5))
+			assertEquals(1, 1.concatWith(3))
+		}
+	}
+}
 
 class FirstNotNullSemigroupTest: SemigroupLaws<FirstNotNull<String>> {
 	override val possibilities: Int = 10

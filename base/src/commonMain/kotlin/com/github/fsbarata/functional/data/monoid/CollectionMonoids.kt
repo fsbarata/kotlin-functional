@@ -5,6 +5,8 @@ import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.monoid
 import com.github.fsbarata.functional.data.monoidOf
 
+fun <A> firstSemigroupScope(): Semigroup.Scope<A> = Semigroup.Scope { a1, _ -> a1 }
+fun <A> lastSemigroupScope(): Semigroup.Scope<A> = Semigroup.Scope { _, a2 -> a2 }
 
 data class FirstNotNull<A: Any>(val get: A?): Semigroup<FirstNotNull<A>> {
 	override fun concatWith(other: FirstNotNull<A>) = FirstNotNull(get ?: other.get)
@@ -14,7 +16,7 @@ data class FirstNotNull<A: Any>(val get: A?): Semigroup<FirstNotNull<A>> {
 	}
 }
 
-fun <A> firstNotNullMonoid() = object: Monoid<A?> {
+fun <A: Any> firstNotNullMonoid() = object: Monoid<A?> {
 	override val empty: A? = null
 
 	override fun concat(a1: A?, a2: A?): A? = a1 ?: a2
@@ -28,7 +30,7 @@ data class LastNotNull<A>(val get: A?): Semigroup<LastNotNull<A>> {
 	}
 }
 
-fun <A> lastNotNullMonoid() = object: Monoid<A?> {
+fun <A: Any> lastNotNullMonoid() = object: Monoid<A?> {
 	override val empty: A? = null
 
 	override fun concat(a1: A?, a2: A?): A? = a2 ?: a1
