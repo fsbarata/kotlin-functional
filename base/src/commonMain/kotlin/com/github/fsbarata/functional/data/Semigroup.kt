@@ -36,8 +36,8 @@ private tailrec fun <A> Semigroup.Scope<A>.add(ac: A, a: A, n: Int): A =
 	if (n == 0) ac
 	else add(concat(ac, a), a, n - 1)
 
-fun <A: Semigroup<A>> NonEmptyList<A>.sconcat() =
+fun <A: Semigroup<A>> NonEmptyList<A>.sconcat(): A =
 	sconcat(::concat)
 
-fun <A> NonEmptyList<A>.sconcat(semigroupScope: Semigroup.Scope<A>) =
-	reduce { a1, a2 -> semigroupScope.concat(a1, a2) }
+fun <A> NonEmptyList<A>.sconcat(semigroupScope: Semigroup.Scope<A>): A =
+	reduce(semigroupScope::concat)
