@@ -4,6 +4,7 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.list.ListF
+import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.set.SetF
 import com.github.fsbarata.functional.utils.singleItemIterator
@@ -82,6 +83,14 @@ class SequenceF<out A>(private val wrapped: Sequence<A>):
 
 	override fun toList(): ListF<A> = ListF.fromSequence(wrapped)
 	override fun toSetF(): SetF<A> = SetF.fromSequence(wrapped)
+
+	override fun some(): SequenceF<NonEmptyList<A>> {
+		return super.some().asSequence
+	}
+
+	override fun many(): SequenceF<List<A>> {
+		return super.many().asSequence
+	}
 
 	companion object:
 		MonadPlus.Scope<SequenceContext>,

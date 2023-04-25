@@ -4,7 +4,6 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.assertEquals
 import com.github.fsbarata.functional.control.MonadPlusLaws
 import com.github.fsbarata.functional.control.MonadZipLaws
-import com.github.fsbarata.functional.control.arrow.kleisli
 import com.github.fsbarata.functional.data.TraversableLaws
 import kotlin.test.*
 

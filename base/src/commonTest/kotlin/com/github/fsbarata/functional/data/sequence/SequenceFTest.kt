@@ -5,6 +5,7 @@ import com.github.fsbarata.functional.assertEquals
 import com.github.fsbarata.functional.control.MonadPlusLaws
 import com.github.fsbarata.functional.control.MonadZipLaws
 import com.github.fsbarata.functional.data.TraversableLaws
+import com.github.fsbarata.functional.data.list.nelOf
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.maybe.asOptional
 import kotlin.test.Test
@@ -64,4 +65,37 @@ class SequenceFTest:
 		assertEquals(listOf(5, 1, 3), transformed.toList())
 		assertEquals(25, x)
 	}
+
+	@Test
+	fun someTest() {
+		var a = 3
+		assertEquals(
+			listOf(
+				nelOf(3, 4, 5),
+				nelOf(3, 4),
+				nelOf(3),
+			),
+			generateSequence({ a++ }, { null })
+				.takeWhile { it <= 5 }
+				.f().some()
+				.toList(),
+		)
+
+		var b = 3
+		assertEquals(
+			listOf(
+				nelOf(3, 4, 5),
+				nelOf(3, 4),
+				nelOf(3, 5),
+				nelOf(3),
+				nelOf(4),
+				nelOf(5),
+			),
+			generateSequence({ b++ }, Int::inc)
+				.takeWhile { it <= 5 }
+				.f().some()
+				.toList(),
+		)
+	}
 }
+

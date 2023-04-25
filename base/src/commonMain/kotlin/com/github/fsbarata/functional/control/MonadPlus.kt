@@ -5,6 +5,8 @@ import com.github.fsbarata.functional.control.arrow.Kleisli
 import com.github.fsbarata.functional.control.arrow.kleisli
 import com.github.fsbarata.functional.data.compose
 import com.github.fsbarata.functional.data.id
+import com.github.fsbarata.functional.data.list.NonEmptyList
+import com.github.fsbarata.functional.data.list.startWithItem
 import com.github.fsbarata.functional.data.maybe.Optional
 
 interface MonadPlus<M, out A>: Monad<M, A>, Alternative<M, A> {
@@ -32,12 +34,19 @@ interface MonadPlus<M, out A>: Monad<M, A>, Alternative<M, A> {
 	fun <B: Any> mapNotNone(f: (A) -> Optional<B>): MonadPlus<M, B> =
 		mapNotNull { f(it).orNull() }
 
+	override fun some(): MonadPlus<M, NonEmptyList<A>> =
+		bind { item -> many().map { list -> list.startWithItem(item) } }
+
 	interface Scope<M>: Monad.Scope<M>, Alternative.Scope<M> {
 		fun <A> filter(ca: Context<M, A>, predicate: (A) -> Boolean): Context<M, A> =
 			bind(ca, filterKleisli(predicate))
 
 		fun <A, B: Any> mapNotNull(ca: Context<M, A>, f: (A) -> B?): Context<M, B> =
 			bind(ca, mapNotNullKleisli(f))
+
+		override fun <A> some(ca: Context<M, A>): Context<M, NonEmptyList<A>> =
+			if (ca is Alternative<M, A>) ca.some()
+			else bind(ca) { item -> map(many(ca)) { list -> list.startWithItem(item) } }
 	}
 }
 
