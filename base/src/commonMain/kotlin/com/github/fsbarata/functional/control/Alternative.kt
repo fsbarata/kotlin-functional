@@ -10,13 +10,9 @@ import com.github.fsbarata.functional.data.maybe.Optional
 interface Alternative<F, out A>: Applicative<F, A> {
 	override val scope: Scope<F>
 
-	override fun <B, R> lift2(fb: Context<F, B>, f: (A, B) -> R) =
-		super.lift2(fb, f) as Alternative<F, R>
-
 	fun combineWith(other: Context<F, @UnsafeVariance A>): Alternative<F, A>
 
-	fun some(): Alternative<F, NonEmptyList<A>> =
-		lift2(many(), List<A>::startWithItem.flip())
+	fun some(): Alternative<F, NonEmptyList<A>>
 
 	fun many(): Alternative<F, List<A>> =
 		combine(some(), scope.just(ListF.empty()))
@@ -34,11 +30,10 @@ interface Alternative<F, out A>: Applicative<F, A> {
 		fun <A> fromList(list: List<A>): Context<F, A> = fromIterable(list)
 
 		fun <A> fromOptional(optional: Optional<A>): Context<F, A> =
-			optional.maybe(empty(), ::just)
+			optional.maybe(::empty, ::just)
 
 		fun <A> some(ca: Context<F, A>): Context<F, NonEmptyList<A>> =
-			if (ca is Alternative) ca.some()
-			else lift2(ca, many(ca), List<A>::startWithItem.flip())
+			(ca as Alternative<F, A>).some()
 
 		fun <A> many(ca: Context<F, A>): Context<F, List<A>> =
 			if (ca is Alternative) ca.many()

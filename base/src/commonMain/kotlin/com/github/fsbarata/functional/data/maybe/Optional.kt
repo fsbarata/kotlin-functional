@@ -68,6 +68,7 @@ sealed class Optional<out A>:
 		lift2(other, f)
 
 	inline fun <B> maybe(b: B, f: (A) -> B): B = map(f) orElse b
+	inline fun <B> maybe(b: () -> B, f: (A) -> B): B = map(f) orElseGet b
 
 	final override inline fun <F, B> traverse(
 		appScope: Applicative.Scope<F>,
