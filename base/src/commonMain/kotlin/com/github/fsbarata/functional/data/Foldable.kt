@@ -10,6 +10,7 @@ import com.github.fsbarata.functional.data.monoid.dual
 import com.github.fsbarata.functional.data.monoid.endoMonoid
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
 import com.github.fsbarata.functional.data.set.SetF
+import kotlin.jvm.JvmName
 
 /**
  * Foldable structure
@@ -78,6 +79,7 @@ fun <A: Semigroup<A>> Foldable<A>.scanR(initialValue: A): NonEmptyList<A> = scan
 fun <F, A> Foldable<Context<F, A>>.asum(scope: Alternative.Scope<F>): Context<F, A> =
 	foldL(scope.empty(), scope::combine)
 
+@JvmName("foldIterable")
 fun <A> Iterable<A>.fold(monoid: Monoid<A>): A = foldMap(monoid, id())
 
 @Suppress("OVERRIDE_BY_INLINE")
@@ -95,4 +97,5 @@ fun <A, R> Iterable<A>.foldL(initialValue: R, accumulator: (R, A) -> R): R = fol
 inline fun <A, M> Iterable<A>.foldMap(monoid: Monoid<M>, f: (A) -> M): M =
 	fold(monoid.empty) { r, a -> monoid.concat(r, f(a)) }
 
+@JvmName("foldLIterable")
 fun <A: Semigroup<A>> Iterable<A>.foldL(initialValue: A): A = fold(initialValue, ::concat)
