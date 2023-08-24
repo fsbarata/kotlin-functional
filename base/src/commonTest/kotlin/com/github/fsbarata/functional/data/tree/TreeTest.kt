@@ -15,15 +15,15 @@ class TreeTest:
 	override val possibilities: Int = 10
 	override fun factory(possibility: Int) = createTreeSequence(possibility)
 
-	override fun <A> createTraversable(vararg items: A) =
-		Tree(
+	override fun <A> createTraversable(vararg items: A): Tree<A> =
+		Tree.of(
 			items[0],
 			when (items.size) {
 				1 -> emptySequence()
-				2 -> sequenceOf(Tree(items[1]))
+				2 -> sequenceOf(Tree.just(items[1]))
 				else -> sequenceOf(
-					Tree(items[1]),
-					Tree(items[2], items.asSequence().drop(3).map(::Tree))
+					Tree.just(items[1]),
+					Tree.of(items[2], items.asSequence().drop(3).map { Tree.just(it) })
 				)
 			}
 		)
