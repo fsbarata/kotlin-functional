@@ -12,7 +12,7 @@ import com.github.fsbarata.functional.data.tuple.Tuple2
  *
  * Eg. See {@link com.github.fsbarata.functional.control.state.RandomGeneratorKt}
  */
-class State<S, A>(
+class State<S, out A>(
 	val runState: (S) -> Tuple2<S, A>,
 ): Monad<StateContext<S>, A> {
 	override val scope get() = Scope<S>()

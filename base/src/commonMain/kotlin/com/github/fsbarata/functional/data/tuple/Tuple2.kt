@@ -11,12 +11,12 @@ import com.github.fsbarata.io.Serializable
 import kotlin.jvm.JvmName
 
 @Suppress("OVERRIDE_BY_INLINE")
-data class Tuple2<X, Y>(val x: X, val y: Y):
-	Traversable<Tuple2Context<X>, Y>,
+data class Tuple2<out X, out Y>(val x: X, val y: Y):
+	Traversable<Tuple2Context<@UnsafeVariance X>, Y>,
 	BiFunctor<Tuple2BiContext, X, Y>,
-	Comonad<Tuple2Context<X>, Y>,
+	Comonad<Tuple2Context<@UnsafeVariance X>, Y>,
 	Serializable {
-	override val scope get() = Scope<X>()
+	override val scope get() = Scope<@UnsafeVariance X>()
 
 	override fun extract() = y
 
@@ -43,7 +43,7 @@ data class Tuple2<X, Y>(val x: X, val y: Y):
 	override inline fun <M> foldMap(monoid: Monoid<M>, f: (Y) -> M): M = f(y)
 
 	@Suppress("OVERRIDE_BY_INLINE")
-	override inline fun <B> extend(f: (Comonad<Tuple2Context<X>, Y>) -> B): Tuple2<X, B> =
+	override inline fun <B> extend(f: (Comonad<Tuple2Context<@UnsafeVariance X>, Y>) -> B): Tuple2<X, B> =
 		coflatMap(f)
 
 	inline fun <B> coflatMap(f: (Tuple2<X, Y>) -> B): Tuple2<X, B> =
