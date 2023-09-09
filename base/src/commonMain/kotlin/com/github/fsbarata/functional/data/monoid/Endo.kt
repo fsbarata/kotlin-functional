@@ -7,4 +7,4 @@ class Endo<A>(private val f: (A) -> A): F1<A, A> by f,
 	override fun concatWith(other: Endo<A>) = Endo(f.compose(other.f))
 }
 
-fun <A> endoMonoid() = monoid(Endo(id<A>()))
+fun <A> endoMonoid() = monoid(Endo<A>(::id))

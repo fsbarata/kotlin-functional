@@ -36,7 +36,7 @@ interface Applicative<F, out A>: Functor<F, A> {
 }
 
 fun <F, A, R> apFromLift2(scope: Applicative.Scope<F>, app: Context<F, A>, ff: Context<F, (A) -> R>): Context<F, R> =
-	scope.lift2(ff, app, uncurry(id<(A) -> R>()))
+	scope.lift2(ff, app, uncurry<(A) -> R, A, R>(::id))
 
 fun <F, A, B, R> lift2FromAp(
 	scope: Applicative.Scope<F>,

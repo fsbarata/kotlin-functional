@@ -18,14 +18,12 @@ typealias sF4<A, B, C, D, R> = suspend (A, B, C, D) -> R
 
 inline fun <A> id(a: A): A = a
 
-inline fun <A> id(): (A) -> A = ::id
-
-
 fun <A> void(f: F1<A, *>): (A) -> Unit = { a: A -> f(a) }
 fun <A, B> void(f: F2<A, B, *>): (A, B) -> Unit = { a: A, b: B -> f(a, b) }
 fun <A, B, C> void(f: F3<A, B, C, *>): (A, B, C) -> Unit = { a: A, b: B, c: C -> f(a, b, c) }
 fun <A, B, C, D> void(f: F4<A, B, C, D, *>): (A, B, C, D) -> Unit = { a: A, b: B, c: C, d: D -> f(a, b, c, d) }
 
+fun <A, R> cast(f: F1<A, R>): F1<A, R> = f
 
 inline fun <A, R> compose0(crossinline f1: F1<A, R>, crossinline f2: F0<A>): F0<R> = { f1(f2()) }
 inline fun <A, R> composeS0(crossinline f1: sF1<A, R>, crossinline f2: sF0<A>): sF0<R> = { f1(f2()) }
