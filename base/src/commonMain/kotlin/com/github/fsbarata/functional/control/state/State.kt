@@ -53,3 +53,24 @@ internal typealias StateContext<S> = State<S, *>
 
 val <S, A> Context<StateContext<S>, A>.asState
 	get() = this as State<S, A>
+
+inline fun <S, A> State<S, A>.loopTo(initial: S, final: S): List<A> =
+	loopUntil(initial) { it == final }
+
+inline fun <S, A> State<S, A>.loopUntil(initial: S, stopCondition: (S) -> Boolean): List<A> {
+	if (stopCondition(initial)) return emptyList()
+	return buildList {
+		loop(initial) { (state, value) ->
+			add(value)
+			if (stopCondition(state)) return@buildList
+		}
+	}
+}
+
+inline fun <S, A> State<S, A>.loop(initial: S, block: (Tuple2<S, A>) -> Unit): Nothing {
+	var r = invoke(initial)
+	while (true) {
+		block(r)
+		r = invoke(r.x)
+	}
+}
