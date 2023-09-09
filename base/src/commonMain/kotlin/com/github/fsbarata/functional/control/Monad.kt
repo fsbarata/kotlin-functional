@@ -41,8 +41,9 @@ interface Monad<M, out A>: Applicative<M, A> {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <M, A, MA: Monad<M, A>> Monad<M, MA>.flatten(): MA =
-	bind(::id) as MA
+fun <M, A, MA: Monad<M, A>> Monad<M, MA>.flatten(): MA {
+	return bind { it } as MA
+}
 
 fun <M, B, MB: Monad<M, B>> Monad<M, *>.andThen(other: MB): MB {
 	bind { scope.just(Unit) }
