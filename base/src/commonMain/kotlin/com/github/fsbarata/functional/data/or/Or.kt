@@ -33,11 +33,11 @@ sealed class Or<out L, out R>:
 	}
 
 	final override inline fun <A> map(f: (R) -> A): Or<L, A> {
-		return bimap(id(), f)
+		return bimap(::id, f)
 	}
 
 	final override inline fun <A> mapLeft(f: (L) -> A): Or<A, R> {
-		return bimap(f, id())
+		return bimap(f, ::id)
 	}
 
 	final override inline fun <A, B> bimap(f: (L) -> A, g: (R) -> B): Or<A, B> {

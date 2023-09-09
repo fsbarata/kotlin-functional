@@ -55,7 +55,7 @@ fun <A: Any, R: Any> Maybe<A>.mapNotNone(f: (A) -> Optional<R>): Maybe<R> =
 		.map { it.orNull()!! }
 
 fun <A: Any> Maybe<Optional<A>>.filterNotNone(): Maybe<A> =
-	mapNotNone(id())
+	mapNotNone(::id)
 
 internal typealias MaybeContext = Maybe<*>
 

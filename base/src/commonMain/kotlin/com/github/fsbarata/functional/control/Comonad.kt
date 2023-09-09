@@ -7,7 +7,7 @@ interface Comonad<W, out A>: Functor<W, A> {
 	fun extract(): A
 
 	fun duplicate(): Comonad<W, Comonad<W, A>> =
-		extend(id())
+		extend(::id)
 
 	fun <B> extend(f: (Comonad<W, A>) -> B): Comonad<W, B> =
 		duplicate().map(f)

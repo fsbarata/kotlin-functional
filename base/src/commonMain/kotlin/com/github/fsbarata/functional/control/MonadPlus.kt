@@ -50,8 +50,8 @@ interface MonadPlus<M, out A>: Monad<M, A>, Alternative<M, A> {
 	}
 }
 
-fun <M, A: Any> MonadPlus<M, A?>.filterNotNull() = mapNotNull(id())
-fun <M, A: Any> MonadPlus<M, Optional<A>>.filterNotNone() = mapNotNone(id())
+fun <M, A: Any> MonadPlus<M, A?>.filterNotNull() = mapNotNull(::id)
+fun <M, A: Any> MonadPlus<M, Optional<A>>.filterNotNone() = mapNotNone(::id)
 
 
 fun <M, A> MonadPlus.Scope<M>.filterKleisli(predicate: (A) -> Boolean): Kleisli<M, A, A> =
@@ -63,5 +63,5 @@ fun <M, A, B: Any> MonadPlus.Scope<M>.mapNotNullKleisli(f: (A) -> B?): Kleisli<M
 fun <M, A, B: Any> MonadPlus.Scope<M>.mapNotNoneKleisli(f: (A) -> Optional<B>): Kleisli<M, A, B> =
 	mapNotNullKleisli { a -> f(a).orNull() }
 
-fun <M, A: Any> MonadPlus.Scope<M>.filterNotNullKleisli(): Kleisli<M, A?, A> = mapNotNullKleisli(id())
-fun <M, A: Any> MonadPlus.Scope<M>.filterNotNoneKleisli(): Kleisli<M, Optional<A>, A> = mapNotNoneKleisli(id())
+fun <M, A: Any> MonadPlus.Scope<M>.filterNotNullKleisli(): Kleisli<M, A?, A> = mapNotNullKleisli(::id)
+fun <M, A: Any> MonadPlus.Scope<M>.filterNotNoneKleisli(): Kleisli<M, Optional<A>, A> = mapNotNoneKleisli(::id)

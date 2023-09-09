@@ -49,7 +49,7 @@ inline fun <A, R: Any> Iterable<A>.mapNotNone(f: (A) -> Optional<R>): List<R> =
 	mapNotNull { f(it).orNull() }
 
 inline fun <A: Any> Iterable<Optional<A>>.filterNotNone(): List<A> =
-	mapNotNone(id())
+	mapNotNone(::id)
 
 inline fun <A, R: Any> Iterable<A>.mapNotNullToSet(f: (A) -> R?): Set<R> =
 	mapNotNullTo(mutableSetOf(), f)
@@ -61,4 +61,4 @@ inline fun <A, R: Any> Iterable<A>.mapNotNoneToSet(f: (A) -> Optional<R>): Set<R
 	mapNotNullToSet { f(it).orNull() }
 
 inline fun <A: Any> Iterable<Optional<A>>.filterNotNoneToSet(): Set<A> =
-	mapNotNoneToSet(id())
+	mapNotNoneToSet(::id)

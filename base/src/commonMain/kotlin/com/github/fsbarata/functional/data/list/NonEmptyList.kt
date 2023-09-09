@@ -177,7 +177,7 @@ class NonEmptyList<out A>(
 		joinToString(prefix = "[", postfix = "]")
 
 	inline fun windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): ListF<ListF<A>> =
-		windowed(size, step, partialWindows, id())
+		windowed(size, step, partialWindows, ::id)
 
 	inline fun windowedNel(size: Int, step: Int = 1, partialWindows: Boolean = false): ListF<NonEmptyList<A>> =
 		toList().windowedNel(size, step, partialWindows)

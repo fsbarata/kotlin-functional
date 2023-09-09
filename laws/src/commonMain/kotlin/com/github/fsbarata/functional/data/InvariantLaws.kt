@@ -15,7 +15,7 @@ interface InvariantLaws<F>: ContextTest<F>, PossibilitiesTest {
 	@Test
 	fun `invmap identity`() {
 		eachPossibilityInvariant { f1 ->
-			assertEqualF(f1, f1.invmap(id(), id()))
+			assertEqualF(f1, f1.invmap(::id, ::id))
 		}
 	}
 

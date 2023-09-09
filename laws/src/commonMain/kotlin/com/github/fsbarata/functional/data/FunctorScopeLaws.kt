@@ -17,7 +17,7 @@ interface FunctorScopeLaws<F>: ContextTest<F>, PossibilitiesTest {
 
 	@Test
 	fun `scope map identity`() {
-		eachPossibility { fa -> assertEqualF(fa, functorScope.map(fa, id())) }
+		eachPossibility { fa -> assertEqualF(fa, functorScope.map(fa, ::id)) }
 	}
 
 	@Test

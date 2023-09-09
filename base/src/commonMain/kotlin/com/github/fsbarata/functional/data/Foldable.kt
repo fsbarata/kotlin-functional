@@ -69,7 +69,7 @@ fun <A, R> Foldable<A>.scanR(initialValue: R, accumulator: (A, R) -> R): NonEmpt
 	}.second
 		.toNel()
 
-fun <A> Foldable<A>.fold(monoid: Monoid<A>) = foldMap(monoid, id())
+fun <A> Foldable<A>.fold(monoid: Monoid<A>) = foldMap(monoid, ::id)
 fun <A: Semigroup<A>> Foldable<A>.foldL(initialValue: A) = foldL(initialValue, ::concat)
 fun <A: Semigroup<A>> Foldable<A>.foldR(initialValue: A) = foldR(initialValue, ::concat)
 fun <A: Semigroup<A>> Foldable<A>.scanL(initialValue: A): NonEmptyList<A> = scanL(initialValue, ::concat)
@@ -80,7 +80,7 @@ fun <F, A> Foldable<Context<F, A>>.asum(scope: Alternative.Scope<F>): Context<F,
 	foldL(scope.empty(), scope::combine)
 
 @JvmName("foldIterable")
-fun <A> Iterable<A>.fold(monoid: Monoid<A>): A = foldMap(monoid, id())
+fun <A> Iterable<A>.fold(monoid: Monoid<A>): A = foldMap(monoid, ::id)
 
 @Suppress("OVERRIDE_BY_INLINE")
 private class FoldableIterable<A>(val iterable: Iterable<A>): Foldable<A>, Iterable<A> by iterable {

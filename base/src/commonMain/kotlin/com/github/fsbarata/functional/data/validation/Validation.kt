@@ -26,9 +26,9 @@ sealed class Validation<out E, out A>:
 		is Success -> ifSuccess(value)
 	}
 
-	final override inline fun <C> mapLeft(f: (E) -> C): Validation<C, A> = bimap(f, id())
+	final override inline fun <C> mapLeft(f: (E) -> C): Validation<C, A> = bimap(f, ::id)
 
-	final override inline fun <B> map(f: (A) -> B): Validation<E, B> = bimap(id(), f)
+	final override inline fun <B> map(f: (A) -> B): Validation<E, B> = bimap(::id, f)
 
 	final override inline fun <C, D> bimap(f: (E) -> C, g: (A) -> D): Validation<C, D> = when (this) {
 		is Failure -> Failure(f(err))

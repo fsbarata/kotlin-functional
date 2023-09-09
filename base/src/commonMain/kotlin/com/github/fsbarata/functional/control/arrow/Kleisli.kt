@@ -56,7 +56,7 @@ class Kleisli<M, A, R> internal constructor(
 		}
 	}
 
-	override fun <PASS> left(): Kleisli<M, Either<A, PASS>, Either<R, PASS>> = splitChoice(scope.arr(id()))
+	override fun <PASS> left(): Kleisli<M, Either<A, PASS>, Either<R, PASS>> = splitChoice(scope.arr(::id))
 	override fun <PASS> right(): Kleisli<M, Either<PASS, A>, Either<PASS, R>> = scope.arr(id<PASS>()).splitChoice(this)
 
 	override infix fun <B, RR> splitChoice(other: ArrowChoice<Kleisli<M, *, *>, B, RR>): Kleisli<M, Either<A, B>, Either<R, RR>> =

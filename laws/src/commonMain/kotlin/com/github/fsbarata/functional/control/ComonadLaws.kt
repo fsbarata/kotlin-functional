@@ -45,7 +45,7 @@ interface ComonadLaws<W>: FunctorLaws<W> {
 	fun `duplicate = extend id`() {
 		eachPossibilityComonad { v ->
 			val r1 = v.duplicate()
-			val r2 = v.extend(id())
+			val r2 = v.extend(::id)
 			assertEqualF(r1, r2)
 		}
 	}

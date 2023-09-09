@@ -19,7 +19,7 @@ fun <A: Any, R: Any> Flowable<A>.mapNotNone(f: (A) -> Optional<R>): Flowable<R> 
 		.map { it.orNull()!! }
 
 fun <A: Any> Flowable<Optional<A>>.filterNotNone(): Flowable<A> =
-	mapNotNone(id())
+	mapNotNone(::id)
 
 fun <A: Any> Flowable<A>.partition(predicate: (A) -> Boolean): Pair<Flowable<A>, Flowable<A>> =
 	Pair(filter(predicate), filter { !predicate(it) })

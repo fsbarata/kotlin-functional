@@ -7,8 +7,8 @@ interface BiFunctor<P, out B, out A>: BiContext<P, B, A> {
 		mapLeft(f).map(g)
 
 	fun <C> mapLeft(f: (B) -> C): BiFunctor<P, C, A> =
-		bimap(f, id())
+		bimap(f, ::id)
 
 	fun <C> map(f: (A) -> C): BiFunctor<P, B, C> =
-		bimap(id(), f)
+		bimap(::id, f)
 }

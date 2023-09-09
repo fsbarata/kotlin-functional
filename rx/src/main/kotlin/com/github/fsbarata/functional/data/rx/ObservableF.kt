@@ -136,7 +136,7 @@ fun <A: Any, R: Any> Observable<A>.mapNotNone(f: (A) -> Optional<R>): Observable
 		.map { it.orNull()!! }
 
 fun <A: Any> Observable<Optional<A>>.filterNotNone(): Observable<A> =
-	mapNotNone(id())
+	mapNotNone(::id)
 
 fun <A: Any> Observable<A>.partition(predicate: (A) -> Boolean): Pair<Observable<A>, Observable<A>> =
 	Pair(filter(predicate), filter { !predicate(it) })

@@ -17,5 +17,5 @@ interface ArrowChoice<ARR, A, R>: Arrow<ARR, A, R> {
 			.composeForward(scope.arr { it.swap() })
 
 	infix fun <B> fanin(other: ArrowChoice<ARR, B, R>): Arrow<ARR, Either<A, B>, R> =
-		splitChoice(other).composeForward(scope.arr { it.fold(id(), id()) })
+		splitChoice(other).composeForward(scope.arr { it.fold(::id, ::id) })
 }

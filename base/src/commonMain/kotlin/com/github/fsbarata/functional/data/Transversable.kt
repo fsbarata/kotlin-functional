@@ -45,5 +45,5 @@ fun <T, F, A> sequenceFromTraverse(
 	t: Context<T, Context<F, A>>,
 	appScope: Applicative.Scope<F>,
 ): Context<F, Context<T, A>> =
-	scope.traverse(t, appScope, id())
+	scope.traverse(t, appScope, ::id)
 

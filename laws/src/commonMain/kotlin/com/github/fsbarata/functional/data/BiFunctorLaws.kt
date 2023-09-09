@@ -20,44 +20,44 @@ interface BiFunctorLaws<P>: PossibilitiesTest {
 	@Test
 	fun `bimap identity`() {
 		eachPossibility { a ->
-			val r = a.bimap(id(), id())
+			val r = a.bimap(::id, ::id)
 			assertEqual(a, r)
 		}
 
 		val a = createBiFunctor("a", 3)
-		val r1 = a.bimap(id(), id())
+		val r1 = a.bimap(::id, ::id)
 		assertEqual(a, r1)
 
 		val b = createBiFunctor("b", null)
-		val r2 = b.bimap(id(), id())
+		val r2 = b.bimap(::id, ::id)
 		assertEqual(b, r2)
 
 		val c = createBiFunctor(null, 3)
-		val r3 = c.bimap(id(), id())
+		val r3 = c.bimap(::id, ::id)
 		assertEqual(c, r3)
 	}
 
 	@Test
 	fun `bifunctor map identity`() {
 		eachPossibility { a ->
-			val r = a.map(id())
+			val r = a.map(::id)
 			assertEqual(a, r)
 		}
 
 		val b = createBiFunctor(null, 4)
-		val r2 = b.map(id())
+		val r2 = b.map(::id)
 		assertEqual(b, r2)
 	}
 
 	@Test
 	fun `mapLeft identity`() {
 		eachPossibility { a ->
-			val r = a.mapLeft(id())
+			val r = a.mapLeft(::id)
 			assertEqual(a, r)
 		}
 
 		val b = createBiFunctor(4, null)
-		val r2 = b.mapLeft(id())
+		val r2 = b.mapLeft(::id)
 		assertEqual(b, r2)
 	}
 

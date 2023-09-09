@@ -14,7 +14,7 @@ interface ApplicativeScopeLaws<F>: FunctorScopeLaws<F> {
 	@Test
 	fun `just identity`() {
 		eachPossibility { r1 ->
-			val r2 = applicativeScope.ap(r1, applicativeScope.just(id()))
+			val r2 = applicativeScope.ap(r1, applicativeScope.just(::id))
 			assertEqualF(r1, r2)
 		}
 	}

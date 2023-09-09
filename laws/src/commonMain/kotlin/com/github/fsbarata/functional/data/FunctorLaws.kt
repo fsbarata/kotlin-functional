@@ -3,14 +3,13 @@ package com.github.fsbarata.functional.data
 import kotlin.test.Test
 
 interface FunctorLaws<F>: FunctorScopeLaws<F>, InvariantLaws<F> {
-	@Suppress("UNCHECKED_CAST")
 	private fun eachPossibilityFunctor(block: (Functor<F, Int>) -> Unit) {
 		eachPossibility { block(it as Functor<F, Int>) }
 	}
 
 	@Test
 	fun `map identity`() {
-		eachPossibilityFunctor { fa -> assertEqualF(fa, fa.map(id())) }
+		eachPossibilityFunctor { fa -> assertEqualF(fa, fa.map(::id)) }
 	}
 
 	@Test
