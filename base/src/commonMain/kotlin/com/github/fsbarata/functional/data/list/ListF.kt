@@ -57,7 +57,10 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	}
 
 	inline fun <B, R> lift2Iterable(other: Iterable<B>, f: (A, B) -> R): ListF<R> {
-		return buildListF { forEach { a -> other.forEach { add(f(a, it)) } } }
+		return buildListF(
+			if (other is Collection) size * other.size
+			else -1
+		) { forEach { a -> other.forEach { add(f(a, it)) } } }
 	}
 
 	override inline infix fun <B> bind(f: (A) -> Context<ListContext, B>): ListF<B> =
@@ -162,7 +165,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	}
 }
 
-inline fun <A> ListF(size: Int, f: (index: Int) -> A): ListF<A> = buildListF {
+inline fun <A> ListF(size: Int, f: (index: Int) -> A): ListF<A> = buildListF(size) {
 	for (index in 0 until size) {
 		add(f(index))
 	}
