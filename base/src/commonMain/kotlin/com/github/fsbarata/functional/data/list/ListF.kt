@@ -5,6 +5,7 @@ package com.github.fsbarata.functional.data.list
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
+import com.github.fsbarata.functional.data.collection.NonEmptyCollection
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.sequence.SequenceF
 import com.github.fsbarata.functional.data.set.SetF
@@ -31,7 +32,11 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	operator fun plus(other: @UnsafeVariance A): ListF<A> = ListF(wrapped + other)
 	operator fun plus(other: Iterable<@UnsafeVariance A>): ListF<A> = ListF(wrapped + other)
 
-	fun plusElementNel(other: @UnsafeVariance A): NonEmptyList<A> = toNel()?.plus(other) ?: NonEmptyList.just(other)
+	fun plusElementNel(other: @UnsafeVariance A): NonEmptyList<A> =
+		toNel()?.plus(other) ?: NonEmptyList.just(other)
+
+	fun plusNel(other: NonEmptyCollection<@UnsafeVariance A>): NonEmptyList<A> =
+		toNel()?.plus(other) ?: other.toNel()
 
 	override inline fun <B> map(f: (A) -> B): ListF<B> =
 		buildListF(size) { forEach { add(f(it)) } }
