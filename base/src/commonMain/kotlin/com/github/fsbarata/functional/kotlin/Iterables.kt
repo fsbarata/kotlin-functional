@@ -26,15 +26,15 @@ inline fun <T, K, V> Iterable<T>.groupByNel(
 	crossinline keySelector: (T) -> K,
 	valueTransform: (T) -> V,
 ): Map<K, NonEmptyList<V>> =
-	groupingBy(keySelector)
-		.aggregate { _, accumulator: Pair<V, ImmutableListBuildScope<V>>?, element, _ ->
+	buildMap<K, Pair<V, ImmutableListBuildScope<V>>> {
+		for (element in this@groupByNel) {
+			val key = keySelector(element)
 			val value = valueTransform(element)
-			if (accumulator == null) Pair(value, ImmutableListBuildScope())
-			else {
-				accumulator.second.add(value)
-				accumulator
-			}
+			val accumulator = this[key]
+			if (accumulator == null) put(key, Pair(value, ImmutableListBuildScope()))
+			else accumulator.second.add(value)
 		}
+	}
 		.mapValues { NonEmptyList(it.value.first, it.value.second.build()) }
 
 fun <T> Iterable<T>.chunkedNel(size: Int): List<NonEmptyList<T>> =
