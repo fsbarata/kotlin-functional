@@ -1,6 +1,6 @@
 package com.github.fsbarata.functional.data.list
 
-class ImmutableListBuildScope<A>(sizeHint: Int = -1) {
+class ImmutableListBuildScope<A>(sizeHint: Int = -1): RandomAccess {
 	private var list: MutableList<A>? = if (sizeHint >= 0) ArrayList(sizeHint) else ArrayList()
 
 	val size: Int get() = list?.size ?: 0
@@ -13,6 +13,24 @@ class ImmutableListBuildScope<A>(sizeHint: Int = -1) {
 		return ListF(unreachableList)
 	}
 
+	fun get(index: Int): A =
+		list?.get(index) ?: throw IllegalStateException("list has been built")
+
+	fun removeAt(index: Int): A =
+		list?.removeAt(index) ?: throw IllegalStateException("list has been built")
+
+	operator fun set(index: Int, element: A): A =
+		list?.set(index, element) ?: throw IllegalStateException("list has been built")
+
+	fun iterator(): Iterator<A> {
+		val iterator = list?.iterator() ?: throw IllegalStateException("list has been built")
+		return object : Iterator<A> by iterator {}
+	}
+
+	fun indexOf(element: A): Int = list?.indexOf(element) ?: -1
+
+	fun lastIndexOf(element: A): Int = list?.lastIndexOf(element) ?: -1
+
 	fun contains(element: A): Boolean {
 		return list?.contains(element) ?: false
 	}
@@ -21,12 +39,12 @@ class ImmutableListBuildScope<A>(sizeHint: Int = -1) {
 		return list?.containsAll(elements) ?: false
 	}
 
-	fun add(item: A): Boolean {
-		return list?.add(item) ?: false
+	fun add(element: A): Boolean {
+		return list?.add(element) ?: false
 	}
 
-	fun add(index: Int, item: A): Boolean {
-		return list?.add(index, item) != null
+	fun add(index: Int, element: A): Boolean {
+		return list?.add(index, element) != null
 	}
 
 	fun remove(element: A): Boolean {
