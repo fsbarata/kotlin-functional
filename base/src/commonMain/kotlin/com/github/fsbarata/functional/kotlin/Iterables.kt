@@ -2,9 +2,7 @@ package com.github.fsbarata.functional.kotlin
 
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
 import com.github.fsbarata.functional.data.id
-import com.github.fsbarata.functional.data.list.NonEmptyList
-import com.github.fsbarata.functional.data.list.nelOf
-import com.github.fsbarata.functional.data.list.toNel
+import com.github.fsbarata.functional.data.list.*
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.set.NonEmptySet
 import com.github.fsbarata.functional.data.set.toNes
@@ -22,17 +20,22 @@ fun <A> Set<A>.plusNes(other: NonEmptyCollection<A>): NonEmptySet<A> =
 	toNes()?.plus(other) ?: other.toNes()
 
 inline fun <T, K> Iterable<T>.groupByNel(crossinline keySelector: (T) -> K): Map<K, NonEmptyList<T>> =
-	groupByNel(keySelector) { it }
+	groupByNel(keySelector, ::id)
 
 inline fun <T, K, V> Iterable<T>.groupByNel(
 	crossinline keySelector: (T) -> K,
 	valueTransform: (T) -> V,
 ): Map<K, NonEmptyList<V>> =
 	groupingBy(keySelector)
-		.aggregate { _, accumulator, element, _ ->
+		.aggregate { _, accumulator: Pair<V, ImmutableListBuildScope<V>>?, element, _ ->
 			val value = valueTransform(element)
-			accumulator?.plus(value) ?: nelOf(value)
+			if (accumulator == null) Pair(value, ImmutableListBuildScope())
+			else {
+				accumulator.second.add(value)
+				accumulator
+			}
 		}
+		.mapValues { NonEmptyList(it.value.first, it.value.second.build()) }
 
 fun <T> Iterable<T>.chunkedNel(size: Int): List<NonEmptyList<T>> =
 	windowedNel(size, size, partialWindows = true)

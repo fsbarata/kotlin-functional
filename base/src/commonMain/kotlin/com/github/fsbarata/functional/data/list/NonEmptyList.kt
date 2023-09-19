@@ -129,7 +129,7 @@ class NonEmptyList<out A>(
 		return of(f(head, otherNel.head), tail.zipWith(otherNel.tail, f))
 	}
 
-	fun reversed(): NonEmptyList<A> = tail.asReversed().toNel()?.plus(head) ?: this
+	fun reversed(): NonEmptyList<A> = tail.asReversed().plusElementNel(head)
 
 	fun distinct(): NonEmptyList<A> = toNes().toNel()
 	inline fun <K> distinctBy(selector: (A) -> K): NonEmptyList<A> {
