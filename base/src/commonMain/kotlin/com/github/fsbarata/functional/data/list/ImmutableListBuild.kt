@@ -13,11 +13,8 @@ class ImmutableListBuildScope<A>(sizeHint: Int = -1): RandomAccess {
 		return ListF(unreachableList)
 	}
 
-	fun get(index: Int): A =
+	operator fun get(index: Int): A =
 		list?.get(index) ?: throw IllegalStateException("list has been built")
-
-	fun removeAt(index: Int): A =
-		list?.removeAt(index) ?: throw IllegalStateException("list has been built")
 
 	operator fun set(index: Int, element: A): A =
 		list?.set(index, element) ?: throw IllegalStateException("list has been built")
@@ -50,6 +47,9 @@ class ImmutableListBuildScope<A>(sizeHint: Int = -1): RandomAccess {
 	fun remove(element: A): Boolean {
 		return list?.remove(element) ?: false
 	}
+
+	fun removeAt(index: Int): A =
+		list?.removeAt(index) ?: throw IllegalStateException("list has been built")
 
 	fun addAll(elements: Collection<A>): Boolean {
 		return addAll(size, elements)
