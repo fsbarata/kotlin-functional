@@ -65,3 +65,8 @@ inline fun <A, R: Any> Iterable<A>.mapNotNoneToSet(f: (A) -> Optional<R>): Set<R
 
 inline fun <A: Any> Iterable<Optional<A>>.filterNotNoneToSet(): Set<A> =
 	mapNotNoneToSet(::id)
+
+inline fun <A> Iterable<A>.firstOrError(): A = first()
+inline fun <A> List<A>.firstOrError(): A = first()
+inline fun <A> Iterable<A>.lastOrError(): A = last()
+inline fun <A> List<A>.lastOrError(): A = last()

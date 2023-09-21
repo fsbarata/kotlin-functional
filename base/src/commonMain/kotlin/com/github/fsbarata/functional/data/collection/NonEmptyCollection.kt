@@ -27,14 +27,21 @@ interface NonEmptyCollection<out A>:
 	@Deprecated("Non empty collection cannot be empty", replaceWith = ReplaceWith("false"))
 	fun none() = false
 
-	fun first() = head
+	fun first(): A = head
 
 	@Deprecated("Non empty collection always has a first", replaceWith = ReplaceWith("first()"))
 	fun firstOrNull(): Nothing = throw UnsupportedOperationException()
+
+	@Deprecated("Non empty collection always has a first", replaceWith = ReplaceWith("first()"))
+	fun firstOrError(): Nothing = throw UnsupportedOperationException()
+
 	fun last(): A = tail.lastOrNull() ?: head
 
 	@Deprecated("Non empty collection always has a last", replaceWith = ReplaceWith("last()"))
 	fun lastOrNull(): Nothing = throw UnsupportedOperationException()
+
+	@Deprecated("Non empty collection always has a last", replaceWith = ReplaceWith("last()"))
+	fun lastOrError(): Nothing = throw UnsupportedOperationException()
 
 	@Deprecated("Non empty collection always has a random", replaceWith = ReplaceWith("random()"))
 	fun randomOrNull(): Nothing = throw UnsupportedOperationException()

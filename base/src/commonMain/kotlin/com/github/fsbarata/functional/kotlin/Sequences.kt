@@ -22,3 +22,6 @@ fun <A, R> Sequence<A>.scanNe(initialValue: R, operation: (R, A) -> R): NonEmpty
 	val scan = scan(initialValue, operation)
 	return NonEmptySequence { scan.iterator() }
 }
+
+inline fun <A> Sequence<A>.firstOrError(): A = first()
+inline fun <A> Sequence<A>.lastOrError(): A = last()
