@@ -1,7 +1,9 @@
 package com.github.fsbarata.functional.kotlin
 
+import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.toNel
+import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
 import com.github.fsbarata.functional.data.sequence.nonEmpty
 import com.github.fsbarata.functional.utils.nonEmptyIterator
@@ -22,6 +24,24 @@ fun <A, R> Sequence<A>.scanNe(initialValue: R, operation: (R, A) -> R): NonEmpty
 	val scan = scan(initialValue, operation)
 	return NonEmptySequence { scan.iterator() }
 }
+
+fun <A, R: Any> Sequence<A>.mapNotNone(f: (A) -> Optional<R>): Sequence<R> =
+	mapNotNull { f(it).orNull() }
+
+fun <A: Any> Sequence<Optional<A>>.filterNotNone(): Sequence<A> =
+	mapNotNone(::id)
+
+inline fun <A, R: Any> Sequence<A>.mapNotNullToSet(f: (A) -> R?): Set<R> =
+	mapNotNullTo(mutableSetOf(), f)
+
+inline fun <A: Any> Sequence<A?>.filterNotNullToSet(): Set<A> =
+	filterNotNullTo(mutableSetOf())
+
+inline fun <A, R: Any> Sequence<A>.mapNotNoneToSet(f: (A) -> Optional<R>): Set<R> =
+	mapNotNullToSet { f(it).orNull() }
+
+inline fun <A: Any> Sequence<Optional<A>>.filterNotNoneToSet(): Set<A> =
+	mapNotNoneToSet(::id)
 
 inline fun <A> Sequence<A>.firstOrError(): A = first()
 inline fun <A> Sequence<A>.lastOrError(): A = last()
