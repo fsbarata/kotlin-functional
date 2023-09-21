@@ -3,6 +3,7 @@ package com.github.fsbarata.functional.data.collection
 import com.github.fsbarata.functional.data.Foldable
 import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.list.NonEmptyList
+import com.github.fsbarata.functional.data.list.buildListF
 import com.github.fsbarata.functional.data.list.toNel
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
 import com.github.fsbarata.functional.data.set.NonEmptySet
@@ -111,20 +112,40 @@ interface NonEmptyCollection<out A>:
 	fun asSequence(): NonEmptySequence<@UnsafeVariance A> = NonEmptySequence.of(head, tail)
 }
 
-fun <T> NonEmptyCollection<NonEmptyCollection<T>>.flattenToList() =
-	NonEmptyList.of(head.head, head.tail + tail.flatten())
+fun <T> NonEmptyCollection<NonEmptyCollection<T>>.flattenToList(): NonEmptyList<T> {
+	val headCollection = first()
+	return NonEmptyList(
+		headCollection.first(),
+		buildListF {
+			addAll(headCollection.tail)
+			tail.forEach { addAll(it) }
+		},
+	)
+}
 
-fun <T> NonEmptyCollection<NonEmptyCollection<T>>.flattenToSet() =
-	NonEmptySet.of(head.head, head.tail.toSet() + tail.flatten())
+fun <T> NonEmptyCollection<NonEmptyCollection<T>>.flattenToSet(): NonEmptySet<T> {
+	val headCollection = first()
+
+	return NonEmptySet.of(
+		headCollection.first(),
+		buildSet {
+			addAll(headCollection.tail)
+			tail.forEach { addAll(it) }
+		},
+	)
+}
 
 inline fun <A, B> NonEmptyCollection<A>.flatMapIterable(f: (A) -> Iterable<B>): List<B> =
-	f(head) + tail.flatMap(f)
+	buildListF {
+		addAll(f(first()))
+		tail.forEach { addAll(f(it)) }
+	}
 
 fun <S, A: S> NonEmptyCollection<A>.runningReduceNel(operation: (S, A) -> S): NonEmptyList<S> =
-	tail.scanNel(head, operation)
+	tail.scanNel(first(), operation)
 
-fun <T: Comparable<T>> NonEmptyCollection<T>.max() = tail.maxOrNull()?.coerceAtLeast(head) ?: head
-fun <T: Comparable<T>> NonEmptyCollection<T>.min() = tail.minOrNull()?.coerceAtMost(head) ?: head
+fun <T: Comparable<T>> NonEmptyCollection<T>.max() = tail.maxOrNull()?.coerceAtLeast(first()) ?: first()
+fun <T: Comparable<T>> NonEmptyCollection<T>.min() = tail.minOrNull()?.coerceAtMost(first()) ?: first()
 
 private fun <A> Iterable<A>.toNelUnsafe(): NonEmptyList<A> =
 	toNel() ?: throw NoSuchElementException()

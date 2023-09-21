@@ -4,13 +4,10 @@ import com.github.fsbarata.functional.assertEquals
 import com.github.fsbarata.functional.control.ComonadLaws
 import com.github.fsbarata.functional.control.MonadZipLaws
 import com.github.fsbarata.functional.data.TraversableLaws
-import com.github.fsbarata.functional.data.collection.max
-import com.github.fsbarata.functional.data.collection.min
-import com.github.fsbarata.functional.data.collection.runningReduceNel
+import com.github.fsbarata.functional.data.collection.*
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.set.nesOf
 import com.github.fsbarata.functional.data.validation.Validation
-import com.github.fsbarata.functional.data.validation.ValidationApplicativeScope
 import com.github.fsbarata.functional.data.validation.asValidation
 import kotlin.test.Test
 
@@ -392,6 +389,36 @@ internal class NonEmptyListTest:
 				.sequenceA(Validation.applicative())
 				.asValidation
 				.map { it.sum() }
+		)
+	}
+
+	@Test
+	fun flatMapToIterable() {
+		assertEquals(emptyList<Double>(), nel1.flatMapIterable { emptyList<Double>() })
+		assertEquals(listOf(90, 9), nel1.flatMapIterable { listOf(10 * it, it) })
+		assertEquals(listOf(50, 5, 10, 1, 30, 3), nel2.flatMapIterable { listOf(10 * it, it) })
+		assertEquals(listOf(20, 2, 40, 4, 20, 2, 50, 5), nel3.flatMapIterable { listOf(10 * it, it) })
+	}
+
+	@Test
+	fun flattenToList() {
+		assertEquals(
+			nelOf(2, 5, 8, 3, 2, 1, 8, 6, 4, 2), nelOf(
+				nelOf(2, 5, 8),
+				nelOf(3, 2, 1, 8),
+				nelOf(6, 4, 2),
+			).flattenToList()
+		)
+	}
+
+	@Test
+	fun flattenToSet() {
+		assertEquals(
+			nesOf(2, 5, 8, 3, 2, 1, 6, 4), nelOf(
+				nelOf(2, 5, 8),
+				nelOf(3, 2, 1, 8),
+				nelOf(6, 4, 2),
+			).flattenToSet()
 		)
 	}
 }

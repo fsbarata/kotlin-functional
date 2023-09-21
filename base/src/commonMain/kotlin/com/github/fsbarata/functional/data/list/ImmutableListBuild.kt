@@ -51,6 +51,13 @@ class ImmutableListBuildScope<A>(sizeHint: Int = -1): RandomAccess {
 	fun removeAt(index: Int): A =
 		list?.removeAt(index) ?: throw IllegalStateException("list has been built")
 
+	fun addAll(elements: Iterable<A>): Boolean {
+		return when (elements) {
+			is Collection -> addAll(size, elements)
+			else -> elements.all { list?.add(it) ?: false }
+		}
+	}
+
 	fun addAll(elements: Collection<A>): Boolean {
 		return addAll(size, elements)
 	}

@@ -60,6 +60,7 @@ class NonEmptyList<out A>(
 	override fun iterator(): Iterator<A> = super<NonEmptyCollection>.iterator()
 
 	override fun subList(fromIndex: Int, toIndex: Int): ListF<A> = when {
+		fromIndex == 0 && toIndex == size -> ListF.fromList(this)
 		fromIndex == 0 && toIndex == 0 -> ListF.empty()
 		fromIndex == 0 -> ListF.fromList(NonEmptyList(head, tail.subList(0, toIndex - 1)))
 		else -> tail.subList(fromIndex - 1, toIndex - 1)
