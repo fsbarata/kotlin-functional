@@ -1,11 +1,11 @@
 package com.github.fsbarata.functional.data.list
 
-class ImmutableListBuildScope<A>(sizeHint: Int = -1): RandomAccess {
+class ImmutableListBuildScope<A>(sizeHint: Int = -1): MutableCollection<A>, RandomAccess {
 	private var list: MutableList<A>? = if (sizeHint >= 0) ArrayList(sizeHint) else ArrayList()
 
-	val size: Int get() = list?.size ?: 0
+	override val size: Int get() = list?.size ?: 0
 
-	fun isEmpty(): Boolean = size == 0
+	override fun isEmpty(): Boolean = size == 0
 
 	fun build(): ListF<A> {
 		val unreachableList = list ?: throw IllegalStateException("build() can only be called once")
@@ -13,30 +13,37 @@ class ImmutableListBuildScope<A>(sizeHint: Int = -1): RandomAccess {
 		return ListF(unreachableList)
 	}
 
-	operator fun get(index: Int): A =
-		list?.get(index) ?: throw IllegalStateException("list has been built")
+	private fun listOrError(): MutableList<A> =
+		checkNotNull(list) { "list has been built" }
+
+	operator fun get(index: Int): A = listOrError()[index]
 
 	operator fun set(index: Int, element: A): A =
-		list?.set(index, element) ?: throw IllegalStateException("list has been built")
+		listOrError().set(index, element)
 
-	fun iterator(): Iterator<A> {
-		val iterator = list?.iterator() ?: throw IllegalStateException("list has been built")
-		return object : Iterator<A> by iterator {}
+	override fun iterator(): MutableIterator<A> {
+		val iterator = listOrError().iterator()
+		return object: MutableIterator<A> by iterator {
+			override fun remove() {
+				checkNotNull(list) { "list has been built" }
+				iterator.remove()
+			}
+		}
 	}
 
 	fun indexOf(element: A): Int = list?.indexOf(element) ?: -1
 
 	fun lastIndexOf(element: A): Int = list?.lastIndexOf(element) ?: -1
 
-	fun contains(element: A): Boolean {
+	override fun contains(element: A): Boolean {
 		return list?.contains(element) ?: false
 	}
 
-	fun containsAll(elements: Collection<A>): Boolean {
+	override fun containsAll(elements: Collection<A>): Boolean {
 		return list?.containsAll(elements) ?: false
 	}
 
-	fun add(element: A): Boolean {
+	override fun add(element: A): Boolean {
 		return list?.add(element) ?: false
 	}
 
@@ -44,21 +51,14 @@ class ImmutableListBuildScope<A>(sizeHint: Int = -1): RandomAccess {
 		return list?.add(index, element) != null
 	}
 
-	fun remove(element: A): Boolean {
+	override fun remove(element: A): Boolean {
 		return list?.remove(element) ?: false
 	}
 
 	fun removeAt(index: Int): A =
-		list?.removeAt(index) ?: throw IllegalStateException("list has been built")
+		listOrError().removeAt(index)
 
-	fun addAll(elements: Iterable<A>): Boolean {
-		return when (elements) {
-			is Collection -> addAll(size, elements)
-			else -> elements.all { list?.add(it) ?: false }
-		}
-	}
-
-	fun addAll(elements: Collection<A>): Boolean {
+	override fun addAll(elements: Collection<A>): Boolean {
 		return addAll(size, elements)
 	}
 
@@ -70,16 +70,16 @@ class ImmutableListBuildScope<A>(sizeHint: Int = -1): RandomAccess {
 		}
 	}
 
-	fun retainAll(elements: Collection<A>): Boolean {
+	override fun retainAll(elements: Collection<A>): Boolean {
 		return list?.retainAll(elements) ?: false
 	}
 
-	fun removeAll(elements: Collection<A>): Boolean {
+	override fun removeAll(elements: Collection<A>): Boolean {
 		return list?.removeAll(elements) ?: false
 	}
 
-	fun clear() {
-		list?.clear()
+	override fun clear() {
+		listOrError().clear()
 	}
 }
 

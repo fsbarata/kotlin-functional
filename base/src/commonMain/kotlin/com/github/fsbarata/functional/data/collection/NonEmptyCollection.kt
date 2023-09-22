@@ -144,7 +144,7 @@ fun <T> NonEmptyCollection<NonEmptyCollection<T>>.flattenToSet(): NonEmptySet<T>
 
 inline fun <A, B> NonEmptyCollection<A>.flatMapIterable(f: (A) -> Iterable<B>): List<B> =
 	buildListF {
-		addAll(f(first()))
+		addAll(f(this@flatMapIterable.first()))
 		tail.forEach { addAll(f(it)) }
 	}
 

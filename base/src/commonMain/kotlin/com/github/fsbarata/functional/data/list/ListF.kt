@@ -39,7 +39,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		toNel()?.plus(other) ?: other.toNel()
 
 	override inline fun <B> map(f: (A) -> B): ListF<B> =
-		buildListF(size) { forEach { add(f(it)) } }
+		buildListF(size) { this@ListF.forEach { add(f(it)) } }
 
 	override inline fun onEach(f: (A) -> Unit): ListF<A> {
 		forEach(f)
@@ -47,7 +47,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	}
 
 	inline fun <B> mapIndexed(f: (index: Int, A) -> B): ListF<B> =
-		buildListF(size) { forEachIndexed { index, item -> add(f(index, item)) } }
+		buildListF(size) { this@ListF.forEachIndexed { index, item -> add(f(index, item)) } }
 
 	inline fun onEachIndexed(f: (index: Int, A) -> Unit): ListF<A> {
 		forEachIndexed(f)
@@ -65,17 +65,17 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		return buildListF(
 			if (other is Collection) size * other.size
 			else -1
-		) { forEach { a -> other.forEach { add(f(a, it)) } } }
+		) { this@ListF.forEach { a -> other.forEach { add(f(a, it)) } } }
 	}
 
 	override inline infix fun <B> bind(f: (A) -> Context<ListContext, B>): ListF<B> =
 		flatMap { f(it).asList }
 
 	inline fun <B> flatMap(f: (A) -> Iterable<B>): ListF<B> =
-		buildListF { forEach { f(it).forEach(::add) } }
+		buildListF { this@ListF.forEach { f(it).forEach(::add) } }
 
 	override inline fun filter(predicate: (A) -> Boolean): ListF<A> =
-		buildListF { forEach { if (predicate(it)) add(it) } }
+		buildListF { this@ListF.forEach { if (predicate(it)) add(it) } }
 
 	override inline fun partition(predicate: (A) -> Boolean): Pair<ListF<A>, ListF<A>> {
 		val p = asIterable().partition(predicate)
@@ -83,7 +83,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 	}
 
 	override inline fun <B: Any> mapNotNull(f: (A) -> B?): ListF<B> =
-		buildListF { forEach { add(f(it) ?: return@forEach) } }
+		buildListF { this@ListF.forEach { add(f(it) ?: return@forEach) } }
 
 	override inline fun <B: Any> mapNotNone(f: (A) -> Optional<B>): ListF<B> =
 		mapNotNull { f(it).orNull() }
