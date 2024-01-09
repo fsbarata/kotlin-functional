@@ -40,5 +40,9 @@ fun allMonoid() = monoidOf(true, Boolean::and)
 fun anyMonoid() = monoidOf(false, Boolean::or)
 
 fun <A: Comparable<A>> maxSemigroupScope(): Semigroup.Scope<A> = Semigroup.Scope<A>(::maxOf)
+fun <A> maxSemigroupScope(comparator: Comparator<A>) =
+	Semigroup.Scope<A> { a, b -> maxOf(a, b, comparator) }
 fun <A: Comparable<A>> minSemigroupScope(): Semigroup.Scope<A> = Semigroup.Scope<A>(::minOf)
+fun <A> minSemigroupScope(comparator: Comparator<A>) =
+	Semigroup.Scope<A> { a, b -> minOf(a, b, comparator) }
 

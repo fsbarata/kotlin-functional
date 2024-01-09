@@ -138,7 +138,7 @@ inline fun <E, A> Optional<A>.toEither(e: () -> E): Either<E, A> =
 infix fun <A> Either<*, A>.orElse(a: A): A = valueOr { a }
 inline infix fun <E, A> Either<E, A>.valueOr(f: (E) -> A): A = fold(ifLeft = f, ifRight = { it })
 
-inline fun <A> Either<Throwable, A>.orThrow() = valueOr { throw it }
+inline fun <A> Either<Throwable, A>.orThrow(): A = valueOr { throw it }
 
 inline fun <E, A, B> Either<E, A>.ensure(e: E, f: (A) -> Optional<B>): Either<E, B> =
 	flatMap { a -> f(a).toEither { e } }
