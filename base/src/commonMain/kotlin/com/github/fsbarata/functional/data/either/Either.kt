@@ -68,7 +68,8 @@ sealed class Either<out E, out A>:
 		ifRight = { appScope.map(f(it), ::Right) }
 	)
 
-	inline fun orNull(): A? = valueOr { null }
+	inline fun orNull(): A? = (this as? Right)?.value
+	inline fun leftOrNull(): E? = (this as? Left)?.value
 
 	inline fun toOptional(): Optional<A> = fold({ Optional.empty() }, { Optional.just(it) })
 
@@ -83,12 +84,12 @@ sealed class Either<out E, out A>:
 	final override inline fun onEach(f: (A) -> Unit): Either<E, A> = onRight(f)
 
 	inline fun onRight(f: (A) -> Unit): Either<E, A> {
-		(this as? Right)?.value?.also(f)
+		f(orNull() ?: return this)
 		return this
 	}
 
 	inline fun onLeft(f: (E) -> Unit): Either<E, A> {
-		(this as? Left)?.value?.also(f)
+		f(leftOrNull() ?: return this)
 		return this
 	}
 

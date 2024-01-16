@@ -74,6 +74,12 @@ class EitherTest:
 	}
 
 	@Test
+	fun leftOrNull() {
+		assertEquals("5", LEFT.leftOrNull())
+		assertNull(RIGHT.leftOrNull())
+	}
+
+	@Test
 	fun toOptional() {
 		assertEquals(Optional.empty<Int>(), LEFT.toOptional())
 		assertEquals(Optional.just(5), RIGHT.toOptional())
