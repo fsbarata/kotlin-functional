@@ -4,7 +4,10 @@ import com.github.fsbarata.functional.BiContext
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.control.arrow.kleisli
-import com.github.fsbarata.functional.data.*
+import com.github.fsbarata.functional.data.BiFunctor
+import com.github.fsbarata.functional.data.Monoid
+import com.github.fsbarata.functional.data.Semigroup
+import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.io.Serializable
 
@@ -170,3 +173,18 @@ fun <E, A, R> liftEither(f: (A) -> R): (Either<E, A>) -> Either<E, R> = lift(f):
 fun <E, A, B, R> liftEither2(f: (A, B) -> R): (Either<E, A>, Either<E, B>) -> Either<E, R> = lift2(f)::invoke
 fun <E, A, B, C, R> liftEither3(f: (A, B, C) -> R): (Either<E, A>, Either<E, B>, Either<E, C>) -> Either<E, R> =
 	lift3(f)::invoke
+
+fun <A> Result<A>.toEither(): Either<Throwable, A> {
+	return fold(Either.Companion::right, Either.Companion::left)
+}
+
+fun <E: Throwable, A> Either<E, A>.toResult(): Result<A> =
+	fold(Result.Companion::failure, Result.Companion::success)
+
+inline fun <R> runCatchingEither(block: () -> R): Either<Throwable, R> {
+	return try {
+		Either.Right(block())
+	} catch (e: Throwable) {
+		Either.Left(e)
+	}
+}
