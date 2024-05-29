@@ -4,6 +4,8 @@ plugins {
 }
 
 kotlin {
+    applyDefaultHierarchyTemplate()
+
     jvm()
     mingwX64()
     linuxX64()
@@ -23,15 +25,9 @@ kotlin {
                 implementation(project(":laws"))
             }
         }
-        val nativeMain by creating {
-            dependsOn(commonMain)
-        }
-        val mingwX64Main by getting {
-            dependsOn(nativeMain)
-        }
-        val linuxX64Main by getting {
-            dependsOn(nativeMain)
-        }
+        val nativeMain by getting {}
+        val mingwX64Main by getting {}
+        val linuxX64Main by getting {}
     }
 }
 

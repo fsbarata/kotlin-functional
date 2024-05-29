@@ -18,7 +18,7 @@ sealed class Or<out L, out R>:
 	Traversable<OrContext<@UnsafeVariance L>, R>,
 	Serializable {
 
-	override val scope get() = Scope<@UnsafeVariance L>()
+	override val scope: Scope<@UnsafeVariance L> get() = Scope()
 
 	data class Left<out A>(val value: A): Or<A, Nothing>()
 	data class Right<out A>(val value: A): Or<Nothing, A>()

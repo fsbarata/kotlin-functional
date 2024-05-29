@@ -27,7 +27,7 @@ sealed class Either<out E, out A>:
 	data class Left<out E>(val value: E): Either<E, Nothing>()
 	data class Right<out A>(val value: A): Either<Nothing, A>()
 
-	override val scope get() = Scope<@UnsafeVariance E>()
+	override val scope: Scope<@UnsafeVariance E> get() = Scope()
 
 	inline fun <R> fold(ifLeft: (E) -> R, ifRight: (A) -> R): R = when (this) {
 		is Left -> ifLeft(value)

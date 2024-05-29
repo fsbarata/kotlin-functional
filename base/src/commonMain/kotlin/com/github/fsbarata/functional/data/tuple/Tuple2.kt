@@ -16,7 +16,7 @@ data class Tuple2<out X, out Y>(val x: X, val y: Y):
 	BiFunctor<Tuple2BiContext, X, Y>,
 	Comonad<Tuple2Context<@UnsafeVariance X>, Y>,
 	Serializable {
-	override val scope get() = Scope<@UnsafeVariance X>()
+	override val scope: Scope<@UnsafeVariance X> get() = Scope()
 
 	override fun extract() = y
 
