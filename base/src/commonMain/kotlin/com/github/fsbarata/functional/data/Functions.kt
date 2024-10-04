@@ -301,6 +301,19 @@ inline fun <A, B, R> on(crossinline f1: ((B) -> (B) -> R), crossinline f2: F1<A,
 	{ a1: A -> val fa1: B = f2(a1); { a2: A -> f1(fa1)(f2(a2)) } }
 
 
+inline fun <A, B> selectFirst2(): F2<A, B, A> = { a, _ -> a }
+inline fun <A, B> selectFirst2S(): sF2<A, B, A> = { a, _ -> a }
+inline fun <A, B, C> selectFirst3(): F3<A, B, C, A> = { a, _, _ -> a }
+inline fun <A, B, C> selectFirst3S(): sF3<A, B, C, A> = { a, _, _ -> a }
+
+inline fun <A, B, C> selectSecond3(): F3<A, B, C, B> = { _, b, _ -> b }
+inline fun <A, B, C> selectSecond3S(): sF3<A, B, C, B> = { _, b, _ -> b }
+
+inline fun <A, B> selectLast2(): F2<A, B, B> = flip(selectFirst2())
+inline fun <A, B> selectLast2S(): sF2<A, B, B> = flipS(selectFirst2S())
+inline fun <A, B, C> selectLast3(): F3<A, B, C, C> = { _, _, c -> c }
+inline fun <A, B, C> selectLast3S(): sF3<A, B, C, C> = { _, _, c -> c }
+
 /**
  * Experimental functions
  */
