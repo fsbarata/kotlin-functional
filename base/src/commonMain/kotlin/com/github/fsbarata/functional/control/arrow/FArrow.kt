@@ -76,8 +76,5 @@ inline infix fun <A, B, R> F1<A, R>.faninWith(crossinline other: F1<B, R>) = fan
 inline fun <A, B, R> fanin(crossinline f1: F1<A, R>, crossinline f2: F1<B, R>): F1<Either<A, B>, R> =
 	{ it.fold(f1, f2) }
 
-@JvmName("fappExt")
-inline fun <A, R> Pair<F1<A, R>, A>.fapp() = fapp(this)
-inline fun <A, R> fapp(f: F1<A, R>, a: A): R = f(a)
-inline fun <A, R> fapp(p: Pair<F1<A, R>, A>): R = p.first.invoke(p.second)
+inline fun <A, R> fapply(f: F1<A, R>, a: A): R = f(a)
 

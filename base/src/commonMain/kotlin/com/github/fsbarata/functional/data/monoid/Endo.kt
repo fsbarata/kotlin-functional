@@ -2,9 +2,7 @@ package com.github.fsbarata.functional.data.monoid
 
 import com.github.fsbarata.functional.data.*
 
-class Endo<A>(private val f: (A) -> A): F1<A, A> by f,
-	Semigroup<Endo<A>> {
-	override fun concatWith(other: Endo<A>) = Endo(f.compose(other.f))
-}
+typealias Endomorphism<A> = F1<A, A>
 
-fun <A> endoMonoid() = monoid(Endo<A>(::id))
+fun <A> endoSemigroup() = Semigroup.Scope<Endomorphism<A>>(::compose)
+fun <A> endoMonoid(): Monoid<Endomorphism<A>> = monoidOf(::id, ::compose)

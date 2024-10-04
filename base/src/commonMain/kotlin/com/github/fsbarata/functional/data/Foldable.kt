@@ -4,8 +4,6 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.Alternative
 import com.github.fsbarata.functional.data.list.ListF
 import com.github.fsbarata.functional.data.list.NonEmptyList
-import com.github.fsbarata.functional.data.monoid.Dual
-import com.github.fsbarata.functional.data.monoid.Endo
 import com.github.fsbarata.functional.data.monoid.dual
 import com.github.fsbarata.functional.data.monoid.endoMonoid
 import com.github.fsbarata.functional.data.sequence.NonEmptySequence
@@ -26,8 +24,8 @@ interface Foldable<out A> {
 	fun <R> foldL(initialValue: R, accumulator: (R, A) -> R): R =
 		foldMap(
 			endoMonoid<R>().dual(),
-			accumulator.flip().curry() composeForward ::Endo composeForward ::Dual
-		).get(initialValue)
+			accumulator.flip().curry(),
+		)(initialValue)
 
 	/**
 	 * Fold the structure from the right
@@ -35,7 +33,7 @@ interface Foldable<out A> {
 	fun <R> foldR(initialValue: R, accumulator: (A, R) -> R): R =
 		foldMap(
 			endoMonoid(),
-			accumulator.curry() composeForward ::Endo
+			accumulator.curry(),
 		)(initialValue)
 
 	/**
