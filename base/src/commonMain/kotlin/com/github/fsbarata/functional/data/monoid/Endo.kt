@@ -11,6 +11,6 @@ fun <A> endoMonoid(): Monoid<Endomorphism<A>> = monoidOf(::id, ::compose)
  * Apply an endomorphism n times
  * Equivalent to generateSequence(a, f).take(n).last()
  */
-tailrec fun <A> fapplyN(a: A, n: Int, f: Endomorphism<A>): A =
-	if (n <= 0) a
-	else fapplyN(f(a), n - 1, f)
+inline fun <A> fapplyN(a: A, n: Int, f: Endomorphism<A>): A {
+	return (0 until n).fold(a) { r, _ -> f(r) }
+}
