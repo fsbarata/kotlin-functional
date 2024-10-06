@@ -1,9 +1,7 @@
 package com.github.fsbarata.functional.control
 
-interface ArrowApply<ARR, A, R>: Arrow<ARR, A, R> {
-	override val scope: Scope<ARR>
-
+object ArrowApply {
 	interface Scope<ARR>: Arrow.Scope<ARR> {
-		fun <A, R> app(): ArrowApply<ARR, out Pair<ArrowApply<ARR, A, R>, A>, R>
+		fun <A, R> app(): Arrow<ARR, out Pair<Arrow<ARR, A, R>, A>, R>
 	}
 }
