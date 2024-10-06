@@ -33,8 +33,14 @@ class Kleisli<M, A, R> internal constructor(
 	override infix fun <B> compose(other: Category<Kleisli<M, *, *>, B, A>): Kleisli<M, B, R> =
 		Kleisli(monadScope) { monadScope.bind(other.asKleisli.f(it), f) }
 
+	infix fun <B> composeKleisli(other: F1<B, Context<M, A>>): Kleisli<M, B, R> =
+		Kleisli(monadScope) { monadScope.bind(other(it), f) }
+
 	override infix fun <RR> composeForward(other: Category<Kleisli<M, *, *>, R, RR>): Kleisli<M, A, RR> =
 		Kleisli(monadScope) { monadScope.bind(f(it), other.asKleisli) }
+
+	infix fun <RR> composeForwardKleisli(other: F1<R, Context<M, RR>>): Kleisli<M, A, RR> =
+		Kleisli(monadScope) { monadScope.bind(f(it), other) }
 
 	override fun <PASS> first(): Kleisli<M, Pair<A, PASS>, Pair<R, PASS>> =
 		Kleisli(monadScope) { (a, d) -> monadScope.map(f(a)) { r -> Pair(r, d) } }

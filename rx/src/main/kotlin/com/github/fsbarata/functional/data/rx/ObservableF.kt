@@ -1,9 +1,13 @@
 package com.github.fsbarata.functional.data.rx
 
 import com.github.fsbarata.functional.Context
+import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.control.MonadPlus
 import com.github.fsbarata.functional.control.MonadZip
 import com.github.fsbarata.functional.control.apFromLift2
+import com.github.fsbarata.functional.control.arrow.Kleisli
+import com.github.fsbarata.functional.control.arrow.kleisli
+import com.github.fsbarata.functional.data.F1
 import com.github.fsbarata.functional.data.Semigroup
 import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.maybe.Optional
@@ -76,6 +80,9 @@ abstract class ObservableMonad: MonadPlus.Scope<ObservableContext>, MonadZip.Sco
 	): Context<ObservableContext, R & Any> {
 		return ObservableF((ca as Observable<A & Any>).zipWith(cb as Observable<B & Any>) { a, b -> f(a, b)!! })
 	}
+
+	fun <A, R: Any> kleisli(f: (A) -> Observable<R>): Kleisli<ObservableContext, A, R> =
+		(this as Monad.Scope<ObservableContext>).kleisli { f(it).f() }
 }
 
 object ObservableSwitchMonad: ObservableMonad() {
@@ -140,6 +147,10 @@ fun <A: Any> Observable<Optional<A>>.filterNotNone(): Observable<A> =
 
 fun <A: Any> Observable<A>.partition(predicate: (A) -> Boolean): Pair<Observable<A>, Observable<A>> =
 	Pair(filter(predicate), filter { !predicate(it) })
+
+fun <A: Any, B: Any> Observable<A>.flatMap(kleisli: F1<A, Context<ObservableContext, B>>): Observable<B> {
+	return flatMap { kleisli(it).asObservable }
+}
 
 fun <A: Any> Observable<A>.f(): ObservableF<A> = ObservableF(this)
 
