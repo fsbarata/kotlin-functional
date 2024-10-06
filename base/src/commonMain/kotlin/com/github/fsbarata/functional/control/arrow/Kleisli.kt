@@ -1,12 +1,14 @@
 package com.github.fsbarata.functional.control.arrow
 
 import com.github.fsbarata.functional.Context
-import com.github.fsbarata.functional.control.*
+import com.github.fsbarata.functional.control.ArrowApply
+import com.github.fsbarata.functional.control.ArrowChoice
+import com.github.fsbarata.functional.control.Category
+import com.github.fsbarata.functional.control.Monad
 import com.github.fsbarata.functional.data.F1
 import com.github.fsbarata.functional.data.compose
 import com.github.fsbarata.functional.data.either.Either
 import com.github.fsbarata.functional.data.either.Either.Right
-import com.github.fsbarata.functional.data.id
 
 /**
  * Kleisli Arrow
@@ -119,8 +121,23 @@ fun <M, A, B, C, D, R> composeKleisli(
 fun <M, A, B, R> composeForwardKleisli(kleisli1: Kleisli<M, A, B>, f2: F1<B, Context<M, R>>) =
 	kleisli1.composeForwardKleisli(f2)
 
-fun <M, A, B, R> Monad.Scope<M>.composeKleisli(f1: F1<A, Context<M, R>>, f2: F1<B, Context<M, A>>): Kleisli<M, B, R> =
-	kleisli(f1).composeKleisli(f2)
+fun <M, A, B, R> Monad.Scope<M>.composeKleisli(
+	f1: F1<A, Context<M, R>>,
+	f2: F1<B, Context<M, A>>,
+): Kleisli<M, B, R> = kleisli(f1).composeKleisli(f2)
+
+fun <M, A, B, C, R> Monad.Scope<M>.composeKleisli(
+	f1: F1<A, Context<M, R>>,
+	f2: F1<B, Context<M, A>>,
+	f3: F1<C, Context<M, B>>,
+): Kleisli<M, C, R> = kleisli(f1).composeKleisli(f2).composeKleisli(f3)
+
+fun <M, A, B, C, D, R> Monad.Scope<M>.composeKleisli(
+	f1: F1<A, Context<M, R>>,
+	f2: F1<B, Context<M, A>>,
+	f3: F1<C, Context<M, B>>,
+	f4: F1<D, Context<M, C>>,
+): Kleisli<M, D, R> = kleisli(f1).composeKleisli(f2).composeKleisli(f3).composeKleisli(f4)
 
 fun <M, A, B, R> Monad.Scope<M>.composeForwardKleisli(
 	f1: F1<A, Context<M, B>>,
