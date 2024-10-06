@@ -27,17 +27,10 @@ fun <A: Semigroup<A>> A.stimes(n: Int): A {
 	return semigroupScopeOf<A>().stimes(this, n)
 }
 
-fun <A> Semigroup.Scope<A>.stimes(a: A, n: Int): A {
+inline fun <A> Semigroup.Scope<A>.stimes(a: A, n: Int): A {
 	require(n >= 1)
-	return add(a, a, n - 1)
+	return (1 until n).fold(a) { r, _ -> concat(r, a) }
 }
 
-private tailrec fun <A> Semigroup.Scope<A>.add(ac: A, a: A, n: Int): A =
-	if (n == 0) ac
-	else add(concat(ac, a), a, n - 1)
-
-fun <A: Semigroup<A>> NonEmptyList<A>.sconcat(): A =
-	sconcat(::concat)
-
-fun <A> NonEmptyList<A>.sconcat(semigroupScope: Semigroup.Scope<A>): A =
+inline fun <A> NonEmptyList<A>.sconcat(semigroupScope: Semigroup.Scope<A>): A =
 	reduce(semigroupScope::concat)

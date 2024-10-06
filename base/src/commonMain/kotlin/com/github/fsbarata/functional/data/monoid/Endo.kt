@@ -17,3 +17,4 @@ inline fun <A> fapplyN(a: A, n: Int, f: Endomorphism<A>): A {
 	return (0 until n).fold(a) { r, _ -> f(r) }
 }
 
+fun <A> fN(n: Int, f: Endomorphism<A>): Endomorphism<A> = endoSemigroup<A>().stimes(f, n)
