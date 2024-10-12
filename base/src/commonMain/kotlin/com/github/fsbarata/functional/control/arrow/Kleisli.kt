@@ -49,14 +49,14 @@ class Kleisli<M, A, R> internal constructor(
 	override fun <PASS> second(): Kleisli<M, Pair<PASS, A>, Pair<PASS, R>> =
 		Kleisli(monadScope) { (d, a) -> monadScope.map(f(a)) { r -> Pair(d, r) } }
 
-	override fun <B, RR> split(other: Category<Kleisli<M, *, *>, B, RR>): Kleisli<M, Pair<A, B>, Pair<R, RR>> {
+	override infix fun <B, RR> split(other: Category<Kleisli<M, *, *>, B, RR>): Kleisli<M, Pair<A, B>, Pair<R, RR>> {
 		val otherKleisli = other.asKleisli
 		return Kleisli(monadScope) { (a, d) ->
 			monadScope.bind(f(a)) { r -> monadScope.map(otherKleisli(d)) { e -> Pair(r, e) } }
 		}
 	}
 
-	override fun <RR> fanout(other: Category<Kleisli<M, *, *>, A, RR>): Kleisli<M, A, Pair<R, RR>> {
+	override infix fun <RR> fanout(other: Category<Kleisli<M, *, *>, A, RR>): Kleisli<M, A, Pair<R, RR>> {
 		val otherKleisli = other.asKleisli
 		return Kleisli(monadScope) { a ->
 			monadScope.bind(f(a)) { r -> monadScope.map(otherKleisli(a)) { d -> Pair(r, d) } }
