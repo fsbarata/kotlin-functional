@@ -1,6 +1,7 @@
 package com.github.fsbarata.functional.control
 
 import com.github.fsbarata.functional.Context
+import com.github.fsbarata.functional.data.const
 import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.data.partial
 
@@ -45,6 +46,7 @@ fun <M, A, MA: Monad<M, A>> Monad<M, MA>.flatten(): MA {
 	return bind { it } as MA
 }
 
+@Suppress("UNCHECKED_CAST")
 fun <M, B, MB: Monad<M, B>> Monad<M, *>.andThen(other: MB): MB {
-	return bind { _ -> other } as MB
+	return bind(const(other)) as MB
 }
