@@ -2,6 +2,7 @@ package com.github.fsbarata.functional.data.either
 
 import com.github.fsbarata.functional.assertEquals
 import com.github.fsbarata.functional.control.MonadLaws
+import com.github.fsbarata.functional.control.flatten
 import com.github.fsbarata.functional.data.BiFunctorLaws
 import com.github.fsbarata.functional.data.TraversableLaws
 import com.github.fsbarata.functional.data.maybe.Optional
@@ -92,6 +93,13 @@ class EitherTest:
 	}
 
 	@Test
+	fun flatten() {
+		assertEquals(Either.Left("6"), Either.Left("6").flatten<String, Any>())
+		assertEquals(LEFT, Either.Right(LEFT).flatten())
+		assertEquals(RIGHT, Either.Right(RIGHT).flatten())
+	}
+
+	@Test
 	fun orElse() {
 		assertEquals(1239, LEFT.orElse(1239))
 		assertEquals(5, RIGHT.orElse(1239))
@@ -101,6 +109,20 @@ class EitherTest:
 	fun valueOr() {
 		assertEquals(6, LEFT.valueOr { it.toInt() + 1 })
 		assertEquals(5, RIGHT.valueOr { fail() })
+	}
+
+	@Test
+	fun runCatchingEither() {
+		assertEquals(Either.Right(5), runCatchingEither { 5 })
+		val error = Exception()
+		assertEquals(Either.Left(error), runCatchingEither { throw error })
+	}
+
+	@Test
+	fun catch() {
+		val error = IllegalStateException()
+		assertEquals(Either.Right(error), Either.Left(error).catch { e: IllegalStateException -> e })
+		assertEquals(Either.Left(error), Either.Left(error).catch { e: IndexOutOfBoundsException -> e })
 	}
 
 	companion object {

@@ -188,3 +188,13 @@ inline fun <R> runCatchingEither(block: () -> R): Either<Throwable, R> {
 		Either.Left(e)
 	}
 }
+
+inline fun <R, reified E: Throwable> Either<Throwable, R>.catch(handler: (E) -> R): Either<Throwable, R> {
+	return fold(
+		ifLeft = {
+			if (it is E) Either.Right(handler(it))
+			else Either.Left(it)
+		},
+		ifRight = { Either.Right(it) },
+	)
+}
