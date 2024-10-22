@@ -46,6 +46,5 @@ fun <M, A, MA: Monad<M, A>> Monad<M, MA>.flatten(): MA {
 }
 
 fun <M, B, MB: Monad<M, B>> Monad<M, *>.andThen(other: MB): MB {
-	bind { scope.just(Unit) }
-	return other
+	return bind { _ -> other } as MB
 }
