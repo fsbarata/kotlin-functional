@@ -3,6 +3,7 @@ package com.github.fsbarata.functional.control.monad
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.MonadPlusLaws
 import com.github.fsbarata.functional.control.MonadZipScopeLaws
+import com.github.fsbarata.functional.control.andThen
 import com.github.fsbarata.functional.control.trans.MonadTransLaws
 import com.github.fsbarata.functional.data.identity.Identity
 import com.github.fsbarata.functional.data.identity.asIdentity
@@ -96,6 +97,21 @@ class OptionalTTest:
 				),
 				OptionalT(ListF.of(Optional.just(1), Optional.just(2), Optional.empty(), Optional.just(3)))
 			) { a, b -> (a + b).toString() }
+		)
+	}
+
+	override fun `right zero`() {
+		assertEquals(
+			OptionalT(ListF.of(Optional.empty<Int>())),
+			OptionalT(ListF.of(Optional.empty<Int>())).andThen(OptionalT(ListF).empty()),
+		)
+		assertEquals(
+			OptionalT(ListF.just(Optional.empty<Int>())),
+			OptionalT(ListF.just(Optional.just(3))).andThen(OptionalT(ListF).empty()),
+		)
+		assertEquals(
+			OptionalT(ListF.of(Optional.empty<Int>(), Optional.empty())),
+			OptionalT(ListF.of(Optional.just(3), Optional.just(5))).andThen(OptionalT(ListF).empty()),
 		)
 	}
 }
