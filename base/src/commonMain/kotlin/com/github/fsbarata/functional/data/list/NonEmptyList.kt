@@ -122,7 +122,20 @@ class NonEmptyList<out A>(
 	operator fun plus(element: @UnsafeVariance A) = NonEmptyList(head, tail + element)
 	operator fun plus(elements: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + elements)
 
-	fun startWith(other: Iterable<@UnsafeVariance A>) = other.toNel()?.plus(this) ?: this
+	fun startWith(element: @UnsafeVariance A): NonEmptyList<A> {
+		return of(element, this)
+	}
+
+	fun startWith(elements: Iterable<@UnsafeVariance A>): NonEmptyList<A> {
+		val iterator = elements.iterator()
+		if (!iterator.hasNext()) return this
+		val head = iterator.next()
+		val tail = buildListF(size) {
+			while (iterator.hasNext()) add(iterator.next())
+			addAll(this@NonEmptyList)
+		}
+		return NonEmptyList(head, tail)
+	}
 
 	fun uncons(): Pair<A, NonEmptyList<A>?> = Pair(head, tail.toNel())
 

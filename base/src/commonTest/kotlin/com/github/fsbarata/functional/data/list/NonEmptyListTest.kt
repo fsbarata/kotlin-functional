@@ -193,6 +193,14 @@ internal class NonEmptyListTest:
 	}
 
 	@Test
+	fun startWith() {
+		assertEquals(nelOf(9, 3), nelOf(3).startWith(9))
+		assertEquals(nelOf(5, 1, 3, 3), nelOf(1, 3, 3).startWith(5))
+		assertEquals(nelOf(5), nelOf(5).startWith(emptyList()))
+		assertEquals(nelOf(1, 3, 5, 1), nelOf(5, 1).startWith(listOf(1, 3)))
+	}
+
+	@Test
 	fun reversed() {
 		assertEquals(nel1, nel1.reversed())
 		assertEquals(nelOf(3, 1, 5), nel2.reversed())

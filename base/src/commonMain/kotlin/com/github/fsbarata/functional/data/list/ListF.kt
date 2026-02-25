@@ -9,6 +9,7 @@ import com.github.fsbarata.functional.data.collection.NonEmptyCollection
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.sequence.SequenceF
 import com.github.fsbarata.functional.data.set.SetF
+import com.github.fsbarata.functional.kotlin.plusNel
 import com.github.fsbarata.io.Serializable
 
 /**

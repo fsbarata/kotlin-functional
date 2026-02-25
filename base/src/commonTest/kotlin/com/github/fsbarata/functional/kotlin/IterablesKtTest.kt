@@ -7,15 +7,11 @@ import com.github.fsbarata.functional.data.set.nesOf
 import kotlin.test.Test
 
 class IterablesKtTest {
-	private val nel1 = NonEmptyList.just(9)
-	private val nel2 = nelOf(5, 1, 3)
-	private val nel3 = NonEmptyList.of(2, nelOf(4, 2, 5))
-
 	@Test
-	fun plusElementNel() {
-		assertEquals(nelOf(9, 3), listOf(9).plusElementNel(3))
-		assertEquals(nelOf(5, 1, 3, 3), listOf(5, 1, 3).plusElementNel(3))
-		assertEquals(nelOf(5), emptyList<Int>().plusElementNel(5))
+	fun startWith() {
+		assertEquals(nelOf(9, 3), listOf(3).startWith(9))
+		assertEquals(nelOf(5, 1, 3, 3), listOf(1, 3, 3).startWith(5))
+		assertEquals(nelOf(5), emptyList<Int>().startWith(5))
 	}
 
 	@Test
@@ -40,7 +36,8 @@ class IterablesKtTest {
 
 	@Test
 	fun plusNes() {
-		assertEquals(nesOf(5, 1, 3, 3), setOf(5, 1).plusNes(nesOf(3, 3)))
+		assertEquals(nesOf(5, 1, 3), setOf(5, 1).plusNes(nesOf(3, 5)))
+		assertEquals(nesOf(5, 1, 3), setOf(5, 1).plusNes(nesOf(5, 3)))
 		assertEquals(nesOf(5), emptySet<Int>().plusNes(NonEmptyList.just(5)))
 	}
 

@@ -2,13 +2,16 @@ package com.github.fsbarata.functional.data.set
 
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
-import com.github.fsbarata.functional.data.*
+import com.github.fsbarata.functional.data.Functor
+import com.github.fsbarata.functional.data.Semigroup
+import com.github.fsbarata.functional.data.Traversable
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
+import com.github.fsbarata.functional.data.id
 import com.github.fsbarata.functional.utils.toNes
 import com.github.fsbarata.io.Serializable
 
 @Suppress("OVERRIDE_BY_INLINE")
-class NonEmptySet<out A> private constructor(
+class NonEmptySet<out A> internal constructor(
 	override val head: A,
 	override val tail: SetF<A>,
 ): Set<A>,
@@ -97,7 +100,7 @@ class NonEmptySet<out A> private constructor(
 
 	companion object: Monad.Scope<NonEmptySetContext>, Traversable.Scope<NonEmptySetContext> {
 		override fun <A> just(a: A) = NonEmptySet(a, SetF.empty())
-		fun <T> of(head: T, others: Iterable<T>): NonEmptySet<T> = of(head, others.toSetF())
+		fun <T> of(head: T, others: Iterable<T>): NonEmptySet<T> = of(head, others.toSet())
 
 		fun <T> of(head: T, others: Set<T>) = NonEmptySet(head, (others - head).toSetF())
 		fun <T> of(head: T, others: SetF<T>) = NonEmptySet(head, others - head)
