@@ -3,15 +3,16 @@ package com.github.fsbarata.functional.kotlin
 import com.github.fsbarata.functional.assertEquals
 import com.github.fsbarata.functional.data.list.NonEmptyList
 import com.github.fsbarata.functional.data.list.nelOf
+import com.github.fsbarata.functional.data.list.startWithItem
 import com.github.fsbarata.functional.data.set.nesOf
 import kotlin.test.Test
 
 class IterablesKtTest {
 	@Test
 	fun startWith() {
-		assertEquals(nelOf(9, 3), listOf(3).startWith(9))
-		assertEquals(nelOf(5, 1, 3, 3), listOf(1, 3, 3).startWith(5))
-		assertEquals(nelOf(5), emptyList<Int>().startWith(5))
+		assertEquals(nelOf(9, 3), listOf(3).startWithItem(9))
+		assertEquals(nelOf(5, 1, 3, 3), listOf(1, 3, 3).startWithItem(5))
+		assertEquals(nelOf(5), emptyList<Int>().startWithItem(5))
 	}
 
 	@Test

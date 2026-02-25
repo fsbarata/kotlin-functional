@@ -122,7 +122,7 @@ class NonEmptyList<out A>(
 	operator fun plus(element: @UnsafeVariance A) = NonEmptyList(head, tail + element)
 	operator fun plus(elements: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + elements)
 
-	fun startWith(element: @UnsafeVariance A): NonEmptyList<A> {
+	fun startWithItem(element: @UnsafeVariance A): NonEmptyList<A> {
 		return of(element, this)
 	}
 

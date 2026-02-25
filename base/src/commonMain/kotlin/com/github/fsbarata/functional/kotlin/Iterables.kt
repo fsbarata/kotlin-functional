@@ -2,15 +2,13 @@ package com.github.fsbarata.functional.kotlin
 
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
 import com.github.fsbarata.functional.data.id
-import com.github.fsbarata.functional.data.list.*
+import com.github.fsbarata.functional.data.list.ImmutableListBuildScope
+import com.github.fsbarata.functional.data.list.NonEmptyList
+import com.github.fsbarata.functional.data.list.buildListF
+import com.github.fsbarata.functional.data.list.toNel
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.set.NonEmptySet
 import com.github.fsbarata.functional.data.set.SetF
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun <A> Iterable<A>.startWith(element: A): NonEmptyList<A> {
-	return NonEmptyList(element, toListF())
-}
 
 fun <A> Iterable<A>.plusElementNel(element: A): NonEmptyList<A> {
 	val iterator = iterator()
