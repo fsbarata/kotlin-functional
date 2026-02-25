@@ -3,9 +3,7 @@ package com.github.fsbarata.functional.data.set
 import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
-import com.github.fsbarata.functional.data.list.ImmutableList
 import com.github.fsbarata.functional.data.list.ListF
-import com.github.fsbarata.functional.data.list.invoke
 import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.sequence.SequenceF
 import com.github.fsbarata.io.Serializable
@@ -17,6 +15,10 @@ class SetF<out A> internal constructor(private val wrapped: Set<A>): Set<A> by w
 	Traversable<SetContext, A>,
 	Semigroup<SetF<@UnsafeVariance A>> {
 	override val scope get() = SetF
+
+	operator fun plus(element: @UnsafeVariance A): SetF<A> = SetF(wrapped + element)
+	operator fun plus(elements: Iterable<@UnsafeVariance A>): SetF<A> = SetF(wrapped + elements)
+	operator fun minus(element: @UnsafeVariance A): SetF<A> = SetF(wrapped - element)
 
 	override inline fun <B> map(f: (A) -> B): SetF<B> {
 		return mapTo(mutableSetOf(), f).f()
@@ -91,16 +93,18 @@ class SetF<out A> internal constructor(private val wrapped: Set<A>): Set<A> by w
 		fun <A> monoid() = monoid(empty<A>())
 
 		override inline fun <A> fromIterable(iterable: Iterable<A>) = when (iterable) {
-			is SetF -> iterable
-			else -> fromSequence(iterable.asSequence())
+			is Set -> fromSet(iterable)
+			else -> fromSet(iterable.toSet())
 		}
 
 		override fun <A> fromSequence(sequence: Sequence<A>) = SetF(sequence.toSet())
 		override inline fun <A> fromList(list: List<A>): SetF<A> = fromIterable(list)
 
-		inline fun <A> fromSet(set: Set<A>): SetF<A> =
-			if (set.isEmpty()) empty()
-			else fromIterable(set)
+		fun <A> fromSet(set: Set<A>): SetF<A> = when {
+			set is SetF -> set
+			set.isEmpty() -> empty()
+			else -> SetF(set)
+		}
 
 		override inline fun <A> fromOptional(optional: Optional<A>): SetF<A> =
 			optional.maybe(empty(), ::just)

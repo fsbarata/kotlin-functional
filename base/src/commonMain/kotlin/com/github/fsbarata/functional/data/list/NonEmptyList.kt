@@ -6,7 +6,7 @@ import com.github.fsbarata.functional.Context
 import com.github.fsbarata.functional.control.*
 import com.github.fsbarata.functional.data.*
 import com.github.fsbarata.functional.data.collection.NonEmptyCollection
-import com.github.fsbarata.functional.data.maybe.invoke
+import com.github.fsbarata.functional.kotlin.plusElementNel
 import com.github.fsbarata.functional.utils.toNel
 import com.github.fsbarata.io.Serializable
 
@@ -66,7 +66,8 @@ class NonEmptyList<out A>(
 		else -> tail.subList(fromIndex - 1, toIndex - 1)
 	}
 
-	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> = of(f(head), tail.map(f))
+	override inline fun <B> map(f: (A) -> B): NonEmptyList<B> =
+		NonEmptyList(f(head), tail.map(f))
 
 	override inline fun onEach(f: (A) -> Unit): NonEmptyList<A> {
 		f(head)
@@ -75,7 +76,7 @@ class NonEmptyList<out A>(
 	}
 
 	inline fun <B> mapIndexed(f: (index: Int, A) -> B): NonEmptyList<B> =
-		of(f(0, head), tail.mapIndexed { index, item -> f(index + 1, item) })
+		NonEmptyList(f(0, head), tail.mapIndexed { index, item -> f(index + 1, item) })
 
 	inline fun onEachIndexed(f: (index: Int, A) -> Unit): NonEmptyList<A> {
 		forEachIndexed(f)
@@ -93,12 +94,12 @@ class NonEmptyList<out A>(
 
 	inline fun <B> flatMap(f: (A) -> NonEmptyList<B>): NonEmptyList<B> {
 		val mappedHead = f(head)
-		return of(mappedHead.head, mappedHead.tail + tail.flatMap(f))
+		return NonEmptyList(mappedHead.head, mappedHead.tail + tail.flatMap(f))
 	}
 
 	inline fun <B> flatMapIndexed(f: (index: Int, A) -> NonEmptyList<B>): NonEmptyList<B> {
 		val mappedHead = f(0, head)
-		return of(
+		return NonEmptyList(
 			mappedHead.head,
 			mappedHead.tail + tail.flatMapIndexed { index, item -> f(index + 1, item) },
 		)
@@ -118,8 +119,8 @@ class NonEmptyList<out A>(
 		return accumulator(head, tail.foldR(initialValue, accumulator))
 	}
 
-	operator fun plus(other: @UnsafeVariance A) = of(head, tail + other)
-	operator fun plus(other: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + other)
+	operator fun plus(element: @UnsafeVariance A) = NonEmptyList(head, tail + element)
+	operator fun plus(elements: Iterable<@UnsafeVariance A>) = NonEmptyList(head, tail + elements)
 
 	fun startWith(other: Iterable<@UnsafeVariance A>) = other.toNel()?.plus(this) ?: this
 
@@ -127,7 +128,7 @@ class NonEmptyList<out A>(
 
 	override inline fun <B, R> zipWith(other: Context<NonEmptyContext, B>, f: (A, B) -> R): NonEmptyList<R> {
 		val otherNel = other.asNel
-		return of(f(head, otherNel.head), tail.zipWith(otherNel.tail, f))
+		return NonEmptyList(f(head, otherNel.head), tail.zipWith(otherNel.tail, f))
 	}
 
 	fun reversed(): NonEmptyList<A> = tail.asReversed().plusElementNel(head)
@@ -136,7 +137,7 @@ class NonEmptyList<out A>(
 	inline fun <K> distinctBy(selector: (A) -> K): NonEmptyList<A> {
 		val set = HashSet<K>()
 		set.add(selector(head))
-		return of(
+		return NonEmptyList(
 			head,
 			tail.filter { set.add(selector(it)) },
 		)

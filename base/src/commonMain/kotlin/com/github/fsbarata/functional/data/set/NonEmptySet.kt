@@ -54,7 +54,11 @@ class NonEmptySet<out A> private constructor(
 		return of(mappedHead.head, mappedHead.tail + tail.flatMap(f))
 	}
 
-	operator fun plus(other: @UnsafeVariance A) = of(head, tail + other)
+	operator fun plus(element: @UnsafeVariance A): NonEmptySet<A> {
+		if (element == head) return this
+		return NonEmptySet(head, tail + element)
+	}
+
 	operator fun plus(other: Iterable<@UnsafeVariance A>) = of(head, tail + other)
 
 	override fun extract(): A = head
@@ -96,6 +100,7 @@ class NonEmptySet<out A> private constructor(
 		fun <T> of(head: T, others: Iterable<T>): NonEmptySet<T> = of(head, others.toSetF())
 
 		fun <T> of(head: T, others: Set<T>) = NonEmptySet(head, (others - head).toSetF())
+		fun <T> of(head: T, others: SetF<T>) = NonEmptySet(head, others - head)
 	}
 }
 

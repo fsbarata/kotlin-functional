@@ -29,14 +29,11 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 
 	override fun subList(fromIndex: Int, toIndex: Int) = ListF(wrapped.subList(fromIndex, toIndex))
 
-	operator fun plus(other: @UnsafeVariance A): ListF<A> = ListF(wrapped + other)
-	operator fun plus(other: Iterable<@UnsafeVariance A>): ListF<A> = ListF(wrapped + other)
+	operator fun plus(element: @UnsafeVariance A): ListF<A> = ListF(wrapped + element)
+	operator fun plus(elements: Iterable<@UnsafeVariance A>): ListF<A> = ListF(wrapped + elements)
 
-	fun plusElementNel(other: @UnsafeVariance A): NonEmptyList<A> =
-		toNel()?.plus(other) ?: NonEmptyList.just(other)
-
-	fun plusNel(other: NonEmptyCollection<@UnsafeVariance A>): NonEmptyList<A> =
-		toNel()?.plus(other) ?: other.toNel()
+	fun plusNel(element: NonEmptyCollection<@UnsafeVariance A>): NonEmptyList<A> =
+		(this as List<A>).plusNel(element)
 
 	override inline fun <B> map(f: (A) -> B): ListF<B> =
 		buildListF(size) { this@ListF.forEach { add(f(it)) } }
@@ -127,7 +124,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		else -> NonEmptyList(this[0], drop(1))
 	}
 
-	fun startWith(other: Iterable<@UnsafeVariance A>): ListF<A> = ListF(other + this)
+	fun startWith(elements: Iterable<@UnsafeVariance A>): ListF<A> = ListF(elements + this)
 
 	fun uncons(): Pair<A, ListF<A>>? =
 		if (isEmpty()) null
@@ -157,7 +154,7 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		override fun <A> fromIterable(iterable: Iterable<A>): ListF<A> = when (iterable) {
 			is ListF -> iterable
 			is ImmutableList<A> -> ListF(iterable)
-			else -> fromSequence(iterable.asSequence())
+			else -> ListF(iterable.toList())
 		}
 
 		override fun <A> fromSequence(sequence: Sequence<A>) = ListF(sequence.toList())

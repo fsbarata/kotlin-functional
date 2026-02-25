@@ -7,17 +7,75 @@ import com.github.fsbarata.functional.data.maybe.Optional
 import com.github.fsbarata.functional.data.set.NonEmptySet
 import com.github.fsbarata.functional.data.set.toNes
 
-fun <A> Iterable<A>.plusElementNel(item: A): NonEmptyList<A> =
-	toNel()?.plus(item) ?: NonEmptyList.just(item)
+fun <A> Iterable<A>.plusElementNel(element: A): NonEmptyList<A> {
+	val iterator = iterator()
+	if (!iterator.hasNext()) return NonEmptyList.just(element)
+	val head = iterator.next()
+	val tail = buildListF {
+		while (iterator.hasNext()) add(iterator.next())
+		add(element)
+	}
+	return NonEmptyList(head, tail)
+}
 
-fun <A> Iterable<A>.plusNel(other: NonEmptyCollection<A>): NonEmptyList<A> =
-	toNel()?.plus(other) ?: other.toNel()
+fun <A> List<A>.plusElementNel(element: A): NonEmptyList<A> {
+	if (isEmpty()) return NonEmptyList.just(element)
+	val iterator = iterator()
+	val head = iterator.next()
+	val tail = buildListF(size) {
+		while (iterator.hasNext()) add(iterator.next())
+		add(element)
+	}
+	return NonEmptyList(head, tail)
+}
 
-fun <A> Set<A>.plusElementNes(item: A): NonEmptySet<A> =
-	toNes()?.plus(item) ?: NonEmptySet.just(item)
+fun <A> Iterable<A>.plusNel(elements: NonEmptyCollection<A>): NonEmptyList<A> {
+	val iterator = iterator()
+	if (!iterator.hasNext()) return elements.toNel()
+	val head = iterator.next()
+	val tail = buildListF {
+		while (iterator.hasNext()) add(iterator.next())
+		addAll(elements)
+	}
+	return NonEmptyList(head, tail)
+}
 
-fun <A> Set<A>.plusNes(other: NonEmptyCollection<A>): NonEmptySet<A> =
-	toNes()?.plus(other) ?: other.toNes()
+fun <A> List<A>.plusNel(elements: NonEmptyCollection<A>): NonEmptyList<A> {
+	val iterator = iterator()
+	if (!iterator.hasNext()) return elements.toNel()
+	val head = iterator.next()
+	val tail = buildListF(size) {
+		while (iterator.hasNext()) add(iterator.next())
+		addAll(elements)
+	}
+	return NonEmptyList(head, tail)
+}
+
+fun <A> Set<A>.plusElementNes(element: A): NonEmptySet<A> {
+	val iterator = iterator()
+	if (!iterator.hasNext()) return NonEmptySet.just(element)
+
+	val head = iterator.next()
+	val tail = buildSet(size + 1) {
+		while (iterator.hasNext()) add(iterator.next())
+		if (head != element) add(element)
+	}
+	return NonEmptySet(head, SetF(tail))
+}
+
+fun <A> Set<A>.plusNes(elements: NonEmptyCollection<A>): NonEmptySet<A> {
+	val iterator = iterator()
+	if (!iterator.hasNext()) return elements.toNes()
+
+	val head = iterator.next()
+	val tail = buildSet(size + elements.size) {
+		add(head)
+		while (iterator.hasNext()) add(iterator.next())
+		addAll(elements)
+		remove(head)
+	}
+	return NonEmptySet(head, SetF(tail))
+}
 
 inline fun <T, K> Iterable<T>.groupByNel(crossinline keySelector: (T) -> K): Map<K, NonEmptyList<T>> =
 	groupByNel(keySelector, ::id)
