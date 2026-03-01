@@ -102,7 +102,7 @@ class NonEmptySet<out A> internal constructor(
 		override fun <A> just(a: A) = NonEmptySet(a, SetF.empty())
 		fun <T> of(head: T, others: Iterable<T>): NonEmptySet<T> = of(head, others.toSet())
 
-		fun <T> of(head: T, others: Set<T>) = NonEmptySet(head, (others - head).toSetF())
+		fun <T> of(head: T, others: Set<T>) = NonEmptySet(head, SetF(others - head))
 		fun <T> of(head: T, others: SetF<T>) = NonEmptySet(head, others - head)
 	}
 }

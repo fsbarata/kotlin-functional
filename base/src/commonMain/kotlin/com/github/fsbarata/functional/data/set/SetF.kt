@@ -92,18 +92,20 @@ class SetF<out A> internal constructor(private val wrapped: Set<A>): Set<A> by w
 
 		fun <A> monoid() = monoid(empty<A>())
 
-		override inline fun <A> fromIterable(iterable: Iterable<A>) = when (iterable) {
-			is Set -> fromSet(iterable)
-			else -> fromSet(iterable.toSet())
+		override fun <A> fromIterable(iterable: Iterable<A>): SetF<A> = when (iterable) {
+			is SetF -> iterable
+			else -> SetF(iterable.toSet())
 		}
 
 		override fun <A> fromSequence(sequence: Sequence<A>) = SetF(sequence.toSet())
-		override inline fun <A> fromList(list: List<A>): SetF<A> = fromIterable(list)
+		override inline fun <A> fromList(list: List<A>): SetF<A> = when {
+			list.isEmpty() -> empty()
+			else -> fromIterable(list)
+		}
 
-		fun <A> fromSet(set: Set<A>): SetF<A> = when {
-			set is SetF -> set
+		inline fun <A> fromSet(set: Set<A>): SetF<A> = when {
 			set.isEmpty() -> empty()
-			else -> SetF(set)
+			else -> fromIterable(set)
 		}
 
 		override inline fun <A> fromOptional(optional: Optional<A>): SetF<A> =

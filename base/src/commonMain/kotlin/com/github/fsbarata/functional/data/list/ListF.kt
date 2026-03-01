@@ -159,9 +159,10 @@ class ListF<out A> internal constructor(private val wrapped: List<A>): List<A> b
 		}
 
 		override fun <A> fromSequence(sequence: Sequence<A>) = ListF(sequence.toList())
-		override inline fun <A> fromList(list: List<A>) =
-			if (list.isEmpty()) empty()
-			else fromIterable(list)
+		override inline fun <A> fromList(list: List<A>) = when {
+			list.isEmpty() -> empty()
+			else -> fromIterable(list)
+		}
 
 		override inline fun <A> fromOptional(optional: Optional<A>): ListF<A> =
 			optional.fold(ifEmpty = ::empty, ifSome = ::just)
